@@ -1,4 +1,15 @@
 .DS_Store
+Thumbs.db
+
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+.venv/
+venv/
+
+.vscode/
+.idea/
