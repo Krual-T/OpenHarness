@@ -16,13 +16,13 @@ Enable OpenHarness skills in Codex via native skill discovery. Just clone and sy
 2. **Create the skills symlink:**
    ```bash
    mkdir -p ~/.codex/skills
-   ln -s ~/.codex/openharness/.codex/skills ~/.codex/skills/openharness
+   ln -s ~/.codex/openharness/skills ~/.codex/skills/openharness
    ```
 
    **Windows (PowerShell):**
    ```powershell
    New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.codex\skills"
-   cmd /c mklink /J "$env:USERPROFILE\.codex\skills\openharness" "$env:USERPROFILE\.codex\openharness\.codex\skills"
+   cmd /c mklink /J "$env:USERPROFILE\.codex\skills\openharness" "$env:USERPROFILE\.codex\openharness\skills"
    ```
 
 3. **Restart Codex** (quit and relaunch the CLI) to discover the skills.

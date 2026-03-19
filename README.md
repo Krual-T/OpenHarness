@@ -56,7 +56,7 @@ Or install manually:
 ```bash
 git clone https://github.com/Krual-T/OpenHarness.git ~/.codex/openharness
 mkdir -p ~/.codex/skills
-ln -s ~/.codex/openharness/.codex/skills ~/.codex/skills/openharness
+ln -s ~/.codex/openharness/skills ~/.codex/skills/openharness
 ```
 
 Then restart Codex.
@@ -86,7 +86,7 @@ That gives both humans and agents a shared source of truth that can be reviewed,
 
 ### 3. Skills that enforce process, not just style
 
-OpenHarness includes a copied and adapted skills library under `.codex/skills/`, including workflows for:
+OpenHarness includes a copied and adapted skills library under `skills/`, including workflows for:
 - brainstorming before implementation
 - writing plans for multi-step work
 - systematic debugging
@@ -138,7 +138,7 @@ In other words, this repo is optimized less for heroic one-shot prompting and mo
 
 ```text
 AGENTS.md                          # repository map
-.codex/skills/                     # workflow skills used by Codex
+skills/                            # workflow skills used by Codex
 docs/designs/<task>/               # active design packages
 docs/archived/designs/<task>/      # archived design packages
 .project-memory/                   # reusable validated project knowledge
