@@ -1,0 +1,28 @@
+id: <DESIGN_ID>
+title: <TITLE>
+status: <STATUS>
+summary: <SUMMARY>
+owner: <OWNER>
+created_at: <DATE>
+updated_at: <DATE>
+depends_on: []
+scope:
+  areas: []
+entrypoints:
+  - docs/designs/<DESIGN_NAME>/README.md
+  - docs/designs/<DESIGN_NAME>/01-requirements.md
+  - docs/designs/<DESIGN_NAME>/02-overview-design.md
+  - docs/designs/<DESIGN_NAME>/03-detailed-design.md
+  - docs/designs/<DESIGN_NAME>/04-implementation-plan.md
+done_criteria:
+  - Replace this placeholder with real done criteria.
+verification:
+  required_commands: []
+  required_scenarios: []
+evidence:
+  docs:
+    - docs/designs/<DESIGN_NAME>/04-implementation-plan.md
+    - docs/designs/<DESIGN_NAME>/05-verification.md
+    - docs/designs/<DESIGN_NAME>/06-evidence.md
+  code: []
+  tests: []
