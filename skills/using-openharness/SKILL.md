@@ -88,22 +88,23 @@ Use child skills under `using-openharness` like this:
 
 - `brainstorming`
     - use when the task is still ambiguous, under-specified, or needs design convergence
-    - output goes into `01-requirements.md`, `02-overview-design.md`, and `03-detailed-design.md`
+    - output goes into the relevant design docs in the package, typically `01-requirements.md`, `02-overview-design.md`, and `03-detailed-design.md`
+    - after `brainstorming` finishes, hand off to `writing-plans`; do not jump straight from a completed brainstorming pass into implementation
 - `writing-plans`
-    - use only when the task needs explicit staged execution beyond `03-detailed-design.md`
+    - use after `brainstorming`, or when requirements/design are already clear and you still need the explicit execution plan artifact
     - output goes into `04-implementation-plan.md`
 - direct implementation
-    - use when the package is already clear enough and no separate execution plan is needed
+    - use only when the package is already clear enough before any brainstorming pass and no separate execution plan is needed
 
 Default flow:
 
 1. `openharness`
 2. `brainstorming` if the design is not yet clear
-3. `writing-plans` only if the task needs explicit execution slicing
+3. `writing-plans` after `brainstorming`, or when an existing package already needs `04-implementation-plan.md`
 4. implementation
 5. verification and evidence updates
 
-For non-package work that still touches repository workflow, start from `openharness`, decide whether a child skill applies, then continue under that child skill. Do not reintroduce a separate entry skill for this routing step.
+For non-package work that still touches repository workflow, start from `openharness`, decide whether a child skill applies, then continue under that child skill. Do not reintroduce a separate entry skill for this routing step. If you used `brainstorming`, the next workflow skill is `writing-plans`, not direct implementation.
 
 ## Update Protocol
 

@@ -29,10 +29,10 @@ You MUST create a task for each of these items and complete them in order:
 3. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
 4. **Propose 2-3 approaches** — with trade-offs and your recommendation
 5. **Present design** — in sections scaled to their complexity, get user approval after each section
-6. **Write design doc** — write the validated design into the active harness package under `docs/designs/<task>/` and commit
+6. **Write design doc** — write the validated design into the relevant docs of the active harness package under `docs/designs/<task>/` and commit
 7. **Spec review loop** — dispatch spec-document-reviewer subagent with precisely crafted review context (never your session history); fix issues and re-dispatch until approved (max 3 iterations, then surface to human)
 8. **User reviews written spec** — ask user to review the spec file before proceeding
-9. **Transition to implementation** — if the task needs explicit staged execution, invoke `writing-plans` to fill `04-implementation-plan.md`; otherwise return to `using-openharness` for direct implementation
+9. **Transition to implementation** — invoke `writing-plans` to fill `04-implementation-plan.md` inside the active harness package
 
 ## Process Flow
 
@@ -49,7 +49,7 @@ digraph brainstorming {
     "Spec review loop" [shape=box];
     "Spec review passed?" [shape=diamond];
     "User reviews spec?" [shape=diamond];
-    "Return to using-openharness\nfor implementation routing" [shape=doublecircle];
+    "Invoke writing-plans skill" [shape=doublecircle];
 
     "Explore project context" -> "Visual questions ahead?";
     "Visual questions ahead?" -> "Offer Visual Companion\n(own message, no other content)" [label="yes"];
@@ -65,11 +65,11 @@ digraph brainstorming {
     "Spec review passed?" -> "Spec review loop" [label="issues found,\nfix and re-dispatch"];
     "Spec review passed?" -> "User reviews spec?" [label="approved"];
     "User reviews spec?" -> "Write design doc" [label="changes requested"];
-    "User reviews spec?" -> "Return to using-openharness\nfor implementation routing" [label="approved"];
+    "User reviews spec?" -> "Invoke writing-plans skill" [label="approved"];
 }
 ```
 
-**The terminal state is returning to `using-openharness`.** From there, either implement directly or invoke `writing-plans` if `04-implementation-plan.md` is actually needed.
+**The terminal state is invoking `writing-plans`.** Keep the superpowers hard handoff, but write the execution plan into the harness package at `docs/designs/<task>/04-implementation-plan.md`.
 
 ## The Process
 
@@ -115,9 +115,10 @@ digraph brainstorming {
 **Documentation:**
 
 - Write the validated design into the active harness package under `docs/designs/<task>/`:
-  - requirements go in `01-requirements.md`
-  - architecture and boundaries go in `02-overview-design.md`
-  - implementation-oriented design and migration details go in `03-detailed-design.md`
+  - update `01-requirements.md` when the validated design changes goals, scope, constraints, non-goals, or done criteria
+  - update `02-overview-design.md` when the validated design changes architecture, boundaries, responsibilities, or primary flows
+  - update `03-detailed-design.md` when the validated design changes implementation landing points, file-level structure, interfaces, or migration details
+  - do not force all three files to grow on every task; update the relevant package docs for the design you actually validated
   - if no package exists yet, scaffold one first via the harness workflow, then write into that package
 - Use elements-of-style:writing-clearly-and-concisely skill if available
 - Commit the design document to git
@@ -138,9 +139,9 @@ Wait for the user's response. If they request changes, make them and re-run the 
 
 **Implementation:**
 
-- Return to `using-openharness` after the design package is updated
-- Use `writing-plans` only when the task needs explicit staged execution in `04-implementation-plan.md`
-- Otherwise proceed directly to implementation under the package contract
+- Invoke `writing-plans` after the design package is updated
+- Write the execution plan into `docs/designs/<task>/04-implementation-plan.md`
+- Do not skip directly to implementation after a completed brainstorming pass
 
 ## Key Principles
 
