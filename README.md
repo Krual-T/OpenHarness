@@ -4,7 +4,7 @@
 
 It is built around a simple belief: the bottleneck is no longer typing code. The bottleneck is giving coding agents a repository they can actually reason about.
 
-OpenHarness packages the workflow patterns, skills, and repository structure we found most useful when adapting agent-driven development inside [`openrelay`](https://github.com/Krual-T/OpenRelay), with direct inspiration from [`obra/superpowers`](https://github.com/obra/superpowers) and strong conceptual alignment with OpenAI's article on [harness engineering](https://openai.com/index/harness-engineering/).
+OpenHarness packages the workflow patterns, skills, and repository structure we found most useful when adapting agent-driven development inside [`openrelay`](https://github.com/Krual-T/OpenRelay). It directly reuses and adapts code and skill content from [`obra/superpowers`](https://github.com/obra/superpowers), and it is also conceptually aligned with OpenAI's article on [harness engineering](https://openai.com/index/harness-engineering/).
 
 If you want Codex to stop improvising and start operating inside a legible, verifiable system, this repo is for you.
 
@@ -159,12 +159,11 @@ It is probably not a fit if you want a minimal one-file setup with no process ov
 
 OpenHarness is a derivative work.
 
-This repository directly reuses source material from [`obra/superpowers`](https://github.com/obra/superpowers). In particular:
-- the project was bootstrapped by copying the adapted skills library from [`openrelay`](https://github.com/Krual-T/OpenRelay)
-- [`openrelay`](https://github.com/Krual-T/OpenRelay) itself contains work derived from and inspired by `superpowers`
+This repository directly reuses and adapts code from [`obra/superpowers`](https://github.com/obra/superpowers). In particular:
+- the project was bootstrapped by copying the adapted skills library from [`openrelay`](https://github.com/Krual-T/OpenRelay), which itself includes code and skill content derived from `superpowers`
 - the Codex install flow in `.codex/INSTALL.md` intentionally follows the same "Fetch and follow instructions from ..." pattern popularized by `superpowers`
 
-OpenHarness is therefore not presented as an original invention of the entire workflow. It is an adaptation, narrowing, and restructuring of upstream ideas into a repository-centered harness model.
+OpenHarness is therefore not presented as an original invention of the entire workflow. It is a derivative adaptation that reuses upstream code and restructures it into a repository-centered harness model.
 
 Please preserve attribution when redistributing substantial portions of this repository.
 
