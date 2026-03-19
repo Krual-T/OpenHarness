@@ -1,6 +1,6 @@
 ---
-name: openharness
-description: Use when a task should follow the repository harness protocol driven by AGENTS.md as map and docs/designs/<task>/ as the task package.
+name: using-openharness
+description: Use when starting any conversation in an OpenHarness repository - establishes how to find and use repository workflow skills before ANY response including clarifying questions.
 ---
 
 <SUBAGENT-STOP>
@@ -10,10 +10,10 @@ If you were dispatched as a subagent to execute a specific task, skip this skill
 <EXTREMELY-IMPORTANT>
 If there is even a 1% chance a repository skill applies, you must invoke the relevant skill before responding or acting.
 
-`openharness` is the first repository workflow skill to check whenever work may affect task packages, design docs, verification flow, repo protocol, or skill routing.
+`using-openharness` is the first repository workflow skill to check whenever work may affect task packages, design docs, verification flow, repo protocol, or skill routing.
 </EXTREMELY-IMPORTANT>
 
-# Openharness
+# Using OpenHarness
 
 ## Intent
 Use this skill to work inside repositories that organize tasks as `docs/designs/<task>/` packages rather than a centralized task board.
@@ -46,7 +46,7 @@ All repo-facing workflow skills should be treated as subordinate to `openharness
 Invoke relevant or requested repository skills before response or action.
 
 Use this routing order:
-1. `openharness` first for repository workflow and task-package protocol
+1. `using-openharness` first for repository workflow and task-package protocol
 2. process skills next, such as `brainstorming` or `systematic-debugging`
 3. execution skills after that, such as `writing-plans`, `subagent-driven-development`, or `executing-plans`
 

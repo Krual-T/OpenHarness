@@ -110,7 +110,7 @@ That means key decisions should move out of chat threads and into versioned arti
 A typical task looks like this:
 
 1. `AGENTS.md` routes the agent into the correct workflow.
-2. `openharness` checks the manifest and active design packages.
+2. `using-using-openharness` checks the manifest and active design packages.
 3. The agent reads the task package in a fixed order.
 4. If the task is still fuzzy, `brainstorming` converges the design first.
 5. If execution needs staging, `writing-plans` creates the implementation plan.

@@ -8,7 +8,7 @@
 
 1. `AGENTS.md`
    - 仓库地图、默认协作协议、结构约束、验证要求。
-2. `skills/openharness/references/manifest.yaml`
+2. `skills/using-openharness/references/manifest.yaml`
    - harness 的机器可读入口；声明 active / archived design package 布局、状态流和 artifact 根目录。
 3. `docs/designs/<task>/`
    - 设计任务的唯一事实来源；每个任务是一个独立 design package。
@@ -37,7 +37,7 @@
 默认阅读顺序：
 
 1. `AGENTS.md`
-2. `skills/openharness/references/manifest.yaml`
+2. `skills/using-openharness/references/manifest.yaml`
 3. `docs/designs/<task>/README.md`
 4. `docs/designs/<task>/STATUS.yaml`
 5. `docs/designs/<task>/01-requirements.md`
@@ -52,14 +52,14 @@
 ### 进入仓库后
 
 - 先读 `AGENTS.md`，建立仓库地图。
-- 先把 `openharness` 视为本仓库的默认入口技能；任何可能涉及仓库协议、design package、验证流或技能路由的工作，都先从它开始判断该走哪个 skill。
-- 再读 `skills/openharness/references/manifest.yaml`，确认 harness 协议。
-- 运行 `uv run python skills/openharness/scripts/openharness.py bootstrap` 查看当前 active design packages。
+- 先把 `using-openharness` 视为本仓库的默认入口技能；任何可能涉及仓库协议、design package、验证流或技能路由的工作，都先从它开始判断该走哪个 skill。
+- 再读 `skills/using-openharness/references/manifest.yaml`，确认 harness 协议。
+- 运行 `uv run python skills/using-openharness/scripts/openharness.py bootstrap` 查看当前 active design packages。
 - 只在 design package 足够清晰时开始实现；若任务边界缺失，先补设计包而不是直接改代码。
 
 ### 执行任务时
 
-- 先经过 `openharness` 做 skill routing，再进入 `brainstorming`、`systematic-debugging`、`writing-plans` 或直接实现；
+- 先经过 `using-openharness` 做 skill routing，再进入 `brainstorming`、`systematic-debugging`、`writing-plans` 或直接实现；
 - 需求、总体设计、详细设计分层书写，不要混在一个随手增长的长文档里。
 - 改动前先确定主路径、状态流和验证方式。
 - 复杂改动先整理结构，再实现局部。
@@ -103,7 +103,7 @@
 - 影响使用方式、配置方式、架构分层的改动，应同步更新对应 design package。
 - 需求变化先写 `01-requirements.md`；总体设计变化写 `02-overview-design.md`；实现落点变化写 `03-detailed-design.md`；需要阶段化执行方案时写 `04-implementation-plan.md`。
 - 完成前至少运行：
-  - `uv run python skills/openharness/scripts/openharness.py check-designs`
+  - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
   - 当前 design package 在 `STATUS.yaml.verification.required_commands` 中声明的命令
 - 若本轮只是补设计，仍应保证 design package 协议完整。
 
