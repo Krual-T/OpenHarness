@@ -17,7 +17,7 @@ Use this skill when:
 ## Rules
 - Treat `.project-memory/workflows/*.yaml`, `.project-memory/facts/*.yaml`, and `.project-memory/decisions/*.yaml` as the source of truth.
 - Treat `.project-memory/index.sqlite` as a disposable cache; rebuild it from YAML when needed.
-- Run project-memory scripts with `uv run` from the repo root so they resolve against this repository's managed Python environment.
+- Run project-memory scripts directly from the skill root via `scripts/...` paths.
 - `PyYAML` is a required dependency of these scripts and is expected to be available from this project's `pyproject.toml`; if it is missing, fix the project environment instead of falling back to ad-hoc local installs.
 - Query memory before re-discovering an already-known workflow, fact, or decision.
 - Validate a hit against current files or run `check_stale.py` before relying on it.
@@ -32,19 +32,19 @@ Use this skill when:
 Query known memory objects:
 
 ```bash
-uv run python .codex/skills/project-memory/scripts/query_memory.py "workspace api 调试流程"
+scripts/query_memory.py "workspace api 调试流程"
 ```
 
 Include stale or blocked candidates only when you are explicitly auditing why a result was hidden:
 
 ```bash
-uv run python .codex/skills/project-memory/scripts/query_memory.py "workspace api 调试流程" --include-unusable
+scripts/query_memory.py "workspace api 调试流程" --include-unusable
 ```
 
 Save a validated workflow:
 
 ```bash
-uv run python .codex/skills/project-memory/scripts/save_workflow.py trace_order_api \
+scripts/save_workflow.py trace_order_api \
   --title "Trace order create API" \
   --summary "Reusable workflow for following the order create endpoint" \
   --alias "订单创建接口怎么走" \
@@ -59,7 +59,7 @@ uv run python .codex/skills/project-memory/scripts/save_workflow.py trace_order_
 Save a validated fact:
 
 ```bash
-uv run python .codex/skills/project-memory/scripts/save_fact.py workspace_files_content_semantics \
+scripts/save_fact.py workspace_files_content_semantics \
   --title "workspace/files.content 表示工作区文件内容" \
   --statement "workspace/files.data.content 表示工作区真实文件内容，不是聊天消息文本" \
   --alias "workspace files content 是什么" \
@@ -72,7 +72,7 @@ uv run python .codex/skills/project-memory/scripts/save_fact.py workspace_files_
 Save a validated decision:
 
 ```bash
-uv run python .codex/skills/project-memory/scripts/save_decision.py cei_qa_parallel_upgrade_path \
+scripts/save_decision.py cei_qa_parallel_upgrade_path \
   --title "cei-qa 升级采用并行新增链路" \
   --question "cei-qa 是否应该直接替换旧链路" \
   --decision "不直接替换，保留旧链路并新增新链路" \
@@ -89,19 +89,19 @@ uv run python .codex/skills/project-memory/scripts/save_decision.py cei_qa_paral
 Check for stale workflows:
 
 ```bash
-uv run python .codex/skills/project-memory/scripts/check_stale.py --write-status
+scripts/check_stale.py --write-status
 ```
 
 Audit stale objects, alias collisions, low confidence, and missing metadata:
 
 ```bash
-uv run python .codex/skills/project-memory/scripts/audit_memory.py
+scripts/audit_memory.py
 ```
 
 Archive or deprecate an incorrect memory object:
 
 ```bash
-uv run python .codex/skills/project-memory/scripts/archive_memory.py workspace_files_content_semantics \
+scripts/archive_memory.py workspace_files_content_semantics \
   --kind fact \
   --status archived \
   --reason "事实已失效，后续不应继续复用" \
@@ -111,7 +111,7 @@ uv run python .codex/skills/project-memory/scripts/archive_memory.py workspace_f
 Deprecate an old object and move its aliases to a replacement:
 
 ```bash
-uv run python .codex/skills/project-memory/scripts/archive_memory.py workspace_files_content_semantics_v1 \
+scripts/archive_memory.py workspace_files_content_semantics_v1 \
   --kind fact \
   --status deprecated \
   --reason "已被 v2 取代" \

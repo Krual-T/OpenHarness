@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from __future__ import annotations
 
 import argparse
@@ -37,17 +39,9 @@ REQUIRED_STATUS_KEYS = (
 
 @dataclass(slots=True, frozen=True)
 class HarnessManifest:
+    repo_root: Path
     path: Path
     raw: dict[str, Any]
-
-    @property
-    def repo_root(self) -> Path:
-        parts = self.path.parts
-        if parts[-5:] == (".codex", "skills", "openharness", "references", "manifest.yaml"):
-            return self.path.parents[4].resolve()
-        if parts[-4:] == (".codex", "skills", "openharness", "manifest.yaml"):
-            return self.path.parents[3].resolve()
-        return self.path.parent.parent.resolve()
 
     @property
     def designs_root(self) -> Path:
@@ -157,14 +151,22 @@ def _load_yaml(path: Path) -> dict[str, Any]:
 
 
 def load_manifest(repo_root: Path) -> HarnessManifest:
-    manifest_path = (repo_root / ".codex" / "skills" / "openharness" / "references" / "manifest.yaml").resolve()
-    if not manifest_path.exists():
-        manifest_path = (repo_root / ".codex" / "skills" / "openharness" / "manifest.yaml").resolve()
-    if not manifest_path.exists():
-        manifest_path = (repo_root / ".harness" / "manifest.yaml").resolve()
-    if not manifest_path.exists():
-        raise FileNotFoundError(f"Harness manifest not found: {manifest_path}")
-    return HarnessManifest(path=manifest_path, raw=_load_yaml(manifest_path))
+    skill_root = Path(__file__).resolve().parents[1]
+    candidates = (
+        repo_root / ".agents" / "skills" / "openharness" / "using-openharness" / "references" / "manifest.yaml",
+        repo_root / ".agents" / "skills" / "openharness" / "using-openharness" / "manifest.yaml",
+        repo_root / ".harness" / "manifest.yaml",
+        skill_root / "references" / "manifest.yaml",
+        skill_root / "manifest.yaml",
+    )
+    for candidate in candidates:
+        manifest_path = candidate.resolve()
+        if manifest_path.exists():
+            return HarnessManifest(repo_root=repo_root, path=manifest_path, raw=_load_yaml(manifest_path))
+    raise FileNotFoundError(
+        "Harness manifest not found. Checked: "
+        + ", ".join(str(candidate) for candidate in candidates)
+    )
 
 
 def discover_design_packages(repo_root: Path, manifest: HarnessManifest | None = None) -> list[DesignPackage]:
@@ -260,11 +262,14 @@ def create_design_package(request: DesignScaffoldRequest) -> Path:
     design_root = manifest.designs_root / design_name
     if design_root.exists():
         raise FileExistsError(f"design package already exists: {design_root}")
-    template_root = request.repo_root / ".codex" / "skills" / "openharness" / "references" / "templates"
+    skill_root = Path(__file__).resolve().parents[1]
+    template_root = request.repo_root / ".agents" / "skills" / "openharness" / "using-openharness" / "references" / "templates"
     if not template_root.exists():
-        template_root = request.repo_root / ".codex" / "skills" / "openharness" / "templates"
+        template_root = request.repo_root / ".agents" / "skills" / "openharness" / "using-openharness" / "templates"
     if not template_root.exists():
-        template_root = manifest.path.parent / "templates"
+        template_root = skill_root / "references" / "templates"
+    if not template_root.exists():
+        template_root = skill_root / "templates"
     replacements = {
         "<DESIGN_ID>": request.design_id,
         "<TITLE>": request.title,

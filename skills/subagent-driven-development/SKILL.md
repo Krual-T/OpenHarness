@@ -266,7 +266,7 @@ Done!
 
 **Required workflow skills:**
 - **using-git-worktrees** - REQUIRED: Set up isolated workspace before starting
-- **writing-plans** - Creates the `04-implementation-plan.md` artifact this skill executes under `openharness`
+- **writing-plans** - Creates the `04-implementation-plan.md` artifact this skill executes under `using-openharness`
 - **requesting-code-review** - Code review template for reviewer subagents
 - **finishing-a-development-branch** - Complete development after all tasks
 

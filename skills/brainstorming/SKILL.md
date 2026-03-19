@@ -7,7 +7,7 @@ description: "You MUST use this before any creative work - creating features, bu
 
 Help turn ideas into fully formed designs and specs through natural collaborative dialogue.
 
-In this repository, `brainstorming` is a child skill of `openharness`.
+In this repository, `brainstorming` is a child skill of `using-openharness`.
 It does not define task roots or package structure. It only helps converge the design content that belongs in the active harness package.
 
 Start by understanding the current project context, then ask questions one at a time to refine the idea. Once you understand what you're building, present the design and get user approval.
@@ -32,7 +32,7 @@ You MUST create a task for each of these items and complete them in order:
 6. **Write design doc** — write the validated design into the active harness package under `docs/designs/<task>/` and commit
 7. **Spec review loop** — dispatch spec-document-reviewer subagent with precisely crafted review context (never your session history); fix issues and re-dispatch until approved (max 3 iterations, then surface to human)
 8. **User reviews written spec** — ask user to review the spec file before proceeding
-9. **Transition to implementation** — if the task needs explicit staged execution, invoke `writing-plans` to fill `04-implementation-plan.md`; otherwise return to `openharness` for direct implementation
+9. **Transition to implementation** — if the task needs explicit staged execution, invoke `writing-plans` to fill `04-implementation-plan.md`; otherwise return to `using-openharness` for direct implementation
 
 ## Process Flow
 
@@ -49,7 +49,7 @@ digraph brainstorming {
     "Spec review loop" [shape=box];
     "Spec review passed?" [shape=diamond];
     "User reviews spec?" [shape=diamond];
-    "Return to openharness\nfor implementation routing" [shape=doublecircle];
+    "Return to using-openharness\nfor implementation routing" [shape=doublecircle];
 
     "Explore project context" -> "Visual questions ahead?";
     "Visual questions ahead?" -> "Offer Visual Companion\n(own message, no other content)" [label="yes"];
@@ -65,11 +65,11 @@ digraph brainstorming {
     "Spec review passed?" -> "Spec review loop" [label="issues found,\nfix and re-dispatch"];
     "Spec review passed?" -> "User reviews spec?" [label="approved"];
     "User reviews spec?" -> "Write design doc" [label="changes requested"];
-    "User reviews spec?" -> "Return to openharness\nfor implementation routing" [label="approved"];
+    "User reviews spec?" -> "Return to using-openharness\nfor implementation routing" [label="approved"];
 }
 ```
 
-**The terminal state is returning to `openharness`.** From there, either implement directly or invoke `writing-plans` if `04-implementation-plan.md` is actually needed.
+**The terminal state is returning to `using-openharness`.** From there, either implement directly or invoke `writing-plans` if `04-implementation-plan.md` is actually needed.
 
 ## The Process
 
@@ -138,7 +138,7 @@ Wait for the user's response. If they request changes, make them and re-run the 
 
 **Implementation:**
 
-- Return to `openharness` after the design package is updated
+- Return to `using-openharness` after the design package is updated
 - Use `writing-plans` only when the task needs explicit staged execution in `04-implementation-plan.md`
 - Otherwise proceed directly to implementation under the package contract
 

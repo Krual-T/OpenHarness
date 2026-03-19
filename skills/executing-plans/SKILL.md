@@ -11,7 +11,7 @@ Load the harness package implementation plan, review critically, execute all tas
 
 **Announce at start:** "I'm using the executing-plans skill to implement this plan."
 
-In this repository, `executing-plans` executes the plan artifact owned by `openharness`, not an external planning system.
+In this repository, `executing-plans` executes the plan artifact owned by `using-openharness`, not an external planning system.
 
 **Note:** If subagents are available, prefer `subagent-driven-development` over this skill.
 
@@ -68,5 +68,5 @@ After all tasks complete and verified:
 
 **Required workflow skills:**
 - **using-git-worktrees** - REQUIRED: Set up isolated workspace before starting
-- **writing-plans** - Creates the `04-implementation-plan.md` artifact this skill executes under `openharness`
+- **writing-plans** - Creates the `04-implementation-plan.md` artifact this skill executes under `using-openharness`
 - **finishing-a-development-branch** - Complete development after all tasks
