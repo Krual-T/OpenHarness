@@ -153,6 +153,8 @@ def _load_yaml(path: Path) -> dict[str, Any]:
 def load_manifest(repo_root: Path) -> HarnessManifest:
     skill_root = Path(__file__).resolve().parents[1]
     candidates = (
+        repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml",
+        repo_root / "skills" / "using-openharness" / "manifest.yaml",
         repo_root / ".agents" / "skills" / "openharness" / "using-openharness" / "references" / "manifest.yaml",
         repo_root / ".agents" / "skills" / "openharness" / "using-openharness" / "manifest.yaml",
         repo_root / ".harness" / "manifest.yaml",
@@ -263,7 +265,11 @@ def create_design_package(request: DesignScaffoldRequest) -> Path:
     if design_root.exists():
         raise FileExistsError(f"design package already exists: {design_root}")
     skill_root = Path(__file__).resolve().parents[1]
-    template_root = request.repo_root / ".agents" / "skills" / "openharness" / "using-openharness" / "references" / "templates"
+    template_root = request.repo_root / "skills" / "using-openharness" / "references" / "templates"
+    if not template_root.exists():
+        template_root = request.repo_root / "skills" / "using-openharness" / "templates"
+    if not template_root.exists():
+        template_root = request.repo_root / ".agents" / "skills" / "openharness" / "using-openharness" / "references" / "templates"
     if not template_root.exists():
         template_root = request.repo_root / ".agents" / "skills" / "openharness" / "using-openharness" / "templates"
     if not template_root.exists():

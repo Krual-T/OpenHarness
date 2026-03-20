@@ -1,0 +1,17 @@
+[project]
+name = "openharness"
+version = "0.1.0"
+description = "Agent-first repository scaffold and workflow harness for Codex."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "PyYAML>=6.0,<7",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0,<9",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["skills/using-openharness/tests"]

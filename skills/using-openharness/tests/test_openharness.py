@@ -22,7 +22,8 @@ from openharness import (
 )
 
 
-REPO_ROOT = Path(__file__).resolve().parents[4]
+REPO_ROOT = Path(__file__).resolve().parents[3]
+
 
 def test_manifest_points_to_designs_root() -> None:
     manifest = load_manifest(REPO_ROOT)
@@ -30,36 +31,17 @@ def test_manifest_points_to_designs_root() -> None:
     assert manifest.archived_designs_root == REPO_ROOT / "docs" / "archived" / "designs"
 
 
-def test_harness_foundation_design_package_is_discoverable() -> None:
+def test_self_hosting_design_package_is_discoverable() -> None:
     manifest = load_manifest(REPO_ROOT)
     packages = discover_design_packages(REPO_ROOT, manifest)
-    harness_package = next(package for package in packages if package.name == "harness-foundation")
-    assert harness_package.design_id == "OR-015"
-    assert harness_package.status_name == "archived"
-    assert "Harness Foundation" in summarize_design_package(harness_package)
+    package = next(package for package in packages if package.name == "self-hosting-bootstrap")
+    assert package.design_id == "OH-001"
+    assert package.status_name == "in_progress"
+    assert "Self-Hosting Bootstrap" in summarize_design_package(package)
 
 
-def test_migrated_and_scaffolded_design_packages_are_discoverable() -> None:
-    manifest = load_manifest(REPO_ROOT)
-    packages = discover_design_packages(REPO_ROOT, manifest)
-    names = {package.name for package in packages}
-    assert {
-        "message-observability",
-        "architecture-refactor",
-        "harness-foundation",
-        "harness-completion",
-        "unified-waiting-interactions",
-        "current-session-control-surface",
-        "asynchronous-lookback-experience",
-        "workspace-shortcuts-and-directory-maintenance",
-        "log-manager",
-        "legacy-design-package-maturation",
-    }.issubset(names)
-
-
-def test_active_statuses_do_not_include_landed() -> None:
+def test_active_statuses_do_not_include_archived() -> None:
     assert "in_progress" in ACTIVE_STATUSES
-    assert "landed" not in ACTIVE_STATUSES
     assert "archived" not in ACTIVE_STATUSES
 
 
@@ -70,11 +52,25 @@ def test_design_packages_validate_cleanly() -> None:
     assert errors == []
 
 
+def test_load_manifest_prefers_repo_local_skills_layout(tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
+    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
+        "version: 1\n"
+        "designs_root: docs/designs\n"
+        "archived_designs_root: docs/archived/designs\n",
+        encoding="utf-8",
+    )
+
+    manifest = load_manifest(repo_root)
+    assert manifest.path == (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml")
+
+
 def test_validate_design_package_rejects_unknown_status_and_missing_paths(tmp_path: Path) -> None:
     repo_root = tmp_path / "repo"
-    (repo_root / ".codex" / "skills" / "openharness" / "references").mkdir(parents=True)
+    (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
     (repo_root / "docs" / "designs" / "broken").mkdir(parents=True)
-    (repo_root / ".codex" / "skills" / "openharness" / "references" / "manifest.yaml").write_text(
+    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
         "version: 1\n"
         "designs_root: docs/designs\n"
         "required_design_files:\n"
@@ -104,13 +100,13 @@ def test_validate_design_package_rejects_unknown_status_and_missing_paths(tmp_pa
     ):
         (root / name).write_text("x\n", encoding="utf-8")
     (root / "STATUS.yaml").write_text(
-        "id: OR-999\n"
+        "id: OH-999\n"
         "title: Broken Package\n"
         "status: invalid_status\n"
         "summary: bad\n"
         "owner: codex\n"
-        "created_at: 2026-03-19\n"
-        "updated_at: 2026-03-19\n"
+        "created_at: 2026-03-20\n"
+        "updated_at: 2026-03-20\n"
         "done_criteria:\n"
         "  - x\n"
         "entrypoints:\n"
@@ -135,9 +131,9 @@ def test_validate_design_package_rejects_unknown_status_and_missing_paths(tmp_pa
 
 def test_validate_design_package_rejects_archived_status_in_active_root(tmp_path: Path) -> None:
     repo_root = tmp_path / "repo"
-    (repo_root / ".codex" / "skills" / "openharness" / "references").mkdir(parents=True)
+    (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
     (repo_root / "docs" / "designs" / "wrong-place").mkdir(parents=True)
-    (repo_root / ".codex" / "skills" / "openharness" / "references" / "manifest.yaml").write_text(
+    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
         "version: 1\n"
         "designs_root: docs/designs\n"
         "archived_designs_root: docs/archived/designs\n"
@@ -160,13 +156,13 @@ def test_validate_design_package_rejects_archived_status_in_active_root(tmp_path
     for name in REQUIRED_DESIGN_FILES:
         (root / name).write_text("x\n", encoding="utf-8")
     (root / "STATUS.yaml").write_text(
-        "id: OR-999\n"
+        "id: OH-999\n"
         "title: Wrong Place\n"
         "status: archived\n"
         "summary: bad\n"
         "owner: codex\n"
-        "created_at: 2026-03-19\n"
-        "updated_at: 2026-03-19\n"
+        "created_at: 2026-03-20\n"
+        "updated_at: 2026-03-20\n"
         "done_criteria:\n"
         "  - x\n"
         "verification:\n"
@@ -185,15 +181,15 @@ def test_slugify_design_name_normalizes_human_text() -> None:
 
 def test_create_design_package_from_templates(tmp_path: Path) -> None:
     repo_root = tmp_path / "repo"
-    (repo_root / ".codex" / "skills" / "openharness" / "references" / "templates").mkdir(parents=True)
+    (repo_root / "skills" / "using-openharness" / "references" / "templates").mkdir(parents=True)
     (repo_root / "docs" / "designs").mkdir(parents=True)
-    (repo_root / ".codex" / "skills" / "openharness" / "references" / "manifest.yaml").write_text(
+    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
         "version: 1\ndesigns_root: docs/designs\narchived_designs_root: docs/archived/designs\nrequired_design_files:\n"
         "  - README.md\n  - STATUS.yaml\n  - 01-requirements.md\n  - 02-overview-design.md\n"
         "  - 03-detailed-design.md\n  - 04-implementation-plan.md\n  - 05-verification.md\n  - 06-evidence.md\n",
         encoding="utf-8",
     )
-    template_root = repo_root / ".codex" / "skills" / "openharness" / "references" / "templates"
+    template_root = repo_root / "skills" / "using-openharness" / "references" / "templates"
     for file_name, content in {
         "design-package.README.md": "# <DESIGN_ID> <TITLE>\n",
         "design-package.STATUS.yaml": "id: <DESIGN_ID>\ntitle: <TITLE>\nstatus: <STATUS>\nsummary: <SUMMARY>\nowner: <OWNER>\ncreated_at: <DATE>\nupdated_at: <DATE>\ndone_criteria:\n  - x\nverification:\n  required_commands: []\n",
@@ -210,7 +206,7 @@ def test_create_design_package_from_templates(tmp_path: Path) -> None:
         DesignScaffoldRequest(
             repo_root=repo_root,
             design_name="Harness Replay",
-            design_id="OR-016",
+            design_id="OH-016",
             title="Harness Replay",
             owner="codex",
             summary="Replay scenarios.",
@@ -218,37 +214,36 @@ def test_create_design_package_from_templates(tmp_path: Path) -> None:
     )
 
     assert design_root == repo_root / "docs" / "designs" / "harness-replay"
-    assert (design_root / "README.md").read_text(encoding="utf-8") == "# OR-016 Harness Replay\n"
+    assert (design_root / "README.md").read_text(encoding="utf-8") == "# OH-016 Harness Replay\n"
     assert (design_root / "04-implementation-plan.md").read_text(encoding="utf-8") == "plan\n"
     assert "summary: Replay scenarios." in (design_root / "STATUS.yaml").read_text(encoding="utf-8")
 
 
 def test_key_repo_skills_are_vendored_locally() -> None:
     expected = [
-        'openharness',
-        'using-git-worktrees',
-        'writing-plans',
-        'executing-plans',
-        'verification-before-completion',
-        'systematic-debugging',
-        'finishing-a-development-branch',
+        "using-openharness",
+        "using-git-worktrees",
+        "writing-plans",
+        "executing-plans",
+        "verification-before-completion",
+        "systematic-debugging",
+        "finishing-a-development-branch",
     ]
     for name in expected:
-        path = REPO_ROOT / '.codex' / 'skills' / name
+        path = REPO_ROOT / "skills" / name
         assert path.is_dir()
-        assert not path.is_symlink()
-        assert (path / 'SKILL.md').exists()
+        assert (path / "SKILL.md").exists()
 
 
 def test_openharness_skill_owns_supporting_scripts_and_templates() -> None:
-    skill_root = REPO_ROOT / '.codex' / 'skills' / 'openharness'
+    skill_root = REPO_ROOT / "skills" / "using-openharness"
     assert SKILL_ROOT == skill_root
-    assert (skill_root / 'scripts' / 'openharness.py').exists()
-    assert (skill_root / 'tests' / 'test_openharness.py').exists()
-    assert (skill_root / 'references' / 'manifest.yaml').exists()
-    assert (skill_root / 'references' / 'templates' / 'design-package.README.md').exists()
-    assert (skill_root / 'references' / 'templates' / 'design-package.STATUS.yaml').exists()
-    assert (skill_root / 'references' / 'templates' / 'design-package.04-implementation-plan.md').exists()
+    assert (skill_root / "scripts" / "openharness.py").exists()
+    assert (skill_root / "tests" / "test_openharness.py").exists()
+    assert (skill_root / "references" / "manifest.yaml").exists()
+    assert (skill_root / "references" / "templates" / "design-package.README.md").exists()
+    assert (skill_root / "references" / "templates" / "design-package.STATUS.yaml").exists()
+    assert (skill_root / "references" / "templates" / "design-package.04-implementation-plan.md").exists()
 
 
 def test_openharness_single_cli_supports_all_subcommands() -> None:
@@ -258,30 +253,22 @@ def test_openharness_single_cli_supports_all_subcommands() -> None:
 
 
 def test_openharness_skill_is_repo_entry_skill() -> None:
-    skill_path = REPO_ROOT / ".codex" / "skills" / "openharness" / "SKILL.md"
+    skill_path = REPO_ROOT / "skills" / "using-openharness" / "SKILL.md"
     text = skill_path.read_text(encoding="utf-8")
-    legacy_brand = "super" + "powers"
-    legacy_entry = "using-" + legacy_brand
-    assert "`openharness` is the first repository workflow skill to check" in text
+    assert "`using-openharness` is the first repository workflow skill to check" in text
     assert "including clarifying questions" in text
     assert "only repository entry skill" in text
-    assert legacy_entry not in text
-    assert legacy_brand not in text
 
 
 def test_skill_hub_declares_no_parallel_entry_skill() -> None:
-    hub_path = REPO_ROOT / ".codex" / "skills" / "openharness" / "references" / "skill-hub.md"
+    hub_path = REPO_ROOT / "skills" / "using-openharness" / "references" / "skill-hub.md"
     text = hub_path.read_text(encoding="utf-8")
-    legacy_brand = "super" + "powers"
-    legacy_entry = "using-" + legacy_brand
     assert "repository entry skill" in text
     assert "Do not keep a separate repository entry layer beside `openharness`." in text
-    assert legacy_entry not in text
-    assert legacy_brand not in text
 
 
 def test_agents_md_routes_repo_skill_usage_through_openharness() -> None:
     agents_path = REPO_ROOT / "AGENTS.md"
     text = agents_path.read_text(encoding="utf-8")
-    assert "`openharness` 视为本仓库的默认入口技能" in text
-    assert "先经过 `openharness` 做 skill routing" in text
+    assert "`using-openharness` 视为本仓库的默认入口技能" in text
+    assert "先经过 `using-openharness` 做 skill routing" in text
