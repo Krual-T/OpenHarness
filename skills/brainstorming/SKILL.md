@@ -133,7 +133,6 @@ After writing the spec document:
 **User Review Gate:**
 After the spec review loop passes, ask the user to review the written spec before proceeding:
 
-> "Design package updated and committed at `<path>`. Please review it and let me know if you want to make any changes before we start writing out the implementation plan."
 > "Design package updated and committed at `<path>`. Please review it and let me know if you want to make any changes before we continue into exploration and detailed design."
 
 Wait for the user's response. If they request changes, make them and re-run the spec review loop. Only proceed once the user approves.

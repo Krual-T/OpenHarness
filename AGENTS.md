@@ -60,6 +60,7 @@
 - 先经过 `using-openharness` 做 skill routing，再进入 `brainstorming`、`exploring-solution-space`、`systematic-debugging` 或直接实现；
 - 需求、总体设计、详细设计分层书写，不要混在一个随手增长的长文档里。
 - 先写需求，再探索（本地仓库 + web search），再形成总体设计与详细设计。
+- `02-overview-design.md` 与 `03-detailed-design.md` 都应经过一轮显式反思（reflection）；若仍存在高影响不确定性，应触发有边界的子智能体讨论或评审。
 - 改动前先确定主路径、状态流和验证方式。
 - 复杂改动先整理结构，再实现局部。
 - 若发现稳定可复用事实，应优先回写 `.project-memory/`。

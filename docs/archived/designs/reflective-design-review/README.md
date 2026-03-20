@@ -5,7 +5,7 @@
 - Allow and encourage bounded subagent discussion before architecture and detailed design are treated as ready.
 
 ## Current Status
-- In progress.
+- Archived. The reflective design review loop is now part of the core workflow and retained here as historical evidence.
 
 ## Read This First
 - `STATUS.yaml`

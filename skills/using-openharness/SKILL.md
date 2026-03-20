@@ -100,10 +100,12 @@ Default flow:
 1. `openharness`
 2. `brainstorming` to converge and write `01-requirements.md`
 3. `exploring-solution-space` to explore local code and the web before writing design
-4. write `02-overview-design.md`
-5. write `03-detailed-design.md`
-6. implementation and runtime verification
-7. verification and evidence updates
+4. draft `02-overview-design.md`
+5. run an overview reflection pass; use bounded subagent discussion when the architecture is high-impact, uncertain, or hard to compare against alternatives
+6. draft `03-detailed-design.md`
+7. run a detailed-design reflection pass; use bounded subagent discussion when test strategy, module boundaries, migration risk, or runtime verification remain uncertain
+8. implementation and runtime verification
+9. verification and evidence updates
 
 For non-package work that still touches repository workflow, start from `openharness`, decide whether a child skill applies, then continue under that child skill. Do not reintroduce a separate entry skill for this routing step.
 
@@ -114,6 +116,8 @@ For non-package work that still touches repository workflow, start from `openhar
 - Put problem framing in `01-requirements.md`.
 - Put boundary and architecture choices in `02-overview-design.md`.
 - Put testing-first implementation details, runtime verification approach, and implementation order in `03-detailed-design.md`.
+- Record the overview reflection pass in `02-overview-design.md`, including when a bounded subagent discussion was used and what it changed.
+- Record the detailed-design reflection pass in `03-detailed-design.md`, including when a bounded subagent discussion was used and what it changed.
 - Put verification plan and results in `05-verification.md`.
 - Put changed files, commands, and remaining follow-ups in `06-evidence.md`.
 
@@ -132,6 +136,8 @@ For non-package work that still touches repository workflow, start from `openhar
 - `brainstorming` must not invent a parallel spec system or a second task root.
 - `exploring-solution-space` must not become a parallel task system; it exists to inform `02` and `03`.
 - `03-detailed-design.md` owns testing-first implementation detail inside the fixed package protocol.
+- Design is not ready after a first draft alone; `02` and `03` each require a reflection pass before they are treated as ready.
+- Bounded subagent discussion is the preferred escalation path when reflection reveals uncertainty that the main agent cannot confidently resolve alone.
 
 ## Verification
 

@@ -113,10 +113,11 @@ A typical task looks like this:
 2. `using-openharness` checks the manifest and active design packages.
 3. `brainstorming` converges the requirements first.
 4. `exploring-solution-space` explores the local repo and the web before architecture is locked in.
-5. The agent writes overview design and detailed testing-first design.
-6. The agent implements against the package contract.
-7. Runtime verification, verification, and evidence are written back into the package.
-8. Completed packages are archived without losing history.
+5. The agent drafts overview design, then runs a reflection pass and can use bounded subagent discussion before treating architecture as ready.
+6. The agent drafts detailed testing-first design, then runs a second reflection pass and can use bounded subagent discussion before implementation.
+7. The agent implements against the package contract.
+8. Runtime verification, verification, and evidence are written back into the package.
+9. Completed packages are archived without losing history.
 
 The result is a repo that accumulates usable knowledge instead of accumulating invisible assumptions.
 

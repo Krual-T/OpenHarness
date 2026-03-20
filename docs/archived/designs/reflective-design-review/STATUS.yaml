@@ -1,6 +1,6 @@
 id: OH-003
 title: Reflective Design Review Loop
-status: in_progress
+status: archived
 summary: Add explicit reflection and optional subagent discussion loops around overview design and detailed design so architecture choices are challenged before implementation.
 owner: codex
 created_at: 2026-03-20
@@ -13,10 +13,10 @@ scope:
     - subagent-review
     - workflow-protocol
 entrypoints:
-  - docs/designs/reflective-design-review/README.md
-  - docs/designs/reflective-design-review/01-requirements.md
-  - docs/designs/reflective-design-review/02-overview-design.md
-  - docs/designs/reflective-design-review/03-detailed-design.md
+  - docs/archived/designs/reflective-design-review/README.md
+  - docs/archived/designs/reflective-design-review/01-requirements.md
+  - docs/archived/designs/reflective-design-review/02-overview-design.md
+  - docs/archived/designs/reflective-design-review/03-detailed-design.md
 done_criteria:
   - The workflow explicitly requires a reflection pass before `02-overview-design.md` is treated as ready.
   - The workflow explicitly requires a reflection pass before `03-detailed-design.md` is treated as ready.
@@ -29,7 +29,14 @@ verification:
   required_scenarios: []
 evidence:
   docs:
-    - docs/designs/reflective-design-review/05-verification.md
-    - docs/designs/reflective-design-review/06-evidence.md
-  code: []
-  tests: []
+    - docs/archived/designs/reflective-design-review/05-verification.md
+    - docs/archived/designs/reflective-design-review/06-evidence.md
+  code:
+    - AGENTS.md
+    - README.md
+    - skills/using-openharness/SKILL.md
+    - skills/exploring-solution-space/SKILL.md
+    - skills/using-openharness/references/skill-hub.md
+    - skills/brainstorming/SKILL.md
+  tests:
+    - skills/using-openharness/tests/test_openharness.py

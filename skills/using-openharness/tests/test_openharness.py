@@ -54,7 +54,7 @@ def test_reflective_design_review_package_is_discoverable() -> None:
     packages = discover_design_packages(REPO_ROOT, manifest)
     package = next(package for package in packages if package.name == "reflective-design-review")
     assert package.design_id == "OH-003"
-    assert package.status_name == "in_progress"
+    assert package.status_name == "archived"
     assert "Reflective Design Review" in summarize_design_package(package)
 
 
@@ -275,6 +275,8 @@ def test_openharness_skill_is_repo_entry_skill() -> None:
     assert "only repository entry skill" in text
     assert "exploring-solution-space" in text
     assert "runtime verification" in text
+    assert "reflection pass" in text
+    assert "bounded subagent discussion" in text
 
 
 def test_skill_hub_declares_no_parallel_entry_skill() -> None:
@@ -283,6 +285,7 @@ def test_skill_hub_declares_no_parallel_entry_skill() -> None:
     assert "repository entry skill" in text
     assert "Do not keep a separate repository entry layer beside `openharness`." in text
     assert "`exploring-solution-space`" in text
+    assert "reflection" in text
 
 
 def test_optional_execution_skills_are_not_described_as_core_protocol() -> None:
@@ -294,6 +297,22 @@ def test_optional_execution_skills_are_not_described_as_core_protocol() -> None:
     ]:
         text = path.read_text(encoding="utf-8")
         assert "04-implementation-plan.md" not in text
+
+
+def test_exploration_skill_requires_reflection_before_design_is_ready() -> None:
+    text = (REPO_ROOT / "skills" / "exploring-solution-space" / "SKILL.md").read_text(encoding="utf-8")
+    assert "02-overview-design.md" in text
+    assert "03-detailed-design.md" in text
+    assert "reflection" in text
+    assert "subagent" in text
+
+
+def test_docs_describe_reflective_design_loop() -> None:
+    readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
+    agents = (REPO_ROOT / "AGENTS.md").read_text(encoding="utf-8")
+    assert "reflection" in readme
+    assert "reflection" in agents
+    assert "subagent" in readme or "子智能体" in agents
 
 
 def test_agents_md_routes_repo_skill_usage_through_openharness() -> None:
