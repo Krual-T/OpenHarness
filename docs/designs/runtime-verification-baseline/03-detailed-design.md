@@ -11,6 +11,7 @@ This package is still in early design. The first test for this round is document
 - Update `01-requirements.md` with the minimum verification problem statement and scope.
 - Update `02-overview-design.md` with the verification ladder, completion semantics, and upstream/downstream dependencies.
 - After overview stabilization, update verification-oriented skills, templates, and CLI behavior in that order.
+- First implementation wave completed for templates and verification-oriented skills; CLI/test metadata tightening remains follow-up work.
 
 ## Interfaces
 - Likely follow-up touch points:
@@ -59,4 +60,5 @@ This package is still in early design. The first test for this round is document
 - I challenged whether this package already had enough information to write file-level implementation steps. It does not yet; that would lock in interfaces before the verification semantics are stable.
 - I checked whether the current detailed design was now concrete enough to add an implementation order. It is, because local exploration exposed a small, ordered set of repository surfaces and showed that templates and skills should move before CLI enforcement.
 - I checked whether a CLI-first implementation would be cleaner. It would be riskier, because machine fields would be chosen before the repository validated how packages actually record verification paths and residual risk.
+- I checked whether the first implementation wave should include CLI changes immediately. It did not need to; updating templates and skill wording first was enough to make the new contract visible while preserving the current CLI surface.
 - No bounded subagent discussion was needed because the remaining work is now a straightforward repository-local rollout sequence.

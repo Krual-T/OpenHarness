@@ -26,11 +26,15 @@ If you haven't run the verification command in this message, you cannot claim it
 ```
 BEFORE claiming any status or expressing satisfaction:
 
-1. IDENTIFY: What command proves this claim?
-2. RUN: Execute the FULL command (fresh, complete)
-3. READ: Full output, check exit code, count failures
-4. VERIFY: Does output confirm the claim?
+1. IDENTIFY: What verification path proves this claim?
+   - command-backed verification
+   - manual runtime verification
+   - insufficient verification
+2. RUN: Execute the full command or manual runtime verification steps fresh
+3. READ: Full output or observed result, check exit code, failures, blind spots
+4. VERIFY: Does the evidence confirm the claim?
    - If NO: State actual status with evidence
+   - If path is insufficient verification: state the blocked completion state and missing evidence
    - If YES: State claim WITH evidence
 5. ONLY THEN: Make the claim
 
@@ -45,6 +49,8 @@ Skip any step = lying, not verifying
 | Linter clean | Linter output: 0 errors | Partial check, extrapolation |
 | Build succeeds | Build command: exit 0 | Linter passing, logs look good |
 | Bug fixed | Test original symptom: passes | Code changed, assumed fixed |
+| Manual runtime verification passed | Explicit steps, observed outputs, blind spots | "I clicked around", vague recollection |
+| Completion with weak harness | Strongest available path recorded, limits stated | Silent manual checks, missing residual risks |
 | Regression test works | Red-green cycle verified | Test passes once |
 | Agent completed | VCS diff shows changes | Agent reports "success" |
 | Requirements met | Line-by-line checklist | Tests passing |
@@ -93,6 +99,18 @@ Skip any step = lying, not verifying
 ❌ "Linter passed" (linter doesn't check compilation)
 ```
 
+**Manual runtime verification:**
+```
+✅ [Run documented steps] [Record observed result + blind spots] "Manual runtime verification passed for X"
+❌ "I tested it manually" / "Seems fine in the UI"
+```
+
+**Insufficient verification:**
+```
+✅ "Verification is currently insufficient; completion is blocked pending stronger evidence"
+❌ "Probably done except for verification"
+```
+
 **Requirements:**
 ```
 ✅ Re-read plan → Create checklist → Verify each → Report gaps or completion
@@ -134,6 +152,6 @@ From 24 failure memories:
 
 **No shortcuts for verification.**
 
-Run the command. Read the output. THEN claim the result.
+Run the strongest available verification path. Read the evidence. If the only available path is insufficient verification, say so and treat it as a blocked completion state.
 
 This is non-negotiable.

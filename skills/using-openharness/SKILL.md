@@ -115,11 +115,11 @@ For non-package work that still touches repository workflow, start from `openhar
 - Keep `STATUS.yaml` machine-readable; it is the harness state source.
 - Put problem framing in `01-requirements.md`.
 - Put boundary and architecture choices in `02-overview-design.md`.
-- Put testing-first implementation details, runtime verification approach, and implementation order in `03-detailed-design.md`.
+- Put testing-first implementation details, runtime verification path, fallback path, and implementation order in `03-detailed-design.md`.
 - Record the overview reflection pass in `02-overview-design.md`, including when a bounded subagent discussion was used and what it changed.
 - Record the detailed-design reflection pass in `03-detailed-design.md`, including when a bounded subagent discussion was used and what it changed.
-- Put verification plan and results in `05-verification.md`.
-- Put changed files, commands, and remaining follow-ups in `06-evidence.md`.
+- Put planned versus executed verification path and results in `05-verification.md`.
+- Put changed files, commands, manual steps, residual risks, and remaining follow-ups in `06-evidence.md`.
 
 ## Archive Protocol
 

@@ -17,3 +17,6 @@
   - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
   - `uv run pytest`
   - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
+- Passed again on 2026-03-20 after implementing the first runtime-verification rollout wave in templates and verification-oriented skills:
+  - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
+  - `uv run pytest`

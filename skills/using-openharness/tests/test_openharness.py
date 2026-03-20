@@ -330,3 +330,45 @@ def test_brainstorming_defaults_to_autonomous_continuation() -> None:
     assert "continue automatically by default" in text
     assert "Only stop for user review if one of these is true" in text
     assert "do not create unnecessary approval pauses" in text
+
+
+def test_design_package_templates_include_verification_path_sections() -> None:
+    detailed = (
+        REPO_ROOT
+        / "skills"
+        / "using-openharness"
+        / "references"
+        / "templates"
+        / "design-package.03-detailed-design.md"
+    ).read_text(encoding="utf-8")
+    verification = (
+        REPO_ROOT
+        / "skills"
+        / "using-openharness"
+        / "references"
+        / "templates"
+        / "design-package.05-verification.md"
+    ).read_text(encoding="utf-8")
+    evidence = (
+        REPO_ROOT
+        / "skills"
+        / "using-openharness"
+        / "references"
+        / "templates"
+        / "design-package.06-evidence.md"
+    ).read_text(encoding="utf-8")
+
+    assert "## Runtime Verification Plan" in detailed
+    assert "Verification Path" in detailed
+    assert "Fallback Path" in detailed
+    assert "## Verification Path" in verification
+    assert "Executed Path" in verification
+    assert "## Residual Risks" in evidence
+    assert "Manual Steps" in evidence
+
+
+def test_verification_skill_distinguishes_manual_and_insufficient_paths() -> None:
+    text = (REPO_ROOT / "skills" / "verification-before-completion" / "SKILL.md").read_text(encoding="utf-8")
+    assert "manual runtime verification" in text
+    assert "insufficient verification" in text
+    assert "blocked completion state" in text
