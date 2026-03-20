@@ -15,15 +15,15 @@ Execute plan by dispatching fresh subagent per task, with two-stage review after
 
 ```dot
 digraph when_to_use {
-    "Have implementation plan?" [shape=diamond];
+    "Have explicit execution plan?" [shape=diamond];
     "Tasks mostly independent?" [shape=diamond];
     "Stay in this session?" [shape=diamond];
     "subagent-driven-development" [shape=box];
     "executing-plans" [shape=box];
     "Manual execution or brainstorm first" [shape=box];
 
-    "Have implementation plan?" -> "Tasks mostly independent?" [label="yes"];
-    "Have implementation plan?" -> "Manual execution or brainstorm first" [label="no"];
+    "Have explicit execution plan?" -> "Tasks mostly independent?" [label="yes"];
+    "Have explicit execution plan?" -> "Manual execution or design first" [label="no"];
     "Tasks mostly independent?" -> "Stay in this session?" [label="yes"];
     "Tasks mostly independent?" -> "Manual execution or brainstorm first" [label="no - tightly coupled"];
     "Stay in this session?" -> "subagent-driven-development" [label="yes"];
@@ -128,7 +128,7 @@ Implementer subagents report one of four statuses. Handle each appropriately:
 ```
 You: I'm using Subagent-Driven Development to execute this plan.
 
-[Read plan file once: docs/designs/<task>/04-implementation-plan.md]
+[Read the chosen execution plan artifact once]
 [Extract all 5 tasks with full text and context]
 [Create TodoWrite with all tasks]
 
@@ -266,7 +266,7 @@ Done!
 
 **Required workflow skills:**
 - **using-git-worktrees** - REQUIRED: Set up isolated workspace before starting
-- **writing-plans** - Creates the `04-implementation-plan.md` artifact this skill executes under `using-openharness`
+- **writing-plans** - Optional compatibility skill that may create the explicit execution plan this skill consumes
 - **requesting-code-review** - Code review template for reviewer subagents
 - **finishing-a-development-branch** - Complete development after all tasks
 

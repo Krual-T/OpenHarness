@@ -7,18 +7,18 @@ description: Use when you have a written implementation plan to execute in a sep
 
 ## Overview
 
-Load the harness package implementation plan, review critically, execute all tasks, report when complete.
+Load the chosen optional execution plan, review critically, execute all tasks, report when complete.
 
 **Announce at start:** "I'm using the executing-plans skill to implement this plan."
 
-In this repository, `executing-plans` executes the plan artifact owned by `using-openharness`, not an external planning system.
+In this repository, `executing-plans` is a legacy compatibility helper for cases where work has already been written as an explicit execution plan. It is not part of the fixed core workflow.
 
 **Note:** If subagents are available, prefer `subagent-driven-development` over this skill.
 
 ## The Process
 
 ### Step 1: Load and Review Plan
-1. Read plan file
+1. Read the chosen execution plan artifact
 2. Review critically - identify any questions or concerns about the plan
 3. If concerns: Raise them with your human partner before starting
 4. If no concerns: Create TodoWrite and proceed
@@ -68,5 +68,5 @@ After all tasks complete and verified:
 
 **Required workflow skills:**
 - **using-git-worktrees** - REQUIRED: Set up isolated workspace before starting
-- **writing-plans** - Creates the `04-implementation-plan.md` artifact this skill executes under `using-openharness`
+- **writing-plans** - Optional compatibility skill that may create the explicit execution plan this skill consumes
 - **finishing-a-development-branch** - Complete development after all tasks

@@ -8,18 +8,19 @@ description: Use when you have a spec or requirements for a multi-step task, bef
 ## Overview
 
 In this repository, `writing-plans` is a child skill of `using-openharness`.
-It does not decide task roots, requirements, or architecture. It only writes the numbered implementation-plan artifact inside an already-established harness package.
+It is now a legacy compatibility skill. It does not decide task roots, requirements, or architecture, and it is not part of the fixed OpenHarness core workflow.
 
 Write comprehensive implementation plans assuming the engineer has zero context for our codebase and questionable taste. Document everything they need to know: which files to touch for each task, code, testing, docs they might need to check, how to test it. Give them the whole plan as bite-sized tasks. DRY. YAGNI. TDD. Frequent commits.
 
 Assume they are a skilled developer, but know almost nothing about our toolset or problem domain. Assume they don't know good test design very well.
 
-**Announce at start:** "I'm using the writing-plans skill to create the implementation plan."
+**Announce at start:** "I'm using the writing-plans compatibility skill to create an optional staged execution plan."
 
 **Context:** This should be run in a dedicated worktree (created by brainstorming skill).
 
-**Save plans to:** the active harness package under `docs/designs/<task>/04-implementation-plan.md`
-- If no active package exists yet, create the package first and keep the plan inside that package
+**Save plans to:** a temporary compatibility planning artifact chosen for the task.
+- This artifact is optional and outside the fixed required package protocol.
+- If a project still keeps a plan file, reference that concrete path explicitly instead of assuming a default filename.
 
 ## Scope Check
 
@@ -131,7 +132,7 @@ After writing the complete plan:
 
 After saving the plan, offer execution choice:
 
-**"Plan complete and saved to `docs/designs/<task>/04-implementation-plan.md`. Two execution options:**
+**"Plan complete and saved to the chosen compatibility plan artifact. Two execution options:**
 
 **1. Subagent-Driven (recommended)** - I dispatch a fresh subagent per task, review between tasks, fast iteration
 

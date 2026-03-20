@@ -49,6 +49,15 @@ def test_workflow_redesign_package_is_discoverable() -> None:
     assert "Workflow Redesign" in summarize_design_package(package)
 
 
+def test_reflective_design_review_package_is_discoverable() -> None:
+    manifest = load_manifest(REPO_ROOT)
+    packages = discover_design_packages(REPO_ROOT, manifest)
+    package = next(package for package in packages if package.name == "reflective-design-review")
+    assert package.design_id == "OH-003"
+    assert package.status_name == "in_progress"
+    assert "Reflective Design Review" in summarize_design_package(package)
+
+
 def test_active_statuses_do_not_include_archived() -> None:
     assert "in_progress" in ACTIVE_STATUSES
     assert "archived" not in ACTIVE_STATUSES
@@ -274,6 +283,17 @@ def test_skill_hub_declares_no_parallel_entry_skill() -> None:
     assert "repository entry skill" in text
     assert "Do not keep a separate repository entry layer beside `openharness`." in text
     assert "`exploring-solution-space`" in text
+
+
+def test_optional_execution_skills_are_not_described_as_core_protocol() -> None:
+    for path in [
+        REPO_ROOT / "skills" / "writing-plans" / "SKILL.md",
+        REPO_ROOT / "skills" / "executing-plans" / "SKILL.md",
+        REPO_ROOT / "skills" / "subagent-driven-development" / "SKILL.md",
+        REPO_ROOT / "skills" / "requesting-code-review" / "SKILL.md",
+    ]:
+        text = path.read_text(encoding="utf-8")
+        assert "04-implementation-plan.md" not in text
 
 
 def test_agents_md_routes_repo_skill_usage_through_openharness() -> None:
