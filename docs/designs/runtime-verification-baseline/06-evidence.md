@@ -1,6 +1,7 @@
 # Evidence
 
 ## Files
+- `AGENTS.md`
 - `docs/designs/runtime-verification-baseline/README.md`
 - `docs/designs/runtime-verification-baseline/STATUS.yaml`
 - `docs/designs/runtime-verification-baseline/01-requirements.md`
@@ -14,7 +15,11 @@
 - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
 - `uv run pytest`
 - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
+- `uv run python skills/using-openharness/scripts/openharness.py check-designs`
+- `uv run pytest`
+- `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
 
 ## Follow-ups
-- Decide whether verification-path vocabulary should live in templates, skills, CLI output, or all three.
-- Determine whether `insufficient verification` should map to a status restriction, a documentation-only rule, or both.
+- Implement the first rollout wave in this order: templates, verification-oriented skills, then CLI/test updates.
+- Decide whether `insufficient verification` should map to a status restriction, a documentation-only rule, or both.
+- Decide whether to add machine-readable verification-path metadata to `STATUS.yaml.verification` only after the docs-first contract is exercised in real packages.
