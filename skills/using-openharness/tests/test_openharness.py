@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 from pathlib import Path
 import sys
 
@@ -372,3 +373,119 @@ def test_verification_skill_distinguishes_manual_and_insufficient_paths() -> Non
     assert "manual runtime verification" in text
     assert "insufficient verification" in text
     assert "blocked completion state" in text
+
+
+def test_verify_reports_declared_manual_scenarios_without_claiming_execution(
+    tmp_path: Path, capsys, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    repo_root = tmp_path / "repo"
+    (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
+    (repo_root / "docs" / "designs" / "manual-only").mkdir(parents=True)
+    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
+        "version: 1\n"
+        "designs_root: docs/designs\n"
+        "archived_designs_root: docs/archived/designs\n"
+        "required_design_files:\n"
+        "  - README.md\n"
+        "  - STATUS.yaml\n"
+        "  - 01-requirements.md\n"
+        "  - 02-overview-design.md\n"
+        "  - 03-detailed-design.md\n"
+        "  - 05-verification.md\n"
+        "  - 06-evidence.md\n"
+        "workflow:\n"
+        "  default_status_flow:\n"
+        "    - proposed\n"
+        "    - requirements_ready\n"
+        "    - archived\n",
+        encoding="utf-8",
+    )
+    root = repo_root / "docs" / "designs" / "manual-only"
+    for name in REQUIRED_DESIGN_FILES:
+        (root / name).write_text("x\n", encoding="utf-8")
+    (root / "STATUS.yaml").write_text(
+        "id: OH-999\n"
+        "title: Manual Only\n"
+        "status: requirements_ready\n"
+        "summary: manual verification only\n"
+        "owner: codex\n"
+        "created_at: 2026-03-20\n"
+        "updated_at: 2026-03-20\n"
+        "done_criteria:\n"
+        "  - x\n"
+        "verification:\n"
+        "  required_commands: []\n"
+        "  required_scenarios:\n"
+        "    - Open the app and confirm the banner text changes.\n",
+        encoding="utf-8",
+    )
+
+    calls: list[str] = []
+
+    def fake_run(repo: Path, command: str) -> int:
+        calls.append(command)
+        return 0
+
+    monkeypatch.setattr(openharness, "_run_command", fake_run)
+
+    result = openharness.cmd_verify(
+        argparse.Namespace(repo=str(repo_root), design="manual-only", check_designs_only=False)
+    )
+
+    captured = capsys.readouterr()
+    assert result == 0
+    assert calls == []
+    assert "Declared manual scenarios" in captured.out
+    assert "not executed automatically" in captured.out
+
+
+def test_verify_rejects_packages_with_no_declared_verification_path(tmp_path: Path, capsys) -> None:
+    repo_root = tmp_path / "repo"
+    (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
+    (repo_root / "docs" / "designs" / "no-verification").mkdir(parents=True)
+    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
+        "version: 1\n"
+        "designs_root: docs/designs\n"
+        "archived_designs_root: docs/archived/designs\n"
+        "required_design_files:\n"
+        "  - README.md\n"
+        "  - STATUS.yaml\n"
+        "  - 01-requirements.md\n"
+        "  - 02-overview-design.md\n"
+        "  - 03-detailed-design.md\n"
+        "  - 05-verification.md\n"
+        "  - 06-evidence.md\n"
+        "workflow:\n"
+        "  default_status_flow:\n"
+        "    - proposed\n"
+        "    - requirements_ready\n"
+        "    - archived\n",
+        encoding="utf-8",
+    )
+    root = repo_root / "docs" / "designs" / "no-verification"
+    for name in REQUIRED_DESIGN_FILES:
+        (root / name).write_text("x\n", encoding="utf-8")
+    (root / "STATUS.yaml").write_text(
+        "id: OH-998\n"
+        "title: No Verification\n"
+        "status: requirements_ready\n"
+        "summary: missing verification path\n"
+        "owner: codex\n"
+        "created_at: 2026-03-20\n"
+        "updated_at: 2026-03-20\n"
+        "done_criteria:\n"
+        "  - x\n"
+        "verification:\n"
+        "  required_commands: []\n"
+        "  required_scenarios: []\n",
+        encoding="utf-8",
+    )
+
+    result = openharness.cmd_verify(
+        argparse.Namespace(repo=str(repo_root), design="no-verification", check_designs_only=False)
+    )
+
+    captured = capsys.readouterr()
+    assert result == 1
+    assert "insufficient verification" in captured.out
+    assert "No command-backed verification or manual scenarios declared" in captured.out

@@ -59,7 +59,7 @@ When those triggers are met, the agent should scaffold a focused child package r
 - The roadmap identifies which stream the request belongs to and whether it is discovery work, design work, or implementation work.
 - If the request is still broad, the agent updates `OH-004` first so the remaining product boundary stays explicit.
 - If one stream is concrete enough, the agent scaffolds a focused child package derived from this roadmap and keeps `OH-004` as the umbrella view.
-- `OH-005 Runtime Verification Baseline` is the first such child package and now holds the focused design work for the runtime-verification stream.
+- `OH-005 Runtime Verification Baseline` is the first such child package and is now archived as the completed baseline for the runtime-verification stream.
 - Completed child packages should feed evidence or durable decisions back into this roadmap only when they materially change what remains.
 
 ## Trade-offs

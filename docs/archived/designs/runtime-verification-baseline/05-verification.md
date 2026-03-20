@@ -20,3 +20,12 @@
 - Passed again on 2026-03-20 after implementing the first runtime-verification rollout wave in templates and verification-oriented skills:
   - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
   - `uv run pytest`
+- Passed again on 2026-03-20 after implementing the second rollout wave in `openharness.py verify` and its targeted tests:
+  - `uv run pytest skills/using-openharness/tests/test_openharness.py -k 'declared_manual_scenarios or no_declared_verification_path'`
+  - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
+  - `uv run pytest`
+  - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
+- Passed again on 2026-03-20 after archiving the completed package under `docs/archived/designs/runtime-verification-baseline`:
+  - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
+  - `uv run pytest`
+  - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`

@@ -6,8 +6,9 @@
 
 ## Current Status
 - Proposed child package split from `OH-004 Harness Completion Roadmap`.
-- Overview drafted and reflected.
-- Ready for deeper detailed design and implementation-facing exploration.
+- Overview and detailed design were completed and reflected.
+- Templates, verification-oriented skills, and `openharness.py verify` now implement the baseline semantics defined here.
+- This package is ready to archive as completed design work.
 
 ## Read This First
 - `STATUS.yaml`

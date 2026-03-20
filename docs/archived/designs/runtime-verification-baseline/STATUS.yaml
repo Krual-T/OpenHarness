@@ -1,6 +1,6 @@
 id: OH-005
 title: Runtime Verification Baseline
-status: overview_ready
+status: archived
 summary: Define the minimum verification protocol and evidence contract for OpenHarness tasks in repositories that may not have an existing runtime harness.
 owner: codex
 created_at: 2026-03-20
@@ -14,10 +14,10 @@ scope:
     - status-semantics
     - no-harness-bootstrap
 entrypoints:
-  - docs/designs/runtime-verification-baseline/README.md
-  - docs/designs/runtime-verification-baseline/01-requirements.md
-  - docs/designs/runtime-verification-baseline/02-overview-design.md
-  - docs/designs/runtime-verification-baseline/03-detailed-design.md
+  - docs/archived/designs/runtime-verification-baseline/README.md
+  - docs/archived/designs/runtime-verification-baseline/01-requirements.md
+  - docs/archived/designs/runtime-verification-baseline/02-overview-design.md
+  - docs/archived/designs/runtime-verification-baseline/03-detailed-design.md
 done_criteria:
   - The package defines a minimum verification ladder that applies even when no pre-existing runtime harness exists.
   - The package defines what evidence belongs in `05-verification.md` and `06-evidence.md` for automated, task-local, and manual verification paths.
@@ -30,7 +30,13 @@ verification:
   required_scenarios: []
 evidence:
   docs:
-    - docs/designs/runtime-verification-baseline/05-verification.md
-    - docs/designs/runtime-verification-baseline/06-evidence.md
-  code: []
-  tests: []
+    - docs/archived/designs/runtime-verification-baseline/05-verification.md
+    - docs/archived/designs/runtime-verification-baseline/06-evidence.md
+  code:
+    - skills/using-openharness/scripts/openharness.py
+    - skills/verification-before-completion/SKILL.md
+    - skills/using-openharness/references/templates/design-package.03-detailed-design.md
+    - skills/using-openharness/references/templates/design-package.05-verification.md
+    - skills/using-openharness/references/templates/design-package.06-evidence.md
+  tests:
+    - skills/using-openharness/tests/test_openharness.py

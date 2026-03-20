@@ -11,7 +11,11 @@ This package is still in early design. The first test for this round is document
 - Update `01-requirements.md` with the minimum verification problem statement and scope.
 - Update `02-overview-design.md` with the verification ladder, completion semantics, and upstream/downstream dependencies.
 - After overview stabilization, update verification-oriented skills, templates, and CLI behavior in that order.
-- First implementation wave completed for templates and verification-oriented skills; CLI/test metadata tightening remains follow-up work.
+- First implementation wave completed for templates and verification-oriented skills.
+- Second implementation wave completed for `skills/using-openharness/scripts/openharness.py` and `skills/using-openharness/tests/test_openharness.py` so the CLI now:
+  - distinguishes declared manual scenarios from command execution
+  - states that manual scenarios are not executed automatically
+  - treats missing command/scenario declarations as insufficient verification and returns a failing status
 
 ## Interfaces
 - Likely follow-up touch points:
@@ -39,7 +43,8 @@ This package is still in early design. The first test for this round is document
 4. Extend `openharness.py verify` and tests only enough to:
    - preserve current command execution behavior
    - surface declared scenarios more intentionally
-   - optionally validate any newly added structured verification metadata
+   - block empty verification declarations as `insufficient verification`
+   - optionally validate any newly added structured verification metadata in a later round
 
 ## Test Design
 - Template tests should assert that new packages include the verification sections needed to record intended path, executed path, and residual risk.
@@ -54,11 +59,13 @@ This package is still in early design. The first test for this round is document
 
 ## Migration Notes
 - This package is the first concrete child of `OH-004` and should remain focused on semantics before automation.
-- The next likely round after this one is to bind these semantics into status transitions and verification-oriented skill wording.
+- The semantics are now implemented in templates, verification-oriented skill wording, and the `verify` CLI baseline.
+- The next likely downstream round is to bind these semantics into tighter status transitions rather than extending this package further.
 
 ## Detailed Reflection
 - I challenged whether this package already had enough information to write file-level implementation steps. It does not yet; that would lock in interfaces before the verification semantics are stable.
 - I checked whether the current detailed design was now concrete enough to add an implementation order. It is, because local exploration exposed a small, ordered set of repository surfaces and showed that templates and skills should move before CLI enforcement.
 - I checked whether a CLI-first implementation would be cleaner. It would be riskier, because machine fields would be chosen before the repository validated how packages actually record verification paths and residual risk.
 - I checked whether the first implementation wave should include CLI changes immediately. It did not need to; updating templates and skill wording first was enough to make the new contract visible while preserving the current CLI surface.
-- No bounded subagent discussion was needed because the remaining work is now a straightforward repository-local rollout sequence.
+- I re-checked whether the second wave needed new machine-readable metadata in `STATUS.yaml.verification`. It still does not; the CLI can enforce the minimum baseline by distinguishing declared manual scenarios from command execution and by failing empty verification declarations.
+- No bounded subagent discussion was needed because the remaining work stayed a straightforward repository-local rollout sequence.

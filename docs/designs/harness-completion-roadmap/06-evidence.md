@@ -13,7 +13,7 @@
 - `skills/using-openharness/SKILL.md`
 - `skills/using-openharness/references/skill-hub.md`
 - `skills/using-openharness/tests/test_openharness.py`
-- `docs/designs/runtime-verification-baseline/*`
+- `docs/archived/designs/runtime-verification-baseline/*`
 
 ## Commands
 - `uv run python skills/using-openharness/scripts/openharness.py new-design harness-completion-roadmap OH-004 "Harness Completion Roadmap" --owner codex --summary "Track the remaining major work needed to make OpenHarness a complete no-harness bootstrap and maintenance-oriented skill hub, including runtime verification defaults, bootstrap workflow, maintenance, and status semantics."`
@@ -23,8 +23,12 @@
 - `uv run pytest`
 - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
 - `uv run pytest`
+- `mv docs/designs/runtime-verification-baseline docs/archived/designs/runtime-verification-baseline`
+- `uv run python skills/using-openharness/scripts/openharness.py check-designs`
+- `uv run pytest`
+- `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
 
 ## Follow-ups
-- Continue focused exploration and design in `OH-005 Runtime Verification Baseline`.
-- After the runtime verification stream is defined, re-check whether `status semantics tightening` should become the second child package before bootstrap work.
+- Re-check whether `status semantics tightening` should become the second child package before bootstrap work, now that `OH-005 Runtime Verification Baseline` is archived.
 - Consider whether a future focused package should tighten the transition contract between overview reflection and detailed-design drafting beyond wording-only safeguards.
+- Decide whether the no-harness bootstrap stream can now reuse the archived `OH-005` baseline directly or needs one more focused discovery round first.

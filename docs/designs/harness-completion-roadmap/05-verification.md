@@ -20,3 +20,7 @@
 - Passed again on 2026-03-20 after removing mandatory user approval pauses from the default brainstorming flow:
   - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
   - `uv run pytest`
+- Passed again on 2026-03-20 after archiving the completed `OH-005 Runtime Verification Baseline` package and updating roadmap references:
+  - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
+  - `uv run pytest`
+  - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`

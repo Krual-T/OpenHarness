@@ -411,13 +411,26 @@ def cmd_verify(args: argparse.Namespace) -> int:
     if not packages:
         print("No matching design packages to verify.")
         return 0
+    saw_insufficient_verification = False
     for package in packages:
         print(f"== Verifying {package.design_id} {package.title} ==")
         for command in package.required_commands:
             if _run_command(repo_root, command) != 0:
                 return 1
         if package.required_scenarios:
-            print(f"Scenarios declared (manual or future replay integration): {', '.join(package.required_scenarios)}")
+            print(
+                "Declared manual scenarios "
+                f"(not executed automatically by this CLI): {', '.join(package.required_scenarios)}"
+            )
+        if not package.required_commands and not package.required_scenarios:
+            print(
+                "ERROR: insufficient verification for "
+                f"{package.design_id} {package.title}: "
+                "No command-backed verification or manual scenarios declared."
+            )
+            saw_insufficient_verification = True
+    if saw_insufficient_verification:
+        return 1
     return 0
 
 
