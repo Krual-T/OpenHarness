@@ -323,3 +323,10 @@ def test_agents_md_routes_repo_skill_usage_through_openharness() -> None:
     assert "`using-openharness` 视为本仓库的默认入口技能" in text
     assert "先经过 `using-openharness` 做 skill routing" in text
     assert "探索" in text
+
+
+def test_brainstorming_defaults_to_autonomous_continuation() -> None:
+    text = (REPO_ROOT / "skills" / "brainstorming" / "SKILL.md").read_text(encoding="utf-8")
+    assert "continue automatically by default" in text
+    assert "Only stop for user review if one of these is true" in text
+    assert "do not create unnecessary approval pauses" in text

@@ -10,15 +10,15 @@ Help turn ideas into fully formed designs and specs through natural collaborativ
 In this repository, `brainstorming` is a child skill of `using-openharness`.
 It does not define task roots or package structure. It only helps converge the design content that belongs in the active harness package.
 
-Start by understanding the current project context, then ask questions one at a time to refine the idea. Once you understand what you're building, present the design and get user approval.
+Start by understanding the current project context, then ask questions only when they are needed to reduce meaningful ambiguity. Once you understand what you're building, present the design clearly enough to proceed without forcing an approval pause unless the user asked for one or the remaining uncertainty is high risk.
 
 <HARD-GATE>
-Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until you have presented a design and the user has approved it. This applies to EVERY project regardless of perceived simplicity.
+Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until the design is explicit enough to be written into the package and withstand review. User approval is required only when the user explicitly asks for a review gate or when unresolved ambiguity makes autonomous continuation risky.
 </HARD-GATE>
 
 ## Anti-Pattern: "This Is Too Simple To Need A Design"
 
-Every project goes through this process. A todo list, a single-function utility, a config change — all of them. "Simple" projects are where unexamined assumptions cause the most wasted work. The design can be short (a few sentences for truly simple projects), but you MUST present it and get approval.
+Every project goes through this process. A todo list, a single-function utility, a config change — all of them. "Simple" projects are where unexamined assumptions cause the most wasted work. The design can be short (a few sentences for truly simple projects), but it still needs to be made explicit before execution. Do not turn that requirement into unnecessary waiting.
 
 ## Checklist
 
@@ -26,12 +26,12 @@ You MUST create a task for each of these items and complete them in order:
 
 1. **Explore project context** — check files, docs, recent commits
 2. **Offer visual companion** (if topic will involve visual questions) — this is its own message, not combined with a clarifying question. See the Visual Companion section below.
-3. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
+3. **Ask clarifying questions only when needed** — one at a time, understand purpose/constraints/success criteria when the repo and user request do not already make them clear
 4. **Propose 2-3 approaches** — with trade-offs and your recommendation
-5. **Present design** — in sections scaled to their complexity, get user approval after each section
+5. **Present design** — in sections scaled to their complexity; pause for approval only if the user asked for review checkpoints or if ambiguity remains high risk
 6. **Write requirements doc** — write the validated requirements into `01-requirements.md` in the active harness package and update `02` / `03` only when already justified
 7. **Spec review loop** — dispatch spec-document-reviewer subagent with precisely crafted review context (never your session history); fix issues and re-dispatch until approved (max 3 iterations, then surface to human)
-8. **User reviews written spec** — ask user to review the spec file before proceeding
+8. **Optional user review gate** — use only when the user explicitly wants to review the written spec before proceeding or when unresolved ambiguity is too risky to carry forward autonomously
 9. **Transition to exploration** — invoke `exploring-solution-space` before architecture and detailed design are finalized
 
 ## Process Flow
@@ -44,11 +44,11 @@ digraph brainstorming {
     "Ask clarifying questions" [shape=box];
     "Propose 2-3 approaches" [shape=box];
     "Present design sections" [shape=box];
-    "User approves design?" [shape=diamond];
+    "Approval needed?" [shape=diamond];
     "Write requirements doc" [shape=box];
     "Spec review loop" [shape=box];
     "Spec review passed?" [shape=diamond];
-    "User reviews spec?" [shape=diamond];
+    "User review gate?" [shape=diamond];
     "Invoke exploring-solution-space skill" [shape=doublecircle];
 
     "Explore project context" -> "Visual questions ahead?";
@@ -57,15 +57,15 @@ digraph brainstorming {
     "Offer Visual Companion\n(own message, no other content)" -> "Ask clarifying questions";
     "Ask clarifying questions" -> "Propose 2-3 approaches";
     "Propose 2-3 approaches" -> "Present design sections";
-    "Present design sections" -> "User approves design?";
-    "User approves design?" -> "Present design sections" [label="no, revise"];
-    "User approves design?" -> "Write requirements doc" [label="yes"];
+    "Present design sections" -> "Approval needed?";
+    "Approval needed?" -> "Present design sections" [label="yes,\nrevise with user"];
+    "Approval needed?" -> "Write requirements doc" [label="no,\ncontinue"];
     "Write requirements doc" -> "Spec review loop";
     "Spec review loop" -> "Spec review passed?";
     "Spec review passed?" -> "Spec review loop" [label="issues found,\nfix and re-dispatch"];
-    "Spec review passed?" -> "User reviews spec?" [label="approved"];
-    "User reviews spec?" -> "Write requirements doc" [label="changes requested"];
-    "User reviews spec?" -> "Invoke exploring-solution-space skill" [label="approved"];
+    "Spec review passed?" -> "User review gate?" [label="approved"];
+    "User review gate?" -> "Write requirements doc" [label="requested,\nchanges needed"];
+    "User review gate?" -> "Invoke exploring-solution-space skill" [label="not needed\nor approved"];
 }
 ```
 
@@ -78,7 +78,7 @@ digraph brainstorming {
 - Check out the current project state first (files, docs, recent commits)
 - Before asking detailed questions, assess scope: if the request describes multiple independent subsystems (e.g., "build a platform with chat, file storage, billing, and analytics"), flag this immediately. Don't spend questions refining details of a project that needs to be decomposed first.
 - If the project is too large for a single spec, help the user decompose into sub-projects: what are the independent pieces, how do they relate, what order should they be built? Then brainstorm the first sub-project through the normal design flow. Each sub-project gets its own spec → plan → implementation cycle.
-- For appropriately-scoped projects, ask questions one at a time to refine the idea
+- For appropriately-scoped projects, ask questions one at a time only when the repository and user request do not already resolve the point
 - Prefer multiple choice questions when possible, but open-ended is fine too
 - Only one question per message - if a topic needs more exploration, break it into multiple questions
 - Focus on understanding: purpose, constraints, success criteria
@@ -93,7 +93,7 @@ digraph brainstorming {
 
 - Once you believe you understand what you're building, present the design
 - Scale each section to its complexity: a few sentences if straightforward, up to 200-300 words if nuanced
-- Ask after each section whether it looks right so far
+- Ask after each section only when the user asked for iterative review or when a wrong assumption would materially change the path
 - Cover: architecture, components, data flow, error handling, testing
 - Be ready to go back and clarify if something doesn't make sense
 
@@ -131,11 +131,18 @@ After writing the spec document:
 3. If loop exceeds 3 iterations, surface to human for guidance
 
 **User Review Gate:**
-After the spec review loop passes, ask the user to review the written spec before proceeding:
+After the spec review loop passes, continue automatically by default.
 
-> "Design package updated and committed at `<path>`. Please review it and let me know if you want to make any changes before we continue into exploration and detailed design."
+Only stop for user review if one of these is true:
+- the user explicitly asked to approve the spec before moving on
+- unresolved ambiguity would make the next step high risk
+- the change affects product direction enough that silent continuation would be unreasonable
 
-Wait for the user's response. If they request changes, make them and re-run the spec review loop. Only proceed once the user approves.
+When a review gate is needed, say:
+
+> "Design package updated at `<path>`. Please review it before I continue into exploration and detailed design."
+
+If the user requests changes, make them and re-run the spec review loop. Otherwise proceed without creating an unnecessary pause.
 
 **Implementation:**
 
@@ -148,7 +155,7 @@ Wait for the user's response. If they request changes, make them and re-run the 
 - **Multiple choice preferred** - Easier to answer than open-ended when possible
 - **YAGNI ruthlessly** - Remove unnecessary features from all designs
 - **Explore alternatives** - Always propose 2-3 approaches before settling
-- **Incremental validation** - Present design, get approval before moving on
+- **Incremental validation** - Make the design explicit before moving on, but do not create unnecessary approval pauses
 - **Be flexible** - Go back and clarify when something doesn't make sense
 
 ## Visual Companion

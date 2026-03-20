@@ -16,6 +16,8 @@ The remaining gap is not absence of structure. The gap is that several product-l
 
 One workflow ambiguity is now explicit: exploration should produce architectural conclusions in `02-overview-design.md` first. It may inform `03-detailed-design.md`, but it should not be read as permission to draft detailed design before overview design is coherent and reflected. The core skill docs should say this directly so the process does not self-contradict.
 
+Another workflow ambiguity is now explicit too: brainstorming should make design explicit before action, but it should not impose mandatory user approval pauses during normal autonomous execution. The protocol should stop for review only when the user asked for it or when unresolved ambiguity makes continuation risky.
+
 ## Roadmap Structure
 Keep `OH-004` as the parent roadmap package and treat the remaining work as five durable streams:
 
@@ -71,4 +73,5 @@ When those triggers are met, the agent should scaffold a focused child package r
 - I considered keeping the roadmap as a simple unordered backlog. That was rejected because the current repo already has enough workflow structure that unordered backlog items would hide real dependencies.
 - I checked whether the proposed ordering ignored runtime verification implications. It did initially; the revised structure now makes runtime verification and status semantics upstream of bootstrap and maintenance.
 - I checked whether the current skill wording accidentally let exploration jump ahead into detailed design. It did leave that ambiguity, so the workflow docs should explicitly state that `02` is the primary output of exploration and `03` only follows when implementation-facing constraints are already justified.
+- I checked whether the brainstorming skill overfit to interactive approval loops. It did, so the workflow should default to autonomous continuation once design is explicit and only introduce user review gates when the task or risk profile justifies them.
 - No bounded subagent discussion was needed in this round because the uncertainty is about prioritization and scope control inside this repository, not about a hard architectural fork.

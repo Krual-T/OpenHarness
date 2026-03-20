@@ -7,6 +7,7 @@
   - owns repository protocol, skill routing, package routing, supporting scripts, and templates
 - `brainstorming`
   - converges ambiguous work into `01-requirements.md`
+  - defaults to autonomous continuation after the design is explicit; use user review gates only when requested or risk justifies a pause
 - `exploring-solution-space`
   - explores the local repository and the web before architecture choices are locked in
   - produces `02-overview-design.md` as its main output and only feeds `03-detailed-design.md` when implementation constraints are already justified
