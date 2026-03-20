@@ -23,6 +23,6 @@ This round only covers the minimal repository machinery needed for OpenHarness t
 4. `check-designs` validates the package and `pytest` validates the self-hosting assumptions.
 
 ## Trade-offs
-- This keeps the current package protocol, including `04-implementation-plan.md`, even though the workflow likely evolves later.
+- This round intentionally left the inherited package protocol in place; the follow-up workflow-redesign package changes that protocol.
 - The first round focuses on repository operability, not on finishing the higher-level workflow redesign discussed earlier.
 - Rewriting tests to current reality is lower risk than forcing the repository to mimic the old `.codex/skills` fixture layout internally.

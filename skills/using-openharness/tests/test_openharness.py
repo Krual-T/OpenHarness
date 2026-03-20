@@ -40,6 +40,15 @@ def test_self_hosting_design_package_is_discoverable() -> None:
     assert "Self-Hosting Bootstrap" in summarize_design_package(package)
 
 
+def test_workflow_redesign_package_is_discoverable() -> None:
+    manifest = load_manifest(REPO_ROOT)
+    packages = discover_design_packages(REPO_ROOT, manifest)
+    package = next(package for package in packages if package.name == "workflow-redesign")
+    assert package.design_id == "OH-002"
+    assert package.status_name == "in_progress"
+    assert "Workflow Redesign" in summarize_design_package(package)
+
+
 def test_active_statuses_do_not_include_archived() -> None:
     assert "in_progress" in ACTIVE_STATUSES
     assert "archived" not in ACTIVE_STATUSES
@@ -79,7 +88,6 @@ def test_validate_design_package_rejects_unknown_status_and_missing_paths(tmp_pa
         "  - 01-requirements.md\n"
         "  - 02-overview-design.md\n"
         "  - 03-detailed-design.md\n"
-        "  - 04-implementation-plan.md\n"
         "  - 05-verification.md\n"
         "  - 06-evidence.md\n"
         "workflow:\n"
@@ -94,7 +102,6 @@ def test_validate_design_package_rejects_unknown_status_and_missing_paths(tmp_pa
         "01-requirements.md",
         "02-overview-design.md",
         "03-detailed-design.md",
-        "04-implementation-plan.md",
         "05-verification.md",
         "06-evidence.md",
     ):
@@ -143,7 +150,6 @@ def test_validate_design_package_rejects_archived_status_in_active_root(tmp_path
         "  - 01-requirements.md\n"
         "  - 02-overview-design.md\n"
         "  - 03-detailed-design.md\n"
-        "  - 04-implementation-plan.md\n"
         "  - 05-verification.md\n"
         "  - 06-evidence.md\n"
         "workflow:\n"
@@ -186,7 +192,7 @@ def test_create_design_package_from_templates(tmp_path: Path) -> None:
     (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
         "version: 1\ndesigns_root: docs/designs\narchived_designs_root: docs/archived/designs\nrequired_design_files:\n"
         "  - README.md\n  - STATUS.yaml\n  - 01-requirements.md\n  - 02-overview-design.md\n"
-        "  - 03-detailed-design.md\n  - 04-implementation-plan.md\n  - 05-verification.md\n  - 06-evidence.md\n",
+        "  - 03-detailed-design.md\n  - 05-verification.md\n  - 06-evidence.md\n",
         encoding="utf-8",
     )
     template_root = repo_root / "skills" / "using-openharness" / "references" / "templates"
@@ -196,7 +202,6 @@ def test_create_design_package_from_templates(tmp_path: Path) -> None:
         "design-package.01-requirements.md": "req\n",
         "design-package.02-overview-design.md": "overview\n",
         "design-package.03-detailed-design.md": "detail\n",
-        "design-package.04-implementation-plan.md": "plan\n",
         "design-package.05-verification.md": "verify\n",
         "design-package.06-evidence.md": "evidence\n",
     }.items():
@@ -215,13 +220,14 @@ def test_create_design_package_from_templates(tmp_path: Path) -> None:
 
     assert design_root == repo_root / "docs" / "designs" / "harness-replay"
     assert (design_root / "README.md").read_text(encoding="utf-8") == "# OH-016 Harness Replay\n"
-    assert (design_root / "04-implementation-plan.md").read_text(encoding="utf-8") == "plan\n"
+    assert not (design_root / "04-implementation-plan.md").exists()
     assert "summary: Replay scenarios." in (design_root / "STATUS.yaml").read_text(encoding="utf-8")
 
 
 def test_key_repo_skills_are_vendored_locally() -> None:
     expected = [
         "using-openharness",
+        "exploring-solution-space",
         "using-git-worktrees",
         "writing-plans",
         "executing-plans",
@@ -243,7 +249,7 @@ def test_openharness_skill_owns_supporting_scripts_and_templates() -> None:
     assert (skill_root / "references" / "manifest.yaml").exists()
     assert (skill_root / "references" / "templates" / "design-package.README.md").exists()
     assert (skill_root / "references" / "templates" / "design-package.STATUS.yaml").exists()
-    assert (skill_root / "references" / "templates" / "design-package.04-implementation-plan.md").exists()
+    assert not (skill_root / "references" / "templates" / "design-package.04-implementation-plan.md").exists()
 
 
 def test_openharness_single_cli_supports_all_subcommands() -> None:
@@ -258,6 +264,8 @@ def test_openharness_skill_is_repo_entry_skill() -> None:
     assert "`using-openharness` is the first repository workflow skill to check" in text
     assert "including clarifying questions" in text
     assert "only repository entry skill" in text
+    assert "exploring-solution-space" in text
+    assert "runtime verification" in text
 
 
 def test_skill_hub_declares_no_parallel_entry_skill() -> None:
@@ -265,6 +273,7 @@ def test_skill_hub_declares_no_parallel_entry_skill() -> None:
     text = hub_path.read_text(encoding="utf-8")
     assert "repository entry skill" in text
     assert "Do not keep a separate repository entry layer beside `openharness`." in text
+    assert "`exploring-solution-space`" in text
 
 
 def test_agents_md_routes_repo_skill_usage_through_openharness() -> None:
@@ -272,3 +281,4 @@ def test_agents_md_routes_repo_skill_usage_through_openharness() -> None:
     text = agents_path.read_text(encoding="utf-8")
     assert "`using-openharness` 视为本仓库的默认入口技能" in text
     assert "先经过 `using-openharness` 做 skill routing" in text
+    assert "探索" in text

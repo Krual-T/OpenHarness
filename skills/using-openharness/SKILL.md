@@ -42,7 +42,7 @@ It decides:
 - which package must be read and updated
 - when to stay in package design docs
 - when to invoke `brainstorming`
-- when to invoke `writing-plans`
+- when to invoke `exploring-solution-space`
 - when to run harness verification
 
 All repo-facing workflow skills should be treated as subordinate to `openharness`, not as parallel systems.
@@ -54,8 +54,8 @@ Invoke relevant or requested repository skills before response or action.
 Use this routing order:
 
 1. `using-openharness` first for repository workflow and task-package protocol
-2. process skills next, such as `brainstorming` or `systematic-debugging`
-3. execution skills after that, such as `writing-plans`, `subagent-driven-development`, or `executing-plans`
+2. process skills next, such as `brainstorming`, `exploring-solution-space`, or `systematic-debugging`
+3. execution skills after that, such as `subagent-driven-development` or `executing-plans`
 
 If a skill applies, use it. Do not bypass it by improvising a parallel workflow.
 
@@ -77,7 +77,6 @@ Repository entry-skill responsibilities live here:
     - `01-requirements.md`
     - `02-overview-design.md`
     - `03-detailed-design.md`
-    - `04-implementation-plan.md`
     - `05-verification.md`
     - `06-evidence.md`
 5. Implement only after the design package is internally consistent enough to act on.
@@ -87,24 +86,26 @@ Repository entry-skill responsibilities live here:
 Use child skills under `using-openharness` like this:
 
 - `brainstorming`
-    - use when the task is still ambiguous, under-specified, or needs design convergence
-    - output goes into the relevant design docs in the package, typically `01-requirements.md`, `02-overview-design.md`, and `03-detailed-design.md`
-    - after `brainstorming` finishes, hand off to `writing-plans`; do not jump straight from a completed brainstorming pass into implementation
-- `writing-plans`
-    - use after `brainstorming`, or when requirements/design are already clear and you still need the explicit execution plan artifact
-    - output goes into `04-implementation-plan.md`
+    - use when the task is still ambiguous, under-specified, or needs requirements convergence
+    - primary output goes into `01-requirements.md`
+- `exploring-solution-space`
+    - use after requirements are clear and before architecture or implementation details are locked in
+    - combines local repository exploration with web research when external/current information matters
+    - writes architectural conclusions into `02-overview-design.md` and feeds implementation context into `03-detailed-design.md`
 - direct implementation
-    - use only when the package is already clear enough before any brainstorming pass and no separate execution plan is needed
+    - use only when `01`, `02`, and `03` are already clear enough
 
 Default flow:
 
 1. `openharness`
-2. `brainstorming` if the design is not yet clear
-3. `writing-plans` after `brainstorming`, or when an existing package already needs `04-implementation-plan.md`
-4. implementation
-5. verification and evidence updates
+2. `brainstorming` to converge and write `01-requirements.md`
+3. `exploring-solution-space` to explore local code and the web before writing design
+4. write `02-overview-design.md`
+5. write `03-detailed-design.md`
+6. implementation and runtime verification
+7. verification and evidence updates
 
-For non-package work that still touches repository workflow, start from `openharness`, decide whether a child skill applies, then continue under that child skill. Do not reintroduce a separate entry skill for this routing step. If you used `brainstorming`, the next workflow skill is `writing-plans`, not direct implementation.
+For non-package work that still touches repository workflow, start from `openharness`, decide whether a child skill applies, then continue under that child skill. Do not reintroduce a separate entry skill for this routing step.
 
 ## Update Protocol
 
@@ -112,8 +113,7 @@ For non-package work that still touches repository workflow, start from `openhar
 - Keep `STATUS.yaml` machine-readable; it is the harness state source.
 - Put problem framing in `01-requirements.md`.
 - Put boundary and architecture choices in `02-overview-design.md`.
-- Put file-level or protocol-level implementation details in `03-detailed-design.md`.
-- Put explicit staged execution planning in `04-implementation-plan.md` when the task needs it.
+- Put testing-first implementation details, runtime verification approach, and implementation order in `03-detailed-design.md`.
 - Put verification plan and results in `05-verification.md`.
 - Put changed files, commands, and remaining follow-ups in `06-evidence.md`.
 
@@ -130,8 +130,8 @@ For non-package work that still touches repository workflow, start from `openhar
 - `openharness` defines the repository protocol and skill order.
 - `openharness` is the only repository entry skill; do not maintain a second entry root.
 - `brainstorming` must not invent a parallel spec system or a second task root.
-- `writing-plans` must not redefine requirements or architecture already owned by `01` to `03`.
-- `04-implementation-plan.md` is part of the harness package, not an external planning artifact.
+- `exploring-solution-space` must not become a parallel task system; it exists to inform `02` and `03`.
+- `03-detailed-design.md` owns testing-first implementation detail inside the fixed package protocol.
 
 ## Verification
 

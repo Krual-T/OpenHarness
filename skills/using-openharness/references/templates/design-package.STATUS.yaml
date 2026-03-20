@@ -13,7 +13,6 @@ entrypoints:
   - docs/designs/<DESIGN_NAME>/01-requirements.md
   - docs/designs/<DESIGN_NAME>/02-overview-design.md
   - docs/designs/<DESIGN_NAME>/03-detailed-design.md
-  - docs/designs/<DESIGN_NAME>/04-implementation-plan.md
 done_criteria:
   - Replace this placeholder with real done criteria.
 verification:
@@ -21,7 +20,6 @@ verification:
   required_scenarios: []
 evidence:
   docs:
-    - docs/designs/<DESIGN_NAME>/04-implementation-plan.md
     - docs/designs/<DESIGN_NAME>/05-verification.md
     - docs/designs/<DESIGN_NAME>/06-evidence.md
   code: []

@@ -75,9 +75,9 @@ This follows the same spirit described by OpenAI's harness engineering article: 
 
 Every meaningful task lives in `docs/designs/<task>/` as a package with stable files for:
 - requirements
+- exploration-backed overview design
 - overview design
 - detailed design
-- implementation plan
 - verification
 - evidence
 - machine-readable status
@@ -111,11 +111,11 @@ A typical task looks like this:
 
 1. `AGENTS.md` routes the agent into the correct workflow.
 2. `using-openharness` checks the manifest and active design packages.
-3. The agent reads the task package in a fixed order.
-4. If the task is still fuzzy, `brainstorming` converges the design first.
-5. If execution needs staging, `writing-plans` creates the implementation plan.
+3. `brainstorming` converges the requirements first.
+4. `exploring-solution-space` explores the local repo and the web before architecture is locked in.
+5. The agent writes overview design and detailed testing-first design.
 6. The agent implements against the package contract.
-7. Verification and evidence are written back into the package.
+7. Runtime verification, verification, and evidence are written back into the package.
 8. Completed packages are archived without losing history.
 
 The result is a repo that accumulates usable knowledge instead of accumulating invisible assumptions.

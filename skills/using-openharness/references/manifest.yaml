@@ -8,7 +8,6 @@ required_design_files:
   - 01-requirements.md
   - 02-overview-design.md
   - 03-detailed-design.md
-  - 04-implementation-plan.md
   - 05-verification.md
   - 06-evidence.md
 workflow:
@@ -19,7 +18,6 @@ workflow:
     - docs/designs/<design>/01-requirements.md
     - docs/designs/<design>/02-overview-design.md
     - docs/designs/<design>/03-detailed-design.md
-    - docs/designs/<design>/04-implementation-plan.md
     - docs/designs/<design>/05-verification.md
     - docs/designs/<design>/06-evidence.md
   default_status_flow:

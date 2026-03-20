@@ -29,10 +29,10 @@ You MUST create a task for each of these items and complete them in order:
 3. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
 4. **Propose 2-3 approaches** — with trade-offs and your recommendation
 5. **Present design** — in sections scaled to their complexity, get user approval after each section
-6. **Write design doc** — write the validated design into the relevant docs of the active harness package under `docs/designs/<task>/` and commit
+6. **Write requirements doc** — write the validated requirements into `01-requirements.md` in the active harness package and update `02` / `03` only when already justified
 7. **Spec review loop** — dispatch spec-document-reviewer subagent with precisely crafted review context (never your session history); fix issues and re-dispatch until approved (max 3 iterations, then surface to human)
 8. **User reviews written spec** — ask user to review the spec file before proceeding
-9. **Transition to implementation** — invoke `writing-plans` to fill `04-implementation-plan.md` inside the active harness package
+9. **Transition to exploration** — invoke `exploring-solution-space` before architecture and detailed design are finalized
 
 ## Process Flow
 
@@ -45,11 +45,11 @@ digraph brainstorming {
     "Propose 2-3 approaches" [shape=box];
     "Present design sections" [shape=box];
     "User approves design?" [shape=diamond];
-    "Write design doc" [shape=box];
+    "Write requirements doc" [shape=box];
     "Spec review loop" [shape=box];
     "Spec review passed?" [shape=diamond];
     "User reviews spec?" [shape=diamond];
-    "Invoke writing-plans skill" [shape=doublecircle];
+    "Invoke exploring-solution-space skill" [shape=doublecircle];
 
     "Explore project context" -> "Visual questions ahead?";
     "Visual questions ahead?" -> "Offer Visual Companion\n(own message, no other content)" [label="yes"];
@@ -59,17 +59,17 @@ digraph brainstorming {
     "Propose 2-3 approaches" -> "Present design sections";
     "Present design sections" -> "User approves design?";
     "User approves design?" -> "Present design sections" [label="no, revise"];
-    "User approves design?" -> "Write design doc" [label="yes"];
-    "Write design doc" -> "Spec review loop";
+    "User approves design?" -> "Write requirements doc" [label="yes"];
+    "Write requirements doc" -> "Spec review loop";
     "Spec review loop" -> "Spec review passed?";
     "Spec review passed?" -> "Spec review loop" [label="issues found,\nfix and re-dispatch"];
     "Spec review passed?" -> "User reviews spec?" [label="approved"];
-    "User reviews spec?" -> "Write design doc" [label="changes requested"];
-    "User reviews spec?" -> "Invoke writing-plans skill" [label="approved"];
+    "User reviews spec?" -> "Write requirements doc" [label="changes requested"];
+    "User reviews spec?" -> "Invoke exploring-solution-space skill" [label="approved"];
 }
 ```
 
-**The terminal state is invoking `writing-plans`.** Keep the superpowers hard handoff, but write the execution plan into the harness package at `docs/designs/<task>/04-implementation-plan.md`.
+**The terminal state is invoking `exploring-solution-space`.** Brainstorming finishes when requirements are clear enough for exploration and design synthesis.
 
 ## The Process
 
@@ -134,13 +134,13 @@ After writing the spec document:
 After the spec review loop passes, ask the user to review the written spec before proceeding:
 
 > "Design package updated and committed at `<path>`. Please review it and let me know if you want to make any changes before we start writing out the implementation plan."
+> "Design package updated and committed at `<path>`. Please review it and let me know if you want to make any changes before we continue into exploration and detailed design."
 
 Wait for the user's response. If they request changes, make them and re-run the spec review loop. Only proceed once the user approves.
 
 **Implementation:**
 
-- Invoke `writing-plans` after the design package is updated
-- Write the execution plan into `docs/designs/<task>/04-implementation-plan.md`
+- Invoke `exploring-solution-space` after `01-requirements.md` is updated
 - Do not skip directly to implementation after a completed brainstorming pass
 
 ## Key Principles

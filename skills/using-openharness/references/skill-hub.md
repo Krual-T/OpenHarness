@@ -6,17 +6,17 @@
   - repository entry skill
   - owns repository protocol, skill routing, package routing, supporting scripts, and templates
 - `brainstorming`
-  - converges ambiguous work into `01-requirements.md`, `02-overview-design.md`, `03-detailed-design.md`
-- `writing-plans`
-  - writes `04-implementation-plan.md` when explicit staged execution is needed
+  - converges ambiguous work into `01-requirements.md`
+- `exploring-solution-space`
+  - explores the local repository and the web before architecture choices are locked in
 - `verification-before-completion`
   - enforces evidence-before-claims at the end of work
 
 ## Execution
 - `executing-plans`
-  - executes `04-implementation-plan.md` in-session
+  - legacy execution helper; not part of the fixed core workflow
 - `subagent-driven-development`
-  - executes `04-implementation-plan.md` with subagents and review stages
+  - legacy execution helper; not part of the fixed core workflow
 - `finishing-a-development-branch`
   - completes verified development work
 - `using-git-worktrees`

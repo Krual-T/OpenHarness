@@ -18,5 +18,5 @@
 - Repo-local path discovery must keep existing fallback paths so installed/global skill layouts still work.
 
 ## Migration Notes
-- This round intentionally leaves `writing-plans` and `04-implementation-plan.md` in place; protocol simplification can happen in a later package.
+- This round intentionally focused on self-hosting bootstrap; protocol simplification is tracked separately in `OH-002`.
 - The rewritten tests should stop depending on inherited historical packages from other repositories.

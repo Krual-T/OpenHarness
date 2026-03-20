@@ -15,6 +15,6 @@
 - `uv run pytest`
 
 ## Follow-ups
-- Revisit the design package protocol simplification discussed earlier, especially the overlap between `03-detailed-design.md` and `04-implementation-plan.md`.
+- Continue protocol simplification work under `OH-002`, especially the workflow change that removes the duplicated implementation-plan artifact from the fixed protocol.
 - Add explicit exploration / maintenance skills in later rounds.
 - Continue the next package by realigning the workflow around requirements -> exploration -> overview -> detailed -> implementation -> runtime verification -> completion.
