@@ -1,0 +1,69 @@
+# Overview Design
+
+## System Boundary
+This package is a meta-level roadmap package for the remaining major OpenHarness product gaps. It does not implement all of them at once; it organizes them into the next durable streams.
+
+## Current Baseline
+OpenHarness already has these repository-level primitives:
+
+- `AGENTS.md` as the repository map
+- a machine-readable manifest and CLI for design-package discovery and validation
+- a fixed design package shape under `docs/designs/<task>/`
+- a workflow that now explicitly includes exploration, overview design, detailed design, reflection, implementation, runtime verification, verification, and evidence
+- archived packages that document the self-hosting, workflow redesign, and reflective design-review rounds
+
+The remaining gap is not absence of structure. The gap is that several product-level operating modes are still only implied by the workflow, not yet defined tightly enough to reuse across repositories.
+
+## Roadmap Structure
+Keep `OH-004` as the parent roadmap package and treat the remaining work as five durable streams:
+
+1. `runtime verification baseline`
+   - Define what every no-harness repository must be able to verify before a task can credibly claim completion.
+   - Focus on minimum acceptable defaults, evidence shape, and escalation paths when there is no existing runtime harness.
+2. `no-harness bootstrap workflow`
+   - Define how OpenHarness should enter a repository that has no harness, no package history, and possibly no usable verification loop.
+   - Focus on the first-round artifact creation path and the minimum bootstrap sequence.
+3. `maintenance and entropy reduction`
+   - Define recurring cleanup and review work so the repository does not decay into stale design packages, stale memory, or drifting skill docs.
+   - Focus on periodic review loops rather than one-off feature work.
+4. `status semantics tightening`
+   - Align the workflow checkpoints with stronger machine- and human-readable meaning for each status.
+   - Focus on readiness criteria, transition rules, and when a package should remain active versus archive.
+5. `skill taxonomy and compatibility cleanup`
+   - Clarify which skills are core protocol, optional helpers, compatibility shims, or legacy imports.
+   - Focus on reducing ambiguity in the skill hub and in per-skill messaging.
+
+## Stream Dependencies And Order
+- `runtime verification baseline` and `status semantics tightening` should lead, because both change what "ready", "verifying", and "done" mean.
+- `no-harness bootstrap workflow` depends on the minimum runtime verification baseline, because bootstrap should not create a package flow that ends with unverifiable claims.
+- `maintenance and entropy reduction` depends on clearer status semantics and skill taxonomy, because maintenance needs stable definitions of stale, active, archived, core, and optional.
+- `skill taxonomy and compatibility cleanup` can start earlier as a documentation cleanup, but it should finalize after status semantics are tightened so vocabulary does not drift again.
+
+## Split Triggers
+This roadmap should stay broad until a request satisfies one of these triggers:
+
+- A stream has a narrow enough problem statement to produce concrete file-level changes in one round.
+- A stream needs repository exploration or external comparison that would overwhelm this parent roadmap.
+- A stream needs its own verification contract beyond the generic `check-designs` plus repository tests.
+- A stream needs to introduce or revise reusable artifacts such as templates, automation, or project-memory conventions.
+
+When those triggers are met, the agent should scaffold a focused child package rather than expanding `OH-004` with implementation detail.
+
+## Key Flows
+- A future task asks “what’s still missing?”
+- The agent enters `OH-004`.
+- The roadmap identifies which stream the request belongs to and whether it is discovery work, design work, or implementation work.
+- If the request is still broad, the agent updates `OH-004` first so the remaining product boundary stays explicit.
+- If one stream is concrete enough, the agent scaffolds a focused child package derived from this roadmap and keeps `OH-004` as the umbrella view.
+- Completed child packages should feed evidence or durable decisions back into this roadmap only when they materially change what remains.
+
+## Trade-offs
+- One large package is less implementation-ready than a focused package, but it is better for preserving product memory across multiple rounds.
+- Keeping the package broad risks vagueness, so the detailed design must name concrete future artifacts, decision fronts, and split triggers.
+- Stronger stream boundaries reduce rediscovery cost, but they also make the roadmap more opinionated and may force some future tasks to be decomposed before implementation.
+
+## Overview Reflection
+- I challenged whether this roadmap should immediately split into five packages. That would create premature package sprawl before the repository has agreed definitions for runtime verification and status semantics.
+- I considered keeping the roadmap as a simple unordered backlog. That was rejected because the current repo already has enough workflow structure that unordered backlog items would hide real dependencies.
+- I checked whether the proposed ordering ignored runtime verification implications. It did initially; the revised structure now makes runtime verification and status semantics upstream of bootstrap and maintenance.
+- No bounded subagent discussion was needed in this round because the uncertainty is about prioritization and scope control inside this repository, not about a hard architectural fork.
