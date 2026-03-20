@@ -5,7 +5,7 @@
 - Make the repo pass its own harness bootstrap, design validation, and Python test flow.
 
 ## Current Status
-- In progress. This package tracks the first self-hosting round.
+- Archived. The first self-hosting round is complete and retained here as historical evidence.
 
 ## Read This First
 - `STATUS.yaml`

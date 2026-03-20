@@ -36,7 +36,7 @@ def test_self_hosting_design_package_is_discoverable() -> None:
     packages = discover_design_packages(REPO_ROOT, manifest)
     package = next(package for package in packages if package.name == "self-hosting-bootstrap")
     assert package.design_id == "OH-001"
-    assert package.status_name == "in_progress"
+    assert package.status_name == "archived"
     assert "Self-Hosting Bootstrap" in summarize_design_package(package)
 
 
@@ -45,7 +45,7 @@ def test_workflow_redesign_package_is_discoverable() -> None:
     packages = discover_design_packages(REPO_ROOT, manifest)
     package = next(package for package in packages if package.name == "workflow-redesign")
     assert package.design_id == "OH-002"
-    assert package.status_name == "in_progress"
+    assert package.status_name == "archived"
     assert "Workflow Redesign" in summarize_design_package(package)
 
 

@@ -18,6 +18,7 @@
 - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
 - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
 - `uv run pytest`
+- `mv docs/designs/workflow-redesign docs/archived/designs/workflow-redesign`
 
 ## Follow-ups
 - Decide later whether `writing-plans`, `executing-plans`, and `subagent-driven-development` should be retired, fully repurposed, or kept as optional compatibility skills.

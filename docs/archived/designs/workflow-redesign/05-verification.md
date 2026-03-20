@@ -13,3 +13,6 @@
   - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
   - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
   - `uv run pytest`
+- 2026-03-20: PASS after archival
+  - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
+  - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`

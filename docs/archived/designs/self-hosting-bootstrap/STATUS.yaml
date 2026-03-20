@@ -1,6 +1,6 @@
 id: OH-001
 title: OpenHarness Self-Hosting Bootstrap
-status: in_progress
+status: archived
 summary: Bootstrap the OpenHarness repository into a self-hosted minimal harness repo with runnable CLI, tests, and an initial active design package.
 owner: codex
 created_at: 2026-03-20
@@ -13,10 +13,10 @@ scope:
     - tests
     - documentation
 entrypoints:
-  - docs/designs/self-hosting-bootstrap/README.md
-  - docs/designs/self-hosting-bootstrap/01-requirements.md
-  - docs/designs/self-hosting-bootstrap/02-overview-design.md
-  - docs/designs/self-hosting-bootstrap/03-detailed-design.md
+  - docs/archived/designs/self-hosting-bootstrap/README.md
+  - docs/archived/designs/self-hosting-bootstrap/01-requirements.md
+  - docs/archived/designs/self-hosting-bootstrap/02-overview-design.md
+  - docs/archived/designs/self-hosting-bootstrap/03-detailed-design.md
 done_criteria:
   - The repository contains at least one valid active design package and passes `openharness.py bootstrap` and `check-designs`.
   - Python workflow dependencies needed by the harness CLI and tests are declared in `pyproject.toml` and runnable via `uv run`.
@@ -30,8 +30,8 @@ verification:
   required_scenarios: []
 evidence:
   docs:
-    - docs/designs/self-hosting-bootstrap/05-verification.md
-    - docs/designs/self-hosting-bootstrap/06-evidence.md
+    - docs/archived/designs/self-hosting-bootstrap/05-verification.md
+    - docs/archived/designs/self-hosting-bootstrap/06-evidence.md
   code:
     - pyproject.toml
     - skills/using-openharness/scripts/openharness.py

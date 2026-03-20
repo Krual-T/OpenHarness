@@ -4,7 +4,7 @@
 - Redesign the fixed OpenHarness workflow so requirements are written first, exploration becomes explicit, and detailed design carries testing-first implementation detail without a duplicated implementation-plan artifact.
 
 ## Current Status
-- In progress.
+- Archived. The core workflow redesign is complete and retained here as historical evidence.
 
 ## Read This First
 - `STATUS.yaml`

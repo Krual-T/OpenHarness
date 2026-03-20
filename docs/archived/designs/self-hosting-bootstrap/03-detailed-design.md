@@ -3,7 +3,7 @@
 ## Files Added Or Changed
 - Add `pyproject.toml` with runtime dependency `PyYAML` and dev dependency `pytest`.
 - Update `skills/using-openharness/scripts/openharness.py` to resolve repo-local manifests and templates from `skills/using-openharness/...`.
-- Add the active design package under `docs/designs/self-hosting-bootstrap/`.
+- Add the active design package under `docs/archived/designs/self-hosting-bootstrap/`.
 - Rewrite `skills/using-openharness/tests/test_openharness.py` to validate the real repo layout and a minimal self-hosting package inventory.
 - Fix small doc mistakes in `AGENTS.md` and `README.md`.
 
