@@ -18,12 +18,13 @@ Its job is to make exploration explicit:
 
 ## Output
 
-This skill informs:
+The primary output of this skill is:
 
 - `02-overview-design.md`
-- `03-detailed-design.md`
 
-Both documents must go through reflection before they are treated as ready.
+This skill may also feed implementation-facing constraints into `03-detailed-design.md` when exploration has already made interfaces, test strategy, or migration boundaries concrete enough to write down.
+
+Do not treat exploration as permission to fully draft `03-detailed-design.md` before `02-overview-design.md` exists and its architecture is reflected.
 
 ## Process
 
@@ -38,7 +39,7 @@ Both documents must go through reflection before they are treated as ready.
    - check for missing runtime verification implications
    - check for overscoping, underscoping, or coupling mistakes
 7. If the architecture is high-impact, uncertain, novel, or still contested after reflection, dispatch a bounded subagent discussion/review with only the relevant design context.
-8. Feed implementation-facing findings into `03-detailed-design.md`.
+8. Only after `02-overview-design.md` is coherent, feed implementation-facing findings into `03-detailed-design.md` if those findings are already concrete enough to constrain implementation.
 9. Run a detailed-design reflection pass:
    - challenge the testing strategy first
    - challenge interfaces, boundaries, and migration assumptions
@@ -52,5 +53,6 @@ Both documents must go through reflection before they are treated as ready.
 - Prefer primary sources for technical choices.
 - Keep exploration focused on the active task.
 - Make the reasoning legible in repository artifacts, not only in chat.
+- Treat `02-overview-design.md` as the main artifact of exploration; update `03-detailed-design.md` only for implementation-facing conclusions that are already justified by the explored architecture.
 - Do not treat `02-overview-design.md` or `03-detailed-design.md` as ready until the reflection pass is written down.
 - When using subagents for design discussion, provide bounded context rather than the entire session history.

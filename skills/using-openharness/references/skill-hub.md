@@ -9,7 +9,8 @@
   - converges ambiguous work into `01-requirements.md`
 - `exploring-solution-space`
   - explores the local repository and the web before architecture choices are locked in
-  - includes reflection for `02-overview-design.md` and `03-detailed-design.md`, with bounded subagent discussion when needed
+  - produces `02-overview-design.md` as its main output and only feeds `03-detailed-design.md` when implementation constraints are already justified
+  - includes reflection for `02-overview-design.md` and, when written, `03-detailed-design.md`, with bounded subagent discussion when needed
 - `verification-before-completion`
   - enforces evidence-before-claims at the end of work
 

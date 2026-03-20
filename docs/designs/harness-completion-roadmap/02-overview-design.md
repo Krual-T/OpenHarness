@@ -14,6 +14,8 @@ OpenHarness already has these repository-level primitives:
 
 The remaining gap is not absence of structure. The gap is that several product-level operating modes are still only implied by the workflow, not yet defined tightly enough to reuse across repositories.
 
+One workflow ambiguity is now explicit: exploration should produce architectural conclusions in `02-overview-design.md` first. It may inform `03-detailed-design.md`, but it should not be read as permission to draft detailed design before overview design is coherent and reflected. The core skill docs should say this directly so the process does not self-contradict.
+
 ## Roadmap Structure
 Keep `OH-004` as the parent roadmap package and treat the remaining work as five durable streams:
 
@@ -61,9 +63,11 @@ When those triggers are met, the agent should scaffold a focused child package r
 - One large package is less implementation-ready than a focused package, but it is better for preserving product memory across multiple rounds.
 - Keeping the package broad risks vagueness, so the detailed design must name concrete future artifacts, decision fronts, and split triggers.
 - Stronger stream boundaries reduce rediscovery cost, but they also make the roadmap more opinionated and may force some future tasks to be decomposed before implementation.
+- Tightening workflow wording reduces agent improvisation, but it also makes the protocol less forgiving of ambiguous phrasing in skill docs. That is acceptable because protocol clarity matters more than flexible but conflicting wording.
 
 ## Overview Reflection
 - I challenged whether this roadmap should immediately split into five packages. That would create premature package sprawl before the repository has agreed definitions for runtime verification and status semantics.
 - I considered keeping the roadmap as a simple unordered backlog. That was rejected because the current repo already has enough workflow structure that unordered backlog items would hide real dependencies.
 - I checked whether the proposed ordering ignored runtime verification implications. It did initially; the revised structure now makes runtime verification and status semantics upstream of bootstrap and maintenance.
+- I checked whether the current skill wording accidentally let exploration jump ahead into detailed design. It did leave that ambiguity, so the workflow docs should explicitly state that `02` is the primary output of exploration and `03` only follows when implementation-facing constraints are already justified.
 - No bounded subagent discussion was needed in this round because the uncertainty is about prioritization and scope control inside this repository, not about a hard architectural fork.

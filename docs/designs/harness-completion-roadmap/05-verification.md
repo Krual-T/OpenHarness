@@ -12,3 +12,4 @@
 - Passed on 2026-03-20:
   - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
   - `uv run pytest`
+  - Result after tightening exploration-to-design workflow wording in the core skill docs.

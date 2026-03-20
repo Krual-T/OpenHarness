@@ -91,7 +91,7 @@ Use child skills under `using-openharness` like this:
 - `exploring-solution-space`
     - use after requirements are clear and before architecture or implementation details are locked in
     - combines local repository exploration with web research when external/current information matters
-    - writes architectural conclusions into `02-overview-design.md` and feeds implementation context into `03-detailed-design.md`
+    - writes architectural conclusions into `02-overview-design.md` first, and only feeds implementation constraints into `03-detailed-design.md` when exploration has made them concrete enough
 - direct implementation
     - use only when `01`, `02`, and `03` are already clear enough
 
@@ -99,10 +99,10 @@ Default flow:
 
 1. `openharness`
 2. `brainstorming` to converge and write `01-requirements.md`
-3. `exploring-solution-space` to explore local code and the web before writing design
+3. `exploring-solution-space` to explore local code and the web before architecture is locked
 4. draft `02-overview-design.md`
 5. run an overview reflection pass; use bounded subagent discussion when the architecture is high-impact, uncertain, or hard to compare against alternatives
-6. draft `03-detailed-design.md`
+6. draft `03-detailed-design.md` only after the explored architecture is coherent enough to constrain implementation
 7. run a detailed-design reflection pass; use bounded subagent discussion when test strategy, module boundaries, migration risk, or runtime verification remain uncertain
 8. implementation and runtime verification
 9. verification and evidence updates
@@ -134,7 +134,7 @@ For non-package work that still touches repository workflow, start from `openhar
 - `openharness` defines the repository protocol and skill order.
 - `openharness` is the only repository entry skill; do not maintain a second entry root.
 - `brainstorming` must not invent a parallel spec system or a second task root.
-- `exploring-solution-space` must not become a parallel task system; it exists to inform `02` and `03`.
+- `exploring-solution-space` must not become a parallel task system; it exists to produce `02` first and only then inform `03` where justified.
 - `03-detailed-design.md` owns testing-first implementation detail inside the fixed package protocol.
 - Design is not ready after a first draft alone; `02` and `03` each require a reflection pass before they are treated as ready.
 - Bounded subagent discussion is the preferred escalation path when reflection reveals uncertainty that the main agent cannot confidently resolve alone.

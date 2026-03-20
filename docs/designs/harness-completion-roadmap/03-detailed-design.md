@@ -9,6 +9,7 @@ This roadmap package does not add runtime code directly. Its "tests" are reposit
 
 ## Files Added Or Changed
 - Update the `OH-004` design documents so they capture stream boundaries, dependency order, split triggers, and concrete expected outputs.
+- Tighten workflow wording in core skill docs so exploration lands in `02-overview-design.md` first and only feeds `03-detailed-design.md` when implementation constraints are already justified.
 - Do not add code or new automation in this round; this package should stay at roadmap level.
 
 ## Interfaces

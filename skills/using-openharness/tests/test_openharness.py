@@ -303,6 +303,8 @@ def test_exploration_skill_requires_reflection_before_design_is_ready() -> None:
     text = (REPO_ROOT / "skills" / "exploring-solution-space" / "SKILL.md").read_text(encoding="utf-8")
     assert "02-overview-design.md" in text
     assert "03-detailed-design.md" in text
+    assert "primary output" in text
+    assert "Only after `02-overview-design.md` is coherent" in text
     assert "reflection" in text
     assert "subagent" in text
 
