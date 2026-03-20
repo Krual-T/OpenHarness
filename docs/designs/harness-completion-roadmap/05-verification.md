@@ -13,3 +13,7 @@
   - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
   - `uv run pytest`
   - Result after tightening exploration-to-design workflow wording in the core skill docs.
+- Passed again on 2026-03-20 after splitting `OH-005 Runtime Verification Baseline`:
+  - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
+  - `uv run pytest`
+  - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
