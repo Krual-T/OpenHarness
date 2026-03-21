@@ -2,6 +2,8 @@ id: <DESIGN_ID>
 title: <TITLE>
 # Default flow: proposed -> requirements_ready -> overview_ready -> detailed_ready -> in_progress -> verifying -> archived
 # requirements_ready -> overview_ready -> detailed_ready are design-readiness checkpoints; later statuses imply earlier checkpoints are already materially complete.
+# `detailed_ready` is the normal resting point for design-complete work before implementation.
+# `archived` means the task package is implemented, verified, and no longer active.
 status: <STATUS>
 summary: <SUMMARY>
 owner: <OWNER>

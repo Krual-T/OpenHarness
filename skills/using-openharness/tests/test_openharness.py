@@ -371,7 +371,15 @@ def test_openharness_skill_owns_supporting_scripts_and_templates() -> None:
 def test_openharness_single_cli_supports_all_subcommands() -> None:
     parser = openharness.build_parser()
     choices = parser._subparsers._group_actions[0].choices  # type: ignore[attr-defined]
-    assert set(choices) == {"bootstrap", "check-designs", "new-design", "verify"}
+    assert set(choices) == {"bootstrap", "check-designs", "check-tasks", "new-design", "new-task", "verify"}
+
+
+def test_task_package_aliases_share_legacy_handlers() -> None:
+    parser = openharness.build_parser()
+    assert parser.parse_args(["check-designs"]).handler == openharness.cmd_check_designs
+    assert parser.parse_args(["check-tasks"]).handler == openharness.cmd_check_designs
+    assert parser.parse_args(["new-design", "name", "OH-999", "Title"]).handler == openharness.cmd_new_design
+    assert parser.parse_args(["new-task", "name", "OH-999", "Title"]).handler == openharness.cmd_new_design
 
 
 def test_openharness_skill_is_repo_entry_skill() -> None:

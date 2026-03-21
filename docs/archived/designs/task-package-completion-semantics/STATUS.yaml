@@ -1,0 +1,48 @@
+id: OH-008
+title: Task Package Completion Semantics
+# Default flow: proposed -> requirements_ready -> overview_ready -> detailed_ready -> in_progress -> verifying -> archived
+# requirements_ready -> overview_ready -> detailed_ready are design-readiness checkpoints; later statuses imply earlier checkpoints are already materially complete.
+status: archived
+summary: Rename design packages to task packages and tighten completion semantics so archive only means implemented, verified, and no longer active.
+owner: codex
+created_at: 2026-03-22
+updated_at: 2026-03-22
+depends_on:
+  - OH-004
+  - OH-006
+scope:
+  areas:
+    - package-naming
+    - completion-semantics
+    - archive-rules
+    - workflow-protocol
+entrypoints:
+  - docs/archived/designs/task-package-completion-semantics/README.md
+  - docs/archived/designs/task-package-completion-semantics/01-requirements.md
+  - docs/archived/designs/task-package-completion-semantics/02-overview-design.md
+  - docs/archived/designs/task-package-completion-semantics/03-detailed-design.md
+done_criteria:
+  - The repository no longer uses `design package` as the primary name for the end-to-end work unit.
+  - The repository protocol makes clear that `archived` means the task package is implemented, verified, and no longer active.
+  - The repository documents what status to use when design is complete but implementation still remains.
+  - Core docs, templates, CLI/help text, and tests use one consistent package vocabulary.
+  - Existing archived packages no longer imply that design completion alone is sufficient for archive.
+verification:
+  required_commands:
+    - uv run python skills/using-openharness/scripts/openharness.py check-tasks
+    - uv run pytest
+  required_scenarios: []
+evidence:
+  docs:
+    - docs/archived/designs/task-package-completion-semantics/05-verification.md
+    - docs/archived/designs/task-package-completion-semantics/06-evidence.md
+  code:
+    - AGENTS.md
+    - skills/using-openharness/SKILL.md
+    - skills/using-openharness/scripts/openharness.py
+    - skills/using-openharness/references/templates/design-package.README.md
+    - skills/using-openharness/references/templates/design-package.STATUS.yaml
+    - skills/using-openharness/references/templates/design-package.03-detailed-design.md
+    - skills/using-openharness/references/templates/design-package.05-verification.md
+  tests:
+    - skills/using-openharness/tests/test_openharness.py

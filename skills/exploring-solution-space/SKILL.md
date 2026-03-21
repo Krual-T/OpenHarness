@@ -12,7 +12,7 @@ Use this skill after `brainstorming` has clarified the task and written `01-requ
 Its job is to make exploration explicit:
 
 - inspect the local repository
-- inspect relevant design packages and recent code
+- inspect relevant task packages and recent code
 - search the web when external references or current best practices matter
 - record the important findings that shape the architecture
 

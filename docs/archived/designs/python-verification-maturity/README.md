@@ -6,7 +6,8 @@
 
 ## Current Status
 - Archived.
-- The Python verification-maturity design work is complete and kept as historical guidance for the implementation wave that follows.
+- This package was archived under earlier repository semantics that allowed a completed design baseline to move out of the active set before end-to-end implementation finished.
+- It should be read as historical design guidance, not as a current example of what `archived` means under the task-package protocol.
 
 ## Read This First
 - `STATUS.yaml`

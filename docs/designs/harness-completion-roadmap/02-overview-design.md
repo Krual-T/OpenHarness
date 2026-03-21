@@ -7,8 +7,8 @@ This package is a meta-level roadmap package for the remaining major OpenHarness
 OpenHarness already has these repository-level primitives:
 
 - `AGENTS.md` as the repository map
-- a machine-readable manifest and CLI for design-package discovery and validation
-- a fixed design package shape under `docs/designs/<task>/`
+- a machine-readable manifest and CLI for task-package discovery and validation
+- a fixed task-package shape under the compatibility path `docs/designs/<task>/`
 - a workflow that now explicitly includes exploration, overview design, detailed design, reflection, implementation, runtime verification, verification, and evidence
 - archived packages that document the self-hosting, workflow redesign, and reflective design-review rounds
 
@@ -28,7 +28,7 @@ Keep `OH-004` as the parent roadmap package and treat the remaining work as five
    - Define the default verification floor for Python work when runtime tests are incomplete.
    - Focus on when `pytest` is enough, when runtime tests are required, and how weaker evidence must be recorded honestly.
 3. `maintenance and entropy reduction`
-   - Define recurring cleanup and review work so the repository does not decay into stale design packages, stale memory, or drifting skill docs.
+   - Define recurring cleanup and review work so the repository does not decay into stale task packages, stale memory, or drifting skill docs.
    - Focus on periodic review loops rather than one-off feature work.
 4. `status semantics tightening`
    - Align the workflow checkpoints with stronger machine- and human-readable meaning for each status.

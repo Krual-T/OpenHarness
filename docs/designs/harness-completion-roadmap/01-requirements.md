@@ -7,7 +7,7 @@ Provide one durable active package that tracks the remaining major gaps in OpenH
 OpenHarness now has:
 
 - self-hosting
-- a fixed design package protocol
+- a fixed task-package protocol stored under the historical `docs/designs/<task>/` path
 - requirements -> exploration -> overview -> detailed -> implementation -> runtime verification -> completion workflow
 - reflection and bounded subagent discussion for design stages
 
@@ -39,10 +39,10 @@ If these gaps are tracked only in conversation, they will be forgotten or redisc
 ## Non-Goals
 - Implement all remaining streams inside this single round.
 - Freeze every downstream design choice before exploration.
-- Replace future smaller design packages that split off from this roadmap once a stream becomes actionable.
+- Replace future smaller task packages that split off from this roadmap once a stream becomes actionable.
 
 ## Constraints
 - The package should be intentionally broad and roadmap-oriented.
 - It should still remain specific enough to drive future implementation packages.
-- It should preserve the fixed design package model instead of creating a parallel planning system.
+- It should preserve the fixed task-package model instead of creating a parallel planning system.
 - It should acknowledge the current repository baseline instead of pretending OpenHarness starts from zero.

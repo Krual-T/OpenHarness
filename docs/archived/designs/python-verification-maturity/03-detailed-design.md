@@ -43,7 +43,8 @@ The Python verification workflow should expose these stable decisions:
 - If implementation cannot yet automate the distinction, prefer explicit docs/template wording over fake machine precision.
 
 ## Migration Notes
-- `OH-007` no longer stays active: the design package is complete and archived once its end-to-end design round finished.
+- `OH-007` no longer stays active under the older repository semantics that archived a completed design baseline once its design round finished.
+- Under the newer task-package semantics, this should be read as a historical exception rather than as the rule for future archive decisions.
 - The implementation wave should treat this archived package as the fact source for Python verification baseline and escalation wording, and feed any remaining maintenance implications back into `OH-004`.
 
 ## Detailed Reflection

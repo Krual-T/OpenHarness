@@ -8,7 +8,7 @@ description: "You MUST use this before any creative work - creating features, bu
 Help turn ideas into fully formed designs and specs through natural collaborative dialogue.
 
 In this repository, `brainstorming` is a child skill of `using-openharness`.
-It does not define task roots or package structure. It only helps converge the design content that belongs in the active harness package.
+It does not define task roots or package structure. It only helps converge the design content that belongs in the active harness task package.
 
 Start by understanding the current project context, then ask questions only when they are needed to reduce meaningful ambiguity. Once you understand what you're building, present the design clearly enough to proceed without forcing an approval pause unless the user asked for one or the remaining uncertainty is high risk.
 
@@ -114,7 +114,7 @@ digraph brainstorming {
 
 **Documentation:**
 
-- Write the validated design into the active harness package under `docs/designs/<task>/`:
+- Write the validated design into the active harness task package under `docs/designs/<task>/`:
   - update `01-requirements.md` when the validated design changes goals, scope, constraints, non-goals, or done criteria
   - update `02-overview-design.md` when the validated design changes architecture, boundaries, responsibilities, or primary flows
   - update `03-detailed-design.md` when the validated design changes implementation landing points, file-level structure, interfaces, or migration details
@@ -140,7 +140,7 @@ Only stop for user review if one of these is true:
 
 When a review gate is needed, say:
 
-> "Design package updated at `<path>`. Please review it before I continue into exploration and detailed design."
+> "Task package updated at `<path>`. Please review it before I continue into exploration and detailed design."
 
 If the user requests changes, make them and re-run the spec review loop. Otherwise proceed without creating an unnecessary pause.
 

@@ -10,8 +10,8 @@
   - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
   - `uv run pytest`
 - Path Notes:
-  - This round verifies the design package and repository behavior after reframing `OH-007` around Python verification maturity instead of bootstrap routing.
-  - This archive round verifies that `OH-007` is complete, can move out of the active design root, and no longer appears in the default active-package inventory.
+  - This round verifies the package documents and repository behavior after reframing `OH-007` around Python verification maturity instead of bootstrap routing.
+  - This archive round was performed under earlier repository semantics that treated a completed design baseline as ready to leave the active set.
   - A later implementation round should add evidence that the new baseline-versus-runtime wording is carried through docs, templates, and completion rules.
 
 Use `verifying` only when implementation is complete enough to gather fresh evidence for the declared verification path.
@@ -22,7 +22,7 @@ Use `verifying` only when implementation is complete enough to gather fresh evid
 - `uv run pytest`
 
 ## Expected Outcomes
-- `OH-007` validates as a complete design package before archive.
+- `OH-007` validates as a complete historical design-baseline package before archive under the earlier semantics used at that time.
 - After the move, `bootstrap` no longer lists `OH-007` as active work.
 - Repository tests still pass after adding the reframed child package and updating roadmap docs.
 

@@ -6,7 +6,7 @@
 
 ## Current Status
 - In progress.
-- Parent roadmap package for follow-up design packages.
+- Parent roadmap package for follow-up task packages.
 - `OH-007 Python Verification Maturity` has completed and moved to the archived design set.
 
 ## Active Streams

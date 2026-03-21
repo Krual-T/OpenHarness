@@ -270,7 +270,7 @@ def create_design_package(request: DesignScaffoldRequest) -> Path:
     design_name = slugify_design_name(request.design_name)
     design_root = manifest.designs_root / design_name
     if design_root.exists():
-        raise FileExistsError(f"design package already exists: {design_root}")
+        raise FileExistsError(f"task package already exists: {design_root}")
     skill_root = Path(__file__).resolve().parents[1]
     template_root = request.repo_root / "skills" / "using-openharness" / "references" / "templates"
     if not template_root.exists():
@@ -322,7 +322,7 @@ def cmd_bootstrap(args: argparse.Namespace) -> int:
                     "manifest": str(manifest.path),
                     "designs_root": str(manifest.designs_root),
                     "archived_designs_root": str(manifest.archived_designs_root),
-                    "design_packages": [
+                    "task_packages": [
                         {
                             "id": package.design_id,
                             "name": package.name,
@@ -343,11 +343,11 @@ def cmd_bootstrap(args: argparse.Namespace) -> int:
         )
         return 0
     print(f"Harness manifest: {manifest.path}")
-    print(f"Design root: {manifest.designs_root}")
+    print(f"Task package root (compat path): {manifest.designs_root}")
     if not packages:
-        print("No matching design packages found.")
+        print("No matching task packages found.")
         return 0
-    print("Active design packages:" if not args.all else "Design packages:")
+    print("Active task packages:" if not args.all else "Task packages:")
     for package in packages:
         print(f"- {summarize_design_package(package)}")
         if package.required_commands:
@@ -364,7 +364,7 @@ def cmd_check_designs(args: argparse.Namespace) -> int:
     errors: list[str] = []
     if not packages:
         errors.append(
-            f"no design packages found under {manifest.designs_root} or {manifest.archived_designs_root}"
+            f"no task packages found under {manifest.designs_root} or {manifest.archived_designs_root}"
         )
     for package in packages:
         errors.extend(validate_design_package(package))
@@ -373,7 +373,7 @@ def cmd_check_designs(args: argparse.Namespace) -> int:
             print(f"ERROR: {error}")
         return 1
     print(
-        f"Validated {len(packages)} design package(s) under "
+        f"Validated {len(packages)} task package(s) under "
         f"{manifest.designs_root} and {manifest.archived_designs_root}"
     )
     return 0
@@ -391,7 +391,7 @@ def cmd_new_design(args: argparse.Namespace) -> int:
             status=args.status,
         )
     )
-    print(f"Created design package: {design_root}")
+    print(f"Created task package: {design_root}")
     return 0
 
 
@@ -402,7 +402,7 @@ def cmd_verify(args: argparse.Namespace) -> int:
     errors: list[str] = []
     if not packages:
         errors.append(
-            f"no design packages found under {manifest.designs_root} or {manifest.archived_designs_root}"
+            f"no task packages found under {manifest.designs_root} or {manifest.archived_designs_root}"
         )
     for package in packages:
         errors.extend(validate_design_package(package))
@@ -417,7 +417,7 @@ def cmd_verify(args: argparse.Namespace) -> int:
     else:
         packages = [package for package in packages if package.status_name in VERIFYABLE_STATUSES]
     if not packages:
-        print("No matching design packages to verify.")
+        print("No matching task packages to verify.")
         return 0
     saw_insufficient_verification = False
     for package in packages:
@@ -446,17 +446,25 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Openharness repository workflow CLI.")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    bootstrap_parser = subparsers.add_parser("bootstrap", help="Inspect project harness entrypoints and design packages.")
+    bootstrap_parser = subparsers.add_parser("bootstrap", help="Inspect project harness entrypoints and task packages.")
     bootstrap_parser.add_argument("--repo", default=".", help="Repository root")
     bootstrap_parser.add_argument("--json", action="store_true", help="Print JSON output")
-    bootstrap_parser.add_argument("--all", action="store_true", help="Include non-active design packages")
+    bootstrap_parser.add_argument("--all", action="store_true", help="Include non-active task packages")
     bootstrap_parser.set_defaults(handler=cmd_bootstrap)
 
-    check_parser = subparsers.add_parser("check-designs", help="Validate repository design packages against harness protocol.")
+    check_parser = subparsers.add_parser(
+        "check-designs",
+        aliases=["check-tasks"],
+        help="Validate repository task packages against harness protocol.",
+    )
     check_parser.add_argument("--repo", default=".", help="Repository root")
     check_parser.set_defaults(handler=cmd_check_designs)
 
-    new_design_parser = subparsers.add_parser("new-design", help="Create a new design package from harness templates.")
+    new_design_parser = subparsers.add_parser(
+        "new-design",
+        aliases=["new-task"],
+        help="Create a new task package from harness templates.",
+    )
     new_design_parser.add_argument("design_name", help="Directory slug or human-readable design name")
     new_design_parser.add_argument("design_id", help="Stable design id, such as OR-016")
     new_design_parser.add_argument("title", help="Human-readable design title")
@@ -466,10 +474,10 @@ def build_parser() -> argparse.ArgumentParser:
     new_design_parser.add_argument("--repo", default=".", help="Repository root")
     new_design_parser.set_defaults(handler=cmd_new_design)
 
-    verify_parser = subparsers.add_parser("verify", help="Run harness verification for one design package or all active packages.")
-    verify_parser.add_argument("design", nargs="?", default="", help="Design package name or design id")
+    verify_parser = subparsers.add_parser("verify", help="Run harness verification for one task package or all active packages.")
+    verify_parser.add_argument("design", nargs="?", default="", help="Task package name or task id")
     verify_parser.add_argument("--repo", default=".", help="Repository root")
-    verify_parser.add_argument("--check-designs-only", action="store_true", help="Only validate design package protocol")
+    verify_parser.add_argument("--check-designs-only", action="store_true", help="Only validate task package protocol")
     verify_parser.set_defaults(handler=cmd_verify)
 
     return parser
