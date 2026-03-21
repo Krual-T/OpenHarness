@@ -14,8 +14,8 @@
 Move to `in_progress` only when detailed design is concrete enough to execute.
 
 ## Files Added Or Changed
-- Update `docs/designs/python-verification-maturity/*` so the package defines the Python verification baseline, escalation rules, and implementation landing points.
-- Update `docs/designs/harness-completion-roadmap/*` so `OH-004` clearly treats `OH-007` as the active child package for the Python verification-maturity stream.
+- Update `docs/archived/designs/python-verification-maturity/*` so the package preserves the Python verification baseline, escalation rules, and implementation landing points as an archived fact source.
+- Update `docs/designs/harness-completion-roadmap/*` so `OH-004` clearly treats `OH-007` as the completed archived package for the Python verification-maturity stream.
 - In the implementation wave, likely update:
   - `skills/using-openharness/references/templates/*`
   - `skills/verification-before-completion/SKILL.md`
@@ -43,8 +43,8 @@ The Python verification workflow should expose these stable decisions:
 - If implementation cannot yet automate the distinction, prefer explicit docs/template wording over fake machine precision.
 
 ## Migration Notes
-- `OH-007` should stay active through the implementation wave even if the first patch only lands docs, templates, and verification wording.
-- Once the Python verification baseline and escalation wording are implemented and verified, archive this package and feed any remaining maintenance implications back into `OH-004`.
+- `OH-007` no longer stays active: the design package is complete and archived once its end-to-end design round finished.
+- The implementation wave should treat this archived package as the fact source for Python verification baseline and escalation wording, and feed any remaining maintenance implications back into `OH-004`.
 
 ## Detailed Reflection
 - I challenged whether this package still needed to say anything about entry routing. It does not; that concern has been removed.

@@ -5,8 +5,8 @@
 - Keep execution immediately usable by treating `pytest` as the minimum verification floor while explicitly guiding runtime-test construction when task risk requires stronger evidence.
 
 ## Current Status
-- Detailed design complete.
-- Ready to drive the first implementation wave for Python verification guidance, templates, and completion rules.
+- Archived.
+- The Python verification-maturity design work is complete and kept as historical guidance for the implementation wave that follows.
 
 ## Read This First
 - `STATUS.yaml`

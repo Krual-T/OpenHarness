@@ -61,7 +61,7 @@ When those triggers are met, the agent should scaffold a focused child package r
 - If one stream is concrete enough, the agent scaffolds a focused child package derived from this roadmap and keeps `OH-004` as the umbrella view.
 - `OH-005 Runtime Verification Baseline` is the first such child package and is now archived as the completed baseline for the runtime-verification stream.
 - `OH-006 Status Semantics Tightening` is now archived as the completed baseline for stronger workflow checkpoint meaning and transition gates.
-- `OH-007 Python Verification Maturity` is now the active child package for the Python verification stream and should carry the first implementation-ready verification-maturity design.
+- `OH-007 Python Verification Maturity` is now archived as the completed design baseline for the Python verification stream and should be reused by the implementation wave rather than reopened casually.
 - Completed child packages should feed evidence or durable decisions back into this roadmap only when they materially change what remains.
 
 ## Trade-offs

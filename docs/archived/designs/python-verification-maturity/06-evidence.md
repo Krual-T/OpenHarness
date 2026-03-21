@@ -9,13 +9,13 @@
 - None yet. If the verification-maturity behavior is later validated manually against a fixture repository or task package, record the exact sequence here.
 
 ## Files
-- `docs/designs/python-verification-maturity/README.md`
-- `docs/designs/python-verification-maturity/STATUS.yaml`
-- `docs/designs/python-verification-maturity/01-requirements.md`
-- `docs/designs/python-verification-maturity/02-overview-design.md`
-- `docs/designs/python-verification-maturity/03-detailed-design.md`
-- `docs/designs/python-verification-maturity/05-verification.md`
-- `docs/designs/python-verification-maturity/06-evidence.md`
+- `docs/archived/designs/python-verification-maturity/README.md`
+- `docs/archived/designs/python-verification-maturity/STATUS.yaml`
+- `docs/archived/designs/python-verification-maturity/01-requirements.md`
+- `docs/archived/designs/python-verification-maturity/02-overview-design.md`
+- `docs/archived/designs/python-verification-maturity/03-detailed-design.md`
+- `docs/archived/designs/python-verification-maturity/05-verification.md`
+- `docs/archived/designs/python-verification-maturity/06-evidence.md`
 - `docs/designs/harness-completion-roadmap/README.md`
 - `docs/designs/harness-completion-roadmap/STATUS.yaml`
 - `docs/designs/harness-completion-roadmap/02-overview-design.md`
@@ -30,6 +30,10 @@
 - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
 - `uv run pytest`
 - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
+- `uv run pytest`
+- `mv docs/designs/python-verification-maturity docs/archived/designs/python-verification-maturity`
+- `uv run python skills/using-openharness/scripts/openharness.py check-designs`
+- `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
 - `uv run pytest`
 
 ## Follow-ups

@@ -7,7 +7,7 @@
 ## Current Status
 - In progress.
 - Parent roadmap package for follow-up design packages.
-- `OH-007 Python Verification Maturity` is the current active child package for the Python verification stream.
+- `OH-007 Python Verification Maturity` has completed and moved to the archived design set.
 
 ## Active Streams
 - `runtime verification baseline`

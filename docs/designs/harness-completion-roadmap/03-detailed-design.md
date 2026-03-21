@@ -47,7 +47,7 @@ Each future stream should produce its own focused package with these minimum out
 - This package is intentionally broad and may stay active longer than a typical feature package.
 - When a substream becomes concrete, prefer creating a dedicated follow-up package rather than overloading this roadmap with implementation detail.
 - `runtime verification baseline` and `status semantics tightening` are now archived completed baselines.
-- The current active next package is `OH-007 Python Verification Maturity`.
+- `OH-007 Python Verification Maturity` is complete and archived; the next implementation wave should execute against that archived package rather than keep it active.
 
 ## Detailed Reflection
 - I challenged whether `OH-004` needed file-level implementation steps now. It does not; adding them here would duplicate the work that belongs in child packages.
