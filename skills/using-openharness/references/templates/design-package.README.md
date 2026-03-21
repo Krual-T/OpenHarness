@@ -3,6 +3,8 @@
 ## Summary
 
 ## Current Status
+- Status should match the highest workflow checkpoint that is actually complete.
+- Keep this short and consistent with `STATUS.yaml`, then put the detailed reasoning in the package docs.
 
 ## Read This First
 - `STATUS.yaml`

@@ -13,7 +13,7 @@ import re
 import yaml
 
 ACTIVE_STATUSES = {"proposed", "requirements_ready", "overview_ready", "detailed_ready", "in_progress", "verifying"}
-VERIFYABLE_STATUSES = {"requirements_ready", "overview_ready", "detailed_ready", "in_progress", "verifying"}
+VERIFYABLE_STATUSES = {"in_progress", "verifying"}
 REQUIRED_DESIGN_FILES = (
     "README.md",
     "STATUS.yaml",
@@ -223,6 +223,14 @@ def validate_design_package(package: DesignPackage) -> list[str]:
     elif package.root.resolve().parent == package.manifest.archived_designs_root:
         errors.append(
             f"non-archived package must not live under {package.manifest.archived_designs_root}: {package.root}"
+        )
+    if package.status_name == "verifying" and not package.required_commands and not package.required_scenarios:
+        errors.append(
+            f"verifying status requires at least one verification path in {package.root / 'STATUS.yaml'}"
+        )
+    if package.status_name == "archived" and not package.required_commands and not package.required_scenarios:
+        errors.append(
+            f"archived status requires at least one verification path in {package.root / 'STATUS.yaml'}"
         )
 
     repo_root = package.manifest.repo_root

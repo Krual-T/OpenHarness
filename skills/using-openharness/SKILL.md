@@ -104,8 +104,9 @@ Default flow:
 5. run an overview reflection pass; use bounded subagent discussion when the architecture is high-impact, uncertain, or hard to compare against alternatives
 6. draft `03-detailed-design.md` only after the explored architecture is coherent enough to constrain implementation
 7. run a detailed-design reflection pass; use bounded subagent discussion when test strategy, module boundaries, migration risk, or runtime verification remain uncertain
-8. implementation and runtime verification
-9. verification and evidence updates
+8. move to `in_progress` only when the package is ready to execute against a stable detailed design
+9. move to `verifying` only when implementation is complete enough to gather fresh verification evidence
+10. verification and evidence updates before `archived`
 
 For non-package work that still touches repository workflow, start from `openharness`, decide whether a child skill applies, then continue under that child skill. Do not reintroduce a separate entry skill for this routing step.
 
@@ -120,6 +121,7 @@ For non-package work that still touches repository workflow, start from `openhar
 - Record the detailed-design reflection pass in `03-detailed-design.md`, including when a bounded subagent discussion was used and what it changed.
 - Put planned versus executed verification path and results in `05-verification.md`.
 - Put changed files, commands, manual steps, residual risks, and remaining follow-ups in `06-evidence.md`.
+- Keep `STATUS.yaml.status` aligned with the highest workflow checkpoint that is actually complete; later statuses imply earlier checkpoints are already materially complete.
 
 ## Archive Protocol
 
@@ -128,6 +130,7 @@ For non-package work that still touches repository workflow, start from `openhar
 - Before moving a completed package, update `05-verification.md` and `06-evidence.md`, then set `STATUS.yaml.status` to `archived` and refresh `updated_at`.
 - After moving the package, update package-local entrypoints/evidence paths and any repository references that still point to the old active location.
 - Archived packages remain historical fact sources and verification evidence, but they must not remain in the active design root.
+- `archived` should mean the package is both complete and evidenced, not merely relocated.
 
 ## Boundary Rules
 

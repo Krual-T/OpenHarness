@@ -191,6 +191,112 @@ def test_validate_design_package_rejects_archived_status_in_active_root(tmp_path
     assert any("archived package must live under" in error for error in errors)
 
 
+def test_validate_design_package_rejects_verifying_without_verification_path(tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
+    (repo_root / "docs" / "designs" / "verifying-empty").mkdir(parents=True)
+    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
+        "version: 1\n"
+        "designs_root: docs/designs\n"
+        "archived_designs_root: docs/archived/designs\n"
+        "required_design_files:\n"
+        "  - README.md\n"
+        "  - STATUS.yaml\n"
+        "  - 01-requirements.md\n"
+        "  - 02-overview-design.md\n"
+        "  - 03-detailed-design.md\n"
+        "  - 05-verification.md\n"
+        "  - 06-evidence.md\n"
+        "workflow:\n"
+        "  default_status_flow:\n"
+        "    - proposed\n"
+        "    - requirements_ready\n"
+        "    - overview_ready\n"
+        "    - detailed_ready\n"
+        "    - in_progress\n"
+        "    - verifying\n"
+        "    - archived\n",
+        encoding="utf-8",
+    )
+    root = repo_root / "docs" / "designs" / "verifying-empty"
+    for name in REQUIRED_DESIGN_FILES:
+        (root / name).write_text("x\n", encoding="utf-8")
+    (root / "STATUS.yaml").write_text(
+        "id: OH-901\n"
+        "title: Verifying Empty\n"
+        "status: verifying\n"
+        "summary: missing verification path\n"
+        "owner: codex\n"
+        "created_at: 2026-03-21\n"
+        "updated_at: 2026-03-21\n"
+        "done_criteria:\n"
+        "  - x\n"
+        "verification:\n"
+        "  required_commands: []\n"
+        "  required_scenarios: []\n",
+        encoding="utf-8",
+    )
+
+    manifest = load_manifest(repo_root)
+    package = discover_design_packages(repo_root, manifest)[0]
+    errors = validate_design_package(package)
+
+    assert any("verifying status requires at least one verification path" in error for error in errors)
+
+
+def test_validate_design_package_rejects_archived_without_verification_path(tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
+    (repo_root / "docs" / "archived" / "designs" / "archived-empty").mkdir(parents=True)
+    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
+        "version: 1\n"
+        "designs_root: docs/designs\n"
+        "archived_designs_root: docs/archived/designs\n"
+        "required_design_files:\n"
+        "  - README.md\n"
+        "  - STATUS.yaml\n"
+        "  - 01-requirements.md\n"
+        "  - 02-overview-design.md\n"
+        "  - 03-detailed-design.md\n"
+        "  - 05-verification.md\n"
+        "  - 06-evidence.md\n"
+        "workflow:\n"
+        "  default_status_flow:\n"
+        "    - proposed\n"
+        "    - requirements_ready\n"
+        "    - overview_ready\n"
+        "    - detailed_ready\n"
+        "    - in_progress\n"
+        "    - verifying\n"
+        "    - archived\n",
+        encoding="utf-8",
+    )
+    root = repo_root / "docs" / "archived" / "designs" / "archived-empty"
+    for name in REQUIRED_DESIGN_FILES:
+        (root / name).write_text("x\n", encoding="utf-8")
+    (root / "STATUS.yaml").write_text(
+        "id: OH-902\n"
+        "title: Archived Empty\n"
+        "status: archived\n"
+        "summary: archived without verification path\n"
+        "owner: codex\n"
+        "created_at: 2026-03-21\n"
+        "updated_at: 2026-03-21\n"
+        "done_criteria:\n"
+        "  - x\n"
+        "verification:\n"
+        "  required_commands: []\n"
+        "  required_scenarios: []\n",
+        encoding="utf-8",
+    )
+
+    manifest = load_manifest(repo_root)
+    package = discover_design_packages(repo_root, manifest)[0]
+    errors = validate_design_package(package)
+
+    assert any("archived status requires at least one verification path" in error for error in errors)
+
+
 def test_slugify_design_name_normalizes_human_text() -> None:
     assert slugify_design_name("Harness Replay Flow") == "harness-replay-flow"
 
@@ -368,11 +474,62 @@ def test_design_package_templates_include_verification_path_sections() -> None:
     assert "Manual Steps" in evidence
 
 
+def test_design_package_templates_include_status_guidance() -> None:
+    readme = (
+        REPO_ROOT
+        / "skills"
+        / "using-openharness"
+        / "references"
+        / "templates"
+        / "design-package.README.md"
+    ).read_text(encoding="utf-8")
+    status = (
+        REPO_ROOT
+        / "skills"
+        / "using-openharness"
+        / "references"
+        / "templates"
+        / "design-package.STATUS.yaml"
+    ).read_text(encoding="utf-8")
+    detailed = (
+        REPO_ROOT
+        / "skills"
+        / "using-openharness"
+        / "references"
+        / "templates"
+        / "design-package.03-detailed-design.md"
+    ).read_text(encoding="utf-8")
+    verification = (
+        REPO_ROOT
+        / "skills"
+        / "using-openharness"
+        / "references"
+        / "templates"
+        / "design-package.05-verification.md"
+    ).read_text(encoding="utf-8")
+
+    assert "Status should match the highest workflow checkpoint" in readme
+    assert "requirements_ready -> overview_ready -> detailed_ready" in status
+    assert "Move to `in_progress` only when detailed design is concrete enough to execute." in detailed
+    assert "Use `verifying` only when implementation is complete enough" in verification
+
+
 def test_verification_skill_distinguishes_manual_and_insufficient_paths() -> None:
     text = (REPO_ROOT / "skills" / "verification-before-completion" / "SKILL.md").read_text(encoding="utf-8")
     assert "manual runtime verification" in text
     assert "insufficient verification" in text
     assert "blocked completion state" in text
+
+
+def test_workflow_skills_include_status_guidance() -> None:
+    openharness_text = (REPO_ROOT / "skills" / "using-openharness" / "SKILL.md").read_text(encoding="utf-8")
+    exploration_text = (REPO_ROOT / "skills" / "exploring-solution-space" / "SKILL.md").read_text(encoding="utf-8")
+
+    assert "`overview_ready`" in exploration_text
+    assert "`detailed_ready`" in exploration_text
+    assert "`in_progress`" in openharness_text
+    assert "`verifying`" in openharness_text
+    assert "`archived`" in openharness_text
 
 
 def test_verify_reports_declared_manual_scenarios_without_claiming_execution(
@@ -489,3 +646,142 @@ def test_verify_rejects_packages_with_no_declared_verification_path(tmp_path: Pa
     assert result == 1
     assert "insufficient verification" in captured.out
     assert "No command-backed verification or manual scenarios declared" in captured.out
+
+
+def test_verify_defaults_to_later_stage_statuses_only(
+    tmp_path: Path, capsys, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    repo_root = tmp_path / "repo"
+    (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
+    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
+        "version: 1\n"
+        "designs_root: docs/designs\n"
+        "archived_designs_root: docs/archived/designs\n"
+        "required_design_files:\n"
+        "  - README.md\n"
+        "  - STATUS.yaml\n"
+        "  - 01-requirements.md\n"
+        "  - 02-overview-design.md\n"
+        "  - 03-detailed-design.md\n"
+        "  - 05-verification.md\n"
+        "  - 06-evidence.md\n"
+        "workflow:\n"
+        "  default_status_flow:\n"
+        "    - proposed\n"
+        "    - requirements_ready\n"
+        "    - overview_ready\n"
+        "    - detailed_ready\n"
+        "    - in_progress\n"
+        "    - verifying\n"
+        "    - archived\n",
+        encoding="utf-8",
+    )
+
+    def write_package(name: str, status: str, command: str) -> None:
+        root = repo_root / "docs" / "designs" / name
+        root.mkdir(parents=True)
+        for file_name in REQUIRED_DESIGN_FILES:
+            (root / file_name).write_text("x\n", encoding="utf-8")
+        (root / "STATUS.yaml").write_text(
+            f"id: {name.upper()}\n"
+            f"title: {name}\n"
+            f"status: {status}\n"
+            "summary: status coverage\n"
+            "owner: codex\n"
+            "created_at: 2026-03-21\n"
+            "updated_at: 2026-03-21\n"
+            "done_criteria:\n"
+            "  - x\n"
+            "verification:\n"
+            "  required_commands:\n"
+            f"    - {command}\n"
+            "  required_scenarios: []\n",
+            encoding="utf-8",
+        )
+
+    write_package("requirements", "requirements_ready", "echo requirements")
+    write_package("detailed", "detailed_ready", "echo detailed")
+    write_package("progress", "in_progress", "echo progress")
+    write_package("verifying", "verifying", "echo verifying")
+
+    calls: list[str] = []
+
+    def fake_run(repo: Path, command: str) -> int:
+        calls.append(command)
+        return 0
+
+    monkeypatch.setattr(openharness, "_run_command", fake_run)
+
+    result = openharness.cmd_verify(
+        argparse.Namespace(repo=str(repo_root), design="", check_designs_only=False)
+    )
+
+    capsys.readouterr()
+    assert result == 0
+    assert calls == ["echo progress", "echo verifying"]
+
+
+def test_verify_allows_explicit_package_target_before_in_progress(
+    tmp_path: Path, capsys, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    repo_root = tmp_path / "repo"
+    (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
+    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
+        "version: 1\n"
+        "designs_root: docs/designs\n"
+        "archived_designs_root: docs/archived/designs\n"
+        "required_design_files:\n"
+        "  - README.md\n"
+        "  - STATUS.yaml\n"
+        "  - 01-requirements.md\n"
+        "  - 02-overview-design.md\n"
+        "  - 03-detailed-design.md\n"
+        "  - 05-verification.md\n"
+        "  - 06-evidence.md\n"
+        "workflow:\n"
+        "  default_status_flow:\n"
+        "    - proposed\n"
+        "    - requirements_ready\n"
+        "    - overview_ready\n"
+        "    - detailed_ready\n"
+        "    - in_progress\n"
+        "    - verifying\n"
+        "    - archived\n",
+        encoding="utf-8",
+    )
+    root = repo_root / "docs" / "designs" / "early-target"
+    root.mkdir(parents=True)
+    for file_name in REQUIRED_DESIGN_FILES:
+        (root / file_name).write_text("x\n", encoding="utf-8")
+    (root / "STATUS.yaml").write_text(
+        "id: OH-777\n"
+        "title: Early Target\n"
+        "status: detailed_ready\n"
+        "summary: explicit verify target\n"
+        "owner: codex\n"
+        "created_at: 2026-03-21\n"
+        "updated_at: 2026-03-21\n"
+        "done_criteria:\n"
+        "  - x\n"
+        "verification:\n"
+        "  required_commands:\n"
+        "    - echo targeted\n"
+        "  required_scenarios: []\n",
+        encoding="utf-8",
+    )
+
+    calls: list[str] = []
+
+    def fake_run(repo: Path, command: str) -> int:
+        calls.append(command)
+        return 0
+
+    monkeypatch.setattr(openharness, "_run_command", fake_run)
+
+    result = openharness.cmd_verify(
+        argparse.Namespace(repo=str(repo_root), design="early-target", check_designs_only=False)
+    )
+
+    capsys.readouterr()
+    assert result == 0
+    assert calls == ["echo targeted"]

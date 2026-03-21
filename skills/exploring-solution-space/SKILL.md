@@ -33,6 +33,7 @@ Do not treat exploration as permission to fully draft `03-detailed-design.md` be
 3. Search the web when the task touches third-party APIs, current platform behavior, existing public solutions, or recent best practices.
 4. Summarize local constraints, viable options, and the recommended direction.
 5. Write the architectural conclusion into `02-overview-design.md`.
+   - When the overview is coherent and reflected, the package is ready for `overview_ready`.
 6. Run an overview reflection pass:
    - challenge the main path
    - compare against at least one viable alternative
@@ -40,6 +41,7 @@ Do not treat exploration as permission to fully draft `03-detailed-design.md` be
    - check for overscoping, underscoping, or coupling mistakes
 7. If the architecture is high-impact, uncertain, novel, or still contested after reflection, dispatch a bounded subagent discussion/review with only the relevant design context.
 8. Only after `02-overview-design.md` is coherent, feed implementation-facing findings into `03-detailed-design.md` if those findings are already concrete enough to constrain implementation.
+   - When detailed design is concrete and reflected, the package is ready for `detailed_ready`.
 9. Run a detailed-design reflection pass:
    - challenge the testing strategy first
    - challenge interfaces, boundaries, and migration assumptions

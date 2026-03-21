@@ -24,3 +24,27 @@
   - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
   - `uv run pytest`
   - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
+- Passed again on 2026-03-21 after scaffolding `OH-006 Status Semantics Tightening` and promoting it to an active child package:
+  - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
+  - `uv run pytest`
+  - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
+- Passed again on 2026-03-21 after `OH-006` completed the first status-semantics CLI tightening wave:
+  - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
+  - `uv run pytest`
+  - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
+- Passed again on 2026-03-21 after `OH-006` added lightweight semantic validation for later-stage status contradictions:
+  - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
+  - `uv run pytest`
+  - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
+- Passed again on 2026-03-21 after `OH-006` added lightweight status guidance to design-package templates:
+  - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
+  - `uv run pytest`
+  - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
+- Passed again on 2026-03-21 after `OH-006` added matching status guidance to workflow skills:
+  - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
+  - `uv run pytest`
+  - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
+- Passed again on 2026-03-21 after archiving `OH-006 Status Semantics Tightening` and updating roadmap references:
+  - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
+  - `uv run pytest`
+  - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
