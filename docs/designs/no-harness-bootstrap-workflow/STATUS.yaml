@@ -3,7 +3,7 @@ title: No-Harness Bootstrap Workflow
 # Default flow: proposed -> requirements_ready -> overview_ready -> detailed_ready -> in_progress -> verifying -> archived
 # requirements_ready -> overview_ready -> detailed_ready are design-readiness checkpoints; later statuses imply earlier checkpoints are already materially complete.
 status: detailed_ready
-summary: Define how OpenHarness should cold-start inside a Python repository with no package history and no mature runtime verification loop, using pytest as the minimum verification gate while guiding later runtime-test construction.
+summary: Define how OpenHarness should cold-start through a Python-first default path, using pytest as the minimum verification gate for supported Python repositories while leaving non-Python repos at protocol compatibility only.
 owner: codex
 created_at: 2026-03-21
 updated_at: 2026-03-22
@@ -26,9 +26,9 @@ entrypoints:
   - docs/designs/no-harness-bootstrap-workflow/03-detailed-design.md
 done_criteria:
   - The repository defines a first-round cold-start sequence for Python repositories that have no OpenHarness package history yet.
-  - The workflow identifies `pytest` as the minimum verification gate for cold start and explains when runtime tests should be recommended or built in parallel.
+  - The workflow identifies `pytest` as the minimum verification gate for the supported Python path and explains when runtime tests should be recommended or built in parallel.
   - The workflow defines how the first active design package is chosen or scaffolded without inventing a parallel planning system.
-  - The workflow stays scoped to Python development instead of pretending to support every language/runtime shape.
+  - The workflow keeps the protocol reusable outside Python without claiming an equally productized default path for non-Python repositories.
   - Follow-up implementation can update docs, templates, and verification guidance from this package without rediscovering the product boundary.
 verification:
   required_commands:
