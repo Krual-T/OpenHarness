@@ -61,6 +61,7 @@ When those triggers are met, the agent should scaffold a focused child package r
 - If one stream is concrete enough, the agent scaffolds a focused child package derived from this roadmap and keeps `OH-004` as the umbrella view.
 - `OH-005 Runtime Verification Baseline` is the first such child package and is now archived as the completed baseline for the runtime-verification stream.
 - `OH-006 Status Semantics Tightening` is now archived as the completed baseline for stronger workflow checkpoint meaning and transition gates.
+- `OH-007 No-Harness Bootstrap Workflow` is now the active child package for the bootstrap stream and should carry the first implementation-ready bootstrap design.
 - Completed child packages should feed evidence or durable decisions back into this roadmap only when they materially change what remains.
 
 ## Trade-offs
@@ -75,4 +76,5 @@ When those triggers are met, the agent should scaffold a focused child package r
 - I checked whether the proposed ordering ignored runtime verification implications. It did initially; the revised structure now makes runtime verification and status semantics upstream of bootstrap and maintenance.
 - I checked whether the current skill wording accidentally let exploration jump ahead into detailed design. It did leave that ambiguity, so the workflow docs should explicitly state that `02` is the primary output of exploration and `03` only follows when implementation-facing constraints are already justified.
 - I checked whether the brainstorming skill overfit to interactive approval loops. It did, so the workflow should default to autonomous continuation once design is explicit and only introduce user review gates when the task or risk profile justifies them.
+- I checked whether the next actionable stream was still ambiguous after `OH-005` and `OH-006` completed. It no longer is; the bootstrap stream now has enough upstream structure to split into `OH-007`.
 - No bounded subagent discussion was needed in this round because the uncertainty is about prioritization and scope control inside this repository, not about a hard architectural fork.

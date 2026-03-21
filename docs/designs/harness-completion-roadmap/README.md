@@ -6,7 +6,8 @@
 
 ## Current Status
 - In progress.
-- Parent roadmap package for the next follow-up design packages.
+- Parent roadmap package for follow-up design packages.
+- `OH-007 No-Harness Bootstrap Workflow` is the current active child package for the bootstrap stream.
 
 ## Active Streams
 - `runtime verification baseline`

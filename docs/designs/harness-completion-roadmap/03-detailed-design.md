@@ -9,6 +9,7 @@ This roadmap package does not add runtime code directly. Its "tests" are reposit
 
 ## Files Added Or Changed
 - Update the `OH-004` design documents so they capture stream boundaries, dependency order, split triggers, and concrete expected outputs.
+- Scaffold `OH-007 No-Harness Bootstrap Workflow` as the next focused child package now that runtime verification and status semantics baselines are archived.
 - Tighten workflow wording in core skill docs so exploration lands in `02-overview-design.md` first and only feeds `03-detailed-design.md` when implementation constraints are already justified.
 - Tighten `brainstorming` so explicit design remains mandatory but default execution stays autonomous unless the user requested a review gate or unresolved ambiguity makes continuation risky.
 - Do not add code or new automation in this round; this package should stay at roadmap level.
@@ -45,10 +46,12 @@ Each future stream should produce its own focused package with these minimum out
 ## Migration Notes
 - This package is intentionally broad and may stay active longer than a typical feature package.
 - When a substream becomes concrete, prefer creating a dedicated follow-up package rather than overloading this roadmap with implementation detail.
-- The most likely next focused package is `runtime verification baseline`, because it constrains bootstrap, completion semantics, and verification evidence across the rest of the system.
+- `runtime verification baseline` and `status semantics tightening` are now archived completed baselines.
+- The current active next package is `OH-007 No-Harness Bootstrap Workflow`.
 
 ## Detailed Reflection
 - I challenged whether `OH-004` needed file-level implementation steps now. It does not; adding them here would duplicate the work that belongs in child packages.
 - I challenged whether the roadmap was still too abstract to verify. The answer was yes in its earlier form, so this revision adds expected outputs and likely repository touch points for each stream.
 - I checked whether the detailed design made runtime verification concrete enough. It is now concrete at the roadmap level by defining the kinds of artifacts and semantics the next child package must settle.
+- I checked whether `OH-004` still needed to hold the bootstrap implementation detail itself. It does not; that detail now belongs in `OH-007`.
 - No bounded subagent discussion was needed in this round because the main uncertainty is package decomposition, not a contested implementation path.

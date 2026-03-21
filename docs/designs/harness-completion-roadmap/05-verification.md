@@ -48,3 +48,7 @@
   - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
   - `uv run pytest`
   - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
+- Passed on 2026-03-21 after scaffolding `OH-007 No-Harness Bootstrap Workflow` and updating roadmap references:
+  - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
+  - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
+  - `uv run pytest`
