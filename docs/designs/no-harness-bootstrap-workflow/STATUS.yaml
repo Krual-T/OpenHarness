@@ -3,10 +3,10 @@ title: No-Harness Bootstrap Workflow
 # Default flow: proposed -> requirements_ready -> overview_ready -> detailed_ready -> in_progress -> verifying -> archived
 # requirements_ready -> overview_ready -> detailed_ready are design-readiness checkpoints; later statuses imply earlier checkpoints are already materially complete.
 status: detailed_ready
-summary: Define how OpenHarness should enter a repository with no harness, no package history, and no established verification loop, while still producing a usable first-round package and verification path.
+summary: Define how OpenHarness should cold-start inside a Python repository with no package history and no mature runtime verification loop, using pytest as the minimum verification gate while guiding later runtime-test construction.
 owner: codex
 created_at: 2026-03-21
-updated_at: 2026-03-21
+updated_at: 2026-03-22
 depends_on:
   - OH-004
   - OH-005
@@ -14,6 +14,7 @@ depends_on:
 scope:
   areas:
     - bootstrap
+    - python
     - design-packages
     - verification
     - templates
@@ -24,11 +25,11 @@ entrypoints:
   - docs/designs/no-harness-bootstrap-workflow/02-overview-design.md
   - docs/designs/no-harness-bootstrap-workflow/03-detailed-design.md
 done_criteria:
-  - The repository defines a first-round bootstrap sequence for repositories that have no OpenHarness package history yet.
-  - The workflow identifies the minimum repo-local artifacts that must exist after bootstrap and the optional artifacts that can wait.
+  - The repository defines a first-round cold-start sequence for Python repositories that have no OpenHarness package history yet.
+  - The workflow identifies `pytest` as the minimum verification gate for cold start and explains when runtime tests should be recommended or built in parallel.
   - The workflow defines how the first active design package is chosen or scaffolded without inventing a parallel planning system.
-  - The workflow defines how a bootstrap round establishes a credible verification path even when repository automation is weak.
-  - Follow-up implementation can update docs, templates, and CLI support from this package without rediscovering the product boundary.
+  - The workflow stays scoped to Python development instead of pretending to support every language/runtime shape.
+  - Follow-up implementation can update docs, templates, and verification guidance from this package without rediscovering the product boundary.
 verification:
   required_commands:
     - uv run python skills/using-openharness/scripts/openharness.py check-designs

@@ -10,8 +10,8 @@
   - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
   - `uv run pytest`
 - Path Notes:
-  - This round verifies the design package and repository behavior after scaffolding `OH-007`.
-  - A later implementation round should add bootstrap-specific scenario evidence, not just package validation.
+  - This round verifies the design package and repository behavior after narrowing `OH-007` to Python-only cold start.
+  - A later implementation round should add Python cold-start scenario evidence, not just package validation.
 
 Use `verifying` only when implementation is complete enough to gather fresh evidence for the declared verification path.
 
@@ -29,4 +29,7 @@ Use `verifying` only when implementation is complete enough to gather fresh evid
 - Passed on 2026-03-21 after scaffolding `OH-007` and completing the first bootstrap design package:
   - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
   - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
+  - `uv run pytest`
+- Passed again on 2026-03-22 after narrowing `OH-007` to Python-only cold start with `pytest` as the minimum verification floor:
+  - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
   - `uv run pytest`

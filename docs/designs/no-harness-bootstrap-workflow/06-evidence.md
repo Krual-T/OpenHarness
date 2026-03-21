@@ -2,10 +2,11 @@
 
 ## Residual Risks
 - The implementation wave may still need one more decision on how much CLI scaffolding is worth adding beyond docs and templates.
-- No end-to-end fixture for bootstrapping a foreign no-harness repository exists yet; that validation remains follow-up work.
+- No end-to-end fixture for Python cold-start entry exists yet; that validation remains follow-up work.
+- `pytest` as a minimum floor is intentionally weaker than runtime tests, so implementation must state clearly when runtime tests are required now versus recommended next.
 
 ## Manual Steps
-- None yet. If bootstrap behavior is later validated manually against a fixture repository, record the exact sequence here.
+- None yet. If Python cold-start behavior is later validated manually against a fixture repository, record the exact sequence here.
 
 ## Files
 - `docs/designs/no-harness-bootstrap-workflow/README.md`
@@ -27,7 +28,9 @@
 - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
 - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
 - `uv run pytest`
+- `uv run python skills/using-openharness/scripts/openharness.py check-designs`
+- `uv run pytest`
 
 ## Follow-ups
-- Implement the first bootstrap support wave in docs, templates, and any minimal CLI help defined by this package.
-- Decide whether bootstrap needs a dedicated fixture repository or can be validated with repository-local temp fixtures inside `skills/using-openharness/tests/`.
+- Implement the first Python cold-start support wave in docs, templates, and any minimal CLI help defined by this package.
+- Decide whether Python cold start needs a dedicated fixture repository or can be validated with repository-local temp fixtures inside `skills/using-openharness/tests/`.
