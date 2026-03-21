@@ -1,17 +1,17 @@
 # OH-004 Harness Completion Roadmap
 
 ## Summary
-- Track the remaining major work needed to turn OpenHarness from a strong protocol skeleton into a more complete no-harness bootstrap and maintenance-oriented skill hub.
+- Track the remaining major work needed to turn OpenHarness from a strong protocol skeleton into a more complete verification- and maintenance-oriented skill hub.
 - Keep the remaining streams in one active package so they are not forgotten or re-discovered ad hoc.
 
 ## Current Status
 - In progress.
 - Parent roadmap package for follow-up design packages.
-- `OH-007 No-Harness Bootstrap Workflow` is the current active child package for the bootstrap stream.
+- `OH-007 Python Verification Maturity` is the current active child package for the Python verification stream.
 
 ## Active Streams
 - `runtime verification baseline`
-- `no-harness bootstrap workflow`
+- `python verification maturity`
 - `maintenance and entropy reduction`
 - `status semantics tightening`
 - `skill taxonomy and compatibility cleanup`

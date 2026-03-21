@@ -52,3 +52,7 @@
   - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
   - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
   - `uv run pytest`
+- Passed again on 2026-03-22 after reframing `OH-007` as `Python Verification Maturity` and updating roadmap references:
+  - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
+  - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
+  - `uv run pytest`
