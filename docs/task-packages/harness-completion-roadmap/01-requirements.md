@@ -16,6 +16,7 @@ But there are still major product gaps:
 - runtime verification exists as a workflow slot, but not yet as a concrete minimum protocol
 - Python verification maturity is still too implicit, especially around `pytest` versus runtime-test expectations
 - maintenance / entropy reduction is not yet a first-class workflow
+- project-specific runtime capability integration is still underspecified after the minimum runtime-verification baseline; the repo does not yet define how multiple runtime helpers attach naturally to one project
 - status semantics are still looser than the workflow now implies
 - compatibility / optional skill boundaries are clearer than before, but not yet fully productized
 
@@ -26,8 +27,9 @@ If these gaps are tracked only in conversation, they will be forgotten or redisc
 2. Define the target shape of the minimal runtime verification protocol.
 3. Define the target shape of Python verification maturity, especially the baseline-versus-runtime distinction.
 4. Define the target shape of maintenance / entropy-reduction work.
-5. Define the target shape of status semantics and skill classification cleanup.
-6. Keep the package large and explicit enough that future follow-up tasks can branch from it without losing context.
+5. Define the target shape of project-specific runtime capability integration and runtime helper-skill routing.
+6. Define the target shape of status semantics and skill classification cleanup.
+7. Keep the package large and explicit enough that future follow-up tasks can branch from it without losing context.
 
 ## Success Conditions
 - A future agent can map an incoming request to one of the roadmap streams without re-reading the whole repository.

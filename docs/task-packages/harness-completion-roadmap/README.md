@@ -12,9 +12,12 @@
 - `OH-012 Skill Taxonomy And Stage Model` is the archived completed follow-up that turns taxonomy cleanup into a live protocol-status plus workflow-stage model and productizes the Python-first pytest baseline in live docs.
 - `OH-009 Task Package Semantic Validation` is the completed archived follow-up that productizes the next wave of status-semantics enforcement.
 - `OH-010 Workflow Transition And Verification Artifacts` is now archived as the completed follow-up for enforcing legal state movement and durable verification evidence.
+- `OH-013 Runtime Capability Contract` is the active design follow-up for defining how OpenHarness should represent and route project-specific runtime capabilities without assuming one universal runtime-debug skill.
+- `OH-014 Project Runtime Surface Map And Helper Skills` is the active design follow-up for defining how a repository should map its runtime surfaces and attach multiple narrow helper skills.
 
 ## Remaining Streams
 - `maintenance and entropy reduction`
+- `project runtime capability integration`
 
 ## Completed Or Baseline Streams
 - `runtime verification baseline`

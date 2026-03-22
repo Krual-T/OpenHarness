@@ -9,6 +9,7 @@ depends_on: []
 scope:
   areas:
     - runtime-verification
+    - runtime-capability-integration
     - python-verification
     - maintenance
     - status-semantics
@@ -20,6 +21,7 @@ entrypoints:
   - docs/task-packages/harness-completion-roadmap/03-detailed-design.md
 done_criteria:
   - The repository defines a minimal default runtime verification protocol for projects that start with weak runtime evidence.
+  - The repository defines how project-specific runtime capabilities and helper skills attach to the core workflow.
   - The repository defines a Python verification-maturity workflow rather than leaving `pytest` versus runtime-test expectations implicit.
   - The repository defines a maintenance / entropy-reduction workflow for ongoing cleanup and review.
   - The repository tightens status semantics and clarifies core vs compatibility vs optional skills.

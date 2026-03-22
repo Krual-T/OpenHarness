@@ -12,6 +12,8 @@
 - `docs/archived/task-packages/workflow-transition-and-verification-artifacts/*`
 - `docs/task-packages/task-package-semantic-validation/*`
 - `docs/task-packages/harness-completion-roadmap/STATUS.yaml`
+- `docs/task-packages/runtime-capability-contract/*`
+- `docs/task-packages/project-runtime-surface-map-and-helper-skills/*`
 - `docs/archived/task-packages/python-verification-maturity/*`
 - `skills/exploring-solution-space/SKILL.md`
 - `skills/brainstorming/SKILL.md`
@@ -47,6 +49,8 @@
 - `uv run python skills/using-openharness/scripts/openharness.py new-task task-package-semantic-validation OH-009 "Task Package Semantic Validation" --owner codex --summary "Strengthen check-tasks so status readiness is anchored to minimum document semantics instead of file existence alone."`
 - `uv run python skills/using-openharness/scripts/openharness.py new-task workflow-transition-and-verification-artifacts OH-010 "Workflow Transition And Verification Artifacts" --owner codex --summary "Enforce legal task-package status transitions and record verification runs as structured artifacts tied back to package evidence."`
 - `uv run python skills/using-openharness/scripts/openharness.py new-task skill-taxonomy-and-stage-model OH-011 "Skill Taxonomy And Stage Model" --owner codex --summary "Reshape OpenHarness skill classification around protocol status plus workflow stage, and define pytest as the Python baseline verification floor in live docs."`
+- `uv run python skills/using-openharness/scripts/openharness.py new-task runtime-capability-contract OH-013 "Runtime Capability Contract" --owner codex --summary "Define how OpenHarness should describe, route, verify, and write back project-specific runtime capabilities without assuming a single universal runtime debugging skill."`
+- `uv run python skills/using-openharness/scripts/openharness.py new-task project-runtime-surface-map-and-helper-skills OH-014 "Project Runtime Surface Map And Helper Skills" --owner codex --summary "Define how a repository should map its runtime surfaces and attach multiple project-specific runtime helper skills to the OpenHarness workflow without collapsing them into one generic debug skill."`
 - `uv run pytest skills/using-openharness/tests/test_openharness.py -k 'skill_hub_uses_protocol_status_plus_stage_model or readme_describes_plug_and_play_harness_and_python_pytest_floor'`
 - `uv run python skills/using-openharness/scripts/openharness.py transition skill-taxonomy-and-stage-model requirements_ready`
 - `uv run python skills/using-openharness/scripts/openharness.py transition skill-taxonomy-and-stage-model overview_ready`
@@ -78,3 +82,4 @@
 - Reuse the archived `OH-006 Status Semantics Tightening` package as the baseline if a later stream needs stronger transition enforcement, rather than reopening status-semantics design from scratch in `OH-004`.
 - Reuse archived `OH-009 Task Package Semantic Validation` if a later stream adds a `transition` command or structured verification artifacts, rather than mixing those concerns back into `OH-004`.
 - Reuse archived `OH-010 Workflow Transition And Verification Artifacts` as the baseline when later work needs stronger workflow control or richer verification evidence, instead of reopening those semantics inside `OH-004`.
+- Drive the next implementation wave from `OH-013` and `OH-014` when productizing runtime capability routing, runtime surface mapping, and project helper-skill guidance.
