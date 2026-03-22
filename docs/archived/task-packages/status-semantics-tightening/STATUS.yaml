@@ -1,0 +1,45 @@
+id: OH-006
+title: Status Semantics Tightening
+status: archived
+summary: Define stronger status meanings, transition rules, and evidence gates for OpenHarness design packages.
+owner: codex
+created_at: 2026-03-21
+updated_at: 2026-03-21
+depends_on:
+  - OH-004
+  - OH-005
+scope:
+  areas:
+    - status-semantics
+    - transition-rules
+    - verification-gates
+    - cli-validation
+entrypoints:
+  - docs/archived/task-packages/status-semantics-tightening/README.md
+  - docs/archived/task-packages/status-semantics-tightening/01-requirements.md
+  - docs/archived/task-packages/status-semantics-tightening/02-overview-design.md
+  - docs/archived/task-packages/status-semantics-tightening/03-detailed-design.md
+done_criteria:
+  - The package defines a non-ambiguous meaning for each workflow status in the default status flow.
+  - The package defines what evidence or readiness conditions must hold before a package may move into each later status.
+  - The package clarifies how runtime verification outcomes constrain `verifying`, completion claims, and archiving.
+  - Follow-up implementation can update templates, CLI validation, and workflow wording without rediscovering the core semantics.
+verification:
+  required_commands:
+    - uv run python skills/using-openharness/scripts/openharness.py check-tasks
+    - uv run pytest
+  required_scenarios: []
+evidence:
+  docs:
+    - docs/archived/task-packages/status-semantics-tightening/05-verification.md
+    - docs/archived/task-packages/status-semantics-tightening/06-evidence.md
+  code:
+    - skills/using-openharness/scripts/openharness.py
+    - skills/using-openharness/SKILL.md
+    - skills/exploring-solution-space/SKILL.md
+    - skills/using-openharness/references/templates/task-package.README.md
+    - skills/using-openharness/references/templates/task-package.STATUS.yaml
+    - skills/using-openharness/references/templates/task-package.03-detailed-design.md
+    - skills/using-openharness/references/templates/task-package.05-verification.md
+  tests:
+    - skills/using-openharness/tests/test_openharness.py

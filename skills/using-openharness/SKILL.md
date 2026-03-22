@@ -17,7 +17,7 @@ If there is even a 1% chance a repository skill applies, you must invoke the rel
 
 ## Intent
 
-Use this skill to work inside repositories that organize tasks as end-to-end `task package` records under `docs/designs/<task>/` rather than a centralized task board.
+Use this skill to work inside repositories that organize tasks as end-to-end `task package` records under `docs/task-packages/<task>/` rather than a centralized task board.
 
 ## Supporting Files
 
@@ -125,8 +125,8 @@ For non-package work that still touches repository workflow, start from `openhar
 
 ## Archive Protocol
 
-- Active work lives under `docs/designs/<task>/`.
-- Completed task packages that should no longer appear in active work move to `docs/archived/designs/<task>/`.
+- Active work lives under `docs/task-packages/<task>/`.
+- Completed task packages that should no longer appear in active work move to `docs/archived/task-packages/<task>/`.
 - Before moving a completed package, update `05-verification.md` and `06-evidence.md`, then set `STATUS.yaml.status` to `archived` and refresh `updated_at`.
 - After moving the package, update package-local entrypoints/evidence paths and any repository references that still point to the old active location.
 - Archived packages remain historical fact sources and verification evidence, but they must not remain in the active task root.

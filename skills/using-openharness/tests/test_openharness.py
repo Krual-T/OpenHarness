@@ -13,7 +13,7 @@ import openharness
 from openharness import (
     ACTIVE_STATUSES,
     DesignScaffoldRequest,
-    REQUIRED_DESIGN_FILES,
+    REQUIRED_TASK_PACKAGE_FILES,
     create_design_package,
     discover_design_packages,
     load_manifest,
@@ -26,10 +26,10 @@ from openharness import (
 REPO_ROOT = Path(__file__).resolve().parents[3]
 
 
-def test_manifest_points_to_designs_root() -> None:
+def test_manifest_points_to_task_package_roots() -> None:
     manifest = load_manifest(REPO_ROOT)
-    assert manifest.designs_root == REPO_ROOT / "docs" / "designs"
-    assert manifest.archived_designs_root == REPO_ROOT / "docs" / "archived" / "designs"
+    assert manifest.task_packages_root == REPO_ROOT / "docs" / "task-packages"
+    assert manifest.archived_task_packages_root == REPO_ROOT / "docs" / "archived" / "task-packages"
 
 
 def test_self_hosting_design_package_is_discoverable() -> None:
@@ -76,8 +76,8 @@ def test_load_manifest_prefers_repo_local_skills_layout(tmp_path: Path) -> None:
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
     (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
         "version: 1\n"
-        "designs_root: docs/designs\n"
-        "archived_designs_root: docs/archived/designs\n",
+        "designs_root: docs/task-packages\n"
+        "archived_designs_root: docs/archived/task-packages\n",
         encoding="utf-8",
     )
 
@@ -88,10 +88,10 @@ def test_load_manifest_prefers_repo_local_skills_layout(tmp_path: Path) -> None:
 def test_validate_design_package_rejects_unknown_status_and_missing_paths(tmp_path: Path) -> None:
     repo_root = tmp_path / "repo"
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
-    (repo_root / "docs" / "designs" / "broken").mkdir(parents=True)
+    (repo_root / "docs" / "task-packages" / "broken").mkdir(parents=True)
     (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
         "version: 1\n"
-        "designs_root: docs/designs\n"
+        "designs_root: docs/task-packages\n"
         "required_design_files:\n"
         "  - README.md\n"
         "  - STATUS.yaml\n"
@@ -106,7 +106,7 @@ def test_validate_design_package_rejects_unknown_status_and_missing_paths(tmp_pa
         "    - archived\n",
         encoding="utf-8",
     )
-    root = repo_root / "docs" / "designs" / "broken"
+    root = repo_root / "docs" / "task-packages" / "broken"
     for name in (
         "README.md",
         "01-requirements.md",
@@ -127,14 +127,14 @@ def test_validate_design_package_rejects_unknown_status_and_missing_paths(tmp_pa
         "done_criteria:\n"
         "  - x\n"
         "entrypoints:\n"
-        "  - docs/designs/broken/README.md\n"
-        "  - docs/designs/broken/missing.md\n"
+        "  - docs/task-packages/broken/README.md\n"
+        "  - docs/task-packages/broken/missing.md\n"
         "verification:\n"
         "  required_commands: []\n"
         "evidence:\n"
         "  docs:\n"
-        "    - docs/designs/broken/06-evidence.md\n"
-        "    - docs/designs/broken/nope.md\n",
+        "    - docs/task-packages/broken/06-evidence.md\n"
+        "    - docs/task-packages/broken/nope.md\n",
         encoding="utf-8",
     )
 
@@ -149,11 +149,11 @@ def test_validate_design_package_rejects_unknown_status_and_missing_paths(tmp_pa
 def test_validate_design_package_rejects_archived_status_in_active_root(tmp_path: Path) -> None:
     repo_root = tmp_path / "repo"
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
-    (repo_root / "docs" / "designs" / "wrong-place").mkdir(parents=True)
+    (repo_root / "docs" / "task-packages" / "wrong-place").mkdir(parents=True)
     (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
         "version: 1\n"
-        "designs_root: docs/designs\n"
-        "archived_designs_root: docs/archived/designs\n"
+        "designs_root: docs/task-packages\n"
+        "archived_designs_root: docs/archived/task-packages\n"
         "required_design_files:\n"
         "  - README.md\n"
         "  - STATUS.yaml\n"
@@ -168,8 +168,8 @@ def test_validate_design_package_rejects_archived_status_in_active_root(tmp_path
         "    - archived\n",
         encoding="utf-8",
     )
-    root = repo_root / "docs" / "designs" / "wrong-place"
-    for name in REQUIRED_DESIGN_FILES:
+    root = repo_root / "docs" / "task-packages" / "wrong-place"
+    for name in REQUIRED_TASK_PACKAGE_FILES:
         (root / name).write_text("x\n", encoding="utf-8")
     (root / "STATUS.yaml").write_text(
         "id: OH-999\n"
@@ -194,11 +194,11 @@ def test_validate_design_package_rejects_archived_status_in_active_root(tmp_path
 def test_validate_design_package_rejects_verifying_without_verification_path(tmp_path: Path) -> None:
     repo_root = tmp_path / "repo"
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
-    (repo_root / "docs" / "designs" / "verifying-empty").mkdir(parents=True)
+    (repo_root / "docs" / "task-packages" / "verifying-empty").mkdir(parents=True)
     (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
         "version: 1\n"
-        "designs_root: docs/designs\n"
-        "archived_designs_root: docs/archived/designs\n"
+        "designs_root: docs/task-packages\n"
+        "archived_designs_root: docs/archived/task-packages\n"
         "required_design_files:\n"
         "  - README.md\n"
         "  - STATUS.yaml\n"
@@ -218,8 +218,8 @@ def test_validate_design_package_rejects_verifying_without_verification_path(tmp
         "    - archived\n",
         encoding="utf-8",
     )
-    root = repo_root / "docs" / "designs" / "verifying-empty"
-    for name in REQUIRED_DESIGN_FILES:
+    root = repo_root / "docs" / "task-packages" / "verifying-empty"
+    for name in REQUIRED_TASK_PACKAGE_FILES:
         (root / name).write_text("x\n", encoding="utf-8")
     (root / "STATUS.yaml").write_text(
         "id: OH-901\n"
@@ -247,11 +247,11 @@ def test_validate_design_package_rejects_verifying_without_verification_path(tmp
 def test_validate_design_package_rejects_archived_without_verification_path(tmp_path: Path) -> None:
     repo_root = tmp_path / "repo"
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
-    (repo_root / "docs" / "archived" / "designs" / "archived-empty").mkdir(parents=True)
+    (repo_root / "docs" / "archived" / "task-packages" / "archived-empty").mkdir(parents=True)
     (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
         "version: 1\n"
-        "designs_root: docs/designs\n"
-        "archived_designs_root: docs/archived/designs\n"
+        "designs_root: docs/task-packages\n"
+        "archived_designs_root: docs/archived/task-packages\n"
         "required_design_files:\n"
         "  - README.md\n"
         "  - STATUS.yaml\n"
@@ -271,8 +271,8 @@ def test_validate_design_package_rejects_archived_without_verification_path(tmp_
         "    - archived\n",
         encoding="utf-8",
     )
-    root = repo_root / "docs" / "archived" / "designs" / "archived-empty"
-    for name in REQUIRED_DESIGN_FILES:
+    root = repo_root / "docs" / "archived" / "task-packages" / "archived-empty"
+    for name in REQUIRED_TASK_PACKAGE_FILES:
         (root / name).write_text("x\n", encoding="utf-8")
     (root / "STATUS.yaml").write_text(
         "id: OH-902\n"
@@ -304,22 +304,22 @@ def test_slugify_design_name_normalizes_human_text() -> None:
 def test_create_design_package_from_templates(tmp_path: Path) -> None:
     repo_root = tmp_path / "repo"
     (repo_root / "skills" / "using-openharness" / "references" / "templates").mkdir(parents=True)
-    (repo_root / "docs" / "designs").mkdir(parents=True)
+    (repo_root / "docs" / "task-packages").mkdir(parents=True)
     (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
-        "version: 1\ndesigns_root: docs/designs\narchived_designs_root: docs/archived/designs\nrequired_design_files:\n"
+        "version: 1\ndesigns_root: docs/task-packages\narchived_designs_root: docs/archived/task-packages\nrequired_design_files:\n"
         "  - README.md\n  - STATUS.yaml\n  - 01-requirements.md\n  - 02-overview-design.md\n"
         "  - 03-detailed-design.md\n  - 05-verification.md\n  - 06-evidence.md\n",
         encoding="utf-8",
     )
     template_root = repo_root / "skills" / "using-openharness" / "references" / "templates"
     for file_name, content in {
-        "design-package.README.md": "# <DESIGN_ID> <TITLE>\n",
-        "design-package.STATUS.yaml": "id: <DESIGN_ID>\ntitle: <TITLE>\nstatus: <STATUS>\nsummary: <SUMMARY>\nowner: <OWNER>\ncreated_at: <DATE>\nupdated_at: <DATE>\ndone_criteria:\n  - x\nverification:\n  required_commands: []\n",
-        "design-package.01-requirements.md": "req\n",
-        "design-package.02-overview-design.md": "overview\n",
-        "design-package.03-detailed-design.md": "detail\n",
-        "design-package.05-verification.md": "verify\n",
-        "design-package.06-evidence.md": "evidence\n",
+        "task-package.README.md": "# <DESIGN_ID> <TITLE>\n",
+        "task-package.STATUS.yaml": "id: <DESIGN_ID>\ntitle: <TITLE>\nstatus: <STATUS>\nsummary: <SUMMARY>\nowner: <OWNER>\ncreated_at: <DATE>\nupdated_at: <DATE>\ndone_criteria:\n  - x\nverification:\n  required_commands: []\n",
+        "task-package.01-requirements.md": "req\n",
+        "task-package.02-overview-design.md": "overview\n",
+        "task-package.03-detailed-design.md": "detail\n",
+        "task-package.05-verification.md": "verify\n",
+        "task-package.06-evidence.md": "evidence\n",
     }.items():
         (template_root / file_name).write_text(content, encoding="utf-8")
 
@@ -334,7 +334,7 @@ def test_create_design_package_from_templates(tmp_path: Path) -> None:
         )
     )
 
-    assert design_root == repo_root / "docs" / "designs" / "harness-replay"
+    assert design_root == repo_root / "docs" / "task-packages" / "harness-replay"
     assert (design_root / "README.md").read_text(encoding="utf-8") == "# OH-016 Harness Replay\n"
     assert not (design_root / "04-implementation-plan.md").exists()
     assert "summary: Replay scenarios." in (design_root / "STATUS.yaml").read_text(encoding="utf-8")
@@ -363,9 +363,9 @@ def test_openharness_skill_owns_supporting_scripts_and_templates() -> None:
     assert (skill_root / "scripts" / "openharness.py").exists()
     assert (skill_root / "tests" / "test_openharness.py").exists()
     assert (skill_root / "references" / "manifest.yaml").exists()
-    assert (skill_root / "references" / "templates" / "design-package.README.md").exists()
-    assert (skill_root / "references" / "templates" / "design-package.STATUS.yaml").exists()
-    assert not (skill_root / "references" / "templates" / "design-package.04-implementation-plan.md").exists()
+    assert (skill_root / "references" / "templates" / "task-package.README.md").exists()
+    assert (skill_root / "references" / "templates" / "task-package.STATUS.yaml").exists()
+    assert not (skill_root / "references" / "templates" / "task-package.04-implementation-plan.md").exists()
 
 
 def test_openharness_single_cli_supports_all_subcommands() -> None:
@@ -376,10 +376,10 @@ def test_openharness_single_cli_supports_all_subcommands() -> None:
 
 def test_task_package_aliases_share_legacy_handlers() -> None:
     parser = openharness.build_parser()
-    assert parser.parse_args(["check-designs"]).handler == openharness.cmd_check_designs
     assert parser.parse_args(["check-tasks"]).handler == openharness.cmd_check_designs
-    assert parser.parse_args(["new-design", "name", "OH-999", "Title"]).handler == openharness.cmd_new_design
+    assert parser.parse_args(["check-designs"]).handler == openharness.cmd_check_designs
     assert parser.parse_args(["new-task", "name", "OH-999", "Title"]).handler == openharness.cmd_new_design
+    assert parser.parse_args(["new-design", "name", "OH-999", "Title"]).handler == openharness.cmd_new_design
 
 
 def test_openharness_skill_is_repo_entry_skill() -> None:
@@ -454,7 +454,7 @@ def test_design_package_templates_include_verification_path_sections() -> None:
         / "using-openharness"
         / "references"
         / "templates"
-        / "design-package.03-detailed-design.md"
+        / "task-package.03-detailed-design.md"
     ).read_text(encoding="utf-8")
     verification = (
         REPO_ROOT
@@ -462,7 +462,7 @@ def test_design_package_templates_include_verification_path_sections() -> None:
         / "using-openharness"
         / "references"
         / "templates"
-        / "design-package.05-verification.md"
+        / "task-package.05-verification.md"
     ).read_text(encoding="utf-8")
     evidence = (
         REPO_ROOT
@@ -470,7 +470,7 @@ def test_design_package_templates_include_verification_path_sections() -> None:
         / "using-openharness"
         / "references"
         / "templates"
-        / "design-package.06-evidence.md"
+        / "task-package.06-evidence.md"
     ).read_text(encoding="utf-8")
 
     assert "## Runtime Verification Plan" in detailed
@@ -489,7 +489,7 @@ def test_design_package_templates_include_status_guidance() -> None:
         / "using-openharness"
         / "references"
         / "templates"
-        / "design-package.README.md"
+        / "task-package.README.md"
     ).read_text(encoding="utf-8")
     status = (
         REPO_ROOT
@@ -497,7 +497,7 @@ def test_design_package_templates_include_status_guidance() -> None:
         / "using-openharness"
         / "references"
         / "templates"
-        / "design-package.STATUS.yaml"
+        / "task-package.STATUS.yaml"
     ).read_text(encoding="utf-8")
     detailed = (
         REPO_ROOT
@@ -505,7 +505,7 @@ def test_design_package_templates_include_status_guidance() -> None:
         / "using-openharness"
         / "references"
         / "templates"
-        / "design-package.03-detailed-design.md"
+        / "task-package.03-detailed-design.md"
     ).read_text(encoding="utf-8")
     verification = (
         REPO_ROOT
@@ -513,7 +513,7 @@ def test_design_package_templates_include_status_guidance() -> None:
         / "using-openharness"
         / "references"
         / "templates"
-        / "design-package.05-verification.md"
+        / "task-package.05-verification.md"
     ).read_text(encoding="utf-8")
 
     assert "Status should match the highest workflow checkpoint" in readme
@@ -545,11 +545,11 @@ def test_verify_reports_declared_manual_scenarios_without_claiming_execution(
 ) -> None:
     repo_root = tmp_path / "repo"
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
-    (repo_root / "docs" / "designs" / "manual-only").mkdir(parents=True)
+    (repo_root / "docs" / "task-packages" / "manual-only").mkdir(parents=True)
     (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
         "version: 1\n"
-        "designs_root: docs/designs\n"
-        "archived_designs_root: docs/archived/designs\n"
+        "designs_root: docs/task-packages\n"
+        "archived_designs_root: docs/archived/task-packages\n"
         "required_design_files:\n"
         "  - README.md\n"
         "  - STATUS.yaml\n"
@@ -565,8 +565,8 @@ def test_verify_reports_declared_manual_scenarios_without_claiming_execution(
         "    - archived\n",
         encoding="utf-8",
     )
-    root = repo_root / "docs" / "designs" / "manual-only"
-    for name in REQUIRED_DESIGN_FILES:
+    root = repo_root / "docs" / "task-packages" / "manual-only"
+    for name in REQUIRED_TASK_PACKAGE_FILES:
         (root / name).write_text("x\n", encoding="utf-8")
     (root / "STATUS.yaml").write_text(
         "id: OH-999\n"
@@ -607,11 +607,11 @@ def test_verify_reports_declared_manual_scenarios_without_claiming_execution(
 def test_verify_rejects_packages_with_no_declared_verification_path(tmp_path: Path, capsys) -> None:
     repo_root = tmp_path / "repo"
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
-    (repo_root / "docs" / "designs" / "no-verification").mkdir(parents=True)
+    (repo_root / "docs" / "task-packages" / "no-verification").mkdir(parents=True)
     (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
         "version: 1\n"
-        "designs_root: docs/designs\n"
-        "archived_designs_root: docs/archived/designs\n"
+        "designs_root: docs/task-packages\n"
+        "archived_designs_root: docs/archived/task-packages\n"
         "required_design_files:\n"
         "  - README.md\n"
         "  - STATUS.yaml\n"
@@ -627,8 +627,8 @@ def test_verify_rejects_packages_with_no_declared_verification_path(tmp_path: Pa
         "    - archived\n",
         encoding="utf-8",
     )
-    root = repo_root / "docs" / "designs" / "no-verification"
-    for name in REQUIRED_DESIGN_FILES:
+    root = repo_root / "docs" / "task-packages" / "no-verification"
+    for name in REQUIRED_TASK_PACKAGE_FILES:
         (root / name).write_text("x\n", encoding="utf-8")
     (root / "STATUS.yaml").write_text(
         "id: OH-998\n"
@@ -663,8 +663,8 @@ def test_verify_defaults_to_later_stage_statuses_only(
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
     (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
         "version: 1\n"
-        "designs_root: docs/designs\n"
-        "archived_designs_root: docs/archived/designs\n"
+        "designs_root: docs/task-packages\n"
+        "archived_designs_root: docs/archived/task-packages\n"
         "required_design_files:\n"
         "  - README.md\n"
         "  - STATUS.yaml\n"
@@ -686,9 +686,9 @@ def test_verify_defaults_to_later_stage_statuses_only(
     )
 
     def write_package(name: str, status: str, command: str) -> None:
-        root = repo_root / "docs" / "designs" / name
+        root = repo_root / "docs" / "task-packages" / name
         root.mkdir(parents=True)
-        for file_name in REQUIRED_DESIGN_FILES:
+        for file_name in REQUIRED_TASK_PACKAGE_FILES:
             (root / file_name).write_text("x\n", encoding="utf-8")
         (root / "STATUS.yaml").write_text(
             f"id: {name.upper()}\n"
@@ -736,8 +736,8 @@ def test_verify_allows_explicit_package_target_before_in_progress(
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
     (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
         "version: 1\n"
-        "designs_root: docs/designs\n"
-        "archived_designs_root: docs/archived/designs\n"
+        "designs_root: docs/task-packages\n"
+        "archived_designs_root: docs/archived/task-packages\n"
         "required_design_files:\n"
         "  - README.md\n"
         "  - STATUS.yaml\n"
@@ -757,9 +757,9 @@ def test_verify_allows_explicit_package_target_before_in_progress(
         "    - archived\n",
         encoding="utf-8",
     )
-    root = repo_root / "docs" / "designs" / "early-target"
+    root = repo_root / "docs" / "task-packages" / "early-target"
     root.mkdir(parents=True)
-    for file_name in REQUIRED_DESIGN_FILES:
+    for file_name in REQUIRED_TASK_PACKAGE_FILES:
         (root / file_name).write_text("x\n", encoding="utf-8")
     (root / "STATUS.yaml").write_text(
         "id: OH-777\n"

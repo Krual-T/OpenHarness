@@ -4,7 +4,7 @@ Use this template when dispatching a spec document reviewer subagent.
 
 **Purpose:** Verify the spec is complete, consistent, and ready for implementation planning.
 
-**Dispatch after:** The active harness task package under `docs/designs/<task>/` is updated
+**Dispatch after:** The active harness task package under `docs/task-packages/<task>/` is updated
 
 ```
 Task tool (general-purpose):

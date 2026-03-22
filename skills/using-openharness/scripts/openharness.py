@@ -14,7 +14,7 @@ import yaml
 
 ACTIVE_STATUSES = {"proposed", "requirements_ready", "overview_ready", "detailed_ready", "in_progress", "verifying"}
 VERIFYABLE_STATUSES = {"in_progress", "verifying"}
-REQUIRED_DESIGN_FILES = (
+REQUIRED_TASK_PACKAGE_FILES = (
     "README.md",
     "STATUS.yaml",
     "01-requirements.md",
@@ -43,21 +43,37 @@ class HarnessManifest:
     raw: dict[str, Any]
 
     @property
-    def designs_root(self) -> Path:
-        raw_root = str(self.raw.get("designs_root") or "designs").strip() or "designs"
+    def task_packages_root(self) -> Path:
+        raw_root = str(
+            self.raw.get("task_packages_root")
+            or self.raw.get("designs_root")
+            or "docs/task-packages"
+        ).strip() or "docs/task-packages"
         return (self.repo_root / raw_root).resolve()
 
     @property
-    def archived_designs_root(self) -> Path:
-        raw_root = str(self.raw.get("archived_designs_root") or "docs/archived/designs").strip() or "docs/archived/designs"
+    def archived_task_packages_root(self) -> Path:
+        raw_root = str(
+            self.raw.get("archived_task_packages_root")
+            or self.raw.get("archived_designs_root")
+            or "docs/archived/task-packages"
+        ).strip() or "docs/archived/task-packages"
         return (self.repo_root / raw_root).resolve()
 
     @property
     def required_design_files(self) -> tuple[str, ...]:
         raw = self.raw.get("required_design_files")
         if not isinstance(raw, list) or not raw:
-            return REQUIRED_DESIGN_FILES
+            return REQUIRED_TASK_PACKAGE_FILES
         return tuple(str(item).strip() for item in raw if str(item).strip())
+
+    @property
+    def designs_root(self) -> Path:
+        return self.task_packages_root
+
+    @property
+    def archived_designs_root(self) -> Path:
+        return self.archived_task_packages_root
 
     @property
     def allowed_statuses(self) -> tuple[str, ...]:
@@ -173,14 +189,14 @@ def load_manifest(repo_root: Path) -> HarnessManifest:
 def discover_design_packages(repo_root: Path, manifest: HarnessManifest | None = None) -> list[DesignPackage]:
     current_manifest = manifest or load_manifest(repo_root)
     packages: list[DesignPackage] = []
-    roots = [current_manifest.designs_root]
-    if current_manifest.archived_designs_root != current_manifest.designs_root:
-        roots.append(current_manifest.archived_designs_root)
+    roots = [current_manifest.task_packages_root]
+    if current_manifest.archived_task_packages_root != current_manifest.task_packages_root:
+        roots.append(current_manifest.archived_task_packages_root)
     seen: set[Path] = set()
-    for designs_root in roots:
-        if not designs_root.exists():
+    for task_packages_root in roots:
+        if not task_packages_root.exists():
             continue
-        for child in sorted(path for path in designs_root.iterdir() if path.is_dir()):
+        for child in sorted(path for path in task_packages_root.iterdir() if path.is_dir()):
             resolved = child.resolve()
             if resolved in seen:
                 continue
@@ -216,13 +232,13 @@ def validate_design_package(package: DesignPackage) -> list[str]:
             f"expected one of: {', '.join(allowed_statuses)}"
         )
     if package.status_name == "archived":
-        if package.root.resolve().parent != package.manifest.archived_designs_root:
+        if package.root.resolve().parent != package.manifest.archived_task_packages_root:
             errors.append(
-                f"archived package must live under {package.manifest.archived_designs_root}: {package.root}"
+                f"archived package must live under {package.manifest.archived_task_packages_root}: {package.root}"
             )
-    elif package.root.resolve().parent == package.manifest.archived_designs_root:
+    elif package.root.resolve().parent == package.manifest.archived_task_packages_root:
         errors.append(
-            f"non-archived package must not live under {package.manifest.archived_designs_root}: {package.root}"
+            f"non-archived package must not live under {package.manifest.archived_task_packages_root}: {package.root}"
         )
     if package.status_name == "verifying" and not package.required_commands and not package.required_scenarios:
         errors.append(
@@ -268,7 +284,7 @@ def slugify_design_name(raw_name: str) -> str:
 def create_design_package(request: DesignScaffoldRequest) -> Path:
     manifest = load_manifest(request.repo_root)
     design_name = slugify_design_name(request.design_name)
-    design_root = manifest.designs_root / design_name
+    design_root = manifest.task_packages_root / design_name
     if design_root.exists():
         raise FileExistsError(f"task package already exists: {design_root}")
     skill_root = Path(__file__).resolve().parents[1]
@@ -293,8 +309,8 @@ def create_design_package(request: DesignScaffoldRequest) -> Path:
         "<DATE>": "YYYY-MM-DD",
     }
     design_root.mkdir(parents=True, exist_ok=False)
-    for template in sorted(template_root.glob("design-package.*")):
-        target_name = template.name.removeprefix("design-package.")
+    for template in sorted(template_root.glob("task-package.*")):
+        target_name = template.name.removeprefix("task-package.")
         content = template.read_text(encoding="utf-8")
         for source, target in replacements.items():
             content = content.replace(source, target)
@@ -320,8 +336,8 @@ def cmd_bootstrap(args: argparse.Namespace) -> int:
                 {
                     "repo": str(repo_root),
                     "manifest": str(manifest.path),
-                    "designs_root": str(manifest.designs_root),
-                    "archived_designs_root": str(manifest.archived_designs_root),
+                    "task_packages_root": str(manifest.task_packages_root),
+                    "archived_task_packages_root": str(manifest.archived_task_packages_root),
                     "task_packages": [
                         {
                             "id": package.design_id,
@@ -343,7 +359,7 @@ def cmd_bootstrap(args: argparse.Namespace) -> int:
         )
         return 0
     print(f"Harness manifest: {manifest.path}")
-    print(f"Task package root (compat path): {manifest.designs_root}")
+    print(f"Task package root: {manifest.task_packages_root}")
     if not packages:
         print("No matching task packages found.")
         return 0
@@ -364,7 +380,7 @@ def cmd_check_designs(args: argparse.Namespace) -> int:
     errors: list[str] = []
     if not packages:
         errors.append(
-            f"no task packages found under {manifest.designs_root} or {manifest.archived_designs_root}"
+            f"no task packages found under {manifest.task_packages_root} or {manifest.archived_task_packages_root}"
         )
     for package in packages:
         errors.extend(validate_design_package(package))
@@ -374,7 +390,7 @@ def cmd_check_designs(args: argparse.Namespace) -> int:
         return 1
     print(
         f"Validated {len(packages)} task package(s) under "
-        f"{manifest.designs_root} and {manifest.archived_designs_root}"
+        f"{manifest.task_packages_root} and {manifest.archived_task_packages_root}"
     )
     return 0
 
@@ -402,7 +418,7 @@ def cmd_verify(args: argparse.Namespace) -> int:
     errors: list[str] = []
     if not packages:
         errors.append(
-            f"no task packages found under {manifest.designs_root} or {manifest.archived_designs_root}"
+            f"no task packages found under {manifest.task_packages_root} or {manifest.archived_task_packages_root}"
         )
     for package in packages:
         errors.extend(validate_design_package(package))
@@ -410,7 +426,7 @@ def cmd_verify(args: argparse.Namespace) -> int:
         for error in errors:
             print(f"ERROR: {error}")
         return 1
-    if args.check_designs_only:
+    if getattr(args, "check_tasks_only", False) or getattr(args, "check_designs_only", False):
         return 0
     if args.design:
         packages = [package for package in packages if package.name == args.design or package.design_id == args.design]
@@ -453,21 +469,21 @@ def build_parser() -> argparse.ArgumentParser:
     bootstrap_parser.set_defaults(handler=cmd_bootstrap)
 
     check_parser = subparsers.add_parser(
-        "check-designs",
-        aliases=["check-tasks"],
+        "check-tasks",
+        aliases=["check-designs"],
         help="Validate repository task packages against harness protocol.",
     )
     check_parser.add_argument("--repo", default=".", help="Repository root")
     check_parser.set_defaults(handler=cmd_check_designs)
 
     new_design_parser = subparsers.add_parser(
-        "new-design",
-        aliases=["new-task"],
+        "new-task",
+        aliases=["new-design"],
         help="Create a new task package from harness templates.",
     )
-    new_design_parser.add_argument("design_name", help="Directory slug or human-readable design name")
-    new_design_parser.add_argument("design_id", help="Stable design id, such as OR-016")
-    new_design_parser.add_argument("title", help="Human-readable design title")
+    new_design_parser.add_argument("design_name", metavar="task_name", help="Directory slug or human-readable task name")
+    new_design_parser.add_argument("design_id", metavar="task_id", help="Stable task id, such as OR-016")
+    new_design_parser.add_argument("title", help="Human-readable task title")
     new_design_parser.add_argument("--owner", default="unassigned", help="Initial owner")
     new_design_parser.add_argument("--summary", default="", help="Short summary")
     new_design_parser.add_argument("--status", default="proposed", help="Initial status")
@@ -477,7 +493,8 @@ def build_parser() -> argparse.ArgumentParser:
     verify_parser = subparsers.add_parser("verify", help="Run harness verification for one task package or all active packages.")
     verify_parser.add_argument("design", nargs="?", default="", help="Task package name or task id")
     verify_parser.add_argument("--repo", default=".", help="Repository root")
-    verify_parser.add_argument("--check-designs-only", action="store_true", help="Only validate task package protocol")
+    verify_parser.add_argument("--check-tasks-only", action="store_true", help="Only validate task package protocol")
+    verify_parser.add_argument("--check-designs-only", action="store_true", help=argparse.SUPPRESS)
     verify_parser.set_defaults(handler=cmd_verify)
 
     return parser

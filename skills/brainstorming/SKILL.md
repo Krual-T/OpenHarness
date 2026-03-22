@@ -114,7 +114,7 @@ digraph brainstorming {
 
 **Documentation:**
 
-- Write the validated design into the active harness task package under `docs/designs/<task>/`:
+- Write the validated design into the active harness task package under `docs/task-packages/<task>/`:
   - update `01-requirements.md` when the validated design changes goals, scope, constraints, non-goals, or done criteria
   - update `02-overview-design.md` when the validated design changes architecture, boundaries, responsibilities, or primary flows
   - update `03-detailed-design.md` when the validated design changes implementation landing points, file-level structure, interfaces, or migration details

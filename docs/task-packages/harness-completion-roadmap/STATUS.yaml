@@ -1,0 +1,37 @@
+id: OH-004
+title: Harness Completion Roadmap
+status: in_progress
+summary: Track the remaining major work needed to make OpenHarness a complete verification- and maintenance-oriented skill hub, including runtime verification defaults, Python verification maturity, maintenance, and status semantics.
+owner: codex
+created_at: 2026-03-20
+updated_at: 2026-03-22
+depends_on: []
+scope:
+  areas:
+    - runtime-verification
+    - python-verification
+    - maintenance
+    - status-semantics
+    - skill-taxonomy
+entrypoints:
+  - docs/task-packages/harness-completion-roadmap/README.md
+  - docs/task-packages/harness-completion-roadmap/01-requirements.md
+  - docs/task-packages/harness-completion-roadmap/02-overview-design.md
+  - docs/task-packages/harness-completion-roadmap/03-detailed-design.md
+done_criteria:
+  - The repository defines a minimal default runtime verification protocol for projects that start with weak runtime evidence.
+  - The repository defines a Python verification-maturity workflow rather than leaving `pytest` versus runtime-test expectations implicit.
+  - The repository defines a maintenance / entropy-reduction workflow for ongoing cleanup and review.
+  - The repository tightens status semantics and clarifies core vs compatibility vs optional skills.
+  - Follow-up implementation can proceed from this package without rediscovering the remaining major gaps.
+verification:
+  required_commands:
+    - uv run python skills/using-openharness/scripts/openharness.py check-tasks
+    - uv run pytest
+  required_scenarios: []
+evidence:
+  docs:
+    - docs/task-packages/harness-completion-roadmap/05-verification.md
+    - docs/task-packages/harness-completion-roadmap/06-evidence.md
+  code: []
+  tests: []

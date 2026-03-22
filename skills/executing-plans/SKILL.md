@@ -11,7 +11,7 @@ Load the task package plus any optional execution plan artifact, review critical
 
 **Announce at start:** "I'm using the executing-plans skill to execute this task package."
 
-In this repository, `executing-plans` is a compatibility helper for cases where work has already been written as an explicit execution plan. The task package under `docs/designs/<task>/` remains the source of truth; the plan is only a derived execution aid.
+In this repository, `executing-plans` is a compatibility helper for cases where work has already been written as an explicit execution plan. The task package under `docs/task-packages/<task>/` remains the source of truth; the plan is only a derived execution aid.
 
 **Note:** If subagents are available, prefer `subagent-driven-development` over this skill.
 

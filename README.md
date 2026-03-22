@@ -23,7 +23,7 @@ OpenHarness exists to fix that.
 It gives Codex a working environment where:
 - `AGENTS.md` is a map, not an encyclopedia
 - repository-local docs are the system of record
-- each task has a structured design package
+- each task has a structured task package
 - verification is explicit and repeatable
 - reusable workflow knowledge lives in version control
 - humans steer and review the system, while agents do the heavy execution
@@ -71,9 +71,9 @@ It tells the agent where truth lives, what the default workflow is, what must be
 
 This follows the same spirit described by OpenAI's harness engineering article: the entrypoint should orient the agent, not drown it.
 
-### 2. Design packages instead of vague task memory
+### 2. Task packages instead of vague task memory
 
-Every meaningful task lives in `docs/designs/<task>/` as a package with stable files for:
+Every meaningful task lives in `docs/task-packages/<task>/` as a package with stable files for:
 - requirements
 - exploration-backed overview design
 - overview design
@@ -110,7 +110,7 @@ That means key decisions should move out of chat threads and into versioned arti
 A typical task looks like this:
 
 1. `AGENTS.md` routes the agent into the correct workflow.
-2. `using-openharness` checks the manifest and active design packages.
+2. `using-openharness` checks the manifest and active task packages.
 3. `brainstorming` converges the requirements first.
 4. `exploring-solution-space` explores the local repo and the web before architecture is locked in.
 5. The agent drafts overview design, then runs a reflection pass and can use bounded subagent discussion before treating architecture as ready.
@@ -140,8 +140,8 @@ In other words, this repo is optimized less for heroic one-shot prompting and mo
 ```text
 AGENTS.md                          # repository map
 skills/                            # workflow skills used by Codex
-docs/designs/<task>/               # active design packages
-docs/archived/designs/<task>/      # archived design packages
+docs/task-packages/<task>/               # active task packages
+docs/archived/task-packages/<task>/      # archived task packages
 .project-memory/                   # reusable validated project knowledge
 ```
 
@@ -151,7 +151,7 @@ OpenHarness is a good fit if you want to:
 - run Codex against real repositories, not toy demos
 - keep architecture and workflow decisions in version control
 - make agent output more consistent without writing giant prompts
-- scale multi-step work through design packages and verification loops
+- scale multi-step work through task packages and verification loops
 - build a repo that gets more legible as it grows
 
 It is probably not a fit if you want a minimal one-file setup with no process overhead.
@@ -178,6 +178,6 @@ This repository includes attribution to the upstream MIT-licensed work from `obr
 
 After installing, open a real repo and give Codex a task that normally goes off the rails. Then compare the difference between:
 - a repo with scattered context and no harness
-- a repo with a map, design packages, verification gates, and reusable skills
+- a repo with a map, task packages, verification gates, and reusable skills
 
 That comparison is the product.

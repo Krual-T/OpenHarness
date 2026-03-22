@@ -1,7 +1,7 @@
 version: 1
 map_file: AGENTS.md
-designs_root: docs/designs
-archived_designs_root: docs/archived/designs
+task_packages_root: docs/task-packages
+archived_task_packages_root: docs/archived/task-packages
 required_design_files:
   - README.md
   - STATUS.yaml
@@ -13,13 +13,13 @@ required_design_files:
 workflow:
   discovery_order:
     - AGENTS.md
-    - docs/designs/<design>/README.md
-    - docs/designs/<design>/STATUS.yaml
-    - docs/designs/<design>/01-requirements.md
-    - docs/designs/<design>/02-overview-design.md
-    - docs/designs/<design>/03-detailed-design.md
-    - docs/designs/<design>/05-verification.md
-    - docs/designs/<design>/06-evidence.md
+    - docs/task-packages/<task>/README.md
+    - docs/task-packages/<task>/STATUS.yaml
+    - docs/task-packages/<task>/01-requirements.md
+    - docs/task-packages/<task>/02-overview-design.md
+    - docs/task-packages/<task>/03-detailed-design.md
+    - docs/task-packages/<task>/05-verification.md
+    - docs/task-packages/<task>/06-evidence.md
   default_status_flow:
     - proposed
     - requirements_ready
