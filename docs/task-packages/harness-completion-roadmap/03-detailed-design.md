@@ -28,6 +28,7 @@ The already-completed baselines should be reused instead of re-designed here:
 - `workflow transition and verification artifacts`
 - `python verification maturity`
 - `skill taxonomy and compatibility cleanup`
+- `skill taxonomy and stage model`
 
 ## Error Handling
 - If a future task tries to solve several of these streams at once, this package should be used to decompose the request before implementation.
@@ -41,6 +42,7 @@ The already-completed baselines should be reused instead of re-designed here:
 - `task package semantic validation` is the archived completed follow-up that adds the next semantic-enforcement wave on top of `OH-006`.
 - `OH-007 Python Verification Maturity` is a legacy archived design baseline written before task-package completion semantics were tightened; future work should not treat it as proof that design-complete alone is archive-ready.
 - `OH-008 Skill Taxonomy And Compatibility Cleanup` is now the archived baseline for stable skill categories and retirement of the old plan-oriented surface.
+- `OH-012 Skill Taxonomy And Stage Model` is now the archived follow-up that turns the taxonomy baseline into live protocol-status and workflow-stage wording and productizes the Python-first pytest floor.
 - `OH-010 Workflow Transition And Verification Artifacts` is now archived as the completed implementation wave for supported transitions and verification artifact closure.
 
 ## Detailed Reflection

@@ -5,6 +5,12 @@ description: Use after requirements are clear to explore the local repository an
 
 # Exploring Solution Space
 
+## Skill Role
+
+- Protocol status: core protocol skill
+- Primary stage: exploration and architecture
+- Trigger: use after requirements are clear and before architecture or implementation details are locked
+
 ## Overview
 
 Use this skill after `brainstorming` has clarified the task and written `01-requirements.md`.

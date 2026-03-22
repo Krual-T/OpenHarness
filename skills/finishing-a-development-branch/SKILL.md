@@ -5,6 +5,12 @@ description: Use when a task package has completed implementation and verificati
 
 # Finishing a Development Branch
 
+## Skill Role
+
+- Protocol status: optional helper skill
+- Primary stage: verification and closure
+- Trigger: use when verified implementation work needs final integration handling
+
 ## Overview
 
 Guide completion of development work by closing the task package correctly, then presenting clear options and handling the chosen workflow.

@@ -15,6 +15,12 @@ If there is even a 1% chance a repository skill applies, you must invoke the rel
 
 # Using OpenHarness
 
+## Skill Role
+
+- Protocol status: core protocol skill
+- Primary stage: entry and routing
+- Trigger: default first skill for repository workflow, task-package protocol, and skill routing
+
 ## Intent
 
 Use this skill to work inside repositories that organize tasks as end-to-end `task package` records under `docs/task-packages/<task>/` rather than a centralized task board.
@@ -148,5 +154,7 @@ For non-package work that still touches repository workflow, start from `openhar
 - Run `scripts/openharness.py new-task <task_name> <task_id> <title>` to scaffold a new task package.
 - Run `scripts/openharness.py verify <task-name-or-id>` when a package declares required commands.
 - `openharness.py` is the single harness CLI; use its subcommands instead of introducing parallel wrapper scripts.
+- For Python-first repositories, treat `uv run pytest` as the default minimum automated verification floor unless the repository already has a stronger automated path.
+- Do not treat that Python floor as full runtime evidence; project-specific runtime verification still belongs in task packages.
 - If the package adds new reusable project knowledge, update `.project-memory/` in the same turn.
 - If a completed package is archived, rerun harness validation after the move and confirm it no longer appears in the default `bootstrap` active-package list.

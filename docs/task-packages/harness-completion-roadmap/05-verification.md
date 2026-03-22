@@ -69,3 +69,8 @@
   - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
   - `uv run pytest`
   - Result: `check-tasks` validated 11 task packages, `bootstrap` showed only `OH-004` as active, and the full suite passed with `41 passed`.
+- Passed again on 2026-03-23 after completing and archiving `OH-012 Skill Taxonomy And Stage Model`:
+  - `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
+  - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
+  - `uv run pytest`
+  - Result: `check-tasks` validated 12 task packages, `bootstrap` returned to only `OH-004` as active after archival, and the full suite passed with `44 passed`.

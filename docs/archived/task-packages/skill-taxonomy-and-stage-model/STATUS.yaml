@@ -1,0 +1,50 @@
+id: OH-012
+title: Skill Taxonomy And Stage Model
+status: archived
+summary: Reshape OpenHarness skill classification around protocol status plus workflow
+  stage, and define pytest as the Python baseline verification floor in live docs.
+owner: codex
+created_at: 2026-03-23
+updated_at: 2026-03-23
+depends_on:
+- OH-004
+- OH-008
+- OH-007
+scope:
+  areas:
+  - skill-taxonomy
+  - workflow-stages
+  - verification-baseline
+  - live-docs
+  - tests
+entrypoints:
+- docs/archived/task-packages/skill-taxonomy-and-stage-model/README.md
+- docs/archived/task-packages/skill-taxonomy-and-stage-model/01-requirements.md
+- docs/archived/task-packages/skill-taxonomy-and-stage-model/02-overview-design.md
+- docs/archived/task-packages/skill-taxonomy-and-stage-model/03-detailed-design.md
+done_criteria:
+- The live skill hub classifies skills by protocol status and separately describes
+  their workflow stage or trigger.
+- The live repository no longer mixes protocol strength and theme buckets as the main
+  taxonomy model.
+- Affected repository-owned skills describe their protocol role and primary stage
+  consistently enough that future maintenance can audit them mechanically.
+- Live docs describe OpenHarness as a plug-and-play Agent Harness for Python-first
+  repositories.
+- Live docs define `uv run pytest` as the default minimum automated verification floor
+  for Python-first repositories while keeping stronger runtime verification project-specific.
+- Repository tests fail if the hub or README drifts away from the new model.
+verification:
+  required_commands:
+  - uv run python skills/using-openharness/scripts/openharness.py check-tasks
+  - uv run pytest
+  required_scenarios: []
+  last_run_at: '2026-03-22T16:49:21Z'
+  last_run_result: passed
+  last_run_artifact: .harness/artifacts/OH-012/verification-runs/20260322T164921906572Z.json
+evidence:
+  docs:
+  - docs/archived/task-packages/skill-taxonomy-and-stage-model/05-verification.md
+  - docs/archived/task-packages/skill-taxonomy-and-stage-model/06-evidence.md
+  code: []
+  tests: []

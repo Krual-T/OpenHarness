@@ -5,6 +5,12 @@ description: Use when receiving code review feedback, before implementing sugges
 
 # Code Review Reception
 
+## Skill Role
+
+- Protocol status: optional helper skill
+- Primary stage: debugging and repair
+- Trigger: use when review feedback arrives and needs technical validation before implementation
+
 ## Overview
 
 Code review requires technical evaluation, not emotional performance.

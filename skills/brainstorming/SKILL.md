@@ -5,6 +5,12 @@ description: "You MUST use this before any creative work - creating features, bu
 
 # Brainstorming Ideas Into Designs
 
+## Skill Role
+
+- Protocol status: core protocol skill
+- Primary stage: requirements convergence
+- Trigger: use when the task needs requirement clarity, scope convergence, or explicit design before execution
+
 Help turn ideas into fully formed designs and specs through natural collaborative dialogue.
 
 In this repository, `brainstorming` is a child skill of `using-openharness`.

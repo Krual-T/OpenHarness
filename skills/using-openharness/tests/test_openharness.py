@@ -482,6 +482,23 @@ def test_skill_hub_declares_no_parallel_entry_skill() -> None:
     assert "reflection" in text
 
 
+def test_skill_hub_uses_protocol_status_plus_stage_model() -> None:
+    hub_path = REPO_ROOT / "skills" / "using-openharness" / "references" / "skill-hub.md"
+    text = hub_path.read_text(encoding="utf-8")
+    assert "## Protocol Status" in text
+    assert "### Core Protocol Skills" in text
+    assert "### Optional Helper Skills" in text
+    assert "### Imported Generic Skills" in text
+    assert "## Workflow Stages And Triggers" in text
+    assert "### Entry And Routing" in text
+    assert "### Requirements Convergence" in text
+    assert "### Exploration And Architecture" in text
+    assert "### Implementation Execution" in text
+    assert "### Debugging And Repair" in text
+    assert "### Verification And Closure" in text
+    assert "### Repository Memory And Maintenance" in text
+
+
 def test_optional_execution_skills_are_not_described_as_core_protocol() -> None:
     for path in [
         REPO_ROOT / "skills" / "subagent-driven-development" / "SKILL.md",
@@ -507,6 +524,14 @@ def test_docs_describe_reflective_design_loop() -> None:
     assert "reflection" in readme
     assert "reflection" in agents
     assert "subagent" in readme or "子智能体" in agents
+
+
+def test_readme_describes_plug_and_play_harness_and_python_pytest_floor() -> None:
+    readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
+    assert "plug-and-play" in readme
+    assert "Python-first" in readme
+    assert "`uv run pytest` is the default minimum automated verification floor" in readme
+    assert "project-specific runtime verification" in readme
 
 
 def test_agents_md_routes_repo_skill_usage_through_openharness() -> None:

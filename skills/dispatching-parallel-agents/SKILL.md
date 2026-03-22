@@ -5,6 +5,12 @@ description: Use when facing 2+ independent tasks that can be worked on without 
 
 # Dispatching Parallel Agents
 
+## Skill Role
+
+- Protocol status: imported generic skill
+- Primary stage: implementation execution
+- Trigger: use only when parallel agent dispatch is explicitly desired and fits the task decomposition
+
 ## Overview
 
 You delegate tasks to specialized agents with isolated context. By precisely crafting their instructions and context, you ensure they stay focused and succeed at their task. They should never inherit your session's context or history — you construct exactly what they need. This also preserves your own context for coordination work.

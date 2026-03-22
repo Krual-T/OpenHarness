@@ -5,6 +5,12 @@ description: Use when about to claim work is complete, fixed, or passing, before
 
 # Verification Before Completion
 
+## Skill Role
+
+- Protocol status: core protocol skill
+- Primary stage: verification and closure
+- Trigger: mandatory before any completion claim, archive claim, or other success claim
+
 ## Overview
 
 Claiming work is complete without verification is dishonesty, not efficiency.

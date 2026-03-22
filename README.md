@@ -1,10 +1,12 @@
 # OpenHarness
 
-**OpenHarness is an agent-first repository scaffold for Codex.**
+**OpenHarness is an agent-first, plug-and-play repository scaffold for Codex.**
 
 It is built around a simple belief: the bottleneck is no longer typing code. The bottleneck is giving coding agents a repository they can actually reason about.
 
 OpenHarness packages the workflow patterns, skills, and repository structure we found most useful when adapting agent-driven development inside [`openrelay`](https://github.com/Krual-T/OpenRelay). It directly reuses and adapts code and skill content from [`obra/superpowers`](https://github.com/obra/superpowers), and it is also conceptually aligned with OpenAI's article on [harness engineering](https://openai.com/index/harness-engineering/).
+
+OpenHarness is intentionally Python-first. For Python-first repositories, `uv run pytest` is the default minimum automated verification floor, while stronger project-specific runtime verification still needs to be defined in task packages.
 
 If you want Codex to stop improvising and start operating inside a legible, verifiable system, this repo is for you.
 
@@ -96,6 +98,12 @@ OpenHarness includes a copied and adapted skills library under `skills/`, includ
 
 These skills are meant to shape how work gets done, not merely how answers are phrased.
 
+The live skill model separates two questions:
+- protocol status: is this part of the fixed harness or an optional helper?
+- workflow stage: when should the agent actually use it?
+
+That keeps the harness plug-and-play instead of forcing every repository to rediscover which skills are mandatory, optional, or only conditionally triggered.
+
 ### 4. A bias toward agent legibility
 
 OpenHarness assumes a practical truth of agentic software work:
@@ -119,6 +127,14 @@ A typical task looks like this:
 9. Completed packages are archived without losing history.
 
 The result is a repo that accumulates usable knowledge instead of accumulating invisible assumptions.
+
+## Verification baseline
+
+OpenHarness does not pretend every repository already has the same runtime harness.
+
+For Python-first repositories, `uv run pytest` is the default minimum automated verification floor.
+That floor is intentionally weaker than full runtime or integration evidence.
+When a task depends on project-specific runtime behavior, project-specific runtime verification must be designed and recorded in the task package rather than guessed globally.
 
 ## Why this works
 

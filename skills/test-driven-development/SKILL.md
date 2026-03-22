@@ -5,6 +5,12 @@ description: Use when implementing any feature or bugfix, before writing impleme
 
 # Test-Driven Development (TDD)
 
+## Skill Role
+
+- Protocol status: optional helper skill
+- Primary stage: implementation execution
+- Trigger: use for feature work, bugfixes, and behavior changes before writing implementation code
+
 ## Overview
 
 Write the test first. Watch it fail. Write minimal code to pass.

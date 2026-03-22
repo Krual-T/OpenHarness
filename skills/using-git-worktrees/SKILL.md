@@ -5,6 +5,12 @@ description: Use when starting implementation work that needs isolation from the
 
 # Using Git Worktrees
 
+## Skill Role
+
+- Protocol status: optional helper skill
+- Primary stage: implementation execution
+- Trigger: use when execution needs an isolated workspace or branch context
+
 ## Overview
 
 Git worktrees create isolated workspaces sharing the same repository, allowing work on multiple branches simultaneously without switching.

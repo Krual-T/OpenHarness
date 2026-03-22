@@ -5,6 +5,12 @@ description: Use when completing tasks, implementing major features, or before m
 
 # Requesting Code Review
 
+## Skill Role
+
+- Protocol status: optional helper skill
+- Primary stage: verification and closure
+- Trigger: use before merge or after major implementation waves when bounded review adds value
+
 Dispatch the local code-reviewer subagent to catch issues before they cascade. The reviewer gets precisely crafted context for evaluation — never your session's history. This keeps the reviewer focused on the work product, not your thought process, and preserves your own context for continued work.
 
 **Core principle:** Review early, review often.

@@ -5,6 +5,12 @@ description: Use when a task package is detailed enough to execute and its tasks
 
 # Subagent-Driven Development
 
+## Skill Role
+
+- Protocol status: optional helper skill
+- Primary stage: implementation execution
+- Trigger: use when a detailed task package can be executed through mostly independent sub-tasks in the current session
+
 Execute a task package by dispatching a fresh subagent per task, with two-stage review after each: task-package compliance review first, then code quality review.
 
 **Why subagents:** You delegate tasks to specialized agents with isolated context. By precisely crafting their instructions and context, you ensure they stay focused and succeed at their task. They should never inherit your session's context or history — you construct exactly what they need. This also preserves your own context for coordination work.

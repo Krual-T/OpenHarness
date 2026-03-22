@@ -5,6 +5,12 @@ description: Use when encountering any bug, test failure, or unexpected behavior
 
 # Systematic Debugging
 
+## Skill Role
+
+- Protocol status: optional helper skill
+- Primary stage: debugging and repair
+- Trigger: use when a bug, failure, regression, or unexplained behavior needs root-cause investigation
+
 ## Overview
 
 Random fixes waste time and create new bugs. Quick patches mask underlying issues.

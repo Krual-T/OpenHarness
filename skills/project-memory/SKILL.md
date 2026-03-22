@@ -5,6 +5,12 @@ description: Reuse and maintain repo-local workflows, facts, and decisions store
 
 # Project Memory
 
+## Skill Role
+
+- Protocol status: optional helper skill
+- Primary stage: repository memory and maintenance
+- Trigger: use when validated facts, workflows, or decisions should be reused, saved, or checked for staleness
+
 ## When To Use
 Use this skill when:
 - a repeated question like "this API how does it flow" may already have a stored workflow

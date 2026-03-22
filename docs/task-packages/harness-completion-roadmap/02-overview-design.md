@@ -33,11 +33,12 @@ The completed baseline streams remain authoritative historical inputs:
 - `workflow transition and verification artifacts`
 - `python verification maturity`
 - `skill taxonomy and compatibility cleanup`
+- `skill taxonomy and stage model`
 
 ## Stream Dependencies And Order
 - `runtime verification baseline` and `status semantics tightening` are already complete enough to act as upstream baselines, because both changed what `ready`, `verifying`, and `done` mean.
 - `python verification maturity` is already captured as a historical design baseline, so the remaining dependency is to decide where its wording should eventually land in live docs and templates.
-- `skill taxonomy and compatibility cleanup` is now complete enough to act as an upstream baseline, because the live repository no longer ships the old plan-oriented skill surface and the archived history has been rewritten to stop advertising it.
+- `skill taxonomy and compatibility cleanup` plus `skill taxonomy and stage model` are now complete enough to act as the upstream skill-surface baseline, because the live repository no longer ships the old plan-oriented skill surface and the live docs now describe protocol status, workflow stage, and the Python-first pytest floor explicitly.
 - `maintenance and entropy reduction` is now the remaining next stream, because it can audit the repository against the stabilized skill categories instead of redefining them implicitly.
 
 ## Split Triggers
@@ -60,6 +61,7 @@ When those triggers are met, the agent should scaffold a focused child package r
 - `OH-006 Status Semantics Tightening` is now archived as the completed baseline for stronger workflow checkpoint meaning and transition gates.
 - `OH-007 Python Verification Maturity` remains a legacy archived design-baseline package from the older semantics period; future work may reuse it as historical design input, but not as an example that design-complete work is archive-ready.
 - `OH-008 Skill Taxonomy And Compatibility Cleanup` is now the archived completed child package for the taxonomy stream.
+- `OH-012 Skill Taxonomy And Stage Model` is now the archived completed follow-up that turns the taxonomy stream into the live two-layer skill model and productizes the Python-first pytest baseline in the live repository docs.
 - `OH-009 Task Package Semantic Validation` is now archived as the follow-up that turns status semantics into stronger minimum document-anchor checks.
 - `OH-010 Workflow Transition And Verification Artifacts` is now archived as the follow-up that turns status semantics and verification evidence into supported CLI mechanics.
 - Completed child packages should feed evidence or durable decisions back into this roadmap only when they materially change what remains.

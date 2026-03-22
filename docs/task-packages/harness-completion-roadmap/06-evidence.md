@@ -8,6 +8,7 @@
 - `docs/task-packages/harness-completion-roadmap/05-verification.md`
 - `docs/task-packages/harness-completion-roadmap/06-evidence.md`
 - `docs/archived/task-packages/skill-taxonomy-and-compatibility-cleanup/*`
+- `docs/archived/task-packages/skill-taxonomy-and-stage-model/*`
 - `docs/archived/task-packages/workflow-transition-and-verification-artifacts/*`
 - `docs/task-packages/task-package-semantic-validation/*`
 - `docs/task-packages/harness-completion-roadmap/STATUS.yaml`
@@ -17,6 +18,7 @@
 - `skills/using-openharness/SKILL.md`
 - `skills/using-openharness/references/skill-hub.md`
 - `skills/using-openharness/tests/test_openharness.py`
+- `README.md`
 - `docs/archived/task-packages/runtime-verification-baseline/*`
 - `docs/archived/task-packages/status-semantics-tightening/*`
 - `docs/archived/task-packages/task-package-semantic-validation/*`
@@ -44,6 +46,15 @@
 - `uv run python skills/using-openharness/scripts/openharness.py new-task skill-taxonomy-and-compatibility-cleanup OH-008 "Skill Taxonomy And Compatibility Cleanup" --owner codex --summary "Clarify core protocol skills, optional helpers, compatibility shims, and imported generic skills so the skill hub and per-skill docs stop drifting."`
 - `uv run python skills/using-openharness/scripts/openharness.py new-task task-package-semantic-validation OH-009 "Task Package Semantic Validation" --owner codex --summary "Strengthen check-tasks so status readiness is anchored to minimum document semantics instead of file existence alone."`
 - `uv run python skills/using-openharness/scripts/openharness.py new-task workflow-transition-and-verification-artifacts OH-010 "Workflow Transition And Verification Artifacts" --owner codex --summary "Enforce legal task-package status transitions and record verification runs as structured artifacts tied back to package evidence."`
+- `uv run python skills/using-openharness/scripts/openharness.py new-task skill-taxonomy-and-stage-model OH-011 "Skill Taxonomy And Stage Model" --owner codex --summary "Reshape OpenHarness skill classification around protocol status plus workflow stage, and define pytest as the Python baseline verification floor in live docs."`
+- `uv run pytest skills/using-openharness/tests/test_openharness.py -k 'skill_hub_uses_protocol_status_plus_stage_model or readme_describes_plug_and_play_harness_and_python_pytest_floor'`
+- `uv run python skills/using-openharness/scripts/openharness.py transition skill-taxonomy-and-stage-model requirements_ready`
+- `uv run python skills/using-openharness/scripts/openharness.py transition skill-taxonomy-and-stage-model overview_ready`
+- `uv run python skills/using-openharness/scripts/openharness.py transition skill-taxonomy-and-stage-model detailed_ready`
+- `uv run python skills/using-openharness/scripts/openharness.py transition skill-taxonomy-and-stage-model in_progress`
+- `uv run python skills/using-openharness/scripts/openharness.py transition skill-taxonomy-and-stage-model verifying`
+- `uv run python skills/using-openharness/scripts/openharness.py verify skill-taxonomy-and-stage-model`
+- `uv run python skills/using-openharness/scripts/openharness.py transition skill-taxonomy-and-stage-model archived`
 - `uv run python skills/using-openharness/scripts/openharness.py transition workflow-transition-and-verification-artifacts requirements_ready`
 - `uv run python skills/using-openharness/scripts/openharness.py transition workflow-transition-and-verification-artifacts overview_ready`
 - `uv run python skills/using-openharness/scripts/openharness.py transition workflow-transition-and-verification-artifacts detailed_ready`
@@ -63,7 +74,7 @@
 
 ## Follow-ups
 - Use archived `OH-008 Skill Taxonomy And Compatibility Cleanup` as the baseline when defining maintenance audits and stale-surface cleanup.
-- Decide in a later focused package how much of archived `OH-007` should be productized into live docs, templates, and completion guidance.
+- Decide in a later focused package whether archived `OH-007` needs more template-level examples beyond the live pytest-floor wording already productized through `OH-012`.
 - Reuse the archived `OH-006 Status Semantics Tightening` package as the baseline if a later stream needs stronger transition enforcement, rather than reopening status-semantics design from scratch in `OH-004`.
 - Reuse archived `OH-009 Task Package Semantic Validation` if a later stream adds a `transition` command or structured verification artifacts, rather than mixing those concerns back into `OH-004`.
 - Reuse archived `OH-010 Workflow Transition And Verification Artifacts` as the baseline when later work needs stronger workflow control or richer verification evidence, instead of reopening those semantics inside `OH-004`.
