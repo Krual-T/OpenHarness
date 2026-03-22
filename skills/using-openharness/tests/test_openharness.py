@@ -76,8 +76,8 @@ def test_load_manifest_prefers_repo_local_skills_layout(tmp_path: Path) -> None:
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
     (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
         "version: 1\n"
-        "designs_root: docs/task-packages\n"
-        "archived_designs_root: docs/archived/task-packages\n",
+        "task_packages_root: docs/task-packages\n"
+        "archived_task_packages_root: docs/archived/task-packages\n",
         encoding="utf-8",
     )
 
@@ -91,7 +91,7 @@ def test_validate_design_package_rejects_unknown_status_and_missing_paths(tmp_pa
     (repo_root / "docs" / "task-packages" / "broken").mkdir(parents=True)
     (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
         "version: 1\n"
-        "designs_root: docs/task-packages\n"
+        "task_packages_root: docs/task-packages\n"
         "required_design_files:\n"
         "  - README.md\n"
         "  - STATUS.yaml\n"
@@ -152,8 +152,8 @@ def test_validate_design_package_rejects_archived_status_in_active_root(tmp_path
     (repo_root / "docs" / "task-packages" / "wrong-place").mkdir(parents=True)
     (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
         "version: 1\n"
-        "designs_root: docs/task-packages\n"
-        "archived_designs_root: docs/archived/task-packages\n"
+        "task_packages_root: docs/task-packages\n"
+        "archived_task_packages_root: docs/archived/task-packages\n"
         "required_design_files:\n"
         "  - README.md\n"
         "  - STATUS.yaml\n"
@@ -197,8 +197,8 @@ def test_validate_design_package_rejects_verifying_without_verification_path(tmp
     (repo_root / "docs" / "task-packages" / "verifying-empty").mkdir(parents=True)
     (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
         "version: 1\n"
-        "designs_root: docs/task-packages\n"
-        "archived_designs_root: docs/archived/task-packages\n"
+        "task_packages_root: docs/task-packages\n"
+        "archived_task_packages_root: docs/archived/task-packages\n"
         "required_design_files:\n"
         "  - README.md\n"
         "  - STATUS.yaml\n"
@@ -250,8 +250,8 @@ def test_validate_design_package_rejects_archived_without_verification_path(tmp_
     (repo_root / "docs" / "archived" / "task-packages" / "archived-empty").mkdir(parents=True)
     (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
         "version: 1\n"
-        "designs_root: docs/task-packages\n"
-        "archived_designs_root: docs/archived/task-packages\n"
+        "task_packages_root: docs/task-packages\n"
+        "archived_task_packages_root: docs/archived/task-packages\n"
         "required_design_files:\n"
         "  - README.md\n"
         "  - STATUS.yaml\n"
@@ -306,7 +306,7 @@ def test_create_design_package_from_templates(tmp_path: Path) -> None:
     (repo_root / "skills" / "using-openharness" / "references" / "templates").mkdir(parents=True)
     (repo_root / "docs" / "task-packages").mkdir(parents=True)
     (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
-        "version: 1\ndesigns_root: docs/task-packages\narchived_designs_root: docs/archived/task-packages\nrequired_design_files:\n"
+        "version: 1\ntask_packages_root: docs/task-packages\narchived_task_packages_root: docs/archived/task-packages\nrequired_design_files:\n"
         "  - README.md\n  - STATUS.yaml\n  - 01-requirements.md\n  - 02-overview-design.md\n"
         "  - 03-detailed-design.md\n  - 05-verification.md\n  - 06-evidence.md\n",
         encoding="utf-8",
@@ -371,15 +371,12 @@ def test_openharness_skill_owns_supporting_scripts_and_templates() -> None:
 def test_openharness_single_cli_supports_all_subcommands() -> None:
     parser = openharness.build_parser()
     choices = parser._subparsers._group_actions[0].choices  # type: ignore[attr-defined]
-    assert set(choices) == {"bootstrap", "check-designs", "check-tasks", "new-design", "new-task", "verify"}
+    assert set(choices) == {"bootstrap", "check-tasks", "new-task", "verify"}
 
-
-def test_task_package_aliases_share_legacy_handlers() -> None:
+def test_task_package_commands_use_current_handlers_only() -> None:
     parser = openharness.build_parser()
     assert parser.parse_args(["check-tasks"]).handler == openharness.cmd_check_designs
-    assert parser.parse_args(["check-designs"]).handler == openharness.cmd_check_designs
     assert parser.parse_args(["new-task", "name", "OH-999", "Title"]).handler == openharness.cmd_new_design
-    assert parser.parse_args(["new-design", "name", "OH-999", "Title"]).handler == openharness.cmd_new_design
 
 
 def test_openharness_skill_is_repo_entry_skill() -> None:
@@ -548,8 +545,8 @@ def test_verify_reports_declared_manual_scenarios_without_claiming_execution(
     (repo_root / "docs" / "task-packages" / "manual-only").mkdir(parents=True)
     (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
         "version: 1\n"
-        "designs_root: docs/task-packages\n"
-        "archived_designs_root: docs/archived/task-packages\n"
+        "task_packages_root: docs/task-packages\n"
+        "archived_task_packages_root: docs/archived/task-packages\n"
         "required_design_files:\n"
         "  - README.md\n"
         "  - STATUS.yaml\n"
@@ -594,7 +591,7 @@ def test_verify_reports_declared_manual_scenarios_without_claiming_execution(
     monkeypatch.setattr(openharness, "_run_command", fake_run)
 
     result = openharness.cmd_verify(
-        argparse.Namespace(repo=str(repo_root), design="manual-only", check_designs_only=False)
+        argparse.Namespace(repo=str(repo_root), design="manual-only", check_tasks_only=False)
     )
 
     captured = capsys.readouterr()
@@ -610,8 +607,8 @@ def test_verify_rejects_packages_with_no_declared_verification_path(tmp_path: Pa
     (repo_root / "docs" / "task-packages" / "no-verification").mkdir(parents=True)
     (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
         "version: 1\n"
-        "designs_root: docs/task-packages\n"
-        "archived_designs_root: docs/archived/task-packages\n"
+        "task_packages_root: docs/task-packages\n"
+        "archived_task_packages_root: docs/archived/task-packages\n"
         "required_design_files:\n"
         "  - README.md\n"
         "  - STATUS.yaml\n"
@@ -647,7 +644,7 @@ def test_verify_rejects_packages_with_no_declared_verification_path(tmp_path: Pa
     )
 
     result = openharness.cmd_verify(
-        argparse.Namespace(repo=str(repo_root), design="no-verification", check_designs_only=False)
+        argparse.Namespace(repo=str(repo_root), design="no-verification", check_tasks_only=False)
     )
 
     captured = capsys.readouterr()
@@ -663,8 +660,8 @@ def test_verify_defaults_to_later_stage_statuses_only(
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
     (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
         "version: 1\n"
-        "designs_root: docs/task-packages\n"
-        "archived_designs_root: docs/archived/task-packages\n"
+        "task_packages_root: docs/task-packages\n"
+        "archived_task_packages_root: docs/archived/task-packages\n"
         "required_design_files:\n"
         "  - README.md\n"
         "  - STATUS.yaml\n"
@@ -721,7 +718,7 @@ def test_verify_defaults_to_later_stage_statuses_only(
     monkeypatch.setattr(openharness, "_run_command", fake_run)
 
     result = openharness.cmd_verify(
-        argparse.Namespace(repo=str(repo_root), design="", check_designs_only=False)
+        argparse.Namespace(repo=str(repo_root), design="", check_tasks_only=False)
     )
 
     capsys.readouterr()
@@ -736,8 +733,8 @@ def test_verify_allows_explicit_package_target_before_in_progress(
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
     (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
         "version: 1\n"
-        "designs_root: docs/task-packages\n"
-        "archived_designs_root: docs/archived/task-packages\n"
+        "task_packages_root: docs/task-packages\n"
+        "archived_task_packages_root: docs/archived/task-packages\n"
         "required_design_files:\n"
         "  - README.md\n"
         "  - STATUS.yaml\n"
@@ -787,7 +784,7 @@ def test_verify_allows_explicit_package_target_before_in_progress(
     monkeypatch.setattr(openharness, "_run_command", fake_run)
 
     result = openharness.cmd_verify(
-        argparse.Namespace(repo=str(repo_root), design="early-target", check_designs_only=False)
+        argparse.Namespace(repo=str(repo_root), design="early-target", check_tasks_only=False)
     )
 
     capsys.readouterr()

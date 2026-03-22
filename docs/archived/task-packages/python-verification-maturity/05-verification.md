@@ -27,7 +27,7 @@ Use `verifying` only when implementation is complete enough to gather fresh evid
 - Repository tests still pass after adding the reframed child package and updating roadmap docs.
 
 ## Latest Result
-- Passed on 2026-03-21 after scaffolding `OH-007` and completing the first bootstrap design package:
+- Passed on 2026-03-21 after scaffolding `OH-007` and completing the first bootstrap task package:
   - `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
   - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
   - `uv run pytest`

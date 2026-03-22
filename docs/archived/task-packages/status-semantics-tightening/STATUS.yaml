@@ -1,7 +1,7 @@
 id: OH-006
 title: Status Semantics Tightening
 status: archived
-summary: Define stronger status meanings, transition rules, and evidence gates for OpenHarness design packages.
+summary: Define stronger status meanings, transition rules, and evidence gates for OpenHarness task packages.
 owner: codex
 created_at: 2026-03-21
 updated_at: 2026-03-21

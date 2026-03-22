@@ -15,7 +15,7 @@ That means the repo cannot demonstrate the most basic OpenHarness promise on its
 
 ## Required Outcomes
 1. The repository can bootstrap itself with `uv run python skills/using-openharness/scripts/openharness.py bootstrap`.
-2. The repository has at least one valid active design package that documents this self-hosting round.
+2. The repository has at least one valid active task package that documents this self-hosting round.
 3. The harness CLI and tests run from declared project dependencies rather than undeclared environment state.
 4. The test suite validates the current `skills/`-based repo layout and the current design-package inventory.
 5. The first round remains minimal: enough to make the repo runnable and self-describing, without trying to finish the whole product redesign in one pass.

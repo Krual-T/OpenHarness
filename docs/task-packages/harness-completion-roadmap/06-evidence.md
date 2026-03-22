@@ -26,7 +26,7 @@
 - `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
 - `uv run pytest`
 - `mv docs/task-packages/runtime-verification-baseline docs/archived/task-packages/runtime-verification-baseline`
-- `uv run python skills/using-openharness/scripts/openharness.py new-task status-semantics-tightening OH-006 "Status Semantics Tightening" --owner codex --summary "Define stronger status meanings, transition rules, and evidence gates for OpenHarness design packages."`
+- `uv run python skills/using-openharness/scripts/openharness.py new-task status-semantics-tightening OH-006 "Status Semantics Tightening" --owner codex --summary "Define stronger status meanings, transition rules, and evidence gates for OpenHarness task packages."`
 - `uv run pytest skills/using-openharness/tests/test_openharness.py -k 'later_stage_statuses_only or explicit_package_target_before_in_progress'`
 - `uv run pytest skills/using-openharness/tests/test_openharness.py -k 'verifying_without_verification_path or archived_without_verification_path'`
 - `uv run pytest skills/using-openharness/tests/test_openharness.py -k 'include_status_guidance'`

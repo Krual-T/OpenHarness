@@ -7,7 +7,7 @@ This package repairs the repository's core workflow object. The object remains t
 Repository exploration shows three important facts:
 
 - The repository already uses one package for the whole lifecycle, not a design-only artifact.
-- Human-facing protocol surfaces still call that object `design package` in `AGENTS.md`, the manifest, workflow skills, templates, CLI help text, and tests.
+- At the time this package was written, human-facing protocol surfaces still called that object `design package` in `AGENTS.md`, the manifest, workflow skills, templates, CLI help text, and tests.
 - The current status flow already has a natural non-archived landing point for "design complete, implementation not started yet": `detailed_ready`.
 
 The failure happened because the name and the lifecycle did not match. `OH-007` then amplified the mismatch by being archived as a completed design baseline while still documenting a later implementation wave.

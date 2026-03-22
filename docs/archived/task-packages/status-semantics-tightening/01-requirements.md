@@ -1,7 +1,7 @@
 # Requirements
 
 ## Goal
-Define stronger, reusable status semantics for OpenHarness design packages so status names communicate real readiness and evidence constraints rather than acting as loose progress labels.
+Define stronger, reusable status semantics for OpenHarness task packages so status names communicate real readiness and evidence constraints rather than acting as loose progress labels.
 
 ## Problem Statement
 OpenHarness already has a default status flow:

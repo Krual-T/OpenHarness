@@ -5,8 +5,8 @@
 - `uv run pytest`
 
 ## Expected Outcomes
-- Design packages validate cleanly.
-- Tests continue to pass after optional-skill cleanup and after adding this new design package.
+- Task packages validate cleanly.
+- Tests continue to pass after optional-skill cleanup and after adding this new task package.
 
 ## Latest Result
 - 2026-03-20: PASS

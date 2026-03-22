@@ -5,7 +5,7 @@
 
 ## Execution Slices
 - Slice 1: make the repo runnable with declared Python dependencies and working CLI bootstrap.
-- Slice 2: scaffold and populate the first active design package for self-hosting.
+- Slice 2: scaffold and populate the first active task package for self-hosting.
 - Slice 3: realign the test suite and top-level docs to the current repository layout.
 
 ## Verification Gates

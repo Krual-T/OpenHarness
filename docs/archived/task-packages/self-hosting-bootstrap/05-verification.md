@@ -6,7 +6,7 @@
 - `uv run pytest`
 
 ## Expected Outcomes
-- Bootstrap lists `OH-001` as an active design package.
+- Bootstrap lists `OH-001` as an active task package.
 - `check-tasks` validates the repository package tree without errors.
 - `pytest` passes against the current self-hosting repository layout.
 

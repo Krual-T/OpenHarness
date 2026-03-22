@@ -25,6 +25,6 @@ For a no-harness target repository, OpenHarness needs to impose a clearer defaul
 - Fully remove every imported execution skill that still references plans, if a smaller compatibility bridge is sufficient for now.
 
 ## Constraints
-- Keep the design package approach fixed and non-configurable.
+- Keep the task-package approach fixed and non-configurable.
 - Preserve a clear migration path for existing docs in this repository.
 - Favor a coherent repo-wide protocol over backward compatibility with inherited wording.

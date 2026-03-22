@@ -1,7 +1,7 @@
 # Overview Design
 
 ## System Boundary
-This package defines the shared meaning of workflow statuses inside OpenHarness design packages. It does not create a new workflow model. It tightens the existing default status flow so package docs, templates, CLI behavior, and tests refer to the same readiness contract.
+This package defines the shared meaning of workflow statuses inside OpenHarness task packages. It does not create a new workflow model. It tightens the existing default status flow so package docs, templates, CLI behavior, and tests refer to the same readiness contract.
 
 ## Proposed Structure
 Treat statuses as explicit readiness checkpoints, not as informal progress labels.

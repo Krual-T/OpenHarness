@@ -3,7 +3,7 @@
 ## Files Added Or Changed
 - Add `pyproject.toml` with runtime dependency `PyYAML` and dev dependency `pytest`.
 - Update `skills/using-openharness/scripts/openharness.py` to resolve repo-local manifests and templates from `skills/using-openharness/...`.
-- Add the active design package under `docs/archived/task-packages/self-hosting-bootstrap/`.
+- Add the initial task package under `docs/archived/task-packages/self-hosting-bootstrap/`.
 - Rewrite `skills/using-openharness/tests/test_openharness.py` to validate the real repo layout and a minimal self-hosting package inventory.
 - Fix small doc mistakes in `AGENTS.md` and `README.md`.
 
@@ -14,7 +14,7 @@
 - The package `STATUS.yaml` for this round declares the commands used for self-host verification.
 
 ## Error Handling
-- If no design packages exist, `bootstrap` may still succeed with an empty inventory, but after this round `check-tasks` and tests should have a valid package to inspect.
+- If no task packages exist, `bootstrap` may still succeed with an empty inventory, but after this round `check-tasks` and tests should have a valid package to inspect.
 - Repo-local path discovery must keep existing fallback paths so installed/global skill layouts still work.
 
 ## Migration Notes

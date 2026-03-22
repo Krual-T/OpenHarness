@@ -3,7 +3,7 @@ title: Task Package Completion Semantics
 # Default flow: proposed -> requirements_ready -> overview_ready -> detailed_ready -> in_progress -> verifying -> archived
 # requirements_ready -> overview_ready -> detailed_ready are design-readiness checkpoints; later statuses imply earlier checkpoints are already materially complete.
 status: archived
-summary: Rename design packages to task packages and tighten completion semantics so archive only means implemented, verified, and no longer active.
+summary: Historical migration package for renaming design packages to task packages and tightening completion semantics so archive only means implemented, verified, and no longer active.
 owner: codex
 created_at: 2026-03-22
 updated_at: 2026-03-22

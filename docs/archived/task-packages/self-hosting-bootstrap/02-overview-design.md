@@ -4,7 +4,7 @@
 This round only covers the minimal repository machinery needed for OpenHarness to operate on itself:
 
 - repo-local Python dependency declaration
-- repo-local design package tree
+- repo-local task-package tree
 - harness CLI repo-path discovery for the current `skills/` layout
 - tests aligned with the actual repository structure
 - small documentation corrections required for self-hosting legibility

@@ -9,7 +9,7 @@
 - `docs/archived/task-packages/self-hosting-bootstrap/*`
 
 ## Commands
-- `uv run python skills/using-openharness/scripts/openharness.py new-task self-hosting-bootstrap OH-001 "OpenHarness Self-Hosting Bootstrap" --owner codex --summary "Bootstrap the OpenHarness repository into a self-hosted minimal harness repo with runnable CLI, tests, and an initial active design package."`
+- `uv run python skills/using-openharness/scripts/openharness.py new-task self-hosting-bootstrap OH-001 "OpenHarness Self-Hosting Bootstrap" --owner codex --summary "Bootstrap the OpenHarness repository into a self-hosted minimal harness repo with runnable CLI, tests, and an initial active task package."`
 - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
 - `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
 - `uv run pytest`

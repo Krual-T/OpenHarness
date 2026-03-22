@@ -28,7 +28,7 @@ Move to `in_progress` only when detailed design is concrete enough to execute.
 ## Interfaces
 - `task package terminology`
   - User-facing docs, templates, and CLI help text should say `task package`.
-  - Compatibility path names and low-level internal identifiers may remain `design`-prefixed where changing them adds churn without changing meaning.
+  - At that time, compatibility path names and low-level internal identifiers could remain `design`-prefixed where changing them added churn without changing meaning.
 - `status semantics`
   - `detailed_ready` means design is complete enough to execute, but implementation is not yet complete.
   - `in_progress` means implementation work is actively underway.

@@ -1,7 +1,7 @@
 # Detailed Design
 
 ## Runtime Verification Plan
-- Verification Path: repository automation for this design package, using harness validation and repository tests
+- Verification Path: repository automation for this task package, using harness validation and repository tests
 - Fallback Path: if repository tests fail for unrelated reasons, record the blocking failure in `05-verification.md` and keep the package below any completion claim
 - Planned Evidence:
   - `uv run python skills/using-openharness/scripts/openharness.py check-tasks`

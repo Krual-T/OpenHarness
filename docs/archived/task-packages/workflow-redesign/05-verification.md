@@ -5,7 +5,7 @@
 - `uv run pytest`
 
 ## Expected Outcomes
-- The repository validates design packages against the new required-file set.
+- The repository validates task packages against the new required-file set.
 - Tests pass with the exploration-centric workflow wording.
 
 ## Latest Result

@@ -13,7 +13,7 @@ OpenHarness currently uses one package object for the full lifecycle:
 - verification
 - archive
 
-But the object is still called `design package` in many repository surfaces. That naming leaks the wrong mental model:
+At the time this package was opened, the object was still called `design package` in many repository surfaces. That naming leaked the wrong mental model:
 
 - it suggests the package primarily exists for design work
 - it makes `design complete` sound dangerously close to `package complete`

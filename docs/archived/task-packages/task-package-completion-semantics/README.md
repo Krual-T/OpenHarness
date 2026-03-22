@@ -1,7 +1,7 @@
 # OH-008 Task Package Completion Semantics
 
 ## Summary
-- Rename the repository's core end-to-end work unit from `design package` to `task package`.
+- This archived package recorded the migration that renamed the repository's core end-to-end work unit from `design package` to `task package`.
 - Repair the archive contract so `archived` no longer gets used for packages whose design is done but implementation still remains.
 
 ## Current Status

@@ -426,7 +426,7 @@ def cmd_verify(args: argparse.Namespace) -> int:
         for error in errors:
             print(f"ERROR: {error}")
         return 1
-    if getattr(args, "check_tasks_only", False) or getattr(args, "check_designs_only", False):
+    if getattr(args, "check_tasks_only", False):
         return 0
     if args.design:
         packages = [package for package in packages if package.name == args.design or package.design_id == args.design]
@@ -470,7 +470,6 @@ def build_parser() -> argparse.ArgumentParser:
 
     check_parser = subparsers.add_parser(
         "check-tasks",
-        aliases=["check-designs"],
         help="Validate repository task packages against harness protocol.",
     )
     check_parser.add_argument("--repo", default=".", help="Repository root")
@@ -478,7 +477,6 @@ def build_parser() -> argparse.ArgumentParser:
 
     new_design_parser = subparsers.add_parser(
         "new-task",
-        aliases=["new-design"],
         help="Create a new task package from harness templates.",
     )
     new_design_parser.add_argument("design_name", metavar="task_name", help="Directory slug or human-readable task name")
@@ -494,7 +492,6 @@ def build_parser() -> argparse.ArgumentParser:
     verify_parser.add_argument("design", nargs="?", default="", help="Task package name or task id")
     verify_parser.add_argument("--repo", default=".", help="Repository root")
     verify_parser.add_argument("--check-tasks-only", action="store_true", help="Only validate task package protocol")
-    verify_parser.add_argument("--check-designs-only", action="store_true", help=argparse.SUPPRESS)
     verify_parser.set_defaults(handler=cmd_verify)
 
     return parser
