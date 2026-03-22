@@ -1,29 +1,29 @@
 ---
 name: subagent-driven-development
-description: Use when executing implementation plans with independent tasks in the current session
+description: Use when a task package is detailed enough to execute and its tasks are independent enough to dispatch subagents in the current session
 ---
 
 # Subagent-Driven Development
 
-Execute plan by dispatching fresh subagent per task, with two-stage review after each: spec compliance review first, then code quality review.
+Execute a task package by dispatching a fresh subagent per task, with two-stage review after each: task-package compliance review first, then code quality review.
 
 **Why subagents:** You delegate tasks to specialized agents with isolated context. By precisely crafting their instructions and context, you ensure they stay focused and succeed at their task. They should never inherit your session's context or history — you construct exactly what they need. This also preserves your own context for coordination work.
 
-**Core principle:** Fresh subagent per task + two-stage review (spec then quality) = high quality, fast iteration
+**Core principle:** Task package stays authoritative, while fresh subagent per task plus two-stage review keeps execution fast and controlled.
 
 ## When to Use
 
 ```dot
 digraph when_to_use {
-    "Have explicit execution plan?" [shape=diamond];
+    "Task package already detailed enough?" [shape=diamond];
     "Tasks mostly independent?" [shape=diamond];
     "Stay in this session?" [shape=diamond];
     "subagent-driven-development" [shape=box];
     "executing-plans" [shape=box];
-    "Manual execution or brainstorm first" [shape=box];
+    "Manual execution or refine task package first" [shape=box];
 
-    "Have explicit execution plan?" -> "Tasks mostly independent?" [label="yes"];
-    "Have explicit execution plan?" -> "Manual execution or design first" [label="no"];
+    "Task package already detailed enough?" -> "Tasks mostly independent?" [label="yes"];
+    "Task package already detailed enough?" -> "Manual execution or refine task package first" [label="no"];
     "Tasks mostly independent?" -> "Stay in this session?" [label="yes"];
     "Tasks mostly independent?" -> "Manual execution or brainstorm first" [label="no - tightly coupled"];
     "Stay in this session?" -> "subagent-driven-development" [label="yes"];
@@ -34,7 +34,7 @@ digraph when_to_use {
 **vs. Executing Plans (parallel session):**
 - Same session (no context switch)
 - Fresh subagent per task (no context pollution)
-- Two-stage review after each task: spec compliance first, then code quality
+- Two-stage review after each task: task-package compliance first, then code quality
 - Faster iteration (no human-in-loop between tasks)
 
 ## The Process
@@ -49,30 +49,30 @@ digraph process {
         "Implementer subagent asks questions?" [shape=diamond];
         "Answer questions, provide context" [shape=box];
         "Implementer subagent implements, tests, commits, self-reviews" [shape=box];
-        "Dispatch spec reviewer subagent (./references/spec-reviewer-prompt.md)" [shape=box];
-        "Spec reviewer subagent confirms code matches spec?" [shape=diamond];
-        "Implementer subagent fixes spec gaps" [shape=box];
+        "Dispatch task-package reviewer subagent (./references/spec-reviewer-prompt.md)" [shape=box];
+        "Task-package reviewer confirms code matches package?" [shape=diamond];
+        "Implementer subagent fixes package gaps" [shape=box];
         "Dispatch code quality reviewer subagent (./references/code-quality-reviewer-prompt.md)" [shape=box];
         "Code quality reviewer subagent approves?" [shape=diamond];
         "Implementer subagent fixes quality issues" [shape=box];
         "Mark task complete in TodoWrite" [shape=box];
     }
 
-    "Read plan, extract all tasks with full text, note context, create TodoWrite" [shape=box];
+    "Read task package, extract executable tasks with full text, note context, create TodoWrite" [shape=box];
     "More tasks remain?" [shape=diamond];
     "Dispatch final code reviewer subagent for entire implementation" [shape=box];
     "Use finishing-a-development-branch" [shape=box style=filled fillcolor=lightgreen];
 
-    "Read plan, extract all tasks with full text, note context, create TodoWrite" -> "Dispatch implementer subagent (./references/implementer-prompt.md)";
+    "Read task package, extract executable tasks with full text, note context, create TodoWrite" -> "Dispatch implementer subagent (./references/implementer-prompt.md)";
     "Dispatch implementer subagent (./references/implementer-prompt.md)" -> "Implementer subagent asks questions?";
     "Implementer subagent asks questions?" -> "Answer questions, provide context" [label="yes"];
     "Answer questions, provide context" -> "Dispatch implementer subagent (./references/implementer-prompt.md)";
     "Implementer subagent asks questions?" -> "Implementer subagent implements, tests, commits, self-reviews" [label="no"];
-    "Implementer subagent implements, tests, commits, self-reviews" -> "Dispatch spec reviewer subagent (./references/spec-reviewer-prompt.md)";
-    "Dispatch spec reviewer subagent (./references/spec-reviewer-prompt.md)" -> "Spec reviewer subagent confirms code matches spec?";
-    "Spec reviewer subagent confirms code matches spec?" -> "Implementer subagent fixes spec gaps" [label="no"];
-    "Implementer subagent fixes spec gaps" -> "Dispatch spec reviewer subagent (./references/spec-reviewer-prompt.md)" [label="re-review"];
-    "Spec reviewer subagent confirms code matches spec?" -> "Dispatch code quality reviewer subagent (./references/code-quality-reviewer-prompt.md)" [label="yes"];
+    "Implementer subagent implements, tests, commits, self-reviews" -> "Dispatch task-package reviewer subagent (./references/spec-reviewer-prompt.md)";
+    "Dispatch task-package reviewer subagent (./references/spec-reviewer-prompt.md)" -> "Task-package reviewer confirms code matches package?";
+    "Task-package reviewer confirms code matches package?" -> "Implementer subagent fixes package gaps" [label="no"];
+    "Implementer subagent fixes package gaps" -> "Dispatch task-package reviewer subagent (./references/spec-reviewer-prompt.md)" [label="re-review"];
+    "Task-package reviewer confirms code matches package?" -> "Dispatch code quality reviewer subagent (./references/code-quality-reviewer-prompt.md)" [label="yes"];
     "Dispatch code quality reviewer subagent (./references/code-quality-reviewer-prompt.md)" -> "Code quality reviewer subagent approves?";
     "Code quality reviewer subagent approves?" -> "Implementer subagent fixes quality issues" [label="no"];
     "Implementer subagent fixes quality issues" -> "Dispatch code quality reviewer subagent (./references/code-quality-reviewer-prompt.md)" [label="re-review"];
@@ -103,7 +103,7 @@ Use the least powerful model that can handle each role to conserve cost and incr
 
 Implementer subagents report one of four statuses. Handle each appropriately:
 
-**DONE:** Proceed to spec compliance review.
+**DONE:** Proceed to task-package compliance review.
 
 **DONE_WITH_CONCERNS:** The implementer completed the work but flagged doubts. Read the concerns before proceeding. If the concerns are about correctness or scope, address them before review. If they're observations (e.g., "this file is getting large"), note them and proceed to review.
 
@@ -120,15 +120,15 @@ Implementer subagents report one of four statuses. Handle each appropriately:
 ## Prompt Templates
 
 - `./references/implementer-prompt.md` - Dispatch implementer subagent
-- `./references/spec-reviewer-prompt.md` - Dispatch spec compliance reviewer subagent
+- `./references/spec-reviewer-prompt.md` - Dispatch task-package compliance reviewer subagent
 - `./references/code-quality-reviewer-prompt.md` - Dispatch code quality reviewer subagent
 
 ## Example Workflow
 
 ```
-You: I'm using Subagent-Driven Development to execute this plan.
+You: I'm using Subagent-Driven Development to execute this task package.
 
-[Read the chosen execution plan artifact once]
+[Read the task package once]
 [Extract all 5 tasks with full text and context]
 [Create TodoWrite with all tasks]
 
@@ -148,8 +148,8 @@ Implementer: "Got it. Implementing now..."
   - Self-review: Found I missed --force flag, added it
   - Committed
 
-[Dispatch spec compliance reviewer]
-Spec reviewer: ✅ Spec compliant - all requirements met, nothing extra
+[Dispatch task-package reviewer]
+Task-package reviewer: ✅ Package compliant - all requirements met, nothing extra
 
 [Get git SHAs, dispatch code quality reviewer]
 Code reviewer: Strengths: Good test coverage, clean. Issues: None. Approved.
@@ -168,16 +168,16 @@ Implementer:
   - Self-review: All good
   - Committed
 
-[Dispatch spec compliance reviewer]
-Spec reviewer: ❌ Issues:
+[Dispatch task-package reviewer]
+Task-package reviewer: ❌ Issues:
   - Missing: Progress reporting (spec says "report every 100 items")
   - Extra: Added --json flag (not requested)
 
 [Implementer fixes issues]
 Implementer: Removed --json flag, added progress reporting
 
-[Spec reviewer reviews again]
-Spec reviewer: ✅ Spec compliant now
+[Task-package reviewer reviews again]
+Task-package reviewer: ✅ Package compliant now
 
 [Dispatch code quality reviewer]
 Code reviewer: Strengths: Solid. Issues (Important): Magic number (100)
@@ -220,9 +220,9 @@ Done!
 
 **Quality gates:**
 - Self-review catches issues before handoff
-- Two-stage review: spec compliance, then code quality
+- Two-stage review: task-package compliance, then code quality
 - Review loops ensure fixes actually work
-- Spec compliance prevents over/under-building
+- Task-package compliance prevents over/under-building
 - Code quality ensures implementation is well-built
 
 **Cost:**
@@ -235,17 +235,18 @@ Done!
 
 **Never:**
 - Start implementation on main/master branch without explicit user consent
-- Skip reviews (spec compliance OR code quality)
+- Skip reviews (task-package compliance OR code quality)
 - Proceed with unfixed issues
 - Dispatch multiple implementation subagents in parallel (conflicts)
-- Make subagent read plan file (provide full text instead)
+- Make subagent discover the task package on its own when you could provide the relevant task text directly
 - Skip scene-setting context (subagent needs to understand where task fits)
 - Ignore subagent questions (answer before letting them proceed)
-- Accept "close enough" on spec compliance (spec reviewer found issues = not done)
+- Accept "close enough" on task-package compliance (reviewer found issues = not done)
 - Skip review loops (reviewer found issues = implementer fixes = review again)
 - Let implementer self-review replace actual review (both are needed)
-- **Start code quality review before spec compliance is ✅** (wrong order)
+- **Start code quality review before task-package compliance is ✅** (wrong order)
 - Move to next task while either review has open issues
+- Mark the whole package done before `05-verification.md`, `06-evidence.md`, and `STATUS.yaml` are updated
 
 **If subagent asks questions:**
 - Answer clearly and completely
@@ -266,7 +267,7 @@ Done!
 
 **Required workflow skills:**
 - **using-git-worktrees** - REQUIRED: Set up isolated workspace before starting
-- **writing-plans** - Optional compatibility skill that may create the explicit execution plan this skill consumes
+- **using-openharness** - REQUIRED: Read the task package and route work before dispatching subagents
 - **requesting-code-review** - Code review template for reviewer subagents
 - **finishing-a-development-branch** - Complete development after all tasks
 
@@ -274,4 +275,4 @@ Done!
 - **test-driven-development** - Subagents follow TDD for each task
 
 **Alternative workflow:**
-- **executing-plans** - Use for parallel session instead of same-session execution
+- **executing-plans** - Use when an extra execution-plan artifact exists and you want to execute it in another session

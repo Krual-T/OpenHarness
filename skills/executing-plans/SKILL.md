@@ -1,27 +1,28 @@
 ---
 name: executing-plans
-description: Use when you have a written implementation plan to execute in a separate session with review checkpoints
+description: Use when a task package already has a written execution plan and you want to execute it in a separate session with review checkpoints
 ---
 
 # Executing Plans
 
 ## Overview
 
-Load the chosen optional execution plan, review critically, execute all tasks, report when complete.
+Load the task package plus any optional execution plan artifact, review critically, execute against the task package, then close the package correctly.
 
-**Announce at start:** "I'm using the executing-plans skill to implement this plan."
+**Announce at start:** "I'm using the executing-plans skill to execute this task package."
 
-In this repository, `executing-plans` is a legacy compatibility helper for cases where work has already been written as an explicit execution plan. It is not part of the fixed core workflow.
+In this repository, `executing-plans` is a compatibility helper for cases where work has already been written as an explicit execution plan. The task package under `docs/designs/<task>/` remains the source of truth; the plan is only a derived execution aid.
 
 **Note:** If subagents are available, prefer `subagent-driven-development` over this skill.
 
 ## The Process
 
-### Step 1: Load and Review Plan
-1. Read the chosen execution plan artifact
-2. Review critically - identify any questions or concerns about the plan
-3. If concerns: Raise them with your human partner before starting
-4. If no concerns: Create TodoWrite and proceed
+### Step 1: Load and Review Task Source
+1. Read the active task package first, especially `README.md`, `STATUS.yaml`, `01-requirements.md`, `02-overview-design.md`, `03-detailed-design.md`, `05-verification.md`, and `06-evidence.md`
+2. If an execution plan artifact exists, read it as a secondary execution aid rather than the primary source
+3. Review critically and identify any conflicts between the plan and the task package
+4. If concerns: raise them with your human partner before starting
+5. If no concerns: create TodoWrite and proceed
 
 ### Step 2: Execute Tasks
 
@@ -31,9 +32,13 @@ For each task:
 3. Run verifications as specified
 4. Mark as completed
 
-### Step 3: Complete Development
+### Step 3: Close the Task Package
 
-After all tasks complete and verified:
+After all tasks complete and required verification commands pass:
+- Update `05-verification.md` with the verification path and fresh results
+- Update `06-evidence.md` with changed files, commands, and residual risk
+- Update `STATUS.yaml` so the package status matches reality
+- Archive the task package only if implementation and verification are complete and the package is leaving active work
 - Announce: "I'm using the finishing-a-development-branch skill to complete this work."
 - **REQUIRED SUB-SKILL:** Use `finishing-a-development-branch`
 - Follow that skill to verify tests, present options, execute choice
@@ -53,13 +58,15 @@ After all tasks complete and verified:
 **Return to Review (Step 1) when:**
 - Partner updates the plan based on your feedback
 - Fundamental approach needs rethinking
+- The execution plan and task package diverge
 
 **Don't force through blockers** - stop and ask.
 
 ## Remember
-- Review plan critically first
-- Follow plan steps exactly
+- Review the task package first
+- Follow the task package first and the plan second
 - Don't skip verifications
+- Don't treat design-complete or test-complete as package-complete
 - Reference skills when plan says to
 - Stop when blocked, don't guess
 - Never start implementation on main/master branch without explicit user consent

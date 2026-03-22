@@ -1,32 +1,38 @@
 ---
 name: finishing-a-development-branch
-description: Use when implementation is complete, all tests pass, and you need to decide how to integrate the work - guides completion of development work by presenting structured options for merge, PR, or cleanup
+description: Use when a task package has completed implementation and verification and you need to decide how to integrate the work
 ---
 
 # Finishing a Development Branch
 
 ## Overview
 
-Guide completion of development work by presenting clear options and handling chosen workflow.
+Guide completion of development work by closing the task package correctly, then presenting clear options and handling the chosen workflow.
 
-**Core principle:** Verify tests → Present options → Execute choice → Clean up.
+**Core principle:** Verify declared evidence first, close the task package, then present integration options.
 
 **Announce at start:** "I'm using the finishing-a-development-branch skill to complete this work."
 
 ## The Process
 
-### Step 1: Verify Tests
+### Step 1: Verify Task Evidence
 
-**Before presenting options, verify tests pass:**
+**Before presenting options, verify the task package reflects completed work:**
+
+- `05-verification.md` has fresh verification results
+- `06-evidence.md` has changed files, commands, and residual risk
+- `STATUS.yaml` matches the real state of the work
+
+Then verify the required commands and the project test suite pass:
 
 ```bash
 # Run project's test suite
 npm test / cargo test / pytest / go test ./...
 ```
 
-**If tests fail:**
+**If verification or tests fail:**
 ```
-Tests failing (<N> failures). Must fix before completing:
+Verification incomplete or failing. Must fix before completing:
 
 [Show failures]
 
@@ -35,7 +41,7 @@ Cannot proceed with merge/PR until tests pass.
 
 Stop. Don't proceed to Step 2.
 
-**If tests pass:** Continue to Step 2.
+**If verification is complete and tests pass:** Continue to Step 2.
 
 ### Step 2: Determine Base Branch
 
@@ -51,7 +57,7 @@ Or ask: "This branch split from main - is that correct?"
 Present exactly these 4 options:
 
 ```
-Implementation complete. What would you like to do?
+Task package closed and implementation complete. What would you like to do?
 
 1. Merge back to <base-branch> locally
 2. Push and create a Pull Request
@@ -160,9 +166,13 @@ git worktree remove <worktree-path>
 
 ## Common Mistakes
 
-**Skipping test verification**
-- **Problem:** Merge broken code, create failing PR
-- **Fix:** Always verify tests before offering options
+**Treating implementation complete as task complete**
+- **Problem:** Merge code before `05-verification.md`, `06-evidence.md`, and `STATUS.yaml` are aligned
+- **Fix:** Close the task package before offering options
+
+**Skipping verification**
+- **Problem:** Merge broken or weakly evidenced code, create failing PR
+- **Fix:** Always verify the package evidence and tests before offering options
 
 **Open-ended questions**
 - **Problem:** "What should I do next?" → ambiguous
@@ -179,12 +189,14 @@ git worktree remove <worktree-path>
 ## Red Flags
 
 **Never:**
+- Proceed with incomplete package evidence
 - Proceed with failing tests
 - Merge without verifying tests on result
 - Delete work without confirmation
 - Force-push without explicit request
 
 **Always:**
+- Update task-package evidence before integration
 - Verify tests before offering options
 - Present exactly 4 options
 - Get typed confirmation for Option 4

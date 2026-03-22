@@ -64,7 +64,7 @@ scripts/save_fact.py workspace_files_content_semantics \
   --statement "workspace/files.data.content 表示工作区真实文件内容，不是聊天消息文本" \
   --alias "workspace files content 是什么" \
   --applies-to server/deepagents/api.py \
-  --evidence docs/design/deepagent/workspace_tree/README.md \
+  --evidence docs/designs/deepagent-workspace-tree/README.md \
   --tag workspace \
   --tag fact
 ```
@@ -81,7 +81,7 @@ scripts/save_decision.py cei_qa_parallel_upgrade_path \
   --consequence "需要短期并行维护两条路径" \
   --revisit-when "当职责边界再次调整时重新评估" \
   --alias "cei-qa 为什么不直接替换旧链路" \
-  --evidence docs/design/cei-qa/README.md \
+  --evidence docs/designs/cei-qa-parallel-upgrade/README.md \
   --tag decision \
   --tag cei-qa
 ```

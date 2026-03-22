@@ -10,7 +10,7 @@ If you were dispatched as a subagent to execute a specific task, skip this skill
 <EXTREMELY-IMPORTANT>
 If there is even a 1% chance a repository skill applies, you must invoke the relevant skill before responding or acting.
 
-`using-openharness` is the first repository workflow skill to check whenever work may affect task packages, design docs, verification flow, repo protocol, or skill routing.
+`using-openharness` is the first repository workflow skill to check whenever work may affect task packages, task docs, verification flow, repo protocol, or skill routing.
 </EXTREMELY-IMPORTANT>
 
 # Using OpenHarness
@@ -40,7 +40,7 @@ It decides:
 - whether a repository or process skill applies before any response
 - where task truth lives
 - which package must be read and updated
-- when to stay in package design docs
+- when to stay in task-package docs
 - when to invoke `brainstorming`
 - when to invoke `exploring-solution-space`
 - when to run harness verification
@@ -106,7 +106,7 @@ Default flow:
 7. run a detailed-design reflection pass; use bounded subagent discussion when test strategy, module boundaries, migration risk, or runtime verification remain uncertain
 8. move to `in_progress` only when the package is ready to execute against a stable detailed design
 9. move to `verifying` only when implementation is complete enough to gather fresh verification evidence
-10. verification and evidence updates before `archived`
+10. update verification and evidence before `archived`, and archive only after implementation is done and verified
 
 For non-package work that still touches repository workflow, start from `openharness`, decide whether a child skill applies, then continue under that child skill. Do not reintroduce a separate entry skill for this routing step.
 
@@ -129,7 +129,7 @@ For non-package work that still touches repository workflow, start from `openhar
 - Completed task packages that should no longer appear in active work move to `docs/archived/designs/<task>/`.
 - Before moving a completed package, update `05-verification.md` and `06-evidence.md`, then set `STATUS.yaml.status` to `archived` and refresh `updated_at`.
 - After moving the package, update package-local entrypoints/evidence paths and any repository references that still point to the old active location.
-- Archived packages remain historical fact sources and verification evidence, but they must not remain in the active design root.
+- Archived packages remain historical fact sources and verification evidence, but they must not remain in the active task root.
 - `archived` should mean the task package is implemented, verified, and no longer active, not merely design-complete or relocated.
 
 ## Boundary Rules
@@ -145,8 +145,8 @@ For non-package work that still touches repository workflow, start from `openhar
 ## Verification
 
 - Run `scripts/openharness.py check-tasks` before claiming completion.
-- Run `scripts/openharness.py new-task <design_name> <design_id> <title>` to scaffold a new task package.
-- Run `scripts/openharness.py verify <design-name-or-id>` when a package declares required commands.
+- Run `scripts/openharness.py new-task <task_name> <task_id> <title>` to scaffold a new task package.
+- Run `scripts/openharness.py verify <task-name-or-id>` when a package declares required commands.
 - `openharness.py` is the single harness CLI; use its subcommands instead of introducing parallel wrapper scripts.
 - If the package adds new reusable project knowledge, update `.project-memory/` in the same turn.
 - If a completed package is archived, rerun harness validation after the move and confirm it no longer appears in the default `bootstrap` active-package list.
