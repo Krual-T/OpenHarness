@@ -14,11 +14,9 @@
     - 任务包（task package）的唯一事实来源；每个任务是一个独立 task package。
 4. `docs/archived/task-packages/<task>/`
     - 已完成 task package 的归档区；保留历史事实与验证证据，但不再属于 active package 集合。
-5. `docs/architecture.md`
-    - 当前系统结构说明。
-6. `.project-memory/`
+5. `.project-memory/`
     - 已验证的项目事实、决策和可复用 workflow。
-7. `docs/archived/legacy/`
+6. `docs/archived/legacy/`
     - 历史材料归档区；仅作为 legacy evidence，不再作为当前任务事实源。
 
 ### 设计任务包协议
