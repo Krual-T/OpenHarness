@@ -28,7 +28,7 @@
 - `docs/archived/task-packages/task-package-completion-semantics/*`
 
 ## Commands
-- `uv run python skills/using-openharness/scripts/openharness.py new-task task-package-completion-semantics OH-008 "Task Package Completion Semantics" --owner codex --summary "Rename task packages consistently and tighten completion semantics so archive only means implemented, verified, and no longer active."`
+- `uv run python skills/using-openharness/scripts/openharness.py new-task task-package-completion-semantics OH-011 "Task Package Completion Semantics" --owner codex --summary "Rename task packages consistently and tighten completion semantics so archive only means implemented, verified, and no longer active."`
 - `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
 - `uv run pytest`
 - `mv docs/task-packages/task-package-completion-semantics docs/archived/task-packages/task-package-completion-semantics`

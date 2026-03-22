@@ -323,6 +323,17 @@ def discover_task_packages(repo_root: Path, manifest: HarnessManifest | None = N
     return packages
 
 
+def find_duplicate_task_ids(packages: list[TaskPackage]) -> dict[str, list[TaskPackage]]:
+    grouped: dict[str, list[TaskPackage]] = {}
+    for package in packages:
+        grouped.setdefault(package.task_id, []).append(package)
+    return {
+        task_id: duplicates
+        for task_id, duplicates in grouped.items()
+        if task_id and len(duplicates) > 1
+    }
+
+
 def resolve_task_package(repo_root: Path, task: str, manifest: HarnessManifest | None = None) -> TaskPackage:
     current_manifest = manifest or load_manifest(repo_root)
     for package in discover_task_packages(repo_root, current_manifest):
@@ -842,6 +853,10 @@ def cmd_check_tasks(args: argparse.Namespace) -> int:
         errors.append(
             f"no task packages found under {manifest.task_packages_root} or {manifest.archived_task_packages_root}"
         )
+    duplicate_task_ids = find_duplicate_task_ids(packages)
+    for task_id, duplicates in sorted(duplicate_task_ids.items()):
+        roots = ", ".join(str(package.root) for package in duplicates)
+        errors.append(f"duplicate task id `{task_id}` found in: {roots}")
     for package in packages:
         errors.extend(validate_task_package(package))
     if errors:

@@ -28,3 +28,9 @@ Do not use `archived` while implementation is still deferred to a future wave.
   - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
   - `uv run pytest`
   - Result: the repository validates cleanly, the full test suite passes, and `bootstrap` shows only `OH-004` in the active set after archival.
+- Passed again on 2026-03-23 after adding duplicate-task-id protection and cleaning remaining archive inconsistencies:
+  - `uv run pytest skills/using-openharness/tests/test_openharness.py -k 'design_packages_validate_cleanly or find_duplicate_task_ids_reports_conflicts'`
+  - `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
+  - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
+  - `uv run pytest`
+  - Result: duplicate task ids are now guarded by tests and `check-tasks`, `OH-008` remains archived cleanly, and `bootstrap` still shows only `OH-004` as active.

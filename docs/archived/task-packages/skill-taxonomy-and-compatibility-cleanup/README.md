@@ -5,7 +5,7 @@
 - Remove vocabulary drift between the skill hub, per-skill docs, and test expectations so future maintenance work can reason about one stable classification model.
 
 ## Current Status
-- Verifying.
+- Archived.
 - Child package of `OH-004 Harness Completion Roadmap`.
 - This package now implements the retirement of the old plan-oriented skill surface and the matching taxonomy cleanup.
 

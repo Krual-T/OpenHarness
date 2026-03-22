@@ -8,7 +8,7 @@ status: archived
 summary: Clarify core protocol skills, optional helpers, compatibility shims, and imported generic skills so the skill hub and per-skill docs stop drifting.
 owner: codex
 created_at: 2026-03-22
-updated_at: 2026-03-22
+updated_at: 2026-03-23
 depends_on:
   - OH-004
   - OH-006

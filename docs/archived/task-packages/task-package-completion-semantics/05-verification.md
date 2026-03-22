@@ -11,7 +11,7 @@
   - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
 - Path Notes:
   - This round verifies the naming migration, CLI alias support, template guidance, and historical archive clarification.
-  - The archive check confirms `OH-008` no longer appears in the default active task-package list.
+  - The archive check confirms `OH-011` no longer appears in the default active task-package list.
 
 Use `verifying` only when implementation is complete enough to gather fresh evidence for the declared verification path.
 
@@ -23,7 +23,7 @@ Use `verifying` only when implementation is complete enough to gather fresh evid
 ## Expected Outcomes
 - Repository task packages validate cleanly after the terminology and semantics repair.
 - Repository tests pass after CLI alias and wording updates.
-- `bootstrap` no longer lists `OH-008` after the package is archived.
+- `bootstrap` no longer lists `OH-011` after the package is archived.
 
 ## Latest Result
 - Passed on 2026-03-22 after implementing task-package naming, archive-semantics tightening, CLI aliases, and legacy archive clarification:

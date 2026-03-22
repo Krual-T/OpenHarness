@@ -17,6 +17,7 @@ from openharness import (
     REQUIRED_TASK_PACKAGE_FILES,
     create_task_package,
     discover_task_packages,
+    find_duplicate_task_ids,
     load_manifest,
     slugify_task_name,
     summarize_task_package,
@@ -68,8 +69,62 @@ def test_active_statuses_do_not_include_archived() -> None:
 def test_design_packages_validate_cleanly() -> None:
     manifest = load_manifest(REPO_ROOT)
     packages = discover_task_packages(REPO_ROOT, manifest)
+    assert find_duplicate_task_ids(packages) == {}
     errors = [error for package in packages for error in validate_task_package(package)]
     assert errors == []
+
+
+def test_find_duplicate_task_ids_reports_conflicts(tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
+    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
+        "version: 1\n"
+        "task_packages_root: docs/task-packages\n"
+        "archived_task_packages_root: docs/archived/task-packages\n"
+        "required_design_files:\n"
+        "  - README.md\n"
+        "  - STATUS.yaml\n"
+        "  - 01-requirements.md\n"
+        "  - 02-overview-design.md\n"
+        "  - 03-detailed-design.md\n"
+        "  - 05-verification.md\n"
+        "  - 06-evidence.md\n"
+        "workflow:\n"
+        "  default_status_flow:\n"
+        "    - proposed\n"
+        "    - archived\n",
+        encoding="utf-8",
+    )
+
+    first = repo_root / "docs" / "task-packages" / "one"
+    second = repo_root / "docs" / "archived" / "task-packages" / "two"
+    for root, status in ((first, "proposed"), (second, "archived")):
+        root.mkdir(parents=True)
+        for name in REQUIRED_TASK_PACKAGE_FILES:
+            (root / name).write_text("# x\n", encoding="utf-8")
+        (root / "STATUS.yaml").write_text(
+            "id: OH-999\n"
+            "title: Duplicate\n"
+            f"status: {status}\n"
+            "summary: dup\n"
+            "owner: codex\n"
+            "created_at: 2026-03-23\n"
+            "updated_at: 2026-03-23\n"
+            "done_criteria:\n"
+            "  - x\n"
+            "verification:\n"
+            "  required_commands:\n"
+            "    - uv run pytest\n"
+            "  required_scenarios: []\n",
+            encoding="utf-8",
+        )
+
+    manifest = load_manifest(repo_root)
+    packages = discover_task_packages(repo_root, manifest)
+    duplicates = find_duplicate_task_ids(packages)
+
+    assert set(duplicates) == {"OH-999"}
+    assert {package.name for package in duplicates["OH-999"]} == {"one", "two"}
 
 
 def test_load_manifest_prefers_repo_local_skills_layout(tmp_path: Path) -> None:

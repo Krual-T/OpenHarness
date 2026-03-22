@@ -29,10 +29,15 @@
 - `skills/subagent-driven-development/SKILL.md`
 - `skills/requesting-code-review/SKILL.md`
 - `skills/using-openharness/tests/test_openharness.py`
+- `skills/using-openharness/scripts/openharness.py`
 - `docs/archived/task-packages/reflective-design-review/06-evidence.md`
 - `docs/archived/task-packages/workflow-redesign/02-overview-design.md`
 - `docs/archived/task-packages/workflow-redesign/03-detailed-design.md`
 - `docs/archived/task-packages/workflow-redesign/06-evidence.md`
+- `docs/archived/task-packages/task-package-completion-semantics/README.md`
+- `docs/archived/task-packages/task-package-completion-semantics/STATUS.yaml`
+- `docs/archived/task-packages/task-package-completion-semantics/05-verification.md`
+- `docs/archived/task-packages/task-package-completion-semantics/06-evidence.md`
 - removed `skills/writing-plans/**`
 - removed `skills/executing-plans/SKILL.md`
 - removed `skills/writing-skills/**`
@@ -46,6 +51,10 @@
 - `git stash push --keep-index -u -m codex-temp-verify-008-commit`
 - `rmdir skills/writing-plans/references`
 - `rmdir skills/writing-plans`
+- `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
+- `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
+- `uv run pytest`
+- `uv run pytest skills/using-openharness/tests/test_openharness.py -k 'design_packages_validate_cleanly or find_duplicate_task_ids_reports_conflicts'`
 - `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
 - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
 - `uv run pytest`
