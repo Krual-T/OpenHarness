@@ -19,7 +19,6 @@ digraph when_to_use {
     "Tasks mostly independent?" [shape=diamond];
     "Stay in this session?" [shape=diamond];
     "subagent-driven-development" [shape=box];
-    "executing-plans" [shape=box];
     "Manual execution or refine task package first" [shape=box];
 
     "Task package already detailed enough?" -> "Tasks mostly independent?" [label="yes"];
@@ -27,7 +26,7 @@ digraph when_to_use {
     "Tasks mostly independent?" -> "Stay in this session?" [label="yes"];
     "Tasks mostly independent?" -> "Manual execution or brainstorm first" [label="no - tightly coupled"];
     "Stay in this session?" -> "subagent-driven-development" [label="yes"];
-    "Stay in this session?" -> "executing-plans" [label="no - parallel session"];
+    "Stay in this session?" -> "Manual execution or refine task package first" [label="no - use another execution path"];
 }
 ```
 
@@ -273,6 +272,3 @@ Done!
 
 **Subagents should use:**
 - **test-driven-development** - Subagents follow TDD for each task
-
-**Alternative workflow:**
-- **executing-plans** - Use when an extra execution-plan artifact exists and you want to execute it in another session

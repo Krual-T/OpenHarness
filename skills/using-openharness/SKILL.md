@@ -55,7 +55,7 @@ Use this routing order:
 
 1. `using-openharness` first for repository workflow and task-package protocol
 2. process skills next, such as `brainstorming`, `exploring-solution-space`, or `systematic-debugging`
-3. execution skills after that, such as `subagent-driven-development` or `executing-plans`
+3. execution skills after that, such as `subagent-driven-development`
 
 If a skill applies, use it. Do not bypass it by improvising a parallel workflow.
 

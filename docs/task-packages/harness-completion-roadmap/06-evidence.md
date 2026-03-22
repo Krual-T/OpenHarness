@@ -7,6 +7,9 @@
 - `docs/task-packages/harness-completion-roadmap/03-detailed-design.md`
 - `docs/task-packages/harness-completion-roadmap/05-verification.md`
 - `docs/task-packages/harness-completion-roadmap/06-evidence.md`
+- `docs/task-packages/skill-taxonomy-and-compatibility-cleanup/*`
+- `docs/archived/task-packages/workflow-transition-and-verification-artifacts/*`
+- `docs/task-packages/task-package-semantic-validation/*`
 - `docs/task-packages/harness-completion-roadmap/STATUS.yaml`
 - `docs/archived/task-packages/python-verification-maturity/*`
 - `skills/exploring-solution-space/SKILL.md`
@@ -16,6 +19,7 @@
 - `skills/using-openharness/tests/test_openharness.py`
 - `docs/archived/task-packages/runtime-verification-baseline/*`
 - `docs/archived/task-packages/status-semantics-tightening/*`
+- `docs/archived/task-packages/task-package-semantic-validation/*`
 
 ## Commands
 - `uv run python skills/using-openharness/scripts/openharness.py new-task harness-completion-roadmap OH-004 "Harness Completion Roadmap" --owner codex --summary "Track the remaining major work needed to make OpenHarness a complete no-harness bootstrap and maintenance-oriented skill hub, including runtime verification defaults, bootstrap workflow, maintenance, and status semantics."`
@@ -37,8 +41,26 @@
 - `uv run python skills/using-openharness/scripts/openharness.py new-task no-harness-bootstrap-workflow OH-007 "No-Harness Bootstrap Workflow" --owner codex --summary "Define how OpenHarness should enter a repository with no harness, no package history, and no established verification loop, while still producing a usable first-round package and verification path."`
 - `mv docs/task-packages/no-harness-bootstrap-workflow docs/task-packages/python-verification-maturity`
 - `mv docs/task-packages/python-verification-maturity docs/archived/task-packages/python-verification-maturity`
+- `uv run python skills/using-openharness/scripts/openharness.py new-task skill-taxonomy-and-compatibility-cleanup OH-008 "Skill Taxonomy And Compatibility Cleanup" --owner codex --summary "Clarify core protocol skills, optional helpers, compatibility shims, and imported generic skills so the skill hub and per-skill docs stop drifting."`
+- `uv run python skills/using-openharness/scripts/openharness.py new-task task-package-semantic-validation OH-009 "Task Package Semantic Validation" --owner codex --summary "Strengthen check-tasks so status readiness is anchored to minimum document semantics instead of file existence alone."`
+- `uv run python skills/using-openharness/scripts/openharness.py new-task workflow-transition-and-verification-artifacts OH-010 "Workflow Transition And Verification Artifacts" --owner codex --summary "Enforce legal task-package status transitions and record verification runs as structured artifacts tied back to package evidence."`
+- `uv run python skills/using-openharness/scripts/openharness.py transition workflow-transition-and-verification-artifacts requirements_ready`
+- `uv run python skills/using-openharness/scripts/openharness.py transition workflow-transition-and-verification-artifacts overview_ready`
+- `uv run python skills/using-openharness/scripts/openharness.py transition workflow-transition-and-verification-artifacts detailed_ready`
+- `uv run python skills/using-openharness/scripts/openharness.py transition workflow-transition-and-verification-artifacts in_progress`
+- `uv run python skills/using-openharness/scripts/openharness.py verify workflow-transition-and-verification-artifacts`
+- `uv run python skills/using-openharness/scripts/openharness.py transition workflow-transition-and-verification-artifacts verifying`
+- `uv run python skills/using-openharness/scripts/openharness.py verify workflow-transition-and-verification-artifacts`
+- `uv run python skills/using-openharness/scripts/openharness.py verify workflow-transition-and-verification-artifacts`
+- `uv run python skills/using-openharness/scripts/openharness.py transition workflow-transition-and-verification-artifacts archived`
+- `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
+- `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
+- `uv run pytest`
+- `mv docs/task-packages/task-package-semantic-validation docs/archived/task-packages/task-package-semantic-validation`
 
 ## Follow-ups
-- Consider whether a future focused package should tighten the transition contract between overview reflection and detailed-design drafting beyond wording-only safeguards.
-- Land the first Python verification-maturity support wave in docs, templates, and completion guidance using archived `OH-007` as the fact source.
+- Complete `OH-008 Skill Taxonomy And Compatibility Cleanup`, then use its stable category definitions as input to the later maintenance package.
+- Decide in a later focused package how much of archived `OH-007` should be productized into live docs, templates, and completion guidance.
 - Reuse the archived `OH-006 Status Semantics Tightening` package as the baseline if a later stream needs stronger transition enforcement, rather than reopening status-semantics design from scratch in `OH-004`.
+- Reuse archived `OH-009 Task Package Semantic Validation` if a later stream adds a `transition` command or structured verification artifacts, rather than mixing those concerns back into `OH-004`.
+- Reuse archived `OH-010 Workflow Transition And Verification Artifacts` as the baseline when later work needs stronger workflow control or richer verification evidence, instead of reopening those semantics inside `OH-004`.

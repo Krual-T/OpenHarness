@@ -60,3 +60,7 @@
   - `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
   - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
   - `uv run pytest`
+- Passed again on 2026-03-22 after scaffolding `OH-008 Skill Taxonomy And Compatibility Cleanup` and narrowing `OH-004` to the remaining roadmap streams:
+  - `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
+  - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
+  - `uv run pytest`

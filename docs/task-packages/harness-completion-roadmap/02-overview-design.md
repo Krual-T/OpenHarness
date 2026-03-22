@@ -19,29 +19,28 @@ One workflow ambiguity is now explicit: exploration should produce architectural
 Another workflow ambiguity is now explicit too: brainstorming should make design explicit before action, but it should not impose mandatory user approval pauses during normal autonomous execution. The protocol should stop for review only when the user asked for it or when unresolved ambiguity makes continuation risky.
 
 ## Roadmap Structure
-Keep `OH-004` as the parent roadmap package and treat the remaining work as five durable streams:
+Keep `OH-004` as the parent roadmap package and treat the remaining work as these durable streams:
 
-1. `runtime verification baseline`
-   - Define what every no-harness repository must be able to verify before a task can credibly claim completion.
-   - Focus on minimum acceptable defaults, evidence shape, and escalation paths when there is no existing runtime harness.
-2. `python verification maturity`
-   - Define the default verification floor for Python work when runtime tests are incomplete.
-   - Focus on when `pytest` is enough, when runtime tests are required, and how weaker evidence must be recorded honestly.
-3. `maintenance and entropy reduction`
+1. `maintenance and entropy reduction`
    - Define recurring cleanup and review work so the repository does not decay into stale task packages, stale memory, or drifting skill docs.
    - Focus on periodic review loops rather than one-off feature work.
-4. `status semantics tightening`
-   - Align the workflow checkpoints with stronger machine- and human-readable meaning for each status.
-   - Focus on readiness criteria, transition rules, and when a package should remain active versus archive.
-5. `skill taxonomy and compatibility cleanup`
+2. `skill taxonomy and compatibility cleanup`
    - Clarify which skills are core protocol, optional helpers, compatibility shims, or legacy imports.
    - Focus on reducing ambiguity in the skill hub and in per-skill messaging.
 
+The completed baseline streams remain authoritative historical inputs:
+
+- `runtime verification baseline`
+- `status semantics tightening`
+- `task package semantic validation`
+- `workflow transition and verification artifacts`
+- `python verification maturity`
+
 ## Stream Dependencies And Order
-- `runtime verification baseline` and `status semantics tightening` should lead, because both change what `ready`, `verifying`, and `done` mean.
-- `python verification maturity` depends on the minimum runtime verification baseline and status semantics, because it sharpens what acceptable Python evidence looks like inside completion and status claims.
-- `maintenance and entropy reduction` depends on clearer status semantics and skill taxonomy, because maintenance needs stable definitions of stale, active, archived, core, and optional.
-- `skill taxonomy and compatibility cleanup` can start earlier as a documentation cleanup, but it should finalize after status semantics are tightened so vocabulary does not drift again.
+- `runtime verification baseline` and `status semantics tightening` are already complete enough to act as upstream baselines, because both changed what `ready`, `verifying`, and `done` mean.
+- `python verification maturity` is already captured as a historical design baseline, so the remaining dependency is to decide where its wording should eventually land in live docs and templates.
+- `skill taxonomy and compatibility cleanup` should go next, because maintenance needs stable definitions of core, optional, compatibility, imported, stale, active, and archived.
+- `maintenance and entropy reduction` should follow the taxonomy cleanup, because it will need to audit the repository against those stable categories instead of re-defining them implicitly.
 
 ## Split Triggers
 This roadmap should stay broad until a request satisfies one of these triggers:
@@ -62,6 +61,9 @@ When those triggers are met, the agent should scaffold a focused child package r
 - `OH-005 Runtime Verification Baseline` is the first such child package and is now archived as the completed baseline for the runtime-verification stream.
 - `OH-006 Status Semantics Tightening` is now archived as the completed baseline for stronger workflow checkpoint meaning and transition gates.
 - `OH-007 Python Verification Maturity` remains a legacy archived design-baseline package from the older semantics period; future work may reuse it as historical design input, but not as an example that design-complete work is archive-ready.
+- `OH-008 Skill Taxonomy And Compatibility Cleanup` is now the active child package for the taxonomy stream.
+- `OH-009 Task Package Semantic Validation` is now archived as the follow-up that turns status semantics into stronger minimum document-anchor checks.
+- `OH-010 Workflow Transition And Verification Artifacts` is now archived as the follow-up that turns status semantics and verification evidence into supported CLI mechanics.
 - Completed child packages should feed evidence or durable decisions back into this roadmap only when they materially change what remains.
 
 ## Trade-offs
@@ -76,5 +78,5 @@ When those triggers are met, the agent should scaffold a focused child package r
 - I checked whether the proposed ordering ignored runtime verification implications. It did initially; the revised structure now makes runtime verification and status semantics upstream of Python verification maturity and maintenance.
 - I checked whether the current skill wording accidentally let exploration jump ahead into detailed design. It did leave that ambiguity, so the workflow docs should explicitly state that `02` is the primary output of exploration and `03` only follows when implementation-facing constraints are already justified.
 - I checked whether the brainstorming skill overfit to interactive approval loops. It did, so the workflow should default to autonomous continuation once design is explicit and only introduce user review gates when the task or risk profile justifies them.
-- I checked whether the next actionable stream was still ambiguous after `OH-005` and `OH-006` completed. It no longer is; the Python verification stream now has enough upstream structure to split into `OH-007`.
+- I checked whether the next actionable stream was still ambiguous after `OH-005`, `OH-006`, and the historical `OH-007` baseline. It no longer is; the taxonomy stream now has enough upstream structure to split into `OH-008`.
 - No bounded subagent discussion was needed in this round because the uncertainty is about prioritization and scope control inside this repository, not about a hard architectural fork.

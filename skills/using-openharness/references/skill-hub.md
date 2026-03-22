@@ -16,8 +16,6 @@
   - enforces evidence-before-claims at the end of work
 
 ## Execution
-- `executing-plans`
-  - legacy execution helper; not part of the fixed core workflow
 - `subagent-driven-development`
   - legacy execution helper; not part of the fixed core workflow
 - `finishing-a-development-branch`
@@ -41,7 +39,6 @@
 
 ## Imported Generic Skills
 - `dispatching-parallel-agents`
-- `writing-skills`
 
 These are still generic imported skills. They are available in the hub, but they are not part of the core openharness protocol.
 

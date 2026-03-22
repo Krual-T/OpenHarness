@@ -346,7 +346,6 @@ def test_key_repo_skills_are_vendored_locally() -> None:
         "exploring-solution-space",
         "using-git-worktrees",
         "writing-plans",
-        "executing-plans",
         "verification-before-completion",
         "systematic-debugging",
         "finishing-a-development-branch",
@@ -355,6 +354,11 @@ def test_key_repo_skills_are_vendored_locally() -> None:
         path = REPO_ROOT / "skills" / name
         assert path.is_dir()
         assert (path / "SKILL.md").exists()
+
+
+def test_retired_skills_are_not_shipped_live() -> None:
+    for name in ["executing-plans", "writing-skills"]:
+        assert not (REPO_ROOT / "skills" / name).exists()
 
 
 def test_openharness_skill_owns_supporting_scripts_and_templates() -> None:
@@ -403,7 +407,6 @@ def test_skill_hub_declares_no_parallel_entry_skill() -> None:
 def test_optional_execution_skills_are_not_described_as_core_protocol() -> None:
     for path in [
         REPO_ROOT / "skills" / "writing-plans" / "SKILL.md",
-        REPO_ROOT / "skills" / "executing-plans" / "SKILL.md",
         REPO_ROOT / "skills" / "subagent-driven-development" / "SKILL.md",
         REPO_ROOT / "skills" / "requesting-code-review" / "SKILL.md",
     ]:

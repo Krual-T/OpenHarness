@@ -9,34 +9,28 @@ This roadmap package does not add runtime code directly. Its `tests` are reposit
 
 ## Files Added Or Changed
 - Update the `OH-004` design documents so they capture stream boundaries, dependency order, split triggers, and concrete expected outputs.
-- Reframe `OH-007` as `Python Verification Maturity` now that the real gap is verification policy rather than bootstrap entry routing.
-- Tighten workflow wording in core skill docs so exploration lands in `02-overview-design.md` first and only feeds `03-detailed-design.md` when implementation constraints are already justified.
-- Tighten `brainstorming` so explicit design remains mandatory but default execution stays autonomous unless the user requested a review gate or unresolved ambiguity makes continuation risky.
-- Do not add code or new automation in this round; this package should stay at roadmap level.
+- Scaffold the next focused child package when one stream becomes concrete enough to stand on its own.
+- Keep `OH-004` at roadmap level rather than letting child-package implementation detail accumulate here.
 
 ## Interfaces
-Each future stream should produce its own focused package with these minimum outputs:
+Each remaining future stream should produce its own focused package with these minimum outputs:
 
-- `runtime verification baseline`
-  - define acceptable minimum command, scenario, or manual-interaction evidence for repos with no existing harness
-  - define what goes into `03-detailed-design.md`, `05-verification.md`, and `06-evidence.md` when runtime verification is weak or partly manual
-  - likely touch `skills/using-openharness/SKILL.md`, verification-oriented skills, template docs, and possibly `openharness.py verify`
-- `python verification maturity`
-  - define the Python baseline, runtime-test escalation rules, and evidence wording when runtime verification is incomplete
-  - define which verification expectations belong in detailed design versus verification and evidence docs
-  - likely touch templates, verification-oriented skills, and completion guidance
 - `maintenance and entropy reduction`
   - define regular cleanup loops for archived packages, stale evidence, stale memory, and protocol drift
   - define how maintenance work is triggered and where results are written back
   - likely touch skill docs, `.project-memory/` conventions if present, and maybe add maintenance checklists
-- `status semantics tightening`
-  - define entry and exit criteria for `proposed`, `requirements_ready`, `overview_ready`, `detailed_ready`, `in_progress`, `verifying`, and `archived`
-  - define what evidence must exist before a package changes state
-  - likely touch manifest references, `openharness.py`, tests, templates, and package docs
 - `skill taxonomy and compatibility cleanup`
   - define a stable classification of core protocol, optional helpers, compatibility shims, and imported generic skills
   - define how skills should describe themselves so the hub does not imply parallel entry systems
   - likely touch `skill-hub.md`, per-skill `SKILL.md` files, and maybe README-level explanation
+
+The already-completed baselines should be reused instead of re-designed here:
+
+- `runtime verification baseline`
+- `status semantics tightening`
+- `task package semantic validation`
+- `workflow transition and verification artifacts`
+- `python verification maturity`
 
 ## Error Handling
 - If a future task tries to solve several of these streams at once, this package should be used to decompose the request before implementation.
@@ -46,12 +40,15 @@ Each future stream should produce its own focused package with these minimum out
 ## Migration Notes
 - This package is intentionally broad and may stay active longer than a typical feature package.
 - When a substream becomes concrete, prefer creating a dedicated follow-up package rather than overloading this roadmap with implementation detail.
-- `runtime verification baseline` and `status semantics tightening` are now archived completed baselines.
-- `OH-007 Python Verification Maturity` is a legacy archived design-baseline package written before task-package completion semantics were tightened; future work should not treat it as proof that design-complete alone is archive-ready.
+- `runtime verification baseline` and `status semantics tightening` are archived completed baselines.
+- `task package semantic validation` is the archived completed follow-up that adds the next semantic-enforcement wave on top of `OH-006`.
+- `OH-007 Python Verification Maturity` is a legacy archived design baseline written before task-package completion semantics were tightened; future work should not treat it as proof that design-complete alone is archive-ready.
+- `OH-008 Skill Taxonomy And Compatibility Cleanup` now carries the next implementation-ready design work for this roadmap.
+- `OH-010 Workflow Transition And Verification Artifacts` is now archived as the completed implementation wave for supported transitions and verification artifact closure.
 
 ## Detailed Reflection
 - I challenged whether `OH-004` needed file-level implementation steps now. It does not; adding them here would duplicate the work that belongs in child packages.
 - I challenged whether the roadmap was still too abstract to verify. The answer was yes in its earlier form, so this revision adds expected outputs and likely repository touch points for each stream.
 - I checked whether the detailed design made runtime verification concrete enough. It is now concrete at the roadmap level by defining the kinds of artifacts and semantics the next child package must settle.
-- I checked whether `OH-004` still needed to hold the Python verification-policy detail itself. It does not; that detail now belongs in `OH-007`.
+- I checked whether `OH-004` still needed to hold taxonomy implementation detail itself. It does not; that detail now belongs in `OH-008`.
 - No bounded subagent discussion was needed in this round because the main uncertainty is package decomposition, not a contested implementation path.
