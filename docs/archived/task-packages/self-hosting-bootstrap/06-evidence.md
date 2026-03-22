@@ -1,5 +1,8 @@
 # Evidence
 
+## Residual Risks
+- This package proved the repository could host its own harness, but it intentionally left broader workflow simplification and stronger protocol semantics to later packages.
+
 ## Files
 - `pyproject.toml`
 - `skills/using-openharness/scripts/openharness.py`

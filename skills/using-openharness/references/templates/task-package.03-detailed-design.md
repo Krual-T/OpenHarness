@@ -16,3 +16,5 @@ If design is complete but implementation has not started yet, stay at `detailed_
 ## Error Handling
 
 ## Migration Notes
+
+## Detailed Reflection

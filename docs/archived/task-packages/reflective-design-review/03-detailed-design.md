@@ -1,5 +1,16 @@
 # Detailed Design
 
+## Runtime Verification Plan
+- Verification Path:
+  - run `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
+  - run `uv run pytest`
+- Fallback Path:
+  - if unrelated repository failures block verification, record the blocker in `05-verification.md` and do not claim completion until the package state is honest again
+- Planned Evidence:
+  - updated workflow skills and core docs
+  - tests that pin the reflection-loop wording
+  - a clean repository validation run after the package is archived
+
 ## Files Added Or Changed
 - Update `skills/using-openharness/SKILL.md` to describe reflection checkpoints in the fixed workflow.
 - Update `skills/exploring-solution-space/SKILL.md` or adjacent core docs so exploration hands off into overview reflection instead of directly assuming readiness.
@@ -25,3 +36,7 @@
 ## Migration Notes
 - Start by documenting the reflection loop in workflow docs before introducing any new dedicated automation.
 - The first version can use existing subagent capabilities and bounded prompts rather than adding a heavy new subsystem immediately.
+
+## Detailed Reflection
+- I checked whether this package needed more file-level implementation detail. It did not; the main job was to land the reflection requirement in the protocol surfaces that agents actually read.
+- I checked whether runtime verification needed custom commands. It did not; the standard repository validation path was enough for this documentation-focused package.

@@ -1,5 +1,8 @@
 # Evidence
 
+## Residual Risks
+- This package established the fixed protocol shape, but optional compatibility helpers and later status/verification semantics still required follow-up work.
+
 ## Files
 - `AGENTS.md`
 - `README.md`

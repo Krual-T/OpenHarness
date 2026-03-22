@@ -1,5 +1,8 @@
 # Evidence
 
+## Residual Risks
+- The repository now has a shared verification vocabulary, but it still relies on documentation and lightweight CLI behavior rather than a richer execution-artifact system.
+
 ## Files
 - `AGENTS.md`
 - `docs/archived/task-packages/runtime-verification-baseline/README.md`

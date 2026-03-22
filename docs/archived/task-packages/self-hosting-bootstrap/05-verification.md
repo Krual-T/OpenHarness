@@ -1,5 +1,10 @@
 # Verification
 
+## Verification Path
+- Planned Path: repository automation
+- Executed Path: repository automation
+- Path Notes: self-hosting success was defined by whether the repo-local CLI, package tree, and tests worked from a fresh checkout
+
 ## Required Commands
 - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
 - `uv run python skills/using-openharness/scripts/openharness.py check-tasks`

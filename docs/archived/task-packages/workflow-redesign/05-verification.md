@@ -1,5 +1,10 @@
 # Verification
 
+## Verification Path
+- Planned Path: repository automation
+- Executed Path: repository automation
+- Path Notes: the redesign changed manifest, templates, skills, and tests, so repository validation was the correct evidence path
+
 ## Required Commands
 - `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
 - `uv run pytest`

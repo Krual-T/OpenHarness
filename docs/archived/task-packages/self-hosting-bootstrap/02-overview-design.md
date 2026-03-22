@@ -26,3 +26,8 @@ This round only covers the minimal repository machinery needed for OpenHarness t
 - This round intentionally left the inherited package protocol in place; the follow-up workflow-redesign package changes that protocol.
 - The first round focuses on repository operability, not on finishing the higher-level workflow redesign discussed earlier.
 - Rewriting tests to current reality is lower risk than forcing the repository to mimic the old `.codex/skills` fixture layout internally.
+
+## Overview Reflection
+- I checked whether self-hosting should wait for the workflow redesign. It should not; the repository first needed a working local harness before higher-level protocol cleanup could be trusted.
+- I checked whether mimicking the historical installed-skill layout internally would be simpler. It would be more fragile than teaching the CLI and tests the real repo layout.
+- I checked whether the first package needed broader runtime features. It did not; the correct first milestone was basic repository operability.

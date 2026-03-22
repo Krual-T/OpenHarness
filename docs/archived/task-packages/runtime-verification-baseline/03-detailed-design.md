@@ -1,5 +1,17 @@
 # Detailed Design
 
+## Runtime Verification Plan
+- Verification Path:
+  - run `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
+  - run `uv run pytest`
+  - run targeted `test_openharness.py` cases for verification-path wording and CLI behavior
+- Fallback Path:
+  - if unrelated repository failures block the full suite, record the blocker and keep the package below any completion claim
+- Planned Evidence:
+  - updated templates and verification-oriented skills
+  - CLI behavior that distinguishes command execution from declared manual scenarios
+  - passing repository validation after archival
+
 ## Testing-First Design
 This package is still in early design. The first test for this round is document-level:
 

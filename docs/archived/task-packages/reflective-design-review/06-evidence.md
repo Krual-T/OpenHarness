@@ -1,5 +1,8 @@
 # Evidence
 
+## Residual Risks
+- Reflection quality still depends on agent honesty and skill wording; this package did not add a separate reflection runner or stronger machine enforcement.
+
 ## Files
 - `docs/archived/task-packages/reflective-design-review/*`
 - `skills/writing-plans/SKILL.md`

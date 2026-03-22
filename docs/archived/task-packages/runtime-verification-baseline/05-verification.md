@@ -1,5 +1,10 @@
 # Verification
 
+## Verification Path
+- Planned Path: repository automation
+- Executed Path: repository automation
+- Path Notes: the package rolled out semantics through docs, templates, skills, and CLI behavior, so repository validation and targeted tests were the appropriate evidence path
+
 ## Required Commands
 - `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
 - `uv run pytest`

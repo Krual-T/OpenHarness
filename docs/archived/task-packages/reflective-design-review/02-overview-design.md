@@ -30,3 +30,8 @@ This task covers the workflow semantics around overview and detailed design read
 - This adds process overhead, but it targets the highest-leverage design mistakes rather than every step.
 - Optional subagent discussion preserves flexibility while still making design challenge a first-class activity.
 - The main risk is ritualized review with no substance; the workflow must specify concrete questions to avoid that.
+
+## Overview Reflection
+- I checked whether the reflection loop should be lightweight guidance or a hard requirement. It should be a hard requirement at the design-readiness layer, with bounded subagent discussion remaining conditional on risk.
+- I checked whether overview and detailed reflection should be merged into one generic review pass. They should not; architecture and implementation-facing risks show up at different points.
+- I checked whether this package needed dedicated runtime tooling. It did not; the first value was to record the workflow contract in core docs and skills.

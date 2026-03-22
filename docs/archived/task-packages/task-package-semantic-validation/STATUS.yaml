@@ -1,0 +1,42 @@
+id: OH-009
+title: Task Package Semantic Validation
+# Default flow: proposed -> requirements_ready -> overview_ready -> detailed_ready -> in_progress -> verifying -> archived
+# requirements_ready -> overview_ready -> detailed_ready are design-readiness checkpoints; later statuses imply earlier checkpoints are already materially complete.
+# `detailed_ready` is the normal resting point for design-complete work before implementation.
+# `archived` means the task package is implemented, verified, and no longer active.
+status: archived
+summary: Strengthen check-tasks so status readiness is anchored to minimum document semantics instead of file existence alone.
+owner: codex
+created_at: 2026-03-22
+updated_at: 2026-03-22
+depends_on:
+  - OH-004
+  - OH-006
+  - OH-005
+scope:
+  areas:
+    - status-semantics
+    - validation
+    - workflow-docs
+    - tests
+entrypoints:
+  - docs/archived/task-packages/task-package-semantic-validation/README.md
+  - docs/archived/task-packages/task-package-semantic-validation/01-requirements.md
+  - docs/archived/task-packages/task-package-semantic-validation/02-overview-design.md
+  - docs/archived/task-packages/task-package-semantic-validation/03-detailed-design.md
+done_criteria:
+  - "`check-tasks` rejects packages whose claimed readiness status is contradicted by missing minimum semantic anchors in the corresponding docs."
+  - "The first-wave semantic checks cover at least `requirements_ready`, `overview_ready`, `detailed_ready`, `verifying`, and `archived`."
+  - Templates, package docs, and tests describe the new checks consistently so future agents can predict why validation failed.
+  - This round stays scoped to semantic validation and does not quietly introduce a separate transition engine or execution-artifact format.
+verification:
+  required_commands:
+    - uv run python skills/using-openharness/scripts/openharness.py check-tasks
+    - uv run pytest
+  required_scenarios: []
+evidence:
+  docs:
+    - docs/archived/task-packages/task-package-semantic-validation/05-verification.md
+    - docs/archived/task-packages/task-package-semantic-validation/06-evidence.md
+  code: []
+  tests: []

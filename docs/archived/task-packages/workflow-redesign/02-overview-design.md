@@ -42,3 +42,8 @@ It does not yet add heavy runtime modules; it only defines where runtime verific
 - Removing `04` simplifies the fixed protocol, but some imported execution skills will need wording updates.
 - Making exploration explicit adds process, but it matches the intended harness behavior much better than hidden ad hoc research.
 - Keeping runtime verification in `03` defines the slot without forcing every project to already have a sophisticated runtime-debug harness.
+
+## Overview Reflection
+- I checked whether removing `04` would leave planning homeless. It would not; planning can remain as an optional compatibility helper without staying in the fixed protocol.
+- I checked whether exploration should stay implicit. It should not; the repository needed a visible step between requirements and detailed design.
+- I checked whether runtime verification belonged only at the end. It does not; the intended verification path needs to be planned during detailed design even if execution happens later.

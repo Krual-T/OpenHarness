@@ -1,5 +1,17 @@
 # Detailed Design
 
+## Runtime Verification Plan
+- Verification Path:
+  - run `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
+  - run `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
+  - run `uv run pytest`
+- Fallback Path:
+  - if repo-local path discovery or dependency bootstrapping breaks, record the blocking command and keep the package below any completion claim
+- Planned Evidence:
+  - a self-hosting package tree the CLI can discover
+  - passing repository validation and tests
+  - updated top-level docs with corrected repository identity and paths
+
 ## Files Added Or Changed
 - Add `pyproject.toml` with runtime dependency `PyYAML` and dev dependency `pytest`.
 - Update `skills/using-openharness/scripts/openharness.py` to resolve repo-local manifests and templates from `skills/using-openharness/...`.
@@ -20,3 +32,7 @@
 ## Migration Notes
 - This round intentionally focused on self-hosting bootstrap; protocol simplification is tracked separately in `OH-002`.
 - The rewritten tests should stop depending on inherited historical packages from other repositories.
+
+## Detailed Reflection
+- I checked whether the self-hosting package should also solve later workflow semantics. It should not; that would have mixed bootstrap and redesign into one unstable round.
+- I checked whether the repository needed a custom verification harness immediately. It did not; standard bootstrap, package validation, and tests were enough to prove self-host viability.
