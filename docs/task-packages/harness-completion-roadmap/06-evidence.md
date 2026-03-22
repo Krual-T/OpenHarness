@@ -7,7 +7,7 @@
 - `docs/task-packages/harness-completion-roadmap/03-detailed-design.md`
 - `docs/task-packages/harness-completion-roadmap/05-verification.md`
 - `docs/task-packages/harness-completion-roadmap/06-evidence.md`
-- `docs/task-packages/skill-taxonomy-and-compatibility-cleanup/*`
+- `docs/archived/task-packages/skill-taxonomy-and-compatibility-cleanup/*`
 - `docs/archived/task-packages/workflow-transition-and-verification-artifacts/*`
 - `docs/task-packages/task-package-semantic-validation/*`
 - `docs/task-packages/harness-completion-roadmap/STATUS.yaml`
@@ -57,9 +57,12 @@
 - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
 - `uv run pytest`
 - `mv docs/task-packages/task-package-semantic-validation docs/archived/task-packages/task-package-semantic-validation`
+- `mv docs/task-packages/skill-taxonomy-and-compatibility-cleanup docs/archived/task-packages/skill-taxonomy-and-compatibility-cleanup`
+- `rmdir skills/writing-plans/references`
+- `rmdir skills/writing-plans`
 
 ## Follow-ups
-- Complete `OH-008 Skill Taxonomy And Compatibility Cleanup`, then use its stable category definitions as input to the later maintenance package.
+- Use archived `OH-008 Skill Taxonomy And Compatibility Cleanup` as the baseline when defining maintenance audits and stale-surface cleanup.
 - Decide in a later focused package how much of archived `OH-007` should be productized into live docs, templates, and completion guidance.
 - Reuse the archived `OH-006 Status Semantics Tightening` package as the baseline if a later stream needs stronger transition enforcement, rather than reopening status-semantics design from scratch in `OH-004`.
 - Reuse archived `OH-009 Task Package Semantic Validation` if a later stream adds a `transition` command or structured verification artifacts, rather than mixing those concerns back into `OH-004`.

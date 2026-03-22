@@ -6,7 +6,7 @@
   - run `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
   - run `uv run pytest`
 - Fallback Path:
-  - if legacy wording in compatibility skills causes failures, update the affected docs and rerun the standard repository validation commands
+  - if legacy wording in older skill docs causes failures, update the affected docs and rerun the standard repository validation commands
 - Planned Evidence:
   - manifest and template updates that remove `04-implementation-plan.md`
   - workflow docs and skills aligned to the new exploration-centric flow
@@ -36,7 +36,7 @@
 
 ## Migration Notes
 - Existing active packages in this repo should stop listing `04` in their README and status entrypoints for new work.
-- `writing-plans` may remain in the repo for now, but it is no longer a required part of the fixed workflow.
+- The old plan-writing skills are not required by the fixed workflow and can be retired cleanly in a later cleanup wave.
 
 ## Detailed Reflection
 - I checked whether workflow redesign should include execution-skill removal in the same round. It should not; clarifying the fixed protocol was enough for the first restructuring wave.

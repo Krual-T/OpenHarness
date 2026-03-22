@@ -28,7 +28,7 @@ It does not yet add heavy runtime modules; it only defines where runtime verific
   - implementation / debugging
   - runtime verification
   - completion
-- `writing-plans` stops being part of the fixed core path. It can survive only as a compatibility helper for exceptional staged execution, or be retired later.
+- The old plan-writing surface stops being part of the fixed core path and is fully retired in later cleanup.
 
 ## Key Flows
 1. A new task enters `using-openharness`.
@@ -44,6 +44,6 @@ It does not yet add heavy runtime modules; it only defines where runtime verific
 - Keeping runtime verification in `03` defines the slot without forcing every project to already have a sophisticated runtime-debug harness.
 
 ## Overview Reflection
-- I checked whether removing `04` would leave planning homeless. It would not; planning can remain as an optional compatibility helper without staying in the fixed protocol.
+- I checked whether removing `04` would leave planning homeless. It would not; detailed design already carries the implementation-facing planning that the fixed workflow needs.
 - I checked whether exploration should stay implicit. It should not; the repository needed a visible step between requirements and detailed design.
 - I checked whether runtime verification belonged only at the end. It does not; the intended verification path needs to be planned during detailed design even if execution happens later.

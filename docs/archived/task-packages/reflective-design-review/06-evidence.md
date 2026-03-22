@@ -5,8 +5,6 @@
 
 ## Files
 - `docs/archived/task-packages/reflective-design-review/*`
-- `skills/writing-plans/SKILL.md`
-- `skills/executing-plans/SKILL.md`
 - `skills/subagent-driven-development/SKILL.md`
 - `skills/requesting-code-review/SKILL.md`
 - `skills/using-openharness/tests/test_openharness.py`

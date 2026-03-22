@@ -88,7 +88,6 @@ That gives both humans and agents a shared source of truth that can be reviewed,
 
 OpenHarness includes a copied and adapted skills library under `skills/`, including workflows for:
 - brainstorming before implementation
-- writing plans for multi-step work
 - systematic debugging
 - TDD-oriented execution
 - verification before claiming success

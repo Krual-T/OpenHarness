@@ -30,11 +30,11 @@ digraph when_to_use {
 }
 ```
 
-**vs. Executing Plans (parallel session):**
+**Execution profile:**
 - Same session (no context switch)
 - Fresh subagent per task (no context pollution)
 - Two-stage review after each task: task-package compliance first, then code quality
-- Faster iteration (no human-in-loop between tasks)
+- Faster iteration when tasks are already decomposed
 
 ## The Process
 
@@ -205,11 +205,6 @@ Done!
 - Fresh context per task (no confusion)
 - Parallel-safe (subagents don't interfere)
 - Subagent can ask questions (before AND during work)
-
-**vs. Executing Plans:**
-- Same session (no handoff)
-- Continuous progress (no waiting)
-- Review checkpoints automatic
 
 **Efficiency gains:**
 - No file reading overhead (controller provides full text)

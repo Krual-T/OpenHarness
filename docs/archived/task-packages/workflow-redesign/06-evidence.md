@@ -1,7 +1,7 @@
 # Evidence
 
 ## Residual Risks
-- This package established the fixed protocol shape, but optional compatibility helpers and later status/verification semantics still required follow-up work.
+- This package established the fixed protocol shape, but later status, verification, and taxonomy cleanup still required follow-up work.
 
 ## Files
 - `AGENTS.md`
@@ -24,5 +24,4 @@
 - `mv docs/task-packages/workflow-redesign docs/archived/task-packages/workflow-redesign`
 
 ## Follow-ups
-- Decide later whether `writing-plans`, `executing-plans`, and `subagent-driven-development` should be retired, fully repurposed, or kept as optional compatibility skills.
-- Update the remaining non-core skills that still describe `04-implementation-plan.md` so optional compatibility wording is explicit and not misleading.
+- Update the remaining non-core skills that still describe `04-implementation-plan.md` so the deprecated plan-oriented wording is removed.

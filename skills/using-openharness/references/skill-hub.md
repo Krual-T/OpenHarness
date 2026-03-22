@@ -17,7 +17,7 @@
 
 ## Execution
 - `subagent-driven-development`
-  - legacy execution helper; not part of the fixed core workflow
+  - optional execution helper; not part of the fixed core workflow
 - `finishing-a-development-branch`
   - completes verified development work
 - `using-git-worktrees`
@@ -44,6 +44,7 @@ These are still generic imported skills. They are available in the hub, but they
 
 ## Current Cleanup Rule
 - Prefer `openharness` vocabulary over legacy external-skill vocabulary.
+- Do not advertise retired plan-writing or plan-execution skills anywhere in the live repository surface.
 - Treat imported skills as reusable helpers unless they become part of the core repository workflow.
 - Do not keep a separate repository entry layer beside `openharness`.
 - Remove duplicated entry skills and parallel workflow roots rather than maintaining aliases forever.

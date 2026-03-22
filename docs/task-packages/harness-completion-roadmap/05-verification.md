@@ -64,3 +64,8 @@
   - `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
   - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
   - `uv run pytest`
+- Passed again on 2026-03-22 after completing `OH-008`, retiring the old plan-oriented skill surface, and narrowing `OH-004` to maintenance as the remaining active stream:
+  - `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
+  - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
+  - `uv run pytest`
+  - Result: `check-tasks` validated 11 task packages, `bootstrap` showed only `OH-004` as active, and the full suite passed with `41 passed`.
