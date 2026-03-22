@@ -1,0 +1,26 @@
+{
+  "run_id": "20260322T145742775941Z",
+  "task_id": "OH-010",
+  "task_name": "workflow-transition-and-verification-artifacts",
+  "title": "Workflow Transition And Verification Artifacts",
+  "status_at_run": "verifying",
+  "started_at": "2026-03-22T14:57:41Z",
+  "finished_at": "2026-03-22T14:57:42Z",
+  "package_fingerprint": "c84bc264dae936efa01e19033a41d728a9bf51de9c1bfa7197c42a17f3bc9876",
+  "required_commands_snapshot": [
+    "uv run python skills/using-openharness/scripts/openharness.py check-tasks",
+    "uv run pytest"
+  ],
+  "required_scenarios_snapshot": [],
+  "command_results": [
+    {
+      "command": "uv run python skills/using-openharness/scripts/openharness.py check-tasks",
+      "exit_code": 0
+    },
+    {
+      "command": "uv run pytest",
+      "exit_code": 0
+    }
+  ],
+  "overall_result": "passed"
+}

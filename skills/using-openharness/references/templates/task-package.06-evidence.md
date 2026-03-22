@@ -12,5 +12,8 @@
 ## Commands
 - 
 
+## Artifact Paths
+- 
+
 ## Follow-ups
 - 

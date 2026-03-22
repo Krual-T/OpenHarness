@@ -22,6 +22,9 @@ done_criteria:
 verification:
   required_commands: []
   required_scenarios: []
+  last_run_at: ""
+  last_run_result: ""
+  last_run_artifact: ""
 evidence:
   docs:
     - docs/task-packages/<DESIGN_NAME>/05-verification.md
