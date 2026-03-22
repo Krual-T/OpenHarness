@@ -10,7 +10,7 @@ scope:
   areas:
     - workflow-protocol
     - skill-routing
-    - design-package-layout
+    - task-package-layout
     - documentation
 entrypoints:
   - docs/archived/task-packages/workflow-redesign/README.md

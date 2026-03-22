@@ -2,7 +2,7 @@
 
 ## Verification Path
 - Planned Path:
-  - Design-package validation with `check-tasks`
+  - Task-package validation with `check-tasks`
   - Active-package inventory check with `bootstrap`
   - Repository regression check with `pytest`
 - Executed Path:

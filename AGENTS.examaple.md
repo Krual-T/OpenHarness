@@ -9,11 +9,11 @@
 1. `AGENTS.md`
    - 仓库地图、默认协作协议、结构约束、验证要求。
 2. `skills/using-openharness/references/manifest.yaml`
-   - harness 的机器可读入口；声明 active / archived design package 布局、状态流和 artifact 根目录。
-3. `docs/designs/<task>/`
-   - 设计任务的唯一事实来源；每个任务是一个独立 design package。
-4. `docs/archived/designs/<task>/`
-   - 已完成 design package 的归档区；保留历史事实与验证证据，但不再属于 active package 集合。
+   - harness 的机器可读入口；声明 active / archived task package 布局、状态流和 artifact 根目录。
+3. `docs/task-packages/<task>/`
+   - 任务包（task package）的唯一事实来源；每个任务是一个独立 task package。
+4. `docs/archived/task-packages/<task>/`
+   - 已完成 task package 的归档区；保留历史事实与验证证据，但不再属于 active package 集合。
 5. `docs/architecture.md`
    - 当前系统结构说明。
 6. `.project-memory/`
@@ -23,7 +23,7 @@
 
 ### 设计任务包协议
 
-每个设计任务应放在 `docs/designs/<task>/`，并固定包含：
+每个任务包应放在 `docs/task-packages/<task>/`，并固定包含：
 
 - `README.md`：任务入口页和阅读导航。
 - `STATUS.yaml`：机器可读状态源。
@@ -37,23 +37,23 @@
 
 1. `AGENTS.md`
 2. `skills/using-openharness/references/manifest.yaml`
-3. `docs/designs/<task>/README.md`
-4. `docs/designs/<task>/STATUS.yaml`
-5. `docs/designs/<task>/01-requirements.md`
-6. `docs/designs/<task>/02-overview-design.md`
-7. `docs/designs/<task>/03-detailed-design.md`
-8. `docs/designs/<task>/05-verification.md`
-9. `docs/designs/<task>/06-evidence.md`
+3. `docs/task-packages/<task>/README.md`
+4. `docs/task-packages/<task>/STATUS.yaml`
+5. `docs/task-packages/<task>/01-requirements.md`
+6. `docs/task-packages/<task>/02-overview-design.md`
+7. `docs/task-packages/<task>/03-detailed-design.md`
+8. `docs/task-packages/<task>/05-verification.md`
+9. `docs/task-packages/<task>/06-evidence.md`
 
 ## 2. 默认工作流
 
 ### 进入仓库后
 
 - 先读 `AGENTS.md`，建立仓库地图。
-- 先把 `using-openharness` 视为本仓库的默认入口技能；任何可能涉及仓库协议、design package、验证流或技能路由的工作，都先从它开始判断该走哪个 skill。
+- 先把 `using-openharness` 视为本仓库的默认入口技能；任何可能涉及仓库协议、task package、验证流或技能路由的工作，都先从它开始判断该走哪个 skill。
 - 再读 `skills/using-openharness/references/manifest.yaml`，确认 harness 协议。
-- 运行 `uv run python skills/using-openharness/scripts/openharness.py bootstrap` 查看当前 active design packages。
-- 只在 design package 足够清晰时开始实现；若任务边界缺失，先补设计包而不是直接改代码。
+- 运行 `uv run python skills/using-openharness/scripts/openharness.py bootstrap` 查看当前 active task packages。
+- 只在 task package 足够清晰时开始实现；若任务边界缺失，先补任务包而不是直接改代码。
 
 ### 执行任务时
 
@@ -69,7 +69,7 @@
 
 - 先更新 `05-verification.md` 和 `06-evidence.md`。
 - 再更新 `STATUS.yaml` 中的 `status`、`updated_at`、证据字段。
-- 当 design package 已完成并不再属于 active work 时，应将 `STATUS.yaml.status` 设为 `archived`，并把整个包从 `docs/designs/<task>/` 移动到 `docs/archived/designs/<task>/`。
+- 当 task package 已完成并不再属于 active work 时，应将 `STATUS.yaml.status` 设为 `archived`，并把整个包从 `docs/task-packages/<task>/` 移动到 `docs/archived/task-packages/<task>/`。
 - 归档后必须同步修正该 package 内部引用，以及仓库内指向该 package 的证据或 memory 引用。
 - 每次完成一轮可独立成立的改动后，应做一次聚焦提交。
 
@@ -100,12 +100,12 @@
 
 ## 4. 文档与验证协议
 
-- 影响使用方式、配置方式、架构分层的改动，应同步更新对应 design package。
+- 影响使用方式、配置方式、架构分层的改动，应同步更新对应 task package。
 - 需求变化先写 `01-requirements.md`；探索结论与总体设计变化写 `02-overview-design.md`；测试设计、实现落点、runtime 验证方式变化写 `03-detailed-design.md`。
 - 完成前至少运行：
-  - `uv run python skills/using-openharness/scripts/openharness.py check-designs`
-  - 当前 design package 在 `STATUS.yaml.verification.required_commands` 中声明的命令
-- 若本轮只是补设计，仍应保证 design package 协议完整。
+  - `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
+  - 当前 task package 在 `STATUS.yaml.verification.required_commands` 中声明的命令
+- 若本轮只是补设计，仍应保证 task package 协议完整。
 
 ## 5. Python / uv 约定
 

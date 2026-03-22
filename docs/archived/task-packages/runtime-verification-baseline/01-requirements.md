@@ -43,5 +43,5 @@ OpenHarness therefore needs a reusable baseline that is credible in low-automati
 ## Constraints
 - The baseline must work for repositories that begin with no existing harness.
 - The protocol must be strict enough to prevent empty completion claims, but flexible enough to represent manual verification honestly when automation is absent.
-- The solution should preserve the fixed design-package model and evidence writeback flow.
+- The solution should preserve the fixed task-package model and evidence writeback flow.
 - The baseline should be simple enough to explain in skills and templates without creating a second verification framework beside OpenHarness.

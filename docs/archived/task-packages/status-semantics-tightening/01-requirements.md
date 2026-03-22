@@ -39,13 +39,13 @@ This creates several risks:
 - Follow-up changes to manifest schema, CLI validation, templates, and skill wording can be scoped from this package without rediscovering the core model.
 
 ## Non-Goals
-- Replace the existing design-package workflow with a new state machine framework.
+- Replace the existing task-package workflow with a new state machine framework.
 - Fully implement every downstream CLI, template, or skill change in this package.
 - Add per-package bespoke statuses outside the shared default flow in this round.
 - Design the no-harness bootstrap workflow or maintenance workflow here except where they depend directly on status semantics.
 
 ## Constraints
-- The solution must preserve the fixed design-package model and the single OpenHarness CLI.
+- The solution must preserve the fixed task-package model and the single OpenHarness CLI.
 - The status model must stay simple enough to teach in docs and templates without creating ritualized bureaucracy.
 - The model must align with the runtime verification baseline already defined in `OH-005`.
 - Machine enforcement should follow clarified semantics, not replace the need to define them.

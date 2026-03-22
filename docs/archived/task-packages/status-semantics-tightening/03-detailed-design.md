@@ -15,7 +15,7 @@
   - `skills/using-openharness/scripts/openharness.py`
   - `skills/using-openharness/tests/test_openharness.py`
   - `skills/using-openharness/references/manifest.yaml` only if the status vocabulary itself changes, which is not currently recommended
-  - design-package templates and workflow wording where status expectations need to become explicit
+  - task-package templates and workflow wording where status expectations need to become explicit
 - Update `OH-004` evidence and follow-up notes so the parent roadmap reflects that `status semantics tightening` is now active child work.
 - First implementation wave now completed for CLI default verification scope:
   - `cmd_verify` defaults to `in_progress` and `verifying`
@@ -24,7 +24,7 @@
   - `validate_design_package` rejects `verifying` packages that declare no verification path
   - `validate_design_package` rejects `archived` packages that declare no verification path
 - Third implementation wave now completed for template guidance:
-  - design-package templates now remind authors that status should match the highest completed workflow checkpoint
+  - task-package templates now remind authors that status should match the highest completed workflow checkpoint
   - `03-detailed-design.md` and `05-verification.md` templates now call out the intended boundary for `in_progress` and `verifying`
 - Fourth implementation wave now completed for workflow skill wording:
   - `using-openharness` now states the intended boundary for `in_progress`, `verifying`, and `archived`
@@ -34,7 +34,7 @@
 - Current status surfaces that this package must reconcile:
   - `manifest.yaml` as the ordered source of allowed statuses
   - `openharness.py` constants such as `ACTIVE_STATUSES` and `VERIFYABLE_STATUSES`
-  - design-package templates that imply when docs are considered complete enough to progress
+  - task-package templates that imply when docs are considered complete enough to progress
   - workflow skills that refer to design readiness, implementation start, verification, and archiving
 - Expected implementation-facing interfaces to define:
   - which statuses count as active work versus verification-ready work

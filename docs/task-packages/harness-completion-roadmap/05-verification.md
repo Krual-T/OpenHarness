@@ -36,7 +36,7 @@
   - `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
   - `uv run pytest`
   - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
-- Passed again on 2026-03-21 after `OH-006` added lightweight status guidance to design-package templates:
+- Passed again on 2026-03-21 after `OH-006` added lightweight status guidance to task-package templates:
   - `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
   - `uv run pytest`
   - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`

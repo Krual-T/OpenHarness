@@ -53,7 +53,7 @@ That means the earlier bootstrap framing was solving the wrong problem. The real
 - Define non-Python verification defaults in this round.
 
 ## Constraints
-- The policy must preserve the existing `AGENTS.md` plus design-package model rather than inventing a parallel entry layer.
+- The policy must preserve the existing `AGENTS.md` plus task-package model rather than inventing a parallel entry layer.
 - The workflow must reuse the readiness semantics from `OH-006`.
 - `pytest` is the minimum default verification floor for Python work unless the repository already has stronger automated evidence.
 - The design must encourage runtime tests when task risk justifies them and allow those tests to be built in parallel with other Python tests.

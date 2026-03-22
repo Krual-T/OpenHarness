@@ -8,7 +8,7 @@
 - Fallback Path:
   - If implementation cannot yet enforce the wording mechanically, capture the expected package-writing rules in docs/templates first and record the remaining enforcement gap.
 - Planned Evidence:
-  - `05-verification.md` should record design-package validation, bootstrap inventory output, and repository `pytest` results for the implementation wave.
+  - `05-verification.md` should record task-package validation, bootstrap inventory output, and repository `pytest` results for the implementation wave.
   - `06-evidence.md` should record the updated evidence wording and any remaining gap between baseline-only evidence and stronger runtime evidence.
 
 Move to `in_progress` only when detailed design is concrete enough to execute.

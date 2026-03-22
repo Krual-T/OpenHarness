@@ -52,7 +52,7 @@ Current repository surfaces already shape the solution:
 
 - `skills/verification-before-completion/SKILL.md` enforces "fresh evidence before claims", but it only reasons in terms of commands and does not distinguish stronger versus weaker verification paths.
 - `skills/using-openharness/scripts/openharness.py verify` already runs `verification.required_commands` and prints `required_scenarios`, which means the repository already has a partial structure for command-backed and manual verification.
-- design-package templates for `03`, `05`, and `06` are still generic and do not teach how intended verification, executed verification, and residual risk should be recorded.
+- task-package templates for `03`, `05`, and `06` are still generic and do not teach how intended verification, executed verification, and residual risk should be recorded.
 - current tests validate package structure and CLI behavior, but they do not yet pin any semantics around verification-path vocabulary or blocked completion on insufficient evidence.
 
 That leaves three viable architectural options:

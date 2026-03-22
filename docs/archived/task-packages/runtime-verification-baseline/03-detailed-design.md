@@ -21,7 +21,7 @@ This package is still in early design. The first test for this round is document
 - Likely follow-up touch points:
   - `skills/using-openharness/SKILL.md`
   - `skills/verification-before-completion/SKILL.md`
-  - design-package templates under `skills/using-openharness/references/templates/`
+  - task-package templates under `skills/using-openharness/references/templates/`
   - `skills/using-openharness/scripts/openharness.py verify`
   - tests under `skills/using-openharness/tests/`
 - Expected future interfaces to define:
