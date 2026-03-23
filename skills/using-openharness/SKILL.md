@@ -96,8 +96,8 @@ When a task depends on real runtime behavior rather than code-only changes, `usi
 Use this runtime routing loop:
 
 1. Check whether the task is code-only or requires runtime-aware verification.
-2. Look for the repository's runtime capability contract and any project runtime capability map or linked helper guidance.
-3. If a matching capability exists, reuse the linked project runtime helper and write the planned plus executed evidence back into the active task package.
+2. Look for the repository's runtime capability contract, project runtime surface map, and any linked helper guidance.
+3. If a matching runtime surface exists, reuse the linked project runtime helper and write the planned plus executed evidence back into the active task package.
 4. If no matching capability exists, open or update a bootstrap package for that runtime surface before claiming runtime verification coverage.
 5. Keep project runtime helpers optional and narrow. One repository may host multiple runtime helper skills, but they must not become parallel entry skills.
 

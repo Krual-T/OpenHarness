@@ -16,5 +16,5 @@
 - `uv run pytest`
 
 ## Follow-ups
-- Productize this package into live routing guidance after `OH-013` and `OH-014` move into implementation.
+- Productize this package into live routing guidance on top of archived `OH-013` and archived `OH-014`.
 - Decide whether the repository should ship a runtime helper example template together with the runtime surface map example.

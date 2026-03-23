@@ -477,6 +477,7 @@ def test_openharness_skill_routes_runtime_work_through_capability_contract() -> 
     skill_path = REPO_ROOT / "skills" / "using-openharness" / "SKILL.md"
     text = skill_path.read_text(encoding="utf-8")
     assert "runtime capability" in text
+    assert "runtime surface map" in text
     assert "multiple runtime helper skills" in text
     assert "bootstrap package" in text
 
@@ -494,8 +495,10 @@ def test_skill_hub_describes_runtime_capability_layer() -> None:
     hub_path = REPO_ROOT / "skills" / "using-openharness" / "references" / "skill-hub.md"
     text = hub_path.read_text(encoding="utf-8")
     assert "runtime capability contract" in text
+    assert "runtime surface map" in text
     assert "runtime helper skills" in text
     assert "bootstrap package" in text
+    assert "project-runtime-surface-map.md" in text
 
 
 def test_skill_hub_uses_protocol_status_plus_stage_model() -> None:
@@ -553,6 +556,7 @@ def test_readme_describes_plug_and_play_harness_and_python_pytest_floor() -> Non
 def test_readme_describes_runtime_capability_contract() -> None:
     readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
     assert "runtime capability contract" in readme
+    assert "runtime surface map" in readme
     assert "bootstrap task package" in readme
 
 
@@ -667,7 +671,7 @@ def test_runtime_capability_reference_defines_declaration_shape_and_writeback() 
 
     assert "## Capability Layers" in text
     assert "core protocol" in text
-    assert "project runtime capability map" in text
+    assert "project runtime surface map" in text
     assert "runtime helper skills" in text
     assert "## Declaration Shape" in text
     assert "runtime surface" in text
@@ -682,6 +686,56 @@ def test_runtime_capability_reference_defines_declaration_shape_and_writeback() 
     assert "## Routing Contract" in text
     assert "reuse an existing runtime helper" in text
     assert "bootstrap package" in text
+    assert "project-runtime-surface-map.md" in text
+
+
+def test_project_runtime_surface_map_reference_defines_minimum_contents_and_bootstrap_flow() -> None:
+    text = (
+        REPO_ROOT
+        / "skills"
+        / "using-openharness"
+        / "references"
+        / "project-runtime-surface-map.md"
+    ).read_text(encoding="utf-8")
+
+    assert "# Project Runtime Surface Map" in text
+    assert "## Minimum Contents" in text
+    assert "runtime surface" in text
+    assert "purpose" in text
+    assert "prerequisites" in text
+    assert "driver method" in text
+    assert "observation points" in text
+    assert "success criteria" in text
+    assert "failure evidence" in text
+    assert "helper skill or bootstrap package" in text
+    assert "## Helper Boundary Rules" in text
+    assert "one dominant runtime surface" in text
+    assert "## Bootstrap Path" in text
+    assert "reuse the linked helper" in text
+    assert "open a bootstrap package first" in text
+    assert "03-detailed-design.md" in text
+    assert "05-verification.md" in text
+    assert "06-evidence.md" in text
+
+
+def test_project_runtime_surface_map_template_provides_adoption_shape() -> None:
+    text = (
+        REPO_ROOT
+        / "skills"
+        / "using-openharness"
+        / "references"
+        / "templates"
+        / "project-runtime-surface-map.md"
+    ).read_text(encoding="utf-8")
+
+    assert "# Project Runtime Surface Map" in text
+    assert "## How To Use This Map" in text
+    assert "| Surface | Purpose | Prerequisites | Driver | Evidence | Helper Or Bootstrap |" in text
+    assert "helper skill" in text
+    assert "bootstrap package" in text
+    assert "03-detailed-design.md" in text
+    assert "05-verification.md" in text
+    assert "06-evidence.md" in text
 
 
 def test_task_package_templates_default_to_chinese_narrative_with_english_anchors() -> None:

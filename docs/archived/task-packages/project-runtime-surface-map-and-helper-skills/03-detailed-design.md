@@ -15,20 +15,22 @@ Move to `in_progress` only when detailed design is concrete enough to execute.
 If design is complete but implementation has not started yet, stay at `detailed_ready`.
 
 ## Testing-First Design
-This package is design-only. Its immediate tests are:
+This package is now productized through a documentation-and-template implementation wave. The execution order is:
 
-- `check-tasks` passes with the new package included
-- the package is concrete enough that a later implementation wave can add examples, templates, or helper guidance without redoing the design
-- the package makes helper-skill boundaries and bootstrap conditions explicit enough to avoid one oversized runtime-debug skill
+- add targeted runtime-surface-map assertions to `skills/using-openharness/tests/test_openharness.py`
+- watch those assertions fail before the live reference, template, and wording updates exist
+- update the live docs, reference contract, project runtime surface map reference, and starter template until the targeted assertions pass
+- run `check-tasks` and the full repository test suite to confirm the repository still validates cleanly
 
 ## Files Added Or Changed
-- Add `OH-014` package documents for project runtime surface mapping and helper-skill structure.
-- Update `OH-004` so the roadmap includes this follow-up package.
-- In a later implementation wave, likely update:
-  - `skills/using-openharness/SKILL.md`
-  - `skills/using-openharness/references/skill-hub.md`
-  - README or reference docs that explain project runtime adoption
-  - example project package docs or templates that show a runtime surface map in practice
+- Update `README.md` so the live repository docs mention the project runtime surface map explicitly.
+- Update `skills/using-openharness/SKILL.md` so runtime routing looks for a project runtime surface map, not only the shared contract.
+- Update `skills/using-openharness/references/runtime-capability-contract.md` and `skills/using-openharness/references/skill-hub.md` so the live protocol surface links the project-facing map guidance.
+- Add `skills/using-openharness/references/project-runtime-surface-map.md` as the reusable repository-facing reference.
+- Add `skills/using-openharness/references/templates/project-runtime-surface-map.md` as the starter template/example artifact.
+- Update `skills/using-openharness/tests/test_openharness.py` with targeted assertions for the runtime surface map productization.
+- Update `docs/task-packages/harness-completion-roadmap/*` so roadmap references treat `OH-014` as a completed baseline after archive.
+- Update `.project-memory/` with a reusable fact for the runtime surface map protocol.
 
 ## Interfaces
 - Runtime surface map interface:
@@ -51,8 +53,9 @@ This package is design-only. Its immediate tests are:
 - If a surface cannot state its prerequisites or evidence sources clearly, it is not ready to be advertised as a supported runtime loop.
 
 ## Migration Notes
-- This package should stay design-only until a later task productizes the pattern in live docs, examples, or templates.
+- This package now productizes the pattern in live docs, examples, templates, and project memory.
 - This package depends conceptually on `OH-013`, because project-level mapping should consume the shared capability contract instead of inventing local rules first.
+- `OH-016` should consume this package as an archived baseline rather than redefining the runtime surface map structure.
 
 ## Detailed Reflection
 - I challenged whether helper skill boundaries should be prescribed too tightly. That would overfit the repository model; the design should require narrowness and clarity, not one fixed taxonomy.
