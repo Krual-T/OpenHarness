@@ -634,6 +634,70 @@ def test_design_package_templates_include_status_guidance() -> None:
     assert "Use `verifying` only when implementation is complete enough" in verification
 
 
+def test_task_package_templates_default_to_chinese_narrative_with_english_anchors() -> None:
+    requirements = (
+        REPO_ROOT
+        / "skills"
+        / "using-openharness"
+        / "references"
+        / "templates"
+        / "task-package.01-requirements.md"
+    ).read_text(encoding="utf-8")
+    overview = (
+        REPO_ROOT
+        / "skills"
+        / "using-openharness"
+        / "references"
+        / "templates"
+        / "task-package.02-overview-design.md"
+    ).read_text(encoding="utf-8")
+    detailed = (
+        REPO_ROOT
+        / "skills"
+        / "using-openharness"
+        / "references"
+        / "templates"
+        / "task-package.03-detailed-design.md"
+    ).read_text(encoding="utf-8")
+    verification = (
+        REPO_ROOT
+        / "skills"
+        / "using-openharness"
+        / "references"
+        / "templates"
+        / "task-package.05-verification.md"
+    ).read_text(encoding="utf-8")
+    evidence = (
+        REPO_ROOT
+        / "skills"
+        / "using-openharness"
+        / "references"
+        / "templates"
+        / "task-package.06-evidence.md"
+    ).read_text(encoding="utf-8")
+
+    for text in (requirements, overview, detailed, verification, evidence):
+        assert "正文默认使用中文" in text
+        assert "章节标题保留英文" in text
+        assert "YAML 键名" in text
+
+    assert "## Goal" in requirements
+    assert "## Proposed Structure" in overview
+    assert "## Runtime Verification Plan" in detailed
+    assert "## Verification Path" in verification
+    assert "## Residual Risks" in evidence
+
+
+def test_repo_protocol_documents_task_package_language_policy() -> None:
+    agents = (REPO_ROOT / "AGENTS.md").read_text(encoding="utf-8")
+    openharness_skill = (REPO_ROOT / "skills" / "using-openharness" / "SKILL.md").read_text(encoding="utf-8")
+
+    assert "task package 的 Markdown 正文默认使用中文" in agents
+    assert "章节标题、命令、状态值、YAML 键名、文件名与路径保持英文" in agents
+    assert "task-package Markdown narrative should be Chinese-first" in openharness_skill
+    assert "section titles, commands, status values, YAML keys, file names, and paths stay English" in openharness_skill
+
+
 def test_verification_skill_distinguishes_manual_and_insufficient_paths() -> None:
     text = (REPO_ROOT / "skills" / "verification-before-completion" / "SKILL.md").read_text(encoding="utf-8")
     assert "manual runtime verification" in text

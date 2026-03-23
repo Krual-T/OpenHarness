@@ -118,6 +118,8 @@ For non-package work that still touches repository workflow, start from `openhar
 
 ## Update Protocol
 
+- task-package Markdown narrative should be Chinese-first for maintainer readability.
+- In phase one, section titles, commands, status values, YAML keys, file names, and paths stay English.
 - Keep `README.md` short; it is the human entrypoint.
 - Keep `STATUS.yaml` machine-readable; it is the harness state source.
 - Put problem framing in `01-requirements.md`.

@@ -98,6 +98,9 @@
 
 ## 4. 文档与验证协议
 
+- task package 的 Markdown 正文默认使用中文。
+- 章节标题、命令、状态值、YAML 键名、文件名与路径保持英文。
+- 若后续要把章节标题也切换为中文，必须单独开 task package，同步修改模板、校验器与测试，不要零散混改。
 - 影响使用方式、配置方式、架构分层的改动，应同步更新对应 task package。
 - 需求变化先写 `01-requirements.md`；探索结论与总体设计变化写 `02-overview-design.md`；测试设计、实现落点、runtime 验证方式变化写 `03-detailed-design.md`。
 - 完成前至少运行：
