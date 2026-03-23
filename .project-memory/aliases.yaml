@@ -1,4 +1,13 @@
 aliases:
+  aliases.yaml 为什么会损坏:
+    id: project_memory_saves_must_run_serially
+    kind: fact
+  project-memory save_fact 要串行吗:
+    id: project_memory_saves_must_run_serially
+    kind: fact
+  project-memory 保存命令能并行吗:
+    id: project_memory_saves_must_run_serially
+    kind: fact
   runtime helper 怎么新增:
     id: project_runtime_helper_addition_protocol
     kind: fact

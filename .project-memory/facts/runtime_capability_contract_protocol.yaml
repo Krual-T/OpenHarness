@@ -6,9 +6,10 @@ scope:
   branch: main
 status: reviewed
 created_at: '2026-03-23T08:36:21Z'
-updated_at: '2026-03-23T08:36:21Z'
+updated_at: '2026-03-23T12:33:17Z'
 confidence: 0.8
-last_verified_commit: e73780a9e54f8e7266a9d825e55c17269bae92d6
+owner: codex
+last_verified_commit: 4f5f20a93be2a7dcfb644afcbd4f904ffa9244dc
 intent_aliases:
 - 运行时能力契约在哪里
 - 什么时候复用 runtime helper

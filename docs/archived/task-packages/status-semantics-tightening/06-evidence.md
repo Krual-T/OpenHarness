@@ -16,9 +16,9 @@
 - `docs/archived/task-packages/status-semantics-tightening/03-detailed-design.md`
 - `docs/archived/task-packages/status-semantics-tightening/05-verification.md`
 - `docs/archived/task-packages/status-semantics-tightening/06-evidence.md`
-- `docs/task-packages/harness-completion-roadmap/02-overview-design.md`
-- `docs/task-packages/harness-completion-roadmap/05-verification.md`
-- `docs/task-packages/harness-completion-roadmap/06-evidence.md`
+- `docs/archived/task-packages/harness-completion-roadmap/02-overview-design.md`
+- `docs/archived/task-packages/harness-completion-roadmap/05-verification.md`
+- `docs/archived/task-packages/harness-completion-roadmap/06-evidence.md`
 - `skills/exploring-solution-space/SKILL.md`
 - `skills/using-openharness/SKILL.md`
 - `skills/using-openharness/references/templates/task-package.README.md`

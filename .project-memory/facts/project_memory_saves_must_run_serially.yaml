@@ -1,0 +1,32 @@
+id: project_memory_saves_must_run_serially
+kind: fact
+title: project-memory 保存命令必须串行执行
+summary: 批量刷新 project-memory 对象时，save_* 脚本不能并行运行。
+scope:
+  repo: openharness
+  branch: main
+status: reviewed
+created_at: '2026-03-23T12:43:20Z'
+updated_at: '2026-03-23T12:43:20Z'
+confidence: 0.8
+owner: codex
+last_verified_commit: 4f5f20a93be2a7dcfb644afcbd4f904ffa9244dc
+intent_aliases:
+- project-memory 保存命令能并行吗
+- aliases.yaml 为什么会损坏
+- project-memory save_fact 要串行吗
+tags:
+- project-memory
+- workflow
+- maintenance
+applies_to:
+- skills/project-memory/scripts/save_fact.py
+- skills/project-memory/scripts/save_decision.py
+- skills/project-memory/scripts/save_workflow.py
+- skills/project-memory/scripts/project_memory_lib.py
+statement: skills/project-memory/scripts/save_fact.py、save_decision.py 和 save_workflow.py
+  都会通过 project_memory_lib.save_memory_object 重写 .project-memory/aliases.yaml 并重建索引；同一轮批量刷新多个
+  memory object 时必须串行执行这些保存脚本，不能并行运行，否则会发生竞争写入并破坏 aliases.yaml。
+evidence:
+- path: skills/project-memory/scripts/project_memory_lib.py
+  kind: file

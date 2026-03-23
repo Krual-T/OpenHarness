@@ -29,7 +29,7 @@ This package is now productized through a documentation-and-template implementat
 - Add `skills/using-openharness/references/project-runtime-surface-map.md` as the reusable repository-facing reference.
 - Add `skills/using-openharness/references/templates/project-runtime-surface-map.md` as the starter template/example artifact.
 - Update `skills/using-openharness/tests/test_openharness.py` with targeted assertions for the runtime surface map productization.
-- Update `docs/task-packages/harness-completion-roadmap/*` so roadmap references treat `OH-014` as a completed baseline after archive.
+- Update `docs/archived/task-packages/harness-completion-roadmap/*` so roadmap references treat `OH-014` as a completed baseline after archive.
 - Update `.project-memory/` with a reusable fact for the runtime surface map protocol.
 
 ## Interfaces

@@ -6,9 +6,10 @@ scope:
   branch: main
 status: reviewed
 created_at: '2026-03-23T09:37:41Z'
-updated_at: '2026-03-23T09:37:41Z'
+updated_at: '2026-03-23T12:33:17Z'
 confidence: 0.8
-last_verified_commit: e094ca077ff4e2b482102976c9413f70b2c34af5
+owner: codex
+last_verified_commit: 4f5f20a93be2a7dcfb644afcbd4f904ffa9244dc
 intent_aliases:
 - 运行时表面图在哪里
 - runtime surface map 怎么写

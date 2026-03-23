@@ -18,7 +18,7 @@ If design is complete but implementation has not started yet, stay at `detailed_
 
 ## Files Added Or Changed
 - `docs/archived/task-packages/skill-taxonomy-and-compatibility-cleanup/*`
-- `docs/task-packages/harness-completion-roadmap/*`
+- `docs/archived/task-packages/harness-completion-roadmap/*`
 - `skills/using-openharness/references/skill-hub.md`
 - affected `skills/*/SKILL.md` files whose category wording does not match the taxonomy
 - `skills/using-openharness/tests/test_openharness.py`

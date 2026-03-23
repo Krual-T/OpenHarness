@@ -23,7 +23,7 @@
 - `skills/using-openharness/references/skill-hub.md`
 - `skills/using-openharness/references/adding-project-runtime-helper.md`
 - `skills/using-openharness/tests/test_openharness.py`
-- `docs/task-packages/harness-completion-roadmap/*`
+- `docs/archived/task-packages/harness-completion-roadmap/*`
 - `.project-memory/facts/project_runtime_helper_addition_protocol.yaml`
 - `.project-memory/aliases.yaml`
 

@@ -6,8 +6,9 @@
 - 把 `OH-004` 中仅剩的维护流拆成独立 focused package，定义 OpenHarness 的例行维护边界、触发条件、写回位置与首个实施波次。
 
 ## Current Status
-- 当前已完成需求、概览设计与详细设计收敛，适合停在 `detailed_ready`，等待首个维护实施波次进入 `in_progress`。
-- 本轮还没有实现新的维护命令；主要目标是把维护面、审计顺序和拆包边界固定下来。
+- `archived`。
+- 已完成首个维护实施波次：刷新 4 条 stale memory object，补齐 3 条 fact 的 `owner`，补记 1 条关于串行保存的 project-memory 工作流事实，并把 `audit_memory.py --fail-on high` 收敛到无发现。
+- 本包现在作为 OpenHarness 例行维护的历史基线，后续维护波次若需要新的命令、checklist 或协议扩展，应再拆新的 focused package。
 
 ## Read This First
 - `STATUS.yaml`

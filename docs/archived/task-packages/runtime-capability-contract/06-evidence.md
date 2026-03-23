@@ -20,7 +20,7 @@
 - `skills/using-openharness/references/skill-hub.md`
 - `skills/using-openharness/references/runtime-capability-contract.md`
 - `skills/using-openharness/tests/test_openharness.py`
-- `docs/task-packages/harness-completion-roadmap/*`
+- `docs/archived/task-packages/harness-completion-roadmap/*`
 
 ## Commands
 - `uv run python skills/using-openharness/scripts/openharness.py new-task runtime-capability-contract OH-013 "Runtime Capability Contract" --owner codex --summary "Define how OpenHarness should describe, route, verify, and write back project-specific runtime capabilities without assuming a single universal runtime debugging skill."`

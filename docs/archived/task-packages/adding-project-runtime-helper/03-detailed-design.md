@@ -32,7 +32,7 @@ This package is now productized through a documentation-and-protocol implementat
 - Update `skills/using-openharness/references/runtime-capability-contract.md`, `skills/using-openharness/references/project-runtime-surface-map.md`, and `skills/using-openharness/references/skill-hub.md` so the live protocol surface links the helper-addition workflow.
 - Update `skills/using-openharness/references/templates/project-runtime-surface-map.md` so the starter template explains when to add helper coverage instead of staying on a bootstrap link.
 - Update `skills/using-openharness/tests/test_openharness.py` with targeted assertions for helper-addition productization.
-- Update `docs/task-packages/harness-completion-roadmap/*` so roadmap references treat `OH-016` as a completed archived follow-up.
+- Update `docs/archived/task-packages/harness-completion-roadmap/*` so roadmap references treat `OH-016` as a completed archived follow-up.
 - Update `.project-memory/` with a reusable fact for the helper-addition protocol.
 
 ## Interfaces
