@@ -22,13 +22,12 @@ This is a design package. Its immediate tests are repository-legibility tests:
 - the package must define routing semantics clearly enough to separate runtime capability bootstrap from runtime capability usage
 
 ## Files Added Or Changed
-- Add `OH-013` package documents for the runtime capability contract.
-- Update `OH-004` so the roadmap reflects this new follow-up stream.
-- In a later implementation wave, likely update:
-  - `skills/using-openharness/SKILL.md`
-  - `skills/using-openharness/references/skill-hub.md`
-  - task-package templates or reference docs that describe runtime writeback requirements
-  - possibly `.project-memory/` conventions if runtime capability knowledge becomes reusable project memory
+- Keep `OH-013` package documents aligned with the implementation wave and later archive them as the completed baseline.
+- Update `skills/using-openharness/SKILL.md` so the entry skill routes runtime-aware work through a runtime capability contract instead of ad hoc debugging language.
+- Update `skills/using-openharness/references/skill-hub.md` so the live skill hub advertises the contract and keeps project helpers optional.
+- Add `skills/using-openharness/references/runtime-capability-contract.md` as the shared reference that defines declaration shape, routing choices, and task-package writeback expectations.
+- Update `README.md` so the public repository surface explains the runtime capability contract and the bootstrap-task path.
+- Extend `skills/using-openharness/tests/test_openharness.py` so the live docs and reference contract are locked by repository tests.
 
 ## Interfaces
 - Runtime capability declaration interface:
@@ -50,10 +49,10 @@ This is a design package. Its immediate tests are repository-legibility tests:
 - If a helper skill cannot declare its prerequisites, observations, and evidence clearly, it is not ready to be treated as a reusable runtime capability.
 
 ## Migration Notes
-- This package should remain design-only until a focused implementation task updates live OpenHarness docs and skill routing.
-- The package is upstream of project-level runtime-surface mapping work because repositories need the core declaration contract before they can attach multiple helper skills coherently.
+- This implementation wave productizes the contract in live docs and test coverage without introducing a machine-readable schema yet.
+- The package remains upstream of project-level runtime-surface mapping work because repositories still need `OH-014` to describe repository-specific runtime surface maps and helper examples.
 
 ## Detailed Reflection
-- I challenged whether the contract needed a machine-readable schema immediately. It does not yet; the first useful step is stable design wording and routing rules.
+- I challenged whether the contract needed a machine-readable schema immediately. It still does not; the docs-first contract is now concrete enough to route work and constrain downstream packages.
 - I checked whether runtime capability mapping should live entirely in `OH-014`. It should not, because `OH-014` is about project onboarding structure, while this package defines the reusable OpenHarness-side protocol that all projects should consume.
-- I checked whether the protocol was still too abstract. The added declaration fields and routing choices make it concrete enough for a later implementation wave.
+- I checked whether the implementation wave should update templates now. I rejected that for this round because `OH-014` owns repository-facing surface-map structure, while `OH-013` only needs to productize the shared contract and routing rules first.

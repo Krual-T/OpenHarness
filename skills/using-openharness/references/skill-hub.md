@@ -92,6 +92,14 @@ OpenHarness uses a two-layer model:
 - Passing `pytest` alone does not automatically mean runtime behavior is fully verified.
 - Stronger project-specific runtime verification belongs in task packages, especially `03-detailed-design.md` and `05-verification.md`.
 
+## Runtime Capability Contract
+- OpenHarness uses a runtime capability contract instead of pretending one universal runtime-debug skill can fit every repository.
+- The core protocol defines when runtime work is recognized, how routing works, and where evidence must be written back.
+- A repository may expose multiple runtime helper skills across different runtime surfaces, but those helpers remain optional project-level helpers rather than new entry skills.
+- When a matching runtime capability exists, `using-openharness` should reuse the linked helper guidance.
+- When no matching capability exists, the agent should open a bootstrap package before claiming supported runtime verification on that surface.
+- The shared contract lives in `references/runtime-capability-contract.md`.
+
 ## Current Cleanup Rule
 - Prefer `openharness` vocabulary over legacy external-skill vocabulary.
 - Do not advertise retired plan-writing or plan-execution skills anywhere in the live repository surface.

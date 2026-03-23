@@ -473,6 +473,14 @@ def test_openharness_skill_is_repo_entry_skill() -> None:
     assert "bounded subagent discussion" in text
 
 
+def test_openharness_skill_routes_runtime_work_through_capability_contract() -> None:
+    skill_path = REPO_ROOT / "skills" / "using-openharness" / "SKILL.md"
+    text = skill_path.read_text(encoding="utf-8")
+    assert "runtime capability" in text
+    assert "multiple runtime helper skills" in text
+    assert "bootstrap package" in text
+
+
 def test_skill_hub_declares_no_parallel_entry_skill() -> None:
     hub_path = REPO_ROOT / "skills" / "using-openharness" / "references" / "skill-hub.md"
     text = hub_path.read_text(encoding="utf-8")
@@ -480,6 +488,14 @@ def test_skill_hub_declares_no_parallel_entry_skill() -> None:
     assert "Do not keep a separate repository entry layer beside `openharness`." in text
     assert "`exploring-solution-space`" in text
     assert "reflection" in text
+
+
+def test_skill_hub_describes_runtime_capability_layer() -> None:
+    hub_path = REPO_ROOT / "skills" / "using-openharness" / "references" / "skill-hub.md"
+    text = hub_path.read_text(encoding="utf-8")
+    assert "runtime capability contract" in text
+    assert "runtime helper skills" in text
+    assert "bootstrap package" in text
 
 
 def test_skill_hub_uses_protocol_status_plus_stage_model() -> None:
@@ -532,6 +548,12 @@ def test_readme_describes_plug_and_play_harness_and_python_pytest_floor() -> Non
     assert "Python-first" in readme
     assert "`uv run pytest` is the default minimum automated verification floor" in readme
     assert "project-specific runtime verification" in readme
+
+
+def test_readme_describes_runtime_capability_contract() -> None:
+    readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
+    assert "runtime capability contract" in readme
+    assert "bootstrap task package" in readme
 
 
 def test_agents_md_routes_repo_skill_usage_through_openharness() -> None:
@@ -632,6 +654,34 @@ def test_design_package_templates_include_status_guidance() -> None:
     assert "requirements_ready -> overview_ready -> detailed_ready" in status
     assert "Move to `in_progress` only when detailed design is concrete enough to execute." in detailed
     assert "Use `verifying` only when implementation is complete enough" in verification
+
+
+def test_runtime_capability_reference_defines_declaration_shape_and_writeback() -> None:
+    text = (
+        REPO_ROOT
+        / "skills"
+        / "using-openharness"
+        / "references"
+        / "runtime-capability-contract.md"
+    ).read_text(encoding="utf-8")
+
+    assert "## Capability Layers" in text
+    assert "core protocol" in text
+    assert "project runtime capability map" in text
+    assert "runtime helper skills" in text
+    assert "## Declaration Shape" in text
+    assert "runtime surface" in text
+    assert "prerequisites" in text
+    assert "driving method" in text
+    assert "observation points" in text
+    assert "success criteria" in text
+    assert "failure evidence" in text
+    assert "03-detailed-design.md" in text
+    assert "05-verification.md" in text
+    assert "06-evidence.md" in text
+    assert "## Routing Contract" in text
+    assert "reuse an existing runtime helper" in text
+    assert "bootstrap package" in text
 
 
 def test_task_package_templates_default_to_chinese_narrative_with_english_anchors() -> None:

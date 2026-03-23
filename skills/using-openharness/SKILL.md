@@ -33,6 +33,7 @@ Use this skill to work inside repositories that organize tasks as end-to-end `ta
 - `tests/`
 - `references/templates/`
 - `references/skill-hub.md`
+- `references/runtime-capability-contract.md`
 
 ## Role
 
@@ -49,6 +50,7 @@ It decides:
 - when to stay in task-package docs
 - when to invoke `brainstorming`
 - when to invoke `exploring-solution-space`
+- when runtime work should reuse an existing helper versus opening a bootstrap package
 - when to run harness verification
 
 All repo-facing workflow skills should be treated as subordinate to `openharness`, not as parallel systems.
@@ -86,6 +88,18 @@ Repository entry-skill responsibilities live here:
     - `05-verification.md`
     - `06-evidence.md`
 5. Implement only after the task package is internally consistent enough to act on.
+
+## Runtime Capability Routing
+
+When a task depends on real runtime behavior rather than code-only changes, `using-openharness` should route through the runtime capability contract instead of improvising a universal debug flow.
+
+Use this runtime routing loop:
+
+1. Check whether the task is code-only or requires runtime-aware verification.
+2. Look for the repository's runtime capability contract and any project runtime capability map or linked helper guidance.
+3. If a matching capability exists, reuse the linked project runtime helper and write the planned plus executed evidence back into the active task package.
+4. If no matching capability exists, open or update a bootstrap package for that runtime surface before claiming runtime verification coverage.
+5. Keep project runtime helpers optional and narrow. One repository may host multiple runtime helper skills, but they must not become parallel entry skills.
 
 ## Skill Routing
 
@@ -144,6 +158,7 @@ For non-package work that still touches repository workflow, start from `openhar
 
 - `openharness` defines the repository protocol and skill order.
 - `openharness` is the only repository entry skill; do not maintain a second entry root.
+- runtime capability routing belongs in `openharness`, but project-specific runtime helpers remain optional project-level extensions.
 - `brainstorming` must not invent a parallel spec system or a second task root.
 - `exploring-solution-space` must not become a parallel task system; it exists to produce `02` first and only then inform `03` where justified.
 - `03-detailed-design.md` owns testing-first implementation detail inside the fixed package protocol.
