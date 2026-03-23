@@ -9,6 +9,11 @@
 - The existing repository tests continue to pass with the new active package added.
 
 ## Latest Result
+- Passed again on 2026-03-23 after scaffolding `OH-017 Maintenance And Entropy Reduction` and updating `OH-004` to treat maintenance as an active child package:
+  - `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
+  - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
+  - `uv run pytest`
+  - Result: `check-tasks` validated `17 task package(s)`, `bootstrap` showed `OH-004` and `OH-017` as active, and the full suite passed with `53 passed`.
 - Passed on 2026-03-20:
   - `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
   - `uv run pytest`

@@ -10,6 +10,7 @@ This roadmap package does not add runtime code directly. Its `tests` are reposit
 ## Files Added Or Changed
 - Update the `OH-004` design documents so they capture stream boundaries, dependency order, split triggers, and concrete expected outputs.
 - Scaffold the next focused child package when one stream becomes concrete enough to stand on its own.
+- `OH-017 Maintenance And Entropy Reduction` now fills that role for the remaining maintenance stream, so later maintenance implementation detail should accumulate there rather than in `OH-004`.
 - Keep `OH-004` at roadmap level rather than letting child-package implementation detail accumulate here.
 
 ## Interfaces
@@ -44,6 +45,7 @@ The already-completed baselines should be reused instead of re-designed here:
 - `OH-008 Skill Taxonomy And Compatibility Cleanup` is now the archived baseline for stable skill categories and retirement of the old plan-oriented surface.
 - `OH-012 Skill Taxonomy And Stage Model` is now the archived follow-up that turns the taxonomy baseline into live protocol-status and workflow-stage wording and productizes the Python-first pytest floor.
 - `OH-010 Workflow Transition And Verification Artifacts` is now archived as the completed implementation wave for supported transitions and verification artifact closure.
+- `OH-017 Maintenance And Entropy Reduction` is now the active child package that owns future maintenance implementation detail and cleanup waves.
 
 ## Detailed Reflection
 - I challenged whether `OH-004` needed file-level implementation steps now. It does not; adding them here would duplicate the work that belongs in child packages.
