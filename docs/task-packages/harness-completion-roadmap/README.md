@@ -14,6 +14,7 @@
 - `OH-010 Workflow Transition And Verification Artifacts` is now archived as the completed follow-up for enforcing legal state movement and durable verification evidence.
 - `OH-013 Runtime Capability Contract` is the active design follow-up for defining how OpenHarness should represent and route project-specific runtime capabilities without assuming one universal runtime-debug skill.
 - `OH-014 Project Runtime Surface Map And Helper Skills` is the active design follow-up for defining how a repository should map its runtime surfaces and attach multiple narrow helper skills.
+- `OH-016 Adding Project Runtime Helper` is the active design follow-up for defining the focused workflow that decides when to reuse, add, or bootstrap a project runtime helper.
 
 ## Remaining Streams
 - `maintenance and entropy reduction`
