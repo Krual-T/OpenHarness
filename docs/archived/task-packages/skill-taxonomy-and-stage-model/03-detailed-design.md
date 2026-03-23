@@ -22,7 +22,7 @@ If design is complete but implementation has not started yet, stay at `detailed_
 
 ## Files Added Or Changed
 - `docs/archived/task-packages/skill-taxonomy-and-stage-model/*`
-- `docs/task-packages/harness-completion-roadmap/*`
+- `docs/archived/task-packages/harness-completion-roadmap/*`
 - `README.md`
 - `skills/using-openharness/references/skill-hub.md`
 - affected `skills/*/SKILL.md`

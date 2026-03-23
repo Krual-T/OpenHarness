@@ -1,5 +1,19 @@
 # Detailed Design
 
+## Runtime Verification Plan
+- Verification Path:
+  - Run `uv run python skills/using-openharness/scripts/openharness.py check-tasks` to confirm the parent roadmap and the archived child package still satisfy harness protocol.
+  - Run `uv run python skills/using-openharness/scripts/openharness.py bootstrap` to confirm the maintenance stream no longer appears as active once `OH-017` archives and `OH-004` closes.
+  - Run `uv run pytest` to confirm the final roadmap writeback and archive move do not introduce repository regressions.
+- Fallback Path:
+  - If `OH-017` cannot archive cleanly, `OH-004` must remain active because the final remaining stream would still be open.
+  - If `bootstrap` still shows an active roadmap or maintenance package after archival work, stop and repair the remaining active-path references before claiming closure.
+  - If `check-tasks` or `pytest` fails, fix the repository regression before archiving `OH-004`.
+- Planned Evidence:
+  - The archived `OH-017` package with a passing verification artifact and refreshed maintenance evidence.
+  - The archived `OH-004` roadmap docs stating that no unfinished completion streams remain.
+  - Fresh `check-tasks`, `bootstrap`, and `pytest` results captured in `05-verification.md` and `06-evidence.md`.
+
 ## Testing-First Design
 This roadmap package does not add runtime code directly. Its `tests` are repository-legibility checks:
 
@@ -9,17 +23,16 @@ This roadmap package does not add runtime code directly. Its `tests` are reposit
 
 ## Files Added Or Changed
 - Update the `OH-004` design documents so they capture stream boundaries, dependency order, split triggers, and concrete expected outputs.
-- Scaffold the next focused child package when one stream becomes concrete enough to stand on its own.
-- `OH-017 Maintenance And Entropy Reduction` now fills that role for the remaining maintenance stream, so later maintenance implementation detail should accumulate there rather than in `OH-004`.
-- Keep `OH-004` at roadmap level rather than letting child-package implementation detail accumulate here.
+- Archive `OH-017 Maintenance And Entropy Reduction` after its first maintenance implementation wave closes the last remaining stream.
+- Archive `OH-004` itself once the roadmap no longer has unfinished streams.
+- Keep `OH-004` at roadmap level rather than letting later implementation detail accumulate here.
 
 ## Interfaces
-Each remaining future stream should produce its own focused package with these minimum outputs:
+This roadmap no longer owns any unfinished stream. Future work should create a new focused package with these minimum outputs instead of reopening `OH-004`:
 
-- `maintenance and entropy reduction`
-  - define regular cleanup loops for archived packages, stale evidence, stale memory, and protocol drift
-  - define how maintenance work is triggered and where results are written back
-  - likely touch skill docs, `.project-memory/` conventions if present, and maybe add maintenance checklists
+- a narrow problem statement and verification path
+- explicit writeback locations
+- bounded implementation scope that does not rely on reviving the old roadmap as an active backlog
 
 The already-completed baselines should be reused instead of re-designed here:
 
@@ -45,11 +58,12 @@ The already-completed baselines should be reused instead of re-designed here:
 - `OH-008 Skill Taxonomy And Compatibility Cleanup` is now the archived baseline for stable skill categories and retirement of the old plan-oriented surface.
 - `OH-012 Skill Taxonomy And Stage Model` is now the archived follow-up that turns the taxonomy baseline into live protocol-status and workflow-stage wording and productizes the Python-first pytest floor.
 - `OH-010 Workflow Transition And Verification Artifacts` is now archived as the completed implementation wave for supported transitions and verification artifact closure.
-- `OH-017 Maintenance And Entropy Reduction` is now the active child package that owns future maintenance implementation detail and cleanup waves.
+- `OH-017 Maintenance And Entropy Reduction` is now the archived completed child package that owns the reusable maintenance baseline.
 
 ## Detailed Reflection
 - I challenged whether `OH-004` needed file-level implementation steps now. It does not; adding them here would duplicate the work that belongs in child packages.
 - I challenged whether the roadmap was still too abstract to verify. The answer was yes in its earlier form, so this revision adds expected outputs and likely repository touch points for each stream.
 - I checked whether the detailed design made runtime verification concrete enough. It is now concrete at the roadmap level by defining the kinds of artifacts and semantics the next child package must settle.
 - I checked whether `OH-004` still needed to hold taxonomy implementation detail itself. It does not; that detail now belongs in archived `OH-008`.
+- I checked whether an archived umbrella roadmap was still useful once all streams completed. It is, but only as a historical fact source; new work should branch into a new focused package instead of reactivating `OH-004`.
 - No bounded subagent discussion was needed in this round because the main uncertainty is package decomposition, not a contested implementation path.

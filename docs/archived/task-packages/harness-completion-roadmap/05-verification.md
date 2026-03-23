@@ -1,14 +1,33 @@
 # Verification
 
+## Verification Path
+- Planned Path:
+  - Run `uv run python skills/using-openharness/scripts/openharness.py check-tasks` after the final roadmap writeback and archive moves.
+  - Run `uv run python skills/using-openharness/scripts/openharness.py bootstrap` to confirm `OH-017` and `OH-004` no longer remain in the active package set.
+  - Run `uv run pytest` to confirm the final completion-roadmap closure does not regress the repository.
+- Executed Path:
+  - This round first completed the `OH-017` maintenance wave, refreshed the stale project-memory objects, and archived the child package with `openharness.py verify`.
+  - The parent roadmap then updated its design and verification docs so the final archive state is explicit and machine-checkable.
+  - Final `check-tasks`, `bootstrap`, and `pytest` evidence is gathered again after both package moves are complete.
+- Path Notes:
+  - `OH-004` cannot close until `OH-017` has archived cleanly and no unfinished stream remains under the roadmap.
+  - The archived roadmap still keeps its historical verification log, but new work should open a fresh focused package instead of adding another `Latest Result` entry here.
+
 ## Required Commands
 - `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
 - `uv run pytest`
 
 ## Expected Outcomes
-- The roadmap package validates cleanly.
-- The existing repository tests continue to pass with the new active package added.
+- The roadmap package validates cleanly after both `OH-017` and `OH-004` archive.
+- `bootstrap` no longer shows either package in the active set.
+- The existing repository tests continue to pass after the final archive move.
 
 ## Latest Result
+- Passed on 2026-03-23 for final roadmap closure:
+  - `uv run python skills/using-openharness/scripts/openharness.py verify harness-completion-roadmap`
+  - `uv run python skills/using-openharness/scripts/openharness.py transition harness-completion-roadmap archived`
+  - 最终仓库级验证还重新执行了 `uv run python skills/using-openharness/scripts/openharness.py check-tasks`、`uv run python skills/using-openharness/scripts/openharness.py bootstrap` 与 `uv run pytest`
+  - 结果：`OH-017` 与 `OH-004` 都已归档，completion roadmap 不再留下 active stream；`verify harness-completion-roadmap` 成功记录结构化 artifact，归档后 `bootstrap` 不再显示 active package，仓库测试继续通过。
 - Passed again on 2026-03-23 after scaffolding `OH-017 Maintenance And Entropy Reduction` and updating `OH-004` to treat maintenance as an active child package:
   - `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
   - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
@@ -99,3 +118,5 @@
   - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
   - `uv run pytest`
   - Result: `check-tasks` validated `16 task package(s)`, `bootstrap` showed only `OH-004` as active, and the full suite passed with `53 passed`.
+- Latest Artifact:
+  - 见 `STATUS.yaml.verification.last_run_artifact`

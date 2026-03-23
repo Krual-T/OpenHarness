@@ -18,10 +18,10 @@
 - `skills/using-openharness/references/templates/task-package.STATUS.yaml`
 - `skills/using-openharness/references/templates/task-package.03-detailed-design.md`
 - `skills/using-openharness/references/templates/task-package.05-verification.md`
-- `docs/task-packages/harness-completion-roadmap/README.md`
-- `docs/task-packages/harness-completion-roadmap/01-requirements.md`
-- `docs/task-packages/harness-completion-roadmap/02-overview-design.md`
-- `docs/task-packages/harness-completion-roadmap/03-detailed-design.md`
+- `docs/archived/task-packages/harness-completion-roadmap/README.md`
+- `docs/archived/task-packages/harness-completion-roadmap/01-requirements.md`
+- `docs/archived/task-packages/harness-completion-roadmap/02-overview-design.md`
+- `docs/archived/task-packages/harness-completion-roadmap/03-detailed-design.md`
 - `docs/archived/task-packages/python-verification-maturity/README.md`
 - `docs/archived/task-packages/python-verification-maturity/03-detailed-design.md`
 - `docs/archived/task-packages/python-verification-maturity/05-verification.md`

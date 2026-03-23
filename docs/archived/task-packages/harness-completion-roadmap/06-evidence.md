@@ -1,18 +1,25 @@
 # Evidence
 
+## Residual Risks
+- `OH-004` 已经完成历史使命，但后续如果再出现新的协议缺口，必须新开 focused package；不要把这个归档路线图重新当作 active backlog 使用。
+- 当前维护基线主要由已归档的 `OH-017`、`.project-memory/` 对象和现有文本测试共同约束；如果未来维护波次反复依赖人工步骤，应再拆新的维护实现包，而不是回滚 `OH-004`。
+
+## Manual Steps
+- 无。
+
 ## Files
-- `docs/task-packages/harness-completion-roadmap/README.md`
-- `docs/task-packages/harness-completion-roadmap/01-requirements.md`
-- `docs/task-packages/harness-completion-roadmap/02-overview-design.md`
-- `docs/task-packages/harness-completion-roadmap/03-detailed-design.md`
-- `docs/task-packages/harness-completion-roadmap/05-verification.md`
-- `docs/task-packages/harness-completion-roadmap/06-evidence.md`
-- `docs/task-packages/maintenance-and-entropy-reduction/*`
+- `docs/archived/task-packages/harness-completion-roadmap/README.md`
+- `docs/archived/task-packages/harness-completion-roadmap/01-requirements.md`
+- `docs/archived/task-packages/harness-completion-roadmap/02-overview-design.md`
+- `docs/archived/task-packages/harness-completion-roadmap/03-detailed-design.md`
+- `docs/archived/task-packages/harness-completion-roadmap/05-verification.md`
+- `docs/archived/task-packages/harness-completion-roadmap/06-evidence.md`
+- `docs/archived/task-packages/maintenance-and-entropy-reduction/*`
 - `docs/archived/task-packages/skill-taxonomy-and-compatibility-cleanup/*`
 - `docs/archived/task-packages/skill-taxonomy-and-stage-model/*`
 - `docs/archived/task-packages/workflow-transition-and-verification-artifacts/*`
-- `docs/task-packages/task-package-semantic-validation/*`
-- `docs/task-packages/harness-completion-roadmap/STATUS.yaml`
+- `docs/archived/task-packages/task-package-semantic-validation/*`
+- `docs/archived/task-packages/harness-completion-roadmap/STATUS.yaml`
 - `docs/archived/task-packages/runtime-capability-contract/*`
 - `docs/archived/task-packages/project-runtime-surface-map-and-helper-skills/*`
 - `docs/archived/task-packages/adding-project-runtime-helper/*`
@@ -29,6 +36,8 @@
 - `.project-memory/facts/runtime_capability_contract_protocol.yaml`
 - `.project-memory/facts/project_runtime_surface_map_protocol.yaml`
 - `.project-memory/facts/project_runtime_helper_addition_protocol.yaml`
+- `.project-memory/facts/project_memory_saves_must_run_serially.yaml`
+- `.project-memory/decisions/task_package_language_policy_phase_one.yaml`
 - `.project-memory/aliases.yaml`
 - `docs/archived/task-packages/runtime-verification-baseline/*`
 - `docs/archived/task-packages/status-semantics-tightening/*`
@@ -85,6 +94,20 @@
 - `uv run python skills/using-openharness/scripts/openharness.py transition adding-project-runtime-helper verifying`
 - `uv run python skills/using-openharness/scripts/openharness.py verify adding-project-runtime-helper`
 - `uv run python skills/using-openharness/scripts/openharness.py transition adding-project-runtime-helper archived`
+- `uv run python skills/project-memory/scripts/save_fact.py runtime_capability_contract_protocol --owner codex --verified-commit "$(git rev-parse HEAD)"`
+- `uv run python skills/project-memory/scripts/save_fact.py project_runtime_surface_map_protocol --owner codex --verified-commit "$(git rev-parse HEAD)"`
+- `uv run python skills/project-memory/scripts/save_fact.py project_runtime_helper_addition_protocol --owner codex --verified-commit "$(git rev-parse HEAD)"`
+- `uv run python skills/project-memory/scripts/save_decision.py task_package_language_policy_phase_one --owner codex --verified-commit "$(git rev-parse HEAD)"`
+- `uv run python skills/project-memory/scripts/check_stale.py`
+- `uv run python skills/project-memory/scripts/audit_memory.py --fail-on high`
+- `uv run python skills/using-openharness/scripts/openharness.py transition maintenance-and-entropy-reduction in_progress`
+- `uv run python skills/using-openharness/scripts/openharness.py transition maintenance-and-entropy-reduction verifying`
+- `uv run python skills/using-openharness/scripts/openharness.py verify maintenance-and-entropy-reduction`
+- `uv run python skills/using-openharness/scripts/openharness.py transition maintenance-and-entropy-reduction archived`
+- `uv run python skills/using-openharness/scripts/openharness.py transition harness-completion-roadmap verifying`
+- `uv run python skills/using-openharness/scripts/openharness.py verify harness-completion-roadmap`
+- `uv run python skills/using-openharness/scripts/openharness.py transition harness-completion-roadmap archived`
+- `uv run python skills/project-memory/scripts/save_fact.py project_memory_saves_must_run_serially --title "project-memory 保存命令必须串行执行" --summary "批量刷新 project-memory 对象时，save_* 脚本不能并行运行。" --statement "skills/project-memory/scripts/save_fact.py、save_decision.py 和 save_workflow.py 都会通过 project_memory_lib.save_memory_object 重写 .project-memory/aliases.yaml 并重建索引；同一轮批量刷新多个 memory object 时必须串行执行这些保存脚本，不能并行运行，否则会发生竞争写入并破坏 aliases.yaml。" --alias "project-memory 保存命令能并行吗" --alias "aliases.yaml 为什么会损坏" --alias "project-memory save_fact 要串行吗" --tag project-memory --tag workflow --tag maintenance --applies-to skills/project-memory/scripts/save_fact.py --applies-to skills/project-memory/scripts/save_decision.py --applies-to skills/project-memory/scripts/save_workflow.py --applies-to skills/project-memory/scripts/project_memory_lib.py --evidence skills/project-memory/scripts/project_memory_lib.py --owner codex --verified-commit "$(git rev-parse HEAD)"`
 - `uv run python skills/using-openharness/scripts/openharness.py transition skill-taxonomy-and-stage-model requirements_ready`
 - `uv run python skills/using-openharness/scripts/openharness.py transition skill-taxonomy-and-stage-model overview_ready`
 - `uv run python skills/using-openharness/scripts/openharness.py transition skill-taxonomy-and-stage-model detailed_ready`
@@ -109,11 +132,9 @@
 - `rmdir skills/writing-plans/references`
 - `rmdir skills/writing-plans`
 
+## Artifact Paths
+- `OH-017`: 见 `docs/archived/task-packages/maintenance-and-entropy-reduction/STATUS.yaml` 里的 `verification.last_run_artifact`
+- `OH-004`: 见 `docs/archived/task-packages/harness-completion-roadmap/STATUS.yaml` 里的 `verification.last_run_artifact`
+
 ## Follow-ups
-- Use archived `OH-008 Skill Taxonomy And Compatibility Cleanup` as the baseline when defining maintenance audits and stale-surface cleanup.
-- Decide in a later focused package whether archived `OH-007` needs more template-level examples beyond the live pytest-floor wording already productized through `OH-012`.
-- Reuse the archived `OH-006 Status Semantics Tightening` package as the baseline if a later stream needs stronger transition enforcement, rather than reopening status-semantics design from scratch in `OH-004`.
-- Reuse archived `OH-009 Task Package Semantic Validation` if a later stream adds a `transition` command or structured verification artifacts, rather than mixing those concerns back into `OH-004`.
-- Reuse archived `OH-010 Workflow Transition And Verification Artifacts` as the baseline when later work needs stronger workflow control or richer verification evidence, instead of reopening those semantics inside `OH-004`.
-- Reuse archived `OH-013`, `OH-014`, and `OH-016` together when later work needs runtime-capability onboarding context, instead of reopening that stream inside `OH-004`.
-- Use active `OH-017 Maintenance And Entropy Reduction` as the fact source for future maintenance audits and cleanup waves, instead of pushing new implementation detail back into `OH-004`.
+- 未来如果出现新的维护波次、协议扩展或新的产品缺口，应直接创建新的 focused package，并把需要复用的历史基线从已归档的 `OH-004`、`OH-017`、`OH-006`、`OH-008`、`OH-009`、`OH-010`、`OH-013`、`OH-014`、`OH-016` 中取用。

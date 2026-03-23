@@ -15,7 +15,7 @@ Move to `in_progress` only when detailed design is concrete enough to execute.
 
 ## Files Added Or Changed
 - Update `docs/archived/task-packages/python-verification-maturity/*` so the package preserves the Python verification baseline, escalation rules, and implementation landing points as an archived fact source.
-- Update `docs/task-packages/harness-completion-roadmap/*` so `OH-004` clearly treats `OH-007` as the completed archived package for the Python verification-maturity stream.
+- Update `docs/archived/task-packages/harness-completion-roadmap/*` so `OH-004` clearly treats `OH-007` as the completed archived package for the Python verification-maturity stream.
 - In the implementation wave, likely update:
   - `skills/using-openharness/references/templates/*`
   - `skills/verification-before-completion/SKILL.md`

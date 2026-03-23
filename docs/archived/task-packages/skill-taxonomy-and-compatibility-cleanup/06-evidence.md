@@ -16,11 +16,11 @@
 - `docs/archived/task-packages/skill-taxonomy-and-compatibility-cleanup/03-detailed-design.md`
 - `docs/archived/task-packages/skill-taxonomy-and-compatibility-cleanup/05-verification.md`
 - `docs/archived/task-packages/skill-taxonomy-and-compatibility-cleanup/06-evidence.md`
-- `docs/task-packages/harness-completion-roadmap/README.md`
-- `docs/task-packages/harness-completion-roadmap/02-overview-design.md`
-- `docs/task-packages/harness-completion-roadmap/03-detailed-design.md`
-- `docs/task-packages/harness-completion-roadmap/05-verification.md`
-- `docs/task-packages/harness-completion-roadmap/06-evidence.md`
+- `docs/archived/task-packages/harness-completion-roadmap/README.md`
+- `docs/archived/task-packages/harness-completion-roadmap/02-overview-design.md`
+- `docs/archived/task-packages/harness-completion-roadmap/03-detailed-design.md`
+- `docs/archived/task-packages/harness-completion-roadmap/05-verification.md`
+- `docs/archived/task-packages/harness-completion-roadmap/06-evidence.md`
 - `README.md`
 - `skills/using-openharness/references/skill-hub.md`
 - `skills/using-openharness/SKILL.md`

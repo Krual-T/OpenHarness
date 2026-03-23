@@ -10,10 +10,10 @@
 
 ## Files
 - `docs/archived/task-packages/task-package-semantic-validation/*`
-- `docs/task-packages/harness-completion-roadmap/README.md`
-- `docs/task-packages/harness-completion-roadmap/02-overview-design.md`
-- `docs/task-packages/harness-completion-roadmap/03-detailed-design.md`
-- `docs/task-packages/harness-completion-roadmap/06-evidence.md`
+- `docs/archived/task-packages/harness-completion-roadmap/README.md`
+- `docs/archived/task-packages/harness-completion-roadmap/02-overview-design.md`
+- `docs/archived/task-packages/harness-completion-roadmap/03-detailed-design.md`
+- `docs/archived/task-packages/harness-completion-roadmap/06-evidence.md`
 - `docs/archived/task-packages/reflective-design-review/02-overview-design.md`
 - `docs/archived/task-packages/reflective-design-review/03-detailed-design.md`
 - `docs/archived/task-packages/reflective-design-review/05-verification.md`

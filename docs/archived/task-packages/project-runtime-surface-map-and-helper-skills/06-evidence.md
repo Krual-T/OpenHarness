@@ -22,7 +22,7 @@
 - `skills/using-openharness/references/project-runtime-surface-map.md`
 - `skills/using-openharness/references/templates/project-runtime-surface-map.md`
 - `skills/using-openharness/tests/test_openharness.py`
-- `docs/task-packages/harness-completion-roadmap/*`
+- `docs/archived/task-packages/harness-completion-roadmap/*`
 - `docs/archived/task-packages/adding-project-runtime-helper/06-evidence.md`
 - `.project-memory/facts/project_runtime_surface_map_protocol.yaml`
 - `.project-memory/aliases.yaml`

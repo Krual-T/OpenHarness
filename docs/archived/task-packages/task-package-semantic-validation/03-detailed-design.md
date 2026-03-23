@@ -19,7 +19,7 @@ If design is complete but implementation has not started yet, stay at `detailed_
 
 ## Files Added Or Changed
 - `docs/task-packages/task-package-semantic-validation/*`
-- `docs/task-packages/harness-completion-roadmap/*`
+- `docs/archived/task-packages/harness-completion-roadmap/*`
 - `skills/using-openharness/scripts/openharness.py`
 - `skills/using-openharness/tests/test_openharness.py`
 - `skills/using-openharness/references/templates/task-package.02-overview-design.md`

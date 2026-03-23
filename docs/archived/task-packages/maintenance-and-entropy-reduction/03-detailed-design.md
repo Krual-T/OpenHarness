@@ -23,10 +23,10 @@ Move to `in_progress` only when detailed design is concrete enough to execute.
 If design is complete but implementation has not started yet, stay at `detailed_ready`.
 
 ## Files Added Or Changed
-- 新增 `docs/task-packages/maintenance-and-entropy-reduction/*`，作为维护流的 focused package 事实源。
-- 更新 `docs/task-packages/harness-completion-roadmap/README.md`，让父包直接指向新的活跃子包。
-- 更新 `docs/task-packages/harness-completion-roadmap/02-overview-design.md` 与 `03-detailed-design.md`，把维护流的 ownership 从“父包内的剩余流”收敛为“由 `OH-017` 接管的活跃子包”。
-- 更新 `docs/task-packages/harness-completion-roadmap/05-verification.md` 与 `06-evidence.md`，记录这次拆包和校验证据。
+- 新增 `docs/archived/task-packages/maintenance-and-entropy-reduction/*`，作为维护流的 focused package 事实源。
+- 更新 `docs/archived/task-packages/harness-completion-roadmap/README.md`，让父包直接指向新的活跃子包。
+- 更新 `docs/archived/task-packages/harness-completion-roadmap/02-overview-design.md` 与 `03-detailed-design.md`，把维护流的 ownership 从“父包内的剩余流”收敛为“由 `OH-017` 接管的活跃子包”。
+- 更新 `docs/archived/task-packages/harness-completion-roadmap/05-verification.md` 与 `06-evidence.md`，记录这次拆包和校验证据。
 
 ## Interfaces
 本包不引入新的仓库入口，而是复用现有接口：

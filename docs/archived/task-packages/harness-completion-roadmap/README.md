@@ -1,13 +1,13 @@
 # OH-004 Harness Completion Roadmap
 
 ## Summary
-- Track the remaining major work needed to turn OpenHarness from a strong protocol skeleton into a more complete verification- and maintenance-oriented skill hub.
-- Keep the remaining streams in one active package so they are not forgotten or re-discovered ad hoc.
+- 作为历史 umbrella roadmap，记录 OpenHarness 从协议骨架走到验证与维护能力产品化的主要完成流。
+- 为后续代理保留一份“哪些流已经完成、应该复用哪个归档包”的总入口，而不是继续承担 active backlog。
 
 ## Current Status
-- In progress.
-- Parent roadmap package for follow-up task packages.
-- `OH-017 Maintenance And Entropy Reduction` is now the active child package for the remaining maintenance stream.
+- `archived`。
+- Parent roadmap package for completed follow-up task packages.
+- `OH-017 Maintenance And Entropy Reduction` is now the archived completed child package for the former maintenance stream.
 - `OH-007 Python Verification Maturity` is a legacy archived design-baseline package from the pre-task-package semantics period and should not be reused as an example of current archive meaning.
 - `OH-008 Skill Taxonomy And Compatibility Cleanup` is the archived completed child package for the taxonomy stream.
 - `OH-012 Skill Taxonomy And Stage Model` is the archived completed follow-up that turns taxonomy cleanup into a live protocol-status plus workflow-stage model and productizes the Python-first pytest baseline in live docs.
@@ -18,9 +18,10 @@
 - `OH-016 Adding Project Runtime Helper` is now the archived completed follow-up for the focused workflow that decides when to reuse, add, or bootstrap a project runtime helper.
 
 ## Remaining Streams
-- `maintenance and entropy reduction` owned by active `OH-017`
+- None. `OH-017 Maintenance And Entropy Reduction` completed the final remaining stream on 2026-03-23.
 
 ## Completed Or Baseline Streams
+- `maintenance and entropy reduction`
 - `runtime verification baseline`
 - `project runtime capability integration`
 - `status semantics tightening`
@@ -31,8 +32,8 @@
 - `skill taxonomy and stage model`
 
 ## Intended Use
-- Read this package when a new request asks what major work is still missing from OpenHarness.
-- Use it to decide whether the request should become a focused follow-up package instead of expanding this roadmap indefinitely.
+- Read this package when a new request asks which major OpenHarness completion streams were already productized.
+- If future work reveals a new major gap, create a new focused package instead of reopening this archived roadmap as an active backlog.
 
 ## Read This First
 - `STATUS.yaml`

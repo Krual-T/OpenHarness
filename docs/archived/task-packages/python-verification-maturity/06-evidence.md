@@ -16,12 +16,12 @@
 - `docs/archived/task-packages/python-verification-maturity/03-detailed-design.md`
 - `docs/archived/task-packages/python-verification-maturity/05-verification.md`
 - `docs/archived/task-packages/python-verification-maturity/06-evidence.md`
-- `docs/task-packages/harness-completion-roadmap/README.md`
-- `docs/task-packages/harness-completion-roadmap/STATUS.yaml`
-- `docs/task-packages/harness-completion-roadmap/02-overview-design.md`
-- `docs/task-packages/harness-completion-roadmap/03-detailed-design.md`
-- `docs/task-packages/harness-completion-roadmap/05-verification.md`
-- `docs/task-packages/harness-completion-roadmap/06-evidence.md`
+- `docs/archived/task-packages/harness-completion-roadmap/README.md`
+- `docs/archived/task-packages/harness-completion-roadmap/STATUS.yaml`
+- `docs/archived/task-packages/harness-completion-roadmap/02-overview-design.md`
+- `docs/archived/task-packages/harness-completion-roadmap/03-detailed-design.md`
+- `docs/archived/task-packages/harness-completion-roadmap/05-verification.md`
+- `docs/archived/task-packages/harness-completion-roadmap/06-evidence.md`
 
 ## Commands
 - `uv run python skills/using-openharness/scripts/openharness.py new-task no-harness-bootstrap-workflow OH-007 "No-Harness Bootstrap Workflow" --owner codex --summary "Define how OpenHarness should enter a repository with no harness, no package history, and no established verification loop, while still producing a usable first-round package and verification path."`

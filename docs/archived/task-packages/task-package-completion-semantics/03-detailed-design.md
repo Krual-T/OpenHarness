@@ -22,7 +22,7 @@ Move to `in_progress` only when detailed design is concrete enough to execute.
   - change user-facing output and help text to `task package`
   - add `check-tasks` and `new-task` aliases alongside legacy `check-tasks` and `new-task`
 - Update `skills/using-openharness/tests/test_openharness.py` so tests assert the new task-package vocabulary and alias behavior.
-- Update `docs/task-packages/harness-completion-roadmap/*` so `OH-004` no longer teaches that archived design baselines are completed streams in the end-to-end sense.
+- Update `docs/archived/task-packages/harness-completion-roadmap/*` so `OH-004` no longer teaches that archived design baselines are completed streams in the end-to-end sense.
 - Update the most misleading historical package docs, especially `docs/archived/task-packages/python-verification-maturity/*`, so they are explicitly marked as legacy archive semantics rather than current protocol truth.
 
 ## Interfaces
