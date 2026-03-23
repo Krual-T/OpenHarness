@@ -7,6 +7,7 @@
 - `docs/task-packages/harness-completion-roadmap/03-detailed-design.md`
 - `docs/task-packages/harness-completion-roadmap/05-verification.md`
 - `docs/task-packages/harness-completion-roadmap/06-evidence.md`
+- `docs/task-packages/maintenance-and-entropy-reduction/*`
 - `docs/archived/task-packages/skill-taxonomy-and-compatibility-cleanup/*`
 - `docs/archived/task-packages/skill-taxonomy-and-stage-model/*`
 - `docs/archived/task-packages/workflow-transition-and-verification-artifacts/*`
@@ -59,6 +60,12 @@
 - `uv run python skills/using-openharness/scripts/openharness.py new-task skill-taxonomy-and-stage-model OH-011 "Skill Taxonomy And Stage Model" --owner codex --summary "Reshape OpenHarness skill classification around protocol status plus workflow stage, and define pytest as the Python baseline verification floor in live docs."`
 - `uv run python skills/using-openharness/scripts/openharness.py new-task runtime-capability-contract OH-013 "Runtime Capability Contract" --owner codex --summary "Define how OpenHarness should describe, route, verify, and write back project-specific runtime capabilities without assuming a single universal runtime debugging skill."`
 - `uv run python skills/using-openharness/scripts/openharness.py new-task project-runtime-surface-map-and-helper-skills OH-014 "Project Runtime Surface Map And Helper Skills" --owner codex --summary "Define how a repository should map its runtime surfaces and attach multiple project-specific runtime helper skills to the OpenHarness workflow without collapsing them into one generic debug skill."`
+- `uv run python skills/using-openharness/scripts/openharness.py new-task maintenance-and-entropy-reduction OH-017 "Maintenance And Entropy Reduction" --owner codex --summary "Define a recurring maintenance workflow that audits task-package drift, project-memory freshness, and skill-surface wording drift so OpenHarness stays legible as it grows."`
+- `uv run python skills/project-memory/scripts/check_stale.py`
+- `uv run python skills/project-memory/scripts/audit_memory.py`
+- `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
+- `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
+- `uv run pytest`
 - `uv run pytest skills/using-openharness/tests/test_openharness.py -k 'skill_hub_uses_protocol_status_plus_stage_model or readme_describes_plug_and_play_harness_and_python_pytest_floor'`
 - `uv run pytest skills/using-openharness/tests/test_openharness.py -k 'runtime_capability or capability_contract'`
 - `uv run pytest skills/using-openharness/tests/test_openharness.py -k 'runtime_surface_map or runtime_capability or capability_contract'`
@@ -109,3 +116,4 @@
 - Reuse archived `OH-009 Task Package Semantic Validation` if a later stream adds a `transition` command or structured verification artifacts, rather than mixing those concerns back into `OH-004`.
 - Reuse archived `OH-010 Workflow Transition And Verification Artifacts` as the baseline when later work needs stronger workflow control or richer verification evidence, instead of reopening those semantics inside `OH-004`.
 - Reuse archived `OH-013`, `OH-014`, and `OH-016` together when later work needs runtime-capability onboarding context, instead of reopening that stream inside `OH-004`.
+- Use active `OH-017 Maintenance And Entropy Reduction` as the fact source for future maintenance audits and cleanup waves, instead of pushing new implementation detail back into `OH-004`.

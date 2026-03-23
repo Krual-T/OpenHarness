@@ -7,6 +7,7 @@
 ## Current Status
 - In progress.
 - Parent roadmap package for follow-up task packages.
+- `OH-017 Maintenance And Entropy Reduction` is now the active child package for the remaining maintenance stream.
 - `OH-007 Python Verification Maturity` is a legacy archived design-baseline package from the pre-task-package semantics period and should not be reused as an example of current archive meaning.
 - `OH-008 Skill Taxonomy And Compatibility Cleanup` is the archived completed child package for the taxonomy stream.
 - `OH-012 Skill Taxonomy And Stage Model` is the archived completed follow-up that turns taxonomy cleanup into a live protocol-status plus workflow-stage model and productizes the Python-first pytest baseline in live docs.
@@ -17,7 +18,7 @@
 - `OH-016 Adding Project Runtime Helper` is now the archived completed follow-up for the focused workflow that decides when to reuse, add, or bootstrap a project runtime helper.
 
 ## Remaining Streams
-- `maintenance and entropy reduction`
+- `maintenance and entropy reduction` owned by active `OH-017`
 
 ## Completed Or Baseline Streams
 - `runtime verification baseline`

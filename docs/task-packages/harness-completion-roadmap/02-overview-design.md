@@ -22,7 +22,8 @@ Another workflow ambiguity is now explicit too: brainstorming should make design
 Keep `OH-004` as the parent roadmap package and treat the remaining work as these durable streams:
 
 1. `maintenance and entropy reduction`
-   - Define recurring cleanup and review work so the repository does not decay into stale task packages, stale memory, or drifting skill docs.
+   - This stream is now owned by active `OH-017 Maintenance And Entropy Reduction`.
+   - `OH-017` should define recurring cleanup and review work so the repository does not decay into stale task packages, stale memory, or drifting skill docs.
    - Focus on periodic review loops rather than one-off feature work.
 
 The completed baseline streams remain authoritative historical inputs:
@@ -41,7 +42,7 @@ The completed baseline streams remain authoritative historical inputs:
 - `python verification maturity` is already captured as a historical design baseline, so the remaining dependency is to decide where its wording should eventually land in live docs and templates.
 - `skill taxonomy and compatibility cleanup` plus `skill taxonomy and stage model` are now complete enough to act as the upstream skill-surface baseline, because the live repository no longer ships the old plan-oriented skill surface and the live docs now describe protocol status, workflow stage, and the Python-first pytest floor explicitly.
 - `project runtime capability integration` is now an archived completed baseline, because `OH-013`, `OH-014`, and `OH-016` together cover the contract, the runtime surface map, and the focused helper-addition workflow.
-- `maintenance and entropy reduction` is now the only active stream, and it should consume the stabilized runtime and skill taxonomy surfaces rather than redefining them.
+- `maintenance and entropy reduction` remains the only unfinished roadmap stream, but it is now delegated to active `OH-017`, which should consume the stabilized runtime and skill taxonomy surfaces rather than redefining them.
 
 ## Split Triggers
 This roadmap should stay broad until a request satisfies one of these triggers:
@@ -59,6 +60,7 @@ When those triggers are met, the agent should scaffold a focused child package r
 - The roadmap identifies which stream the request belongs to and whether it is discovery work, design work, or implementation work.
 - If the request is still broad, the agent updates `OH-004` first so the remaining product boundary stays explicit.
 - If one stream is concrete enough, the agent scaffolds a focused child package derived from this roadmap and keeps `OH-004` as the umbrella view.
+- `OH-017 Maintenance And Entropy Reduction` is now that focused child package for the maintenance stream.
 - `OH-005 Runtime Verification Baseline` is the first such child package and is now archived as the completed baseline for the runtime-verification stream.
 - `OH-006 Status Semantics Tightening` is now archived as the completed baseline for stronger workflow checkpoint meaning and transition gates.
 - `OH-007 Python Verification Maturity` remains a legacy archived design-baseline package from the older semantics period; future work may reuse it as historical design input, but not as an example that design-complete work is archive-ready.
@@ -69,7 +71,7 @@ When those triggers are met, the agent should scaffold a focused child package r
 - `OH-013 Runtime Capability Contract` is now the archived completed baseline that defines the OpenHarness-side runtime capability contract.
 - `OH-014 Project Runtime Surface Map And Helper Skills` is now the archived completed baseline that defines the project-facing onboarding structure for multiple runtime helper skills.
 - `OH-016 Adding Project Runtime Helper` is now the archived completed follow-up that defines the narrow helper-addition workflow on top of archived `OH-013` and `OH-014`.
-- Completed child packages should feed evidence or durable decisions back into this roadmap only when they materially change what remains.
+- Active or completed child packages should feed evidence or durable decisions back into this roadmap only when they materially change what remains.
 
 ## Trade-offs
 - One large package is less implementation-ready than a focused package, but it is better for preserving product memory across multiple rounds.
@@ -84,4 +86,5 @@ When those triggers are met, the agent should scaffold a focused child package r
 - I checked whether the current skill wording accidentally let exploration jump ahead into detailed design. It did leave that ambiguity, so the workflow docs should explicitly state that `02` is the primary output of exploration and `03` only follows when implementation-facing constraints are already justified.
 - I checked whether the brainstorming skill overfit to interactive approval loops. It did, so the workflow should default to autonomous continuation once design is explicit and only introduce user review gates when the task or risk profile justifies them.
 - I re-checked whether runtime capability integration still belongs in the active roadmap after archiving `OH-016`. It does not; the remaining active stream is now maintenance, while the runtime helper flow should be reused from the archived baselines.
+- I re-checked whether the maintenance stream still belonged only as prose inside `OH-004`. It does not; the stream is now concrete enough to live in focused `OH-017` while `OH-004` stays the umbrella roadmap.
 - No bounded subagent discussion was needed in this round because the uncertainty is about prioritization and scope control inside this repository, not about a hard architectural fork.
