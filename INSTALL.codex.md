@@ -22,7 +22,7 @@ Enable OpenHarness skills in Codex via native skill discovery. Just clone and sy
    **Windows (PowerShell):**
    ```powershell
    New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.codex\skills"
-   cmd /c mklink /J "$env:USERPROFILE\.codex\skills\openharness" "$env:USERPROFILE\.codex\openharness\skills"
+   cmd /c mklink /J "$env:USERPROFILE\.agents\skills\openharness" "$env:USERPROFILE\.codex\openharness\skills"
    ```
 
 3. **Restart Codex** (quit and relaunch the CLI) to discover the skills.
@@ -30,7 +30,7 @@ Enable OpenHarness skills in Codex via native skill discovery. Just clone and sy
 ## Verify
 
 ```bash
-ls -la ~/.codex/skills/openharness
+ls -la ~/.agents/skills/openharness
 ```
 
 You should see a symlink (or junction on Windows) pointing to your OpenHarness skills directory.
@@ -46,7 +46,7 @@ Skills update instantly through the symlink.
 ## Uninstalling
 
 ```bash
-rm ~/.codex/skills/openharness
+rm ~/.agents/skills/openharness
 ```
 
 Optionally delete the clone: `rm -rf ~/.codex/openharness`.
