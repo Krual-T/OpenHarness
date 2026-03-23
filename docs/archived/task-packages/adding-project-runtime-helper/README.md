@@ -5,8 +5,8 @@
 - Turn the `OH-013` and `OH-014` design output into a focused onboarding package for adding one narrow project runtime helper without creating a second entry workflow.
 
 ## Current Status
-- `detailed_ready`.
-- Design package only. It defines the decision rules, helper boundary rules, and repository surfaces that later implementation should productize.
+- Productized in live docs, reference material, repository tests, and project memory.
+- This package is the focused helper-addition baseline on top of archived `OH-013` and archived `OH-014`.
 
 ## Read This First
 - `STATUS.yaml`

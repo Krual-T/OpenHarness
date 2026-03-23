@@ -1,0 +1,55 @@
+id: OH-016
+title: Adding Project Runtime Helper
+status: archived
+summary: Define when and how a repository should add a new project runtime helper
+  skill under the OpenHarness runtime capability workflow.
+owner: codex
+created_at: 2026-03-23
+updated_at: '2026-03-23'
+depends_on:
+- OH-013
+- OH-014
+scope:
+  areas:
+  - runtime-verification
+  - helper-skills
+  - project-onboarding
+  - skill-routing
+  - repository-protocol
+entrypoints:
+- docs/archived/task-packages/adding-project-runtime-helper/README.md
+- docs/archived/task-packages/adding-project-runtime-helper/01-requirements.md
+- docs/archived/task-packages/adding-project-runtime-helper/02-overview-design.md
+- docs/archived/task-packages/adding-project-runtime-helper/03-detailed-design.md
+done_criteria:
+- The package defines the decision rule between reusing an existing runtime helper,
+  adding a new helper, and opening a bootstrap package first.
+- The package defines the minimum boundary of a project runtime helper so one helper
+  does not absorb unrelated runtime surfaces.
+- The package identifies the repository surfaces and documents that later implementation
+  must update when adding a runtime helper workflow.
+- The package defines the expected writeback into task-package design, verification,
+  and evidence artifacts.
+verification:
+  required_commands:
+  - uv run python skills/using-openharness/scripts/openharness.py check-tasks
+  - uv run pytest
+  required_scenarios: []
+  last_run_at: '2026-03-23T10:00:04Z'
+  last_run_result: passed
+  last_run_artifact: .harness/artifacts/OH-016/verification-runs/20260323T100004667275Z.json
+evidence:
+  docs:
+  - docs/archived/task-packages/adding-project-runtime-helper/05-verification.md
+  - docs/archived/task-packages/adding-project-runtime-helper/06-evidence.md
+  code:
+  - README.md
+  - skills/using-openharness/SKILL.md
+  - skills/using-openharness/references/runtime-capability-contract.md
+  - skills/using-openharness/references/project-runtime-surface-map.md
+  - skills/using-openharness/references/templates/project-runtime-surface-map.md
+  - skills/using-openharness/references/skill-hub.md
+  - skills/using-openharness/references/adding-project-runtime-helper.md
+  - .project-memory/facts/project_runtime_helper_addition_protocol.yaml
+  tests:
+  - skills/using-openharness/tests/test_openharness.py

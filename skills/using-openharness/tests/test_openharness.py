@@ -479,6 +479,7 @@ def test_openharness_skill_routes_runtime_work_through_capability_contract() -> 
     assert "runtime capability" in text
     assert "runtime surface map" in text
     assert "multiple runtime helper skills" in text
+    assert "add one new narrow helper" in text
     assert "bootstrap package" in text
 
 
@@ -497,7 +498,9 @@ def test_skill_hub_describes_runtime_capability_layer() -> None:
     assert "runtime capability contract" in text
     assert "runtime surface map" in text
     assert "runtime helper skills" in text
+    assert "add one new narrow helper" in text
     assert "bootstrap package" in text
+    assert "adding-project-runtime-helper.md" in text
     assert "project-runtime-surface-map.md" in text
 
 
@@ -557,6 +560,7 @@ def test_readme_describes_runtime_capability_contract() -> None:
     readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
     assert "runtime capability contract" in readme
     assert "runtime surface map" in readme
+    assert "add one new narrow helper" in readme
     assert "bootstrap task package" in readme
 
 
@@ -685,7 +689,9 @@ def test_runtime_capability_reference_defines_declaration_shape_and_writeback() 
     assert "06-evidence.md" in text
     assert "## Routing Contract" in text
     assert "reuse an existing runtime helper" in text
+    assert "add one new runtime helper" in text
     assert "bootstrap package" in text
+    assert "adding-project-runtime-helper.md" in text
     assert "project-runtime-surface-map.md" in text
 
 
@@ -712,7 +718,9 @@ def test_project_runtime_surface_map_reference_defines_minimum_contents_and_boot
     assert "one dominant runtime surface" in text
     assert "## Bootstrap Path" in text
     assert "reuse the linked helper" in text
+    assert "add one narrow helper" in text
     assert "open a bootstrap package first" in text
+    assert "adding-project-runtime-helper.md" in text
     assert "03-detailed-design.md" in text
     assert "05-verification.md" in text
     assert "06-evidence.md" in text
@@ -733,6 +741,34 @@ def test_project_runtime_surface_map_template_provides_adoption_shape() -> None:
     assert "| Surface | Purpose | Prerequisites | Driver | Evidence | Helper Or Bootstrap |" in text
     assert "helper skill" in text
     assert "bootstrap package" in text
+    assert "add one narrow helper" in text
+    assert "03-detailed-design.md" in text
+    assert "05-verification.md" in text
+    assert "06-evidence.md" in text
+
+
+def test_project_runtime_helper_reference_defines_reuse_add_bootstrap_and_repo_updates() -> None:
+    text = (
+        REPO_ROOT
+        / "skills"
+        / "using-openharness"
+        / "references"
+        / "adding-project-runtime-helper.md"
+    ).read_text(encoding="utf-8")
+
+    assert "# Adding Project Runtime Helper" in text
+    assert "## Decision Rule" in text
+    assert "reuse existing helper" in text
+    assert "add new helper" in text
+    assert "bootstrap first" in text
+    assert "## Minimum Helper Contract" in text
+    assert "owning runtime surface" in text
+    assert "driver commands or scripts" in text
+    assert "failure evidence expectations" in text
+    assert "## Repository Surfaces To Update" in text
+    assert "runtime surface map" in text
+    assert "helper skill path" in text
+    assert "skill-hub" in text
     assert "03-detailed-design.md" in text
     assert "05-verification.md" in text
     assert "06-evidence.md" in text

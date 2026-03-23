@@ -52,7 +52,11 @@ When a task needs runtime-aware evidence, `using-openharness` should choose exac
 2. `reuse an existing runtime helper`
    - a matching runtime surface already exists
    - the repository already has helper guidance whose prerequisites, driving method, and evidence shape fit the task
-3. `open a bootstrap package`
+3. `add one new runtime helper`
+   - the runtime surface is already mapped clearly enough to act on
+   - no reusable helper fits the task's dominant validation loop yet
+   - add one new narrow helper and link it from the runtime surface map before claiming reusable helper coverage
+4. `open a bootstrap package`
    - the repository cannot yet describe the needed runtime surface clearly enough
    - no helper exists whose contract matches the task
 
@@ -69,5 +73,5 @@ The bootstrap package path is mandatory when the repository cannot state the sur
 
 - This contract is the OpenHarness-side protocol layer.
 - The project-facing surface-map guidance lives in `references/project-runtime-surface-map.md`.
+- The focused helper-addition workflow lives in `references/adding-project-runtime-helper.md`.
 - Repository-specific runtime surface maps and helper-skill examples belong in downstream work.
-- Helper-creation workflow guidance belongs in downstream work too.

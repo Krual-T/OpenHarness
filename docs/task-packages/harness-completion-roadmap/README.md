@@ -14,14 +14,14 @@
 - `OH-010 Workflow Transition And Verification Artifacts` is now archived as the completed follow-up for enforcing legal state movement and durable verification evidence.
 - `OH-013 Runtime Capability Contract` is now the archived completed baseline for the OpenHarness-side runtime capability contract and routing rules.
 - `OH-014 Project Runtime Surface Map And Helper Skills` is now the archived completed baseline for the repository-facing runtime surface map, helper linkage, and bootstrap structure.
-- `OH-016 Adding Project Runtime Helper` is the active follow-up for defining the focused workflow that decides when to reuse, add, or bootstrap a project runtime helper.
+- `OH-016 Adding Project Runtime Helper` is now the archived completed follow-up for the focused workflow that decides when to reuse, add, or bootstrap a project runtime helper.
 
 ## Remaining Streams
 - `maintenance and entropy reduction`
-- `project runtime capability integration`
 
 ## Completed Or Baseline Streams
 - `runtime verification baseline`
+- `project runtime capability integration`
 - `status semantics tightening`
 - `task package semantic validation`
 - `workflow transition and verification artifacts`

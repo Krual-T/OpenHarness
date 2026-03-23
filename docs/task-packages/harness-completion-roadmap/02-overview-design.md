@@ -24,14 +24,11 @@ Keep `OH-004` as the parent roadmap package and treat the remaining work as thes
 1. `maintenance and entropy reduction`
    - Define recurring cleanup and review work so the repository does not decay into stale task packages, stale memory, or drifting skill docs.
    - Focus on periodic review loops rather than one-off feature work.
-2. `project runtime capability integration`
-   - Define the reusable OpenHarness contract for project-specific runtime capabilities.
-   - Define the project-facing runtime surface map and how multiple narrow helper skills attach to one repository.
-   - Focus on pluggable runtime capability onboarding rather than pretending OpenHarness can ship one universal runtime-debug skill.
 
 The completed baseline streams remain authoritative historical inputs:
 
 - `runtime verification baseline`
+- `project runtime capability integration`
 - `status semantics tightening`
 - `task package semantic validation`
 - `workflow transition and verification artifacts`
@@ -43,8 +40,8 @@ The completed baseline streams remain authoritative historical inputs:
 - `runtime verification baseline` and `status semantics tightening` are already complete enough to act as upstream baselines, because both changed what `ready`, `verifying`, and `done` mean.
 - `python verification maturity` is already captured as a historical design baseline, so the remaining dependency is to decide where its wording should eventually land in live docs and templates.
 - `skill taxonomy and compatibility cleanup` plus `skill taxonomy and stage model` are now complete enough to act as the upstream skill-surface baseline, because the live repository no longer ships the old plan-oriented skill surface and the live docs now describe protocol status, workflow stage, and the Python-first pytest floor explicitly.
-- `project runtime capability integration` remains active as the next implementation stream because the OpenHarness-side contract and the repository-facing runtime surface map baseline now exist, but repositories still need helper-addition guidance.
-- `maintenance and entropy reduction` remains active too, but it should consume the stabilized runtime and skill taxonomy surfaces rather than redefining them.
+- `project runtime capability integration` is now an archived completed baseline, because `OH-013`, `OH-014`, and `OH-016` together cover the contract, the runtime surface map, and the focused helper-addition workflow.
+- `maintenance and entropy reduction` is now the only active stream, and it should consume the stabilized runtime and skill taxonomy surfaces rather than redefining them.
 
 ## Split Triggers
 This roadmap should stay broad until a request satisfies one of these triggers:
@@ -71,7 +68,7 @@ When those triggers are met, the agent should scaffold a focused child package r
 - `OH-010 Workflow Transition And Verification Artifacts` is now archived as the follow-up that turns status semantics and verification evidence into supported CLI mechanics.
 - `OH-013 Runtime Capability Contract` is now the archived completed baseline that defines the OpenHarness-side runtime capability contract.
 - `OH-014 Project Runtime Surface Map And Helper Skills` is now the archived completed baseline that defines the project-facing onboarding structure for multiple runtime helper skills.
-- `OH-016 Adding Project Runtime Helper` is the active follow-up that defines the narrow helper-addition workflow on top of archived `OH-013` and `OH-014`.
+- `OH-016 Adding Project Runtime Helper` is now the archived completed follow-up that defines the narrow helper-addition workflow on top of archived `OH-013` and `OH-014`.
 - Completed child packages should feed evidence or durable decisions back into this roadmap only when they materially change what remains.
 
 ## Trade-offs
@@ -86,5 +83,5 @@ When those triggers are met, the agent should scaffold a focused child package r
 - I checked whether the proposed ordering ignored runtime verification implications. It did initially; the revised structure now makes runtime verification and status semantics upstream of Python verification maturity and maintenance.
 - I checked whether the current skill wording accidentally let exploration jump ahead into detailed design. It did leave that ambiguity, so the workflow docs should explicitly state that `02` is the primary output of exploration and `03` only follows when implementation-facing constraints are already justified.
 - I checked whether the brainstorming skill overfit to interactive approval loops. It did, so the workflow should default to autonomous continuation once design is explicit and only introduce user review gates when the task or risk profile justifies them.
-- I checked whether the next actionable streams were still limited to maintenance after the runtime-verification baseline. They were not; the discussion about project-specific runtime helper skills exposed a real remaining product gap between verification semantics and project onboarding.
+- I re-checked whether runtime capability integration still belongs in the active roadmap after archiving `OH-016`. It does not; the remaining active stream is now maintenance, while the runtime helper flow should be reused from the archived baselines.
 - No bounded subagent discussion was needed in this round because the uncertainty is about prioritization and scope control inside this repository, not about a hard architectural fork.

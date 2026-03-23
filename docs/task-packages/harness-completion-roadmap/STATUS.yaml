@@ -1,7 +1,7 @@
 id: OH-004
 title: Harness Completion Roadmap
 status: in_progress
-summary: Track the remaining major work needed to make OpenHarness a complete verification- and maintenance-oriented skill hub, including runtime verification defaults, Python verification maturity, maintenance, and status semantics.
+summary: Track the remaining maintenance-oriented work in OpenHarness while preserving completed baselines for runtime verification, Python verification maturity, runtime helper integration, and status semantics.
 owner: codex
 created_at: 2026-03-20
 updated_at: 2026-03-23
