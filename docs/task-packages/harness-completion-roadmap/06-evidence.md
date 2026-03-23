@@ -14,6 +14,7 @@
 - `docs/task-packages/harness-completion-roadmap/STATUS.yaml`
 - `docs/archived/task-packages/runtime-capability-contract/*`
 - `docs/archived/task-packages/project-runtime-surface-map-and-helper-skills/*`
+- `docs/archived/task-packages/adding-project-runtime-helper/*`
 - `docs/archived/task-packages/python-verification-maturity/*`
 - `skills/exploring-solution-space/SKILL.md`
 - `skills/brainstorming/SKILL.md`
@@ -26,6 +27,7 @@
 - `README.md`
 - `.project-memory/facts/runtime_capability_contract_protocol.yaml`
 - `.project-memory/facts/project_runtime_surface_map_protocol.yaml`
+- `.project-memory/facts/project_runtime_helper_addition_protocol.yaml`
 - `.project-memory/aliases.yaml`
 - `docs/archived/task-packages/runtime-verification-baseline/*`
 - `docs/archived/task-packages/status-semantics-tightening/*`
@@ -66,10 +68,16 @@
 - `uv run python skills/using-openharness/scripts/openharness.py transition runtime-capability-contract archived`
 - `uv run python skills/project-memory/scripts/save_fact.py runtime_capability_contract_protocol --title "OpenHarness 运行时能力契约已产品化" --statement "OpenHarness 通过 skills/using-openharness/references/runtime-capability-contract.md 定义运行时能力契约；using-openharness 负责在代码路径、复用现有运行时 helper 与先开 bootstrap package 之间做路由，仓库可以同时拥有多个窄运行时 helper。" --alias "运行时能力契约在哪里" --alias "什么时候复用 runtime helper" --applies-to skills/using-openharness/SKILL.md --applies-to skills/using-openharness/references/skill-hub.md --evidence skills/using-openharness/references/runtime-capability-contract.md --evidence docs/archived/task-packages/runtime-capability-contract/README.md --tag runtime --tag protocol`
 - `uv run python skills/project-memory/scripts/save_fact.py project_runtime_surface_map_protocol --title "OpenHarness 项目运行时表面图已产品化" --statement "OpenHarness 通过 skills/using-openharness/references/project-runtime-surface-map.md 定义项目运行时表面图；仓库应为每个运行时表面声明用途、前置条件、驱动方式、观察点、成功标准、失败证据，以及关联的 helper skill 或 bootstrap package，并把执行结果回写到 03、05、06。" --alias "运行时表面图在哪里" --alias "runtime surface map 怎么写" --alias "项目运行时表面图包含什么" --applies-to skills/using-openharness/SKILL.md --applies-to skills/using-openharness/references/project-runtime-surface-map.md --applies-to skills/using-openharness/references/templates/project-runtime-surface-map.md --evidence skills/using-openharness/references/project-runtime-surface-map.md --evidence skills/using-openharness/references/templates/project-runtime-surface-map.md --tag runtime --tag protocol --tag onboarding`
+- `uv run python skills/project-memory/scripts/query_memory.py "什么时候新增 project runtime helper"`
+- `uv run python skills/project-memory/scripts/save_fact.py project_runtime_helper_addition_protocol --title "OpenHarness 项目运行时 helper 新增流程已产品化" --statement "OpenHarness 通过 skills/using-openharness/references/adding-project-runtime-helper.md 定义项目运行时 helper 的新增流程；当运行时表面已映射且现有 helper 不匹配时，应新增一个窄 helper 并回写运行时表面图、03、05、06；只有在表面、前置条件、驱动方式或证据流仍不清晰时才先开 bootstrap package。" --alias "什么时候新增 project runtime helper" --alias "什么时候新增 runtime helper" --alias "runtime helper 怎么新增" --applies-to skills/using-openharness/SKILL.md --applies-to skills/using-openharness/references/adding-project-runtime-helper.md --applies-to skills/using-openharness/references/project-runtime-surface-map.md --evidence skills/using-openharness/references/adding-project-runtime-helper.md --evidence docs/archived/task-packages/adding-project-runtime-helper/README.md --tag runtime --tag protocol --tag onboarding --tag helper`
 - `uv run python skills/using-openharness/scripts/openharness.py transition project-runtime-surface-map-and-helper-skills in_progress`
 - `uv run python skills/using-openharness/scripts/openharness.py transition project-runtime-surface-map-and-helper-skills verifying`
 - `uv run python skills/using-openharness/scripts/openharness.py verify project-runtime-surface-map-and-helper-skills`
 - `uv run python skills/using-openharness/scripts/openharness.py transition project-runtime-surface-map-and-helper-skills archived`
+- `uv run python skills/using-openharness/scripts/openharness.py transition adding-project-runtime-helper in_progress`
+- `uv run python skills/using-openharness/scripts/openharness.py transition adding-project-runtime-helper verifying`
+- `uv run python skills/using-openharness/scripts/openharness.py verify adding-project-runtime-helper`
+- `uv run python skills/using-openharness/scripts/openharness.py transition adding-project-runtime-helper archived`
 - `uv run python skills/using-openharness/scripts/openharness.py transition skill-taxonomy-and-stage-model requirements_ready`
 - `uv run python skills/using-openharness/scripts/openharness.py transition skill-taxonomy-and-stage-model overview_ready`
 - `uv run python skills/using-openharness/scripts/openharness.py transition skill-taxonomy-and-stage-model detailed_ready`
@@ -100,4 +108,4 @@
 - Reuse the archived `OH-006 Status Semantics Tightening` package as the baseline if a later stream needs stronger transition enforcement, rather than reopening status-semantics design from scratch in `OH-004`.
 - Reuse archived `OH-009 Task Package Semantic Validation` if a later stream adds a `transition` command or structured verification artifacts, rather than mixing those concerns back into `OH-004`.
 - Reuse archived `OH-010 Workflow Transition And Verification Artifacts` as the baseline when later work needs stronger workflow control or richer verification evidence, instead of reopening those semantics inside `OH-004`.
-- Use archived `OH-013` and archived `OH-014` as the baselines when productizing the remaining helper-addition work in `OH-016`.
+- Reuse archived `OH-013`, `OH-014`, and `OH-016` together when later work needs runtime-capability onboarding context, instead of reopening that stream inside `OH-004`.

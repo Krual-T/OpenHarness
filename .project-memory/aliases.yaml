@@ -1,4 +1,7 @@
 aliases:
+  runtime helper 怎么新增:
+    id: project_runtime_helper_addition_protocol
+    kind: fact
   runtime surface map 怎么写:
     id: project_runtime_surface_map_protocol
     kind: fact
@@ -13,6 +16,12 @@ aliases:
     kind: decision
   什么时候复用 runtime helper:
     id: runtime_capability_contract_protocol
+    kind: fact
+  什么时候新增 project runtime helper:
+    id: project_runtime_helper_addition_protocol
+    kind: fact
+  什么时候新增 runtime helper:
+    id: project_runtime_helper_addition_protocol
     kind: fact
   运行时能力契约在哪里:
     id: runtime_capability_contract_protocol

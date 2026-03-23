@@ -4,6 +4,7 @@
 
 - Add one row for each supported runtime surface.
 - Link `Helper Or Bootstrap` to a reusable helper skill when the runtime loop is already supported.
+- If the surface is already mapped but no reusable helper exists yet, add one narrow helper before replacing a temporary bootstrap link with the helper path.
 - Link `Helper Or Bootstrap` to a bootstrap package when the repository still needs to define that surface.
 - Copy the chosen runtime surface into `03-detailed-design.md`, record the executed path in `05-verification.md`, and list artifacts plus residual risks in `06-evidence.md`.
 

@@ -98,9 +98,11 @@ OpenHarness uses a two-layer model:
 - Repositories should keep a runtime surface map that inventories supported runtime surfaces, their evidence shape, and the linked helper or bootstrap package.
 - A repository may expose multiple runtime helper skills across different runtime surfaces, but those helpers remain optional project-level helpers rather than new entry skills.
 - When a matching runtime capability exists, `using-openharness` should reuse the linked helper guidance.
+- When the runtime surface is mapped but helper coverage is missing, add one new narrow helper instead of hiding the gap inside task-local notes.
 - When no matching capability exists, the agent should open a bootstrap package before claiming supported runtime verification on that surface.
 - The shared contract lives in `references/runtime-capability-contract.md`.
 - The project-facing map guidance lives in `references/project-runtime-surface-map.md`.
+- The focused helper-addition workflow lives in `references/adding-project-runtime-helper.md`.
 
 ## Current Cleanup Rule
 - Prefer `openharness` vocabulary over legacy external-skill vocabulary.

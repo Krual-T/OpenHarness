@@ -23,7 +23,7 @@
 - `skills/using-openharness/references/templates/project-runtime-surface-map.md`
 - `skills/using-openharness/tests/test_openharness.py`
 - `docs/task-packages/harness-completion-roadmap/*`
-- `docs/task-packages/adding-project-runtime-helper/06-evidence.md`
+- `docs/archived/task-packages/adding-project-runtime-helper/06-evidence.md`
 - `.project-memory/facts/project_runtime_surface_map_protocol.yaml`
 - `.project-memory/aliases.yaml`
 
@@ -44,5 +44,5 @@
 - `docs/archived/task-packages/project-runtime-surface-map-and-helper-skills/05-verification.md`
 
 ## Follow-ups
-- Use archived `OH-014` as the repository-facing baseline when productizing `OH-016 Adding Project Runtime Helper`.
+- Archived `OH-016 Adding Project Runtime Helper` now carries the focused helper-addition workflow on top of archived `OH-014`.
 - Decide later whether the repository should add one concrete project runtime helper example on top of the starter runtime surface map template.
