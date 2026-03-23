@@ -1,0 +1,45 @@
+id: task_package_language_policy_phase_one
+kind: decision
+title: Task package 第一阶段语言策略
+summary: 规定 task package 采用中文优先正文，同时保留英文协议结构。
+scope:
+  repo: openharness
+  branch: main
+status: verified
+created_at: '2026-03-23T07:33:15Z'
+updated_at: '2026-03-23T07:33:15Z'
+confidence: 0.8
+owner: codex
+last_verified_commit: 8fd669ef092e3c4da8f48ffece9fe1f21d62b4ed
+intent_aliases:
+- task package 语言策略
+- task package 应该用中文还是英文
+- 中文正文 英文结构
+tags:
+- localization
+- task-package
+- protocol
+alternatives:
+- 立即把所有章节标题和结构元素也迁移成中文
+- 继续维持英文正文，只要求助手回复中文
+consequences:
+- 新建和后续增量更新的 task package 会采用英文标题加中文正文的混合结构。
+- 如果后续要支持中文标题，必须单独开实现包，同时修改模板、校验器与测试。
+revisit_when:
+- 维护者在第一阶段落地后仍然认为英文标题阅读成本过高时。
+question: OpenHarness 的 task package 在第一阶段应采用什么语言策略，哪些结构必须保留英文？
+decision: task package 的 Markdown 正文默认使用中文；章节标题、命令、状态值、YAML 键名、文件名与路径保持英文。
+rationale: 这能在不改动现有校验器和协议锚点的前提下，立刻提升维护者可读性，并避免失控的中英混写漂移。
+evidence:
+- path: AGENTS.md
+  kind: file
+- path: skills/using-openharness/SKILL.md
+  kind: file
+- path: docs/archived/task-packages/task-package-language-policy-and-localization/01-requirements.md
+  kind: file
+- path: docs/archived/task-packages/task-package-language-policy-and-localization/02-overview-design.md
+  kind: file
+- path: docs/archived/task-packages/task-package-language-policy-and-localization/03-detailed-design.md
+  kind: file
+- path: docs/archived/task-packages/task-package-language-policy-and-localization/05-verification.md
+  kind: file

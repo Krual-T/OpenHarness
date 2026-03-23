@@ -1,0 +1,10 @@
+aliases:
+  task package 应该用中文还是英文:
+    id: task_package_language_policy_phase_one
+    kind: decision
+  task package 语言策略:
+    id: task_package_language_policy_phase_one
+    kind: decision
+  中文正文 英文结构:
+    id: task_package_language_policy_phase_one
+    kind: decision
