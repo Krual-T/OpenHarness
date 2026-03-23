@@ -112,6 +112,15 @@ OpenHarness assumes a practical truth of agentic software work:
 
 That means key decisions should move out of chat threads and into versioned artifacts. The repo becomes the working memory, not just the code container.
 
+### 5. A runtime capability contract instead of a fake universal debug skill
+
+OpenHarness does not assume one generic runtime-debug skill can cover API, browser, worker, migration, and observability work equally well.
+
+Instead, it defines a runtime capability contract:
+- the core harness decides when runtime-aware routing applies
+- repositories can expose multiple narrow runtime helper skills for different runtime surfaces
+- if a task needs a surface the repository has not declared yet, the agent should open a bootstrap task package before claiming runtime verification coverage
+
 ## The OpenHarness workflow
 
 A typical task looks like this:
@@ -135,6 +144,7 @@ OpenHarness does not pretend every repository already has the same runtime harne
 For Python-first repositories, `uv run pytest` is the default minimum automated verification floor.
 That floor is intentionally weaker than full runtime or integration evidence.
 When a task depends on project-specific runtime behavior, project-specific runtime verification must be designed and recorded in the task package rather than guessed globally.
+When repositories mature beyond that minimum, the runtime capability contract is what tells the agent whether to reuse an existing helper or open a bootstrap task package first.
 
 ## Why this works
 

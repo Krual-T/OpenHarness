@@ -1,0 +1,28 @@
+id: runtime_capability_contract_protocol
+kind: fact
+title: OpenHarness 运行时能力契约已产品化
+scope:
+  repo: openharness
+  branch: main
+status: reviewed
+created_at: '2026-03-23T08:36:21Z'
+updated_at: '2026-03-23T08:36:21Z'
+confidence: 0.8
+last_verified_commit: e73780a9e54f8e7266a9d825e55c17269bae92d6
+intent_aliases:
+- 运行时能力契约在哪里
+- 什么时候复用 runtime helper
+tags:
+- runtime
+- protocol
+applies_to:
+- skills/using-openharness/SKILL.md
+- skills/using-openharness/references/skill-hub.md
+statement: OpenHarness 通过 skills/using-openharness/references/runtime-capability-contract.md
+  定义运行时能力契约；using-openharness 负责在代码路径、复用现有运行时 helper 与先开 bootstrap package 之间做路由，仓库可以同时拥有多个窄运行时
+  helper。
+evidence:
+- path: skills/using-openharness/references/runtime-capability-contract.md
+  kind: file
+- path: docs/archived/task-packages/runtime-capability-contract/README.md
+  kind: file

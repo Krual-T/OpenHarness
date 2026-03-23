@@ -5,8 +5,9 @@
 - Make runtime support pluggable and multi-surface instead of assuming one universal debugging skill.
 
 ## Current Status
-- `detailed_ready`.
-- Design package only. It defines the contract and routing rules that later implementation should productize in live docs, skills, templates, and examples.
+- `archived`.
+- This implementation wave productizes the runtime capability contract in live `using-openharness` docs, reference material, README wording, and repository tests.
+- This package is now the completed OpenHarness-side baseline for downstream runtime-surface work such as repository surface maps and helper-addition workflow guidance.
 
 ## Read This First
 - `STATUS.yaml`

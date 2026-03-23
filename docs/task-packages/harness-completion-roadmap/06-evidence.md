@@ -12,15 +12,17 @@
 - `docs/archived/task-packages/workflow-transition-and-verification-artifacts/*`
 - `docs/task-packages/task-package-semantic-validation/*`
 - `docs/task-packages/harness-completion-roadmap/STATUS.yaml`
-- `docs/task-packages/runtime-capability-contract/*`
+- `docs/archived/task-packages/runtime-capability-contract/*`
 - `docs/task-packages/project-runtime-surface-map-and-helper-skills/*`
 - `docs/archived/task-packages/python-verification-maturity/*`
 - `skills/exploring-solution-space/SKILL.md`
 - `skills/brainstorming/SKILL.md`
 - `skills/using-openharness/SKILL.md`
 - `skills/using-openharness/references/skill-hub.md`
+- `skills/using-openharness/references/runtime-capability-contract.md`
 - `skills/using-openharness/tests/test_openharness.py`
 - `README.md`
+- `.project-memory/facts/runtime_capability_contract_protocol.yaml`
 - `docs/archived/task-packages/runtime-verification-baseline/*`
 - `docs/archived/task-packages/status-semantics-tightening/*`
 - `docs/archived/task-packages/task-package-semantic-validation/*`
@@ -52,6 +54,12 @@
 - `uv run python skills/using-openharness/scripts/openharness.py new-task runtime-capability-contract OH-013 "Runtime Capability Contract" --owner codex --summary "Define how OpenHarness should describe, route, verify, and write back project-specific runtime capabilities without assuming a single universal runtime debugging skill."`
 - `uv run python skills/using-openharness/scripts/openharness.py new-task project-runtime-surface-map-and-helper-skills OH-014 "Project Runtime Surface Map And Helper Skills" --owner codex --summary "Define how a repository should map its runtime surfaces and attach multiple project-specific runtime helper skills to the OpenHarness workflow without collapsing them into one generic debug skill."`
 - `uv run pytest skills/using-openharness/tests/test_openharness.py -k 'skill_hub_uses_protocol_status_plus_stage_model or readme_describes_plug_and_play_harness_and_python_pytest_floor'`
+- `uv run pytest skills/using-openharness/tests/test_openharness.py -k 'runtime_capability or capability_contract'`
+- `uv run python skills/using-openharness/scripts/openharness.py transition runtime-capability-contract in_progress`
+- `uv run python skills/using-openharness/scripts/openharness.py transition runtime-capability-contract verifying`
+- `uv run python skills/using-openharness/scripts/openharness.py verify runtime-capability-contract`
+- `uv run python skills/using-openharness/scripts/openharness.py transition runtime-capability-contract archived`
+- `uv run python skills/project-memory/scripts/save_fact.py runtime_capability_contract_protocol --title "OpenHarness 运行时能力契约已产品化" --statement "OpenHarness 通过 skills/using-openharness/references/runtime-capability-contract.md 定义运行时能力契约；using-openharness 负责在代码路径、复用现有运行时 helper 与先开 bootstrap package 之间做路由，仓库可以同时拥有多个窄运行时 helper。" --alias "运行时能力契约在哪里" --alias "什么时候复用 runtime helper" --applies-to skills/using-openharness/SKILL.md --applies-to skills/using-openharness/references/skill-hub.md --evidence skills/using-openharness/references/runtime-capability-contract.md --evidence docs/archived/task-packages/runtime-capability-contract/README.md --tag runtime --tag protocol`
 - `uv run python skills/using-openharness/scripts/openharness.py transition skill-taxonomy-and-stage-model requirements_ready`
 - `uv run python skills/using-openharness/scripts/openharness.py transition skill-taxonomy-and-stage-model overview_ready`
 - `uv run python skills/using-openharness/scripts/openharness.py transition skill-taxonomy-and-stage-model detailed_ready`
@@ -82,4 +90,4 @@
 - Reuse the archived `OH-006 Status Semantics Tightening` package as the baseline if a later stream needs stronger transition enforcement, rather than reopening status-semantics design from scratch in `OH-004`.
 - Reuse archived `OH-009 Task Package Semantic Validation` if a later stream adds a `transition` command or structured verification artifacts, rather than mixing those concerns back into `OH-004`.
 - Reuse archived `OH-010 Workflow Transition And Verification Artifacts` as the baseline when later work needs stronger workflow control or richer verification evidence, instead of reopening those semantics inside `OH-004`.
-- Drive the next implementation wave from `OH-013` and `OH-014` when productizing runtime capability routing, runtime surface mapping, and project helper-skill guidance.
+- Use archived `OH-013` as the baseline when productizing the remaining runtime-surface mapping and helper-addition work in `OH-014` and `OH-016`.

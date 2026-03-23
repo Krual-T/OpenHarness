@@ -8,3 +8,9 @@ aliases:
   中文正文 英文结构:
     id: task_package_language_policy_phase_one
     kind: decision
+  什么时候复用 runtime helper:
+    id: runtime_capability_contract_protocol
+    kind: fact
+  运行时能力契约在哪里:
+    id: runtime_capability_contract_protocol
+    kind: fact
