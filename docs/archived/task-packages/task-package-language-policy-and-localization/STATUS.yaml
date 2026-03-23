@@ -1,0 +1,45 @@
+id: OH-015
+title: Task Package Language Policy And Localization
+status: archived
+summary: Roll out the phase-one task-package language policy so Markdown narrative
+  becomes Chinese-first while English protocol anchors remain stable.
+owner: codex
+created_at: 2026-03-23
+updated_at: '2026-03-23'
+depends_on: []
+scope:
+  areas:
+  - maintenance
+  - task-packages
+  - documentation
+  - validation
+  - localization
+entrypoints:
+- docs/archived/task-packages/task-package-language-policy-and-localization/README.md
+- docs/archived/task-packages/task-package-language-policy-and-localization/01-requirements.md
+- docs/archived/task-packages/task-package-language-policy-and-localization/02-overview-design.md
+- docs/archived/task-packages/task-package-language-policy-and-localization/03-detailed-design.md
+done_criteria:
+- '`AGENTS.md` and `using-openharness` explicitly document the phase-one language
+  policy for task packages.'
+- Task-package templates scaffold Chinese-first narrative content while keeping English
+  section anchors and protocol-stable identifiers.
+- The package records fresh verification evidence for the phase-one rollout and is
+  archived after successful validation.
+verification:
+  required_commands:
+  - uv run pytest skills/using-openharness/tests/test_openharness.py -k 'language_policy
+    or chinese_narrative or repo_protocol_documents_task_package_language_policy'
+  - uv run python skills/using-openharness/scripts/openharness.py check-tasks
+  - uv run pytest
+  required_scenarios: []
+  last_run_at: '2026-03-23T07:33:48Z'
+  last_run_result: passed
+  last_run_artifact: .harness/artifacts/OH-015/verification-runs/20260323T073348650956Z.json
+evidence:
+  docs:
+  - docs/archived/task-packages/task-package-language-policy-and-localization/05-verification.md
+  - docs/archived/task-packages/task-package-language-policy-and-localization/06-evidence.md
+  code: []
+  tests:
+  - skills/using-openharness/tests/test_openharness.py
