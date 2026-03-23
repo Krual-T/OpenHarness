@@ -11,9 +11,10 @@ OpenHarness separates runtime support into three layers:
 1. `core protocol`
    - `using-openharness` decides whether a task is code-only or runtime-aware.
    - The core protocol keeps routing, evidence expectations, and writeback rules stable across repositories.
-2. `project runtime capability map`
+2. `project runtime surface map`
    - Each repository may declare the runtime surfaces it supports, such as API, browser, worker, migration, or observability.
    - Each surface should point to its current helper guidance or to the bootstrap package that is still defining that surface.
+   - The project-facing map shape lives in `references/project-runtime-surface-map.md`.
 3. `runtime helper skills`
    - Repositories may attach multiple runtime helper skills.
    - These helpers stay narrow, surface-oriented, and optional. They do not replace the repository entry skill.
@@ -67,5 +68,6 @@ The bootstrap package path is mandatory when the repository cannot state the sur
 ## Relationship To Other OpenHarness Work
 
 - This contract is the OpenHarness-side protocol layer.
+- The project-facing surface-map guidance lives in `references/project-runtime-surface-map.md`.
 - Repository-specific runtime surface maps and helper-skill examples belong in downstream work.
 - Helper-creation workflow guidance belongs in downstream work too.

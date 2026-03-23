@@ -84,3 +84,8 @@
   - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
   - `uv run pytest`
   - Result: `check-tasks` validated `16 task package(s)`, `bootstrap` showed `OH-004`, `OH-014`, and `OH-016` as active, and the full suite passed with `50 passed`.
+- Passed again on 2026-03-23 after productizing and archiving `OH-014 Project Runtime Surface Map And Helper Skills`:
+  - `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
+  - `uv run python skills/using-openharness/scripts/openharness.py bootstrap`
+  - `uv run pytest`
+  - Result: `check-tasks` validated `16 task package(s)`, `bootstrap` showed only `OH-004` and `OH-016` as active, and the full suite passed with `52 passed`.

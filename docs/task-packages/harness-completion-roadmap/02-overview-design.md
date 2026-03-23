@@ -43,7 +43,7 @@ The completed baseline streams remain authoritative historical inputs:
 - `runtime verification baseline` and `status semantics tightening` are already complete enough to act as upstream baselines, because both changed what `ready`, `verifying`, and `done` mean.
 - `python verification maturity` is already captured as a historical design baseline, so the remaining dependency is to decide where its wording should eventually land in live docs and templates.
 - `skill taxonomy and compatibility cleanup` plus `skill taxonomy and stage model` are now complete enough to act as the upstream skill-surface baseline, because the live repository no longer ships the old plan-oriented skill surface and the live docs now describe protocol status, workflow stage, and the Python-first pytest floor explicitly.
-- `project runtime capability integration` remains active as the next design stream because the OpenHarness-side contract now exists, but repositories still need runtime surface mapping and helper-addition guidance.
+- `project runtime capability integration` remains active as the next implementation stream because the OpenHarness-side contract and the repository-facing runtime surface map baseline now exist, but repositories still need helper-addition guidance.
 - `maintenance and entropy reduction` remains active too, but it should consume the stabilized runtime and skill taxonomy surfaces rather than redefining them.
 
 ## Split Triggers
@@ -70,8 +70,8 @@ When those triggers are met, the agent should scaffold a focused child package r
 - `OH-009 Task Package Semantic Validation` is now archived as the follow-up that turns status semantics into stronger minimum document-anchor checks.
 - `OH-010 Workflow Transition And Verification Artifacts` is now archived as the follow-up that turns status semantics and verification evidence into supported CLI mechanics.
 - `OH-013 Runtime Capability Contract` is now the archived completed baseline that defines the OpenHarness-side runtime capability contract.
-- `OH-014 Project Runtime Surface Map And Helper Skills` is the active follow-up that defines the project-facing onboarding structure for multiple runtime helper skills.
-- `OH-016 Adding Project Runtime Helper` is the active follow-up that defines the narrow helper-addition workflow on top of `OH-013` and `OH-014`.
+- `OH-014 Project Runtime Surface Map And Helper Skills` is now the archived completed baseline that defines the project-facing onboarding structure for multiple runtime helper skills.
+- `OH-016 Adding Project Runtime Helper` is the active follow-up that defines the narrow helper-addition workflow on top of archived `OH-013` and `OH-014`.
 - Completed child packages should feed evidence or durable decisions back into this roadmap only when they materially change what remains.
 
 ## Trade-offs

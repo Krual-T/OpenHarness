@@ -1,4 +1,7 @@
 aliases:
+  runtime surface map 怎么写:
+    id: project_runtime_surface_map_protocol
+    kind: fact
   task package 应该用中文还是英文:
     id: task_package_language_policy_phase_one
     kind: decision
@@ -13,4 +16,10 @@ aliases:
     kind: fact
   运行时能力契约在哪里:
     id: runtime_capability_contract_protocol
+    kind: fact
+  运行时表面图在哪里:
+    id: project_runtime_surface_map_protocol
+    kind: fact
+  项目运行时表面图包含什么:
+    id: project_runtime_surface_map_protocol
     kind: fact

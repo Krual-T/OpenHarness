@@ -5,8 +5,8 @@
 - Turn the runtime capability contract into a project-onboarding workflow instead of a single oversized debug skill.
 
 ## Current Status
-- `detailed_ready`.
-- Design package only. It defines the project-facing structure that later examples, templates, and helper skills should follow.
+- Productized in live docs, reference material, templates, tests, and project memory.
+- This package is the repository-facing runtime-surface baseline that later helper-addition work should consume.
 
 ## Read This First
 - `STATUS.yaml`

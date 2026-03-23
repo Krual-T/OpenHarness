@@ -118,7 +118,7 @@ OpenHarness does not assume one generic runtime-debug skill can cover API, brows
 
 Instead, it defines a runtime capability contract:
 - the core harness decides when runtime-aware routing applies
-- repositories can expose multiple narrow runtime helper skills for different runtime surfaces
+- repositories should keep a runtime surface map and can expose multiple narrow runtime helper skills for different runtime surfaces
 - if a task needs a surface the repository has not declared yet, the agent should open a bootstrap task package before claiming runtime verification coverage
 
 ## The OpenHarness workflow
