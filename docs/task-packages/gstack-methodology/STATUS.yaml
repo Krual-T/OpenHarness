@@ -1,0 +1,42 @@
+id: 001
+title: Absorb Gstack Methodology And Multi-Agent Perspectives
+# Default flow: proposed -> requirements_ready -> overview_ready -> detailed_ready -> in_progress -> verifying -> archived
+# requirements_ready -> overview_ready -> detailed_ready are design-readiness checkpoints; later statuses imply earlier checkpoints are already materially complete.
+# `detailed_ready` is the normal resting point for design-complete work before implementation.
+# `archived` means the task package is implemented, verified, and no longer active.
+status: detailed_ready
+summary: 将 gstack 的方法论与多视角多智能体协作方式转译为 openharness 的阶段化协议，而不是复制浏览器等具体工具形态。
+owner: unassigned
+created_at: 2026-03-24
+updated_at: 2026-03-24
+depends_on: []
+scope:
+  areas:
+    - task-package-docs
+    - workflow-methodology
+    - multi-agent-collaboration
+entrypoints:
+  - docs/task-packages/gstack-methodology/README.md
+  - docs/task-packages/gstack-methodology/01-requirements.md
+  - docs/task-packages/gstack-methodology/02-overview-design.md
+  - docs/task-packages/gstack-methodology/03-detailed-design.md
+done_criteria:
+  - 明确区分应吸收的方法论能力与不应被默认绑定的具体工具能力。
+  - 给出与 openharness 阶段模型兼容的多视角注入方案。
+  - 定义每个阶段的主导角色、注入角色、挑战重点和收敛方式。
+  - 说明浏览器能力为何只能作为可选辅助能力，而不是仓库默认基线。
+verification:
+  required_commands:
+    - uv run python skills/using-openharness/scripts/openharness.py check-tasks
+  required_scenarios:
+    - 任务包结构完整且文档可读
+    - 状态与文档内容一致
+  last_run_at: "2026-03-24"
+  last_run_result: passed
+  last_run_artifact: docs/task-packages/gstack-methodology/05-verification.md
+evidence:
+  docs:
+    - docs/task-packages/gstack-methodology/05-verification.md
+    - docs/task-packages/gstack-methodology/06-evidence.md
+  code: []
+  tests: []
