@@ -92,6 +92,14 @@ Repository entry-skill responsibilities live here:
     - `06-evidence.md`
 5. Implement only after the task package is internally consistent enough to act on.
 
+When you enter a new workflow stage, explicitly tell the user:
+
+- current stage
+- what was just completed
+- next planned step
+
+If no package exists and brainstorming has just converged enough to hand off into exploration, scaffold the package first, then report the new package path and continue.
+
 ## Runtime Capability Routing
 
 When a task depends on real runtime behavior rather than code-only changes, `using-openharness` should route through the runtime capability contract instead of improvising a universal debug flow.

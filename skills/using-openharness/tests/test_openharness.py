@@ -15,6 +15,7 @@ from openharness import (
     ACTIVE_STATUSES,
     TaskScaffoldRequest,
     REQUIRED_TASK_PACKAGE_FILES,
+    allocate_next_task_id,
     create_task_package,
     discover_task_packages,
     find_duplicate_task_ids,
@@ -64,6 +65,144 @@ def test_reflective_design_review_package_is_discoverable() -> None:
 def test_active_statuses_do_not_include_archived() -> None:
     assert "in_progress" in ACTIVE_STATUSES
     assert "archived" not in ACTIVE_STATUSES
+
+
+def test_allocate_next_task_id_uses_existing_prefix_and_width(tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
+    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
+        "version: 1\n"
+        "task_packages_root: docs/task-packages\n"
+        "archived_task_packages_root: docs/archived/task-packages\n"
+        "required_design_files:\n"
+        "  - README.md\n"
+        "  - STATUS.yaml\n"
+        "  - 01-requirements.md\n"
+        "  - 02-overview-design.md\n"
+        "  - 03-detailed-design.md\n"
+        "  - 05-verification.md\n"
+        "  - 06-evidence.md\n"
+        "workflow:\n"
+        "  default_status_flow:\n"
+        "    - proposed\n"
+        "    - archived\n",
+        encoding="utf-8",
+    )
+    for root_name, task_id, status in (
+        ("one", "OH-018", "proposed"),
+        ("two", "OH-099", "archived"),
+    ):
+        root = repo_root / "docs" / ("task-packages" if status == "proposed" else "archived/task-packages") / root_name
+        root.mkdir(parents=True)
+        for name in REQUIRED_TASK_PACKAGE_FILES:
+            (root / name).write_text("# x\n", encoding="utf-8")
+        (root / "STATUS.yaml").write_text(
+            f"id: {task_id}\n"
+            "title: Example\n"
+            f"status: {status}\n"
+            "summary: example\n"
+            "owner: codex\n"
+            "created_at: 2026-03-24\n"
+            "updated_at: 2026-03-24\n"
+            "done_criteria:\n"
+            "  - x\n"
+            "verification:\n"
+            "  required_commands: []\n"
+            "  required_scenarios: []\n",
+            encoding="utf-8",
+        )
+
+    assert allocate_next_task_id(repo_root) == "OH-100"
+
+
+def test_cmd_new_task_supports_auto_id(tmp_path: Path, capsys) -> None:
+    repo_root = tmp_path / "repo"
+    (repo_root / "skills" / "using-openharness" / "references" / "templates").mkdir(parents=True)
+    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
+        "version: 1\n"
+        "task_packages_root: docs/task-packages\n"
+        "archived_task_packages_root: docs/archived/task-packages\n"
+        "required_design_files:\n"
+        "  - README.md\n"
+        "  - STATUS.yaml\n"
+        "  - 01-requirements.md\n"
+        "  - 02-overview-design.md\n"
+        "  - 03-detailed-design.md\n"
+        "  - 05-verification.md\n"
+        "  - 06-evidence.md\n"
+        "workflow:\n"
+        "  default_status_flow:\n"
+        "    - proposed\n"
+        "    - archived\n",
+        encoding="utf-8",
+    )
+    for name, contents in {
+        "task-package.README.md": "# <DESIGN_ID> <TITLE>\n",
+        "task-package.STATUS.yaml": (
+            "id: <DESIGN_ID>\n"
+            "title: <TITLE>\n"
+            "status: <STATUS>\n"
+            "summary: <SUMMARY>\n"
+            "owner: <OWNER>\n"
+            "created_at: <DATE>\n"
+            "updated_at: <DATE>\n"
+            "done_criteria:\n"
+            "  - x\n"
+            "verification:\n"
+            "  required_commands: []\n"
+            "  required_scenarios: []\n"
+        ),
+        "task-package.01-requirements.md": "req\n",
+        "task-package.02-overview-design.md": "overview\n",
+        "task-package.03-detailed-design.md": "detailed\n",
+        "task-package.05-verification.md": "verify\n",
+        "task-package.06-evidence.md": "evidence\n",
+    }.items():
+        (repo_root / "skills" / "using-openharness" / "references" / "templates" / name).write_text(
+            contents,
+            encoding="utf-8",
+        )
+
+    existing = repo_root / "docs" / "task-packages" / "existing"
+    existing.mkdir(parents=True)
+    for file_name in REQUIRED_TASK_PACKAGE_FILES:
+        (existing / file_name).write_text("# x\n", encoding="utf-8")
+    (existing / "STATUS.yaml").write_text(
+        "id: OH-009\n"
+        "title: Existing\n"
+        "status: proposed\n"
+        "summary: existing\n"
+        "owner: codex\n"
+        "created_at: 2026-03-24\n"
+        "updated_at: 2026-03-24\n"
+        "done_criteria:\n"
+        "  - x\n"
+        "verification:\n"
+        "  required_commands: []\n"
+        "  required_scenarios: []\n",
+        encoding="utf-8",
+    )
+
+    result = openharness.cmd_new_task(
+        argparse.Namespace(
+            repo=str(repo_root),
+            task_name="next-task",
+            legacy_task_id="",
+            legacy_title="",
+            task_id="",
+            title="Next Task",
+            auto_id=True,
+            owner="codex",
+            summary="auto id",
+            status="proposed",
+        )
+    )
+
+    captured = capsys.readouterr()
+    created = repo_root / "docs" / "task-packages" / "next-task" / "STATUS.yaml"
+    assert result == 0
+    assert "Task id: OH-010" in captured.out
+    assert "id: OH-010" in created.read_text(encoding="utf-8")
 
 
 def test_design_packages_validate_cleanly() -> None:
@@ -586,6 +725,13 @@ def test_brainstorming_defaults_to_autonomous_continuation() -> None:
     assert "do not create unnecessary approval pauses" in text
 
 
+def test_brainstorming_scaffolds_task_package_before_exploration_when_missing() -> None:
+    text = (REPO_ROOT / "skills" / "brainstorming" / "SKILL.md").read_text(encoding="utf-8")
+    assert "If no package exists yet, do not scaffold one at the first vague idea." in text
+    assert "When brainstorming is complete and you are about to enter exploration" in text
+    assert "scaffold the task package before invoking `exploring-solution-space`" in text
+
+
 def test_brainstorming_skill_defines_role_injection_and_requirements_gate() -> None:
     text = (REPO_ROOT / "skills" / "brainstorming" / "SKILL.md").read_text(encoding="utf-8")
     assert "product perspective" in text
@@ -618,6 +764,13 @@ def test_skill_hub_mentions_stage_gates_and_role_injection_model() -> None:
     assert "architecture perspective" in text
     assert "testing perspective" in text
     assert "risk perspective" in text
+
+
+def test_using_openharness_requires_explicit_stage_checkpoints() -> None:
+    text = (REPO_ROOT / "skills" / "using-openharness" / "SKILL.md").read_text(encoding="utf-8")
+    assert "When you enter a new workflow stage, explicitly tell the user" in text
+    assert "current stage" in text
+    assert "next planned step" in text
 
 
 def test_design_package_templates_include_verification_path_sections() -> None:
@@ -1032,6 +1185,120 @@ def test_transition_rejects_skipped_forward_moves(tmp_path: Path, capsys) -> Non
     assert result == 1
     assert "next legal forward status is `requirements_ready`" in captured.out
     assert "status: proposed" in (root / "STATUS.yaml").read_text(encoding="utf-8")
+
+
+def test_bootstrap_reports_stage_guidance_in_text_output(tmp_path: Path, capsys) -> None:
+    repo_root = tmp_path / "repo"
+    (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
+    (repo_root / "docs" / "task-packages" / "visible-stage").mkdir(parents=True)
+    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
+        "version: 1\n"
+        "task_packages_root: docs/task-packages\n"
+        "archived_task_packages_root: docs/archived/task-packages\n"
+        "required_design_files:\n"
+        "  - README.md\n"
+        "  - STATUS.yaml\n"
+        "  - 01-requirements.md\n"
+        "  - 02-overview-design.md\n"
+        "  - 03-detailed-design.md\n"
+        "  - 05-verification.md\n"
+        "  - 06-evidence.md\n"
+        "workflow:\n"
+        "  default_status_flow:\n"
+        "    - proposed\n"
+        "    - requirements_ready\n"
+        "    - overview_ready\n"
+        "    - detailed_ready\n"
+        "    - in_progress\n"
+        "    - verifying\n"
+        "    - archived\n",
+        encoding="utf-8",
+    )
+    root = repo_root / "docs" / "task-packages" / "visible-stage"
+    for name in REQUIRED_TASK_PACKAGE_FILES:
+        (root / name).write_text("# x\n", encoding="utf-8")
+    (root / "STATUS.yaml").write_text(
+        "id: OH-960\n"
+        "title: Visible Stage\n"
+        "status: requirements_ready\n"
+        "summary: stage guidance\n"
+        "owner: codex\n"
+        "created_at: 2026-03-24\n"
+        "updated_at: 2026-03-24\n"
+        "done_criteria:\n"
+        "  - x\n"
+        "verification:\n"
+        "  required_commands: []\n"
+        "  required_scenarios: []\n",
+        encoding="utf-8",
+    )
+
+    result = openharness.cmd_bootstrap(argparse.Namespace(repo=str(repo_root), json=False, all=False))
+
+    captured = capsys.readouterr()
+    assert result == 0
+    assert "current stage:" in captured.out
+    assert "next stage:" in captured.out
+    assert "next step:" in captured.out
+    assert "`overview_ready`" in captured.out
+
+
+def test_bootstrap_json_includes_stage_guidance(tmp_path: Path, capsys) -> None:
+    repo_root = tmp_path / "repo"
+    (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
+    (repo_root / "docs" / "task-packages" / "visible-stage").mkdir(parents=True)
+    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
+        "version: 1\n"
+        "task_packages_root: docs/task-packages\n"
+        "archived_task_packages_root: docs/archived/task-packages\n"
+        "required_design_files:\n"
+        "  - README.md\n"
+        "  - STATUS.yaml\n"
+        "  - 01-requirements.md\n"
+        "  - 02-overview-design.md\n"
+        "  - 03-detailed-design.md\n"
+        "  - 05-verification.md\n"
+        "  - 06-evidence.md\n"
+        "workflow:\n"
+        "  default_status_flow:\n"
+        "    - proposed\n"
+        "    - requirements_ready\n"
+        "    - overview_ready\n"
+        "    - detailed_ready\n"
+        "    - in_progress\n"
+        "    - verifying\n"
+        "    - archived\n",
+        encoding="utf-8",
+    )
+    root = repo_root / "docs" / "task-packages" / "visible-stage"
+    for name in REQUIRED_TASK_PACKAGE_FILES:
+        (root / name).write_text("# x\n", encoding="utf-8")
+    (root / "STATUS.yaml").write_text(
+        "id: OH-961\n"
+        "title: Visible Stage Json\n"
+        "status: detailed_ready\n"
+        "summary: stage guidance json\n"
+        "owner: codex\n"
+        "created_at: 2026-03-24\n"
+        "updated_at: 2026-03-24\n"
+        "done_criteria:\n"
+        "  - x\n"
+        "verification:\n"
+        "  required_commands:\n"
+        "    - echo ok\n"
+        "  required_scenarios: []\n",
+        encoding="utf-8",
+    )
+
+    result = openharness.cmd_bootstrap(argparse.Namespace(repo=str(repo_root), json=True, all=False))
+
+    captured = capsys.readouterr()
+    payload = json.loads(captured.out)
+    task = payload["task_packages"][0]
+    assert result == 0
+    assert task["current_stage"] == "detailed_ready"
+    assert task["next_stage"] == "in_progress"
+    assert "implementation" in task["next_step"]
 
 
 def test_verify_records_artifact_and_status_metadata(

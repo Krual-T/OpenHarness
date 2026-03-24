@@ -1,0 +1,47 @@
+id: OH-018
+title: Workflow Stage Visibility And Task Intake
+status: archived
+summary: Improve OpenHarness so humans and agents can see the current workflow stage
+  clearly, and automatically scaffold a task package when brainstorming finishes and
+  the agent is about to enter the next stage.
+owner: codex
+created_at: 2026-03-24
+updated_at: '2026-03-24'
+depends_on: []
+scope:
+  areas: []
+entrypoints:
+- docs/archived/task-packages/workflow-stage-visibility-and-task-intake/README.md
+- docs/archived/task-packages/workflow-stage-visibility-and-task-intake/01-requirements.md
+- docs/archived/task-packages/workflow-stage-visibility-and-task-intake/02-overview-design.md
+- docs/archived/task-packages/workflow-stage-visibility-and-task-intake/03-detailed-design.md
+done_criteria:
+- '`bootstrap` outputs the current stage, next stage, and suggested next step in both
+  text and JSON forms.'
+- '`new-task` can allocate a stable next task id automatically without breaking existing
+  positional usage.'
+- '`brainstorming` and `using-openharness` explicitly document the stage-checkpoint
+  and post-brainstorming auto-scaffold rules.'
+- Repository tests cover the new CLI behavior and protocol wording.
+verification:
+  required_commands:
+  - uv run pytest skills/using-openharness/tests/test_openharness.py -k "allocate_next_task_id
+    or scaffolds_task_package_before_exploration_when_missing or requires_explicit_stage_checkpoints
+    or bootstrap_reports_stage_guidance_in_text_output or bootstrap_json_includes_stage_guidance"
+  - uv run pytest skills/using-openharness/tests/test_openharness.py
+  - uv run python skills/using-openharness/scripts/openharness.py check-tasks
+  required_scenarios: []
+  last_run_at: '2026-03-24T16:04:04Z'
+  last_run_result: passed
+  last_run_artifact: .harness/artifacts/OH-018/verification-runs/20260324T160404498616Z.json
+evidence:
+  docs:
+  - docs/archived/task-packages/workflow-stage-visibility-and-task-intake/05-verification.md
+  - docs/archived/task-packages/workflow-stage-visibility-and-task-intake/06-evidence.md
+  code:
+  - skills/using-openharness/scripts/openharness.py
+  - skills/using-openharness/SKILL.md
+  - skills/brainstorming/SKILL.md
+  - README.md
+  tests:
+  - skills/using-openharness/tests/test_openharness.py

@@ -128,12 +128,14 @@ A typical task looks like this:
 1. `AGENTS.md` routes the agent into the correct workflow.
 2. `using-openharness` checks the manifest and active task packages.
 3. `brainstorming` converges the requirements first.
-4. `exploring-solution-space` explores the local repo and the web before architecture is locked in.
-5. The agent drafts overview design, then runs a reflection pass and can use bounded subagent discussion before treating architecture as ready.
-6. The agent drafts detailed testing-first design, then runs a second reflection pass and can use bounded subagent discussion before implementation.
-7. The agent implements against the package contract.
-8. Runtime verification, verification, and evidence are written back into the package.
-9. Completed packages are archived without losing history.
+4. If no task package exists yet, the agent scaffolds one after brainstorming has converged and before exploration starts.
+5. `exploring-solution-space` explores the local repo and the web before architecture is locked in.
+6. At each stage handoff, the agent should make the current stage and next planned step explicit instead of silently pushing forward.
+7. The agent drafts overview design, then runs a reflection pass and can use bounded subagent discussion before treating architecture as ready.
+8. The agent drafts detailed testing-first design, then runs a second reflection pass and can use bounded subagent discussion before implementation.
+9. The agent implements against the package contract.
+10. Runtime verification, verification, and evidence are written back into the package.
+11. Completed packages are archived without losing history.
 
 The result is a repo that accumulates usable knowledge instead of accumulating invisible assumptions.
 

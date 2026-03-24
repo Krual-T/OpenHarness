@@ -149,6 +149,12 @@ If these are still missing, continue converging requirements instead of pretendi
 - Commit the design document to git
 - If product perspective or CEO perspective raises a substantive challenge, record the disposition instead of silently absorbing it.
 
+**Task-package timing rule:**
+
+- If no package exists yet, do not scaffold one at the first vague idea.
+- When brainstorming is complete and you are about to enter exploration, scaffold the task package before invoking `exploring-solution-space`.
+- Use the converged task name and title from brainstorming, and prefer automatic task-id allocation when the harness CLI supports it.
+
 **Spec Review Loop:**
 After writing the spec document:
 
