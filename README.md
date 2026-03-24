@@ -45,19 +45,6 @@ The model is simple:
 
 That is the real harness.
 
-## Core Workflow Capabilities
-
-OpenHarness is trying to productize a reusable thinking-and-collaboration loop for agents, not a repository-specific tool trick.
-
-Core capabilities include:
-- requirements brainstorming and convergence before implementation
-- exploration, overview design, and detailed design before code is locked in
-- reflection and bounded subagent discussion before design is treated as ready
-- testing, review loops, and verification before completion claims
-- bounded multi-agent collaboration when another point of view adds signal
-
-That matters across backend, frontend, and mixed repositories because the core value is method, not any one runtime surface.
-
 ## Install in Codex
 
 Tell Codex:
@@ -99,19 +86,10 @@ Every meaningful task lives in `docs/task-packages/<task>/` as a package with st
 
 That gives both humans and agents a shared source of truth that can be reviewed, diffed, validated, and archived.
 
-### 3. A design-and-collaboration loop instead of prompt theater
+### 3. Skills that enforce process, not just style
 
 OpenHarness includes a copied and adapted skills library under `skills/`, including workflows for:
-- `brainstorming` to converge the requirement and surface the user problem, expected value, and scope
-- `exploring-solution-space` to turn exploration into overview design, detailed design, and reflection
-- testing and review helpers to pressure-test implementation before completion claims
-- bounded subagent discussion and execution helpers when a second viewpoint adds signal
-
-That is the main product surface OpenHarness is trying to preserve and reuse. Visual tooling may exist inside that loop, but it is not the loop itself.
-
-### 4. Skills that enforce process, not just style
-
-The same skills library also includes workflows for:
+- brainstorming before implementation
 - systematic debugging
 - TDD-oriented execution
 - verification before claiming success
@@ -126,7 +104,7 @@ The live skill model separates two questions:
 
 That keeps the harness plug-and-play instead of forcing every repository to rediscover which skills are mandatory, optional, or only conditionally triggered.
 
-### 5. A bias toward agent legibility
+### 4. A bias toward agent legibility
 
 OpenHarness assumes a practical truth of agentic software work:
 
@@ -134,7 +112,7 @@ OpenHarness assumes a practical truth of agentic software work:
 
 That means key decisions should move out of chat threads and into versioned artifacts. The repo becomes the working memory, not just the code container.
 
-### 6. A runtime capability contract instead of a fake universal debug skill
+### 5. A runtime capability contract instead of a fake universal debug skill
 
 OpenHarness does not assume one generic runtime-debug skill can cover API, browser, worker, migration, and observability work equally well.
 
@@ -150,8 +128,8 @@ A typical task looks like this:
 
 1. `AGENTS.md` routes the agent into the correct workflow.
 2. `using-openharness` checks the manifest and active task packages.
-3. `brainstorming` converges the requirements first, including the user problem, expected value, and scope.
-4. `exploring-solution-space` explores the local repo and the web before architecture is locked in, then pressure-tests the design against user value, business impact, and implementation cost.
+3. `brainstorming` converges the requirements first.
+4. `exploring-solution-space` explores the local repo and the web before architecture is locked in.
 5. The agent drafts overview design, then runs a reflection pass and can use bounded subagent discussion before treating architecture as ready.
 6. The agent drafts detailed testing-first design, then runs a second reflection pass and can use bounded subagent discussion before implementation.
 7. The agent implements against the package contract.
@@ -198,7 +176,6 @@ docs/archived/task-packages/<task>/      # archived task packages
 OpenHarness is a good fit if you want to:
 - run Codex against real repositories, not toy demos
 - keep architecture and workflow decisions in version control
-- keep design, testing, and review discipline across backend, frontend, or mixed repositories without assuming the same runtime surface
 - make agent output more consistent without writing giant prompts
 - scale multi-step work through task packages and verification loops
 - build a repo that gets more legible as it grows
