@@ -43,6 +43,7 @@ VERIFICATION_RESULT_VALUES = {"passed", "failed", "insufficient_verification"}
 PLACEHOLDER_BULLET_RE = re.compile(r"^[-*]\s*$")
 PLACEHOLDER_NUMBERED_RE = re.compile(r"^\d+\.\s*$")
 LABEL_ONLY_RE = re.compile(r"^[-*]\s+[^:]+:\s*$")
+TASK_ID_RE = re.compile(r"^([A-Za-z]+)-(\d+)$")
 
 STATUS_SECTION_REQUIREMENTS: dict[str, tuple[tuple[str, str], ...]] = {
     "requirements_ready": (
@@ -517,6 +518,38 @@ def slugify_task_name(raw_name: str) -> str:
     return cleaned
 
 
+def humanize_task_name(task_name: str) -> str:
+    slug = slugify_task_name(task_name)
+    return " ".join(part.capitalize() for part in slug.split("-"))
+
+
+def allocate_next_task_id(repo_root: Path, manifest: HarnessManifest | None = None) -> str:
+    current_manifest = manifest or load_manifest(repo_root)
+    prefix_counts: dict[str, int] = {}
+    max_by_prefix: dict[str, tuple[int, int]] = {}
+    for package in discover_task_packages(repo_root, current_manifest):
+        match = TASK_ID_RE.match(package.task_id)
+        if not match:
+            continue
+        prefix, raw_number = match.groups()
+        number = int(raw_number)
+        width = len(raw_number)
+        prefix_counts[prefix] = prefix_counts.get(prefix, 0) + 1
+        previous = max_by_prefix.get(prefix)
+        if previous is None or number > previous[0]:
+            max_by_prefix[prefix] = (number, width)
+        elif number == previous[0] and width > previous[1]:
+            max_by_prefix[prefix] = (number, width)
+
+    if not max_by_prefix:
+        return "TASK-001"
+
+    prefix = max(prefix_counts.items(), key=lambda item: (item[1], item[0]))[0]
+    max_number, width = max_by_prefix[prefix]
+    next_number = max_number + 1
+    return f"{prefix}-{next_number:0{max(width, 3)}d}"
+
+
 def create_task_package(request: TaskScaffoldRequest) -> Path:
     manifest = load_manifest(request.repo_root)
     task_name = slugify_task_name(request.task_name)
@@ -587,6 +620,68 @@ def _status_flow(manifest: HarnessManifest) -> tuple[str, ...]:
     if manifest.allowed_statuses:
         return manifest.allowed_statuses
     return ("proposed", "requirements_ready", "overview_ready", "detailed_ready", "in_progress", "verifying", "archived")
+
+
+def _status_description(status: str) -> str:
+    descriptions = {
+        "proposed": "Task package exists, but requirements are not ready yet.",
+        "requirements_ready": "Requirements are converged and the work is ready for exploration.",
+        "overview_ready": "Overview design is coherent and the work is ready for detailed design.",
+        "detailed_ready": "Detailed design is ready and implementation can start against the package.",
+        "in_progress": "Implementation is underway against the current task-package contract.",
+        "verifying": "Implementation is complete enough to gather fresh verification evidence.",
+        "archived": "Implementation and verification are complete, and the package is no longer active.",
+    }
+    return descriptions.get(status, "Unknown workflow stage.")
+
+
+def _next_status(manifest: HarnessManifest, status: str) -> str:
+    flow = _status_flow(manifest)
+    if status not in flow:
+        return ""
+    index = flow.index(status)
+    if index >= len(flow) - 1:
+        return ""
+    return flow[index + 1]
+
+
+def _next_step(package: TaskPackage) -> str:
+    steps = {
+        "proposed": (
+            "Finish requirements convergence, write `01-requirements.md`, "
+            "then transition to `requirements_ready`."
+        ),
+        "requirements_ready": (
+            "Run exploration, write `02-overview-design.md`, and transition to `overview_ready`."
+        ),
+        "overview_ready": (
+            "Write `03-detailed-design.md`, close detailed-design challenges, "
+            "and transition to `detailed_ready`."
+        ),
+        "detailed_ready": (
+            "Start implementation against the package, then transition to `in_progress` "
+            "once execution actually begins."
+        ),
+        "in_progress": (
+            "Finish implementation, update verification and evidence planning, "
+            "and transition to `verifying` when fresh evidence can be gathered."
+        ),
+        "verifying": (
+            "Run declared verification, refresh `05-verification.md` and `06-evidence.md`, "
+            "then transition to `archived` after passing evidence is recorded."
+        ),
+        "archived": "No next step. The package is complete and archived.",
+    }
+    return steps.get(package.status_name, "No next step available.")
+
+
+def describe_stage(package: TaskPackage) -> dict[str, str]:
+    return {
+        "current_stage": package.status_name,
+        "current_stage_description": _status_description(package.status_name),
+        "next_stage": _next_status(package.manifest, package.status_name),
+        "next_step": _next_step(package),
+    }
 
 
 def _build_transition_candidate(package: TaskPackage, target_status: str) -> TaskPackage:
@@ -820,6 +915,7 @@ def cmd_bootstrap(args: argparse.Namespace) -> int:
                             "root": str(package.root),
                             "required_commands": list(package.required_commands),
                             "required_scenarios": list(package.required_scenarios),
+                            **describe_stage(package),
                         }
                         for package in packages
                     ],
@@ -836,7 +932,11 @@ def cmd_bootstrap(args: argparse.Namespace) -> int:
         return 0
     print("Active task packages:" if not args.all else "Task packages:")
     for package in packages:
+        stage = describe_stage(package)
         print(f"- {summarize_task_package(package)}")
+        print(f"  current stage: `{stage['current_stage']}` - {stage['current_stage_description']}")
+        print(f"  next stage: `{stage['next_stage']}`" if stage["next_stage"] else "  next stage: none")
+        print(f"  next step: {stage['next_step']}")
         if package.required_commands:
             print(f"  verify commands: {', '.join(package.required_commands)}")
         if package.required_scenarios:
@@ -871,18 +971,39 @@ def cmd_check_tasks(args: argparse.Namespace) -> int:
 
 
 def cmd_new_task(args: argparse.Namespace) -> int:
+    repo_root = Path(args.repo).resolve()
+    legacy_task_id = str(getattr(args, "legacy_task_id", "") or "").strip()
+    legacy_title = str(getattr(args, "legacy_title", "") or "").strip()
+    explicit_task_id = str(getattr(args, "task_id", "") or "").strip()
+    explicit_title = str(getattr(args, "title", "") or "").strip()
+    auto_id = bool(getattr(args, "auto_id", False))
+
+    if auto_id and (explicit_task_id or legacy_task_id):
+        print("ERROR: `--auto-id` cannot be combined with an explicit task id")
+        return 1
+
+    task_id = explicit_task_id or legacy_task_id
+    if auto_id:
+        task_id = allocate_next_task_id(repo_root)
+    if not task_id:
+        print("ERROR: new-task requires either an explicit task id or `--auto-id`")
+        return 1
+
+    title = explicit_title or legacy_title or humanize_task_name(args.task_name)
     task_root = create_task_package(
         TaskScaffoldRequest(
-            repo_root=Path(args.repo).resolve(),
+            repo_root=repo_root,
             task_name=args.task_name,
-            task_id=args.task_id,
-            title=args.title,
+            task_id=task_id,
+            title=title,
             owner=args.owner,
             summary=args.summary,
             status=args.status,
         )
     )
     print(f"Created task package: {task_root}")
+    print(f"Task id: {task_id}")
+    print(f"Title: {title}")
     return 0
 
 
@@ -1021,8 +1142,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="Create a new task package from harness templates.",
     )
     new_design_parser.add_argument("task_name", help="Directory slug or human-readable task name")
-    new_design_parser.add_argument("task_id", help="Stable task id, such as OR-016")
-    new_design_parser.add_argument("title", help="Human-readable task title")
+    new_design_parser.add_argument("legacy_task_id", nargs="?", help="Stable task id, such as OR-016")
+    new_design_parser.add_argument("legacy_title", nargs="?", help="Human-readable task title")
+    new_design_parser.add_argument("--task-id", default="", help="Stable task id; omit with `--auto-id` to allocate one")
+    new_design_parser.add_argument("--title", default="", help="Human-readable task title")
+    new_design_parser.add_argument("--auto-id", action="store_true", help="Allocate the next stable task id automatically")
     new_design_parser.add_argument("--owner", default="unassigned", help="Initial owner")
     new_design_parser.add_argument("--summary", default="", help="Short summary")
     new_design_parser.add_argument("--status", default="proposed", help="Initial status")
