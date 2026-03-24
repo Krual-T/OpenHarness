@@ -20,7 +20,7 @@ Its job is to make exploration explicit:
 - inspect the local repository
 - inspect relevant task packages and recent code
 - search the web when external references or current best practices matter
-- record the important findings that shape the architecture
+- record the important findings that shape the architecture, user value, and business impact
 
 ## Output
 
@@ -37,10 +37,12 @@ Do not treat exploration as permission to fully draft `03-detailed-design.md` be
 1. Read `01-requirements.md` and restate the concrete question being explored.
 2. Explore the local repository for relevant code, docs, tests, and recent changes.
 3. Search the web when the task touches third-party APIs, current platform behavior, existing public solutions, or recent best practices.
-4. Summarize local constraints, viable options, and the recommended direction.
+4. Summarize local constraints, viable options, product/value implications, and the recommended direction.
 5. Write the architectural conclusion into `02-overview-design.md`.
    - When the overview is coherent and reflected, the package is ready for `overview_ready`.
 6. Run an overview reflection pass:
+   - restate the user problem and expected value
+   - check business impact, operator cost, or product risk
    - challenge the main path
    - compare against at least one viable alternative
    - check for missing runtime verification implications
@@ -50,6 +52,7 @@ Do not treat exploration as permission to fully draft `03-detailed-design.md` be
    - When detailed design is concrete and reflected, the package is ready for `detailed_ready`.
 9. Run a detailed-design reflection pass:
    - challenge the testing strategy first
+   - check whether the design still matches the user problem and expected value without unnecessary scope
    - challenge interfaces, boundaries, and migration assumptions
    - check whether runtime verification is concrete enough to trust
 10. If detailed design remains uncertain or risky, dispatch a bounded subagent discussion/review with only the relevant design context.
@@ -60,6 +63,7 @@ Do not treat exploration as permission to fully draft `03-detailed-design.md` be
 - Do not skip web research when the information is time-sensitive or external.
 - Prefer primary sources for technical choices.
 - Keep exploration focused on the active task.
+- Keep product/value checks concrete: user problem, expected value, business impact, and scope.
 - Make the reasoning legible in repository artifacts, not only in chat.
 - Treat `02-overview-design.md` as the main artifact of exploration; update `03-detailed-design.md` only for implementation-facing conclusions that are already justified by the explored architecture.
 - Do not treat `02-overview-design.md` or `03-detailed-design.md` as ready until the reflection pass is written down.
