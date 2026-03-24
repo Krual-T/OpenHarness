@@ -5,10 +5,16 @@ OpenHarness uses a two-layer model:
 - `protocol status` answers whether a skill is part of the fixed harness
 - `workflow stage and trigger` answers when the skill should actually be used
 
+The live workflow also uses stage-organized role injection:
+
+- stages remain the main path
+- roles are injected inside those stages to challenge specific decisions
+- stage gates and challenge closure determine readiness
+
 ## Protocol Status
 
 ### Core Protocol Skills
-- `openharness`
+- `using-openharness`
   - parent workflow skill
   - repository entry skill
   - owns repository protocol, skill routing, package routing, supporting scripts, and templates
@@ -46,17 +52,19 @@ OpenHarness uses a two-layer model:
 ## Workflow Stages And Triggers
 
 ### Entry And Routing
-- `openharness`
+- `using-openharness`
   - default first step for repository workflow and task-package routing
   - the only repository entry skill
 
 ### Requirements Convergence
 - `brainstorming`
   - default when the task needs requirement convergence or design clarification before implementation
+  - injects product perspective and CEO perspective before requirements are treated as ready
 
 ### Exploration And Architecture
 - `exploring-solution-space`
   - default after requirements are clear and before architecture or implementation details are locked
+  - injects architecture perspective, testing perspective, and later verification-facing review/risk expectations through stage gates
 
 ### Implementation Execution
 - `test-driven-development`
@@ -75,10 +83,32 @@ OpenHarness uses a two-layer model:
 ### Verification And Closure
 - `verification-before-completion`
   - mandatory before completion claims, archive claims, or merge-ready claims
+  - works best when earlier stages already recorded challenge closure and requirement-to-evidence links
 - `requesting-code-review`
   - optional before merge or after major implementation waves
 - `finishing-a-development-branch`
   - optional when the work is implemented and verified and needs final integration handling
+
+## Role Injection Model
+
+- product perspective
+  - challenge user value, scenarios, priorities, and success semantics
+- CEO perspective
+  - challenge timing, cost cap, strategic fit, and worst acceptable downside
+- architecture perspective
+  - challenge boundaries, complexity, and main-path stability
+- testing perspective
+  - challenge testability, observability, rollback clarity, and evidence quality
+- review perspective
+  - challenge whether the finished work actually matches the package and its declared evidence
+- risk perspective
+  - challenge high-impact residual risks without expanding into infinite caution
+
+## Stage Gates And Challenge Closure
+
+- stage gates define what must be concretely present before a stage is treated as ready
+- challenge closure means each substantive challenge is accepted, rejected, or deferred with a visible disposition
+- if role injection adds commentary without changing constraints, evidence shape, or decisions, the workflow has failed
 
 ### Repository Memory And Maintenance
 - `project-memory`
@@ -105,8 +135,9 @@ OpenHarness uses a two-layer model:
 - The focused helper-addition workflow lives in `references/adding-project-runtime-helper.md`.
 
 ## Current Cleanup Rule
-- Prefer `openharness` vocabulary over legacy external-skill vocabulary.
+- Prefer `using-openharness` when referring to the concrete repository entry skill.
+- Reserve `OpenHarness` for the harness product or protocol, not the concrete skill id.
 - Do not advertise retired plan-writing or plan-execution skills anywhere in the live repository surface.
 - Treat imported skills as reusable helpers unless they become part of the core repository workflow.
-- Do not keep a separate repository entry layer beside `openharness`.
+- Do not keep a separate repository entry layer beside `using-openharness`.
 - Remove duplicated entry skills and parallel workflow roots rather than maintaining aliases forever.

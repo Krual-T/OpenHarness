@@ -52,6 +52,7 @@ It decides:
 - when to stay in task-package docs
 - when to invoke `brainstorming`
 - when to invoke `exploring-solution-space`
+- when stage-organized role injection is required versus optional
 - when runtime work should reuse an existing helper, add one new narrow helper, or open a bootstrap package
 - when to run harness verification
 
@@ -124,14 +125,64 @@ Default flow:
 2. `brainstorming` to converge and write `01-requirements.md`
 3. `exploring-solution-space` to explore local code and the web before architecture is locked
 4. draft `02-overview-design.md`
-5. run an overview reflection pass; use bounded subagent discussion when the architecture is high-impact, uncertain, or hard to compare against alternatives
+5. run an overview reflection pass with role injection and stage gates; use bounded subagent discussion when the architecture is high-impact, uncertain, or hard to compare against alternatives
 6. draft `03-detailed-design.md` only after the explored architecture is coherent enough to constrain implementation
-7. run a detailed-design reflection pass; use bounded subagent discussion when test strategy, module boundaries, migration risk, or runtime verification remain uncertain
+7. run a detailed-design reflection pass with role injection and challenge closure; use bounded subagent discussion when test strategy, module boundaries, migration risk, or runtime verification remain uncertain
 8. move to `in_progress` only when the package is ready to execute against a stable detailed design
 9. move to `verifying` only when implementation is complete enough to gather fresh verification evidence
 10. update verification and evidence before `archived`, and archive only after implementation is done and verified
 
 For non-package work that still touches repository workflow, start from `openharness`, decide whether a child skill applies, then continue under that child skill. Do not reintroduce a separate entry skill for this routing step.
+
+## Stage-Organized Role Injection
+
+OpenHarness keeps stages as the main axis and uses role injection inside those stages rather than building a second role-driven workflow.
+
+- requirements convergence should inject the product perspective and CEO perspective
+- overview design should inject the architecture perspective and, when still relevant, the product perspective
+- detailed design should inject the architecture perspective and testing perspective
+- verification should inject review perspective and risk perspective
+
+Role injection is not free-form commentary. The main agent still owns the draft, while injected roles challenge the draft inside a bounded problem domain.
+
+## Stage Gates
+
+Stages are not ready just because the prose is longer. Each stage needs a gate before the package advances.
+
+- requirements gate
+  - target user and core scenario
+  - single success metric
+  - non-goals
+  - cost cap
+  - acceptance criteria
+  - at least one counterexample
+- overview gate
+  - key constraints
+  - boundary and interface decisions
+  - key failure modes
+  - degradation or rollback direction
+- detailed gate
+  - test strategy
+  - observability requirements
+  - implementation landing points
+  - migration order
+  - expected evidence types
+- verification gate
+  - requirement-to-verification traceability
+  - residual risks
+  - explicit risk acceptance reasoning
+
+## Challenge Closure
+
+Injected roles do not merely comment. Their substantive challenges must be closed before the stage can be treated as ready.
+
+The main agent must handle each important challenge in one of three ways:
+
+- accept it and turn it into a constraint
+- reject it and record the reason plus the chosen alternative
+- defer it with a trigger condition and latest allowed landing point
+
+Do not advance a stage while material challenges still float without a recorded disposition.
 
 ## Update Protocol
 
@@ -142,6 +193,8 @@ For non-package work that still touches repository workflow, start from `openhar
 - Put problem framing in `01-requirements.md`.
 - Put boundary and architecture choices in `02-overview-design.md`.
 - Put testing-first implementation details, runtime verification path, fallback path, and implementation order in `03-detailed-design.md`.
+- Record stage gates in the design docs when they materially shape readiness.
+- Record challenge closure when role injection or bounded subagent discussion changes the design.
 - Record the overview reflection pass in `02-overview-design.md`, including when a bounded subagent discussion was used and what it changed.
 - Record the detailed-design reflection pass in `03-detailed-design.md`, including when a bounded subagent discussion was used and what it changed.
 - Put planned versus executed verification path and results in `05-verification.md`.
@@ -166,6 +219,8 @@ For non-package work that still touches repository workflow, start from `openhar
 - `exploring-solution-space` must not become a parallel task system; it exists to produce `02` first and only then inform `03` where justified.
 - `03-detailed-design.md` owns testing-first implementation detail inside the fixed package protocol.
 - Design is not ready after a first draft alone; `02` and `03` each require a reflection pass before they are treated as ready.
+- Role injection supports the stages; it must not replace the stages.
+- Stage gates and challenge closure are part of readiness, not optional polish.
 - Bounded subagent discussion is the preferred escalation path when reflection reveals uncertainty that the main agent cannot confidently resolve alone.
 
 ## Verification

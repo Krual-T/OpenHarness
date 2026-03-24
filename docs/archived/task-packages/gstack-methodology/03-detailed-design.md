@@ -2,33 +2,49 @@
 
 ## Runtime Verification Plan
 - Verification Path:
-- 本轮属于文档设计，不涉及运行时代码验证。
-- 需要执行的验证是任务包完整性检查，以及确认状态与文档叙述一致。
+- 本轮是 skill 与测试 productization，不涉及业务运行时验证。
+- 需要执行 `uv run python skills/using-openharness/scripts/openharness.py check-tasks` 与 `uv run pytest`，确认任务包、技能文档、模板与仓库测试一起成立。
 - Fallback Path:
-- 如果 `check-tasks` 受环境问题阻塞，本轮只能宣称“文档已起草”，不能宣称任务包已经通过仓库协议验证。
+- 如果 `check-tasks` 或 `uv run pytest` 被环境或无关失败阻塞，本轮只能停在 `verifying`，不能宣称协议已 productize 完成。
 - Planned Evidence:
-- 任务包目录完整
-- `STATUS.yaml` 与文档内容一致
-- `05-verification.md` 和 `06-evidence.md` 记录本轮命令与结果
+- 受影响 skill 文档与模板已更新
+- 针对新协议的仓库测试已补充并通过
+- `05-verification.md` 和 `06-evidence.md` 记录实施与验证结果
 
 Move to `in_progress` only when detailed design is concrete enough to execute.
 If design is complete but implementation has not started yet, stay at `detailed_ready`.
 
 ## Files Added Or Changed
-- `docs/task-packages/gstack-methodology/README.md`
+- `docs/archived/task-packages/gstack-methodology/README.md`
   - 作为任务入口页，说明这不是工具安装任务，而是方法论设计任务。
-- `docs/task-packages/gstack-methodology/STATUS.yaml`
+- `docs/archived/task-packages/gstack-methodology/STATUS.yaml`
   - 记录当前处于 `detailed_ready`，表明设计已成形但尚未进入实现。
-- `docs/task-packages/gstack-methodology/01-requirements.md`
+- `docs/archived/task-packages/gstack-methodology/01-requirements.md`
   - 明确目标、边界、非目标与约束。
-- `docs/task-packages/gstack-methodology/02-overview-design.md`
+- `docs/archived/task-packages/gstack-methodology/02-overview-design.md`
   - 说明“按阶段组织、按角色注入”的总体结构。
-- `docs/task-packages/gstack-methodology/03-detailed-design.md`
+- `docs/archived/task-packages/gstack-methodology/03-detailed-design.md`
   - 明确阶段与角色的映射、职责边界和收敛协议。
-- `docs/task-packages/gstack-methodology/05-verification.md`
-  - 记录本轮只进行文档级验证。
-- `docs/task-packages/gstack-methodology/06-evidence.md`
+- `docs/archived/task-packages/gstack-methodology/05-verification.md`
+  - 记录本轮 skill productization 的验证路径与结果。
+- `docs/archived/task-packages/gstack-methodology/06-evidence.md`
   - 记录残余风险与后续事项。
+- `skills/using-openharness/SKILL.md`
+  - 落地入口协议中的角色注入、阶段门禁与挑战闭环。
+- `skills/brainstorming/SKILL.md`
+  - 落地需求阶段的产品/CEO 视角与 requirements gate。
+- `skills/exploring-solution-space/SKILL.md`
+  - 落地 overview / detailed design 阶段的角色注入与 challenge closure。
+- `skills/using-openharness/references/skill-hub.md`
+  - 对齐 live skill taxonomy 与新的阶段化多视角模型。
+- `skills/using-openharness/references/templates/task-package.02-overview-design.md`
+  - 为 overview 模板增加 stage gate 槽位。
+- `skills/using-openharness/references/templates/task-package.03-detailed-design.md`
+  - 为 detailed 模板增加 challenge closure 槽位。
+- `skills/using-openharness/references/templates/task-package.05-verification.md`
+  - 为 verification 模板增加 traceability 槽位。
+- `skills/using-openharness/tests/test_openharness.py`
+  - 用仓库测试钉住新协议文案与模板结构。
 
 ## Interfaces
 本轮设计定义的是概念接口，而不是代码接口。
@@ -79,6 +95,8 @@ If design is complete but implementation has not started yet, stay at `detailed_
 
 浏览器或视觉辅助不属于阶段接口，只属于可选展示接口。
 
+## Stage Gates
+
 建议的阶段门禁如下：
 
 1. `brainstorming`
@@ -119,15 +137,28 @@ If design is complete but implementation has not started yet, stay at `detailed_
 - 为风险视角设置时间盒和分级，避免验证无限膨胀
 - 防止产品视角在总体设计阶段重新打开已经关闭的需求边界
 
+## Decision Closure
+
+当前任务包里的关键挑战处置如下：
+
+- 接受：阶段必须先于实现补齐门禁、挑战闭环与收敛判据，不能只停留在方法论文档。
+- 接受：具体入口技能名称统一为 `using-openharness`，避免 skill id 与协议概念混淆。
+- 拒绝：把新的门禁锚点立即强制施加到所有历史归档任务包上。
+  - 理由：这会把当前 productization 任务膨胀成一次历史迁移。
+  - 替代：先在 live templates、live skills 与测试中落实；校验器保持对历史包兼容，后续如需机械强制再单独开包迁移。
+- 延期：是否把门禁和挑战闭环变成 task-package validator 的硬性要求。
+  - 触发条件：准备统一迁移现有 active / archived task package 时。
+  - 最晚落点：未来若要宣称“门禁由仓库机械强制”，必须先完成迁移任务包。
+
 ## Migration Notes
 建议分三步迁移，而不是一次性把所有技能重写。
 
-1. 先完成方法论文档定稿
-   - 目标是让阶段骨架和角色注入规则足够清楚。
-2. 再选择一个最适合验证的阶段先落地
-   - 优先建议从 `brainstorming` 开始，因为产品/CEO 视角边界、阶段门禁和收敛机制最容易先被观察到。
-3. 再把架构、测试、review、风险视角逐步接入其他阶段
-   - 每一步都应保留回退到“单主代理直推”的能力，避免流程过重。
+1. 先把入口 skill、需求阶段 skill、探索阶段 skill、skill hub 与模板一起更新
+   - 避免 live surface 局部采用新协议，其他地方仍停在旧语义。
+2. 再用仓库测试把关键文案与结构钉住
+   - 确保阶段门禁、角色注入、挑战闭环不会在后续维护中静默回退。
+3. 最后通过任务包验证与仓库测试确认协议 productization 完成
+   - 每一步都保留回退到“单主代理直推”的能力，避免流程过重。
 
 若后续实现发现角色注入成本过高，可以回退到“仅保留阶段问题清单，不启用真实多智能体”这一中间态。
 
