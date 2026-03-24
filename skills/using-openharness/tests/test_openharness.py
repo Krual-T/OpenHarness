@@ -507,6 +507,7 @@ def test_skill_hub_describes_runtime_capability_layer() -> None:
 def test_skill_hub_uses_protocol_status_plus_stage_model() -> None:
     hub_path = REPO_ROOT / "skills" / "using-openharness" / "references" / "skill-hub.md"
     text = hub_path.read_text(encoding="utf-8")
+    assert "## Core Capability Model" in text
     assert "## Protocol Status" in text
     assert "### Core Protocol Skills" in text
     assert "### Optional Helper Skills" in text
@@ -556,6 +557,19 @@ def test_readme_describes_plug_and_play_harness_and_python_pytest_floor() -> Non
     assert "project-specific runtime verification" in readme
 
 
+def test_readme_foregrounds_core_workflow_capabilities_before_runtime_contract() -> None:
+    readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
+    readme_lower = readme.lower()
+    intro = "\n".join(readme_lower.splitlines()[:20])
+
+    assert "## Core Workflow Capabilities" in readme
+    assert "requirements brainstorming and convergence" in readme_lower
+    assert "review loops, and verification" in readme_lower
+    assert readme_lower.index("## core workflow capabilities") < readme_lower.index("runtime capability contract")
+    assert "browser" not in intro
+    assert "visual companion" not in intro
+
+
 def test_readme_describes_runtime_capability_contract() -> None:
     readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
     assert "runtime capability contract" in readme
@@ -577,6 +591,41 @@ def test_brainstorming_defaults_to_autonomous_continuation() -> None:
     assert "continue automatically by default" in text
     assert "Only stop for user review if one of these is true" in text
     assert "do not create unnecessary approval pauses" in text
+
+
+def test_brainstorming_positions_visual_companion_as_optional() -> None:
+    text = (REPO_ROOT / "skills" / "brainstorming" / "SKILL.md").read_text(encoding="utf-8")
+    text_lower = text.lower()
+    assert "Offer optional visual companion" in text
+    assert "This is optional." in text
+    assert "backend or service work" in text_lower
+    assert "stay in the terminal" in text_lower
+    assert "Do not offer the companion just because a browser is available." in text
+
+
+def test_brainstorming_and_exploration_include_product_value_checks() -> None:
+    brainstorming = (REPO_ROOT / "skills" / "brainstorming" / "SKILL.md").read_text(encoding="utf-8")
+    exploration = (REPO_ROOT / "skills" / "exploring-solution-space" / "SKILL.md").read_text(encoding="utf-8")
+
+    assert "user problem, expected value, business impact, and scope boundary" in brainstorming
+    assert "Cover: user problem and value, architecture, components, data flow, error handling, testing" in brainstorming
+    assert "product/value implications" in exploration
+    assert "restate the user problem and expected value" in exploration
+    assert "check business impact, operator cost, or product risk" in exploration
+    assert "Keep product/value checks concrete: user problem, expected value, business impact, and scope." in exploration
+
+
+def test_skill_hub_describes_core_capability_model() -> None:
+    text = (
+        REPO_ROOT / "skills" / "using-openharness" / "references" / "skill-hub.md"
+    ).read_text(encoding="utf-8")
+
+    assert "requirements brainstorming and convergence" in text
+    assert "testing, review loops, and verification" in text
+    assert "bounded multi-agent collaboration when it adds signal" in text
+    assert "optional visual companion for visual questions only" in text
+    assert "includes user problem, expected value, and scope framing" in text
+    assert "includes product/value checks and reflection" in text
 
 
 def test_design_package_templates_include_verification_path_sections() -> None:

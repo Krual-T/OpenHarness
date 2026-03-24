@@ -5,6 +5,16 @@ OpenHarness uses a two-layer model:
 - `protocol status` answers whether a skill is part of the fixed harness
 - `workflow stage and trigger` answers when the skill should actually be used
 
+## Core Capability Model
+
+OpenHarness is centered on a small set of reusable working capabilities:
+
+- requirements brainstorming and convergence
+- exploration, overview design, and detailed design with reflection
+- testing, review loops, and verification
+- bounded multi-agent collaboration when it adds signal
+- optional visual companion for visual questions only; non-visual work stays in the terminal
+
 ## Protocol Status
 
 ### Core Protocol Skills
@@ -14,9 +24,10 @@ OpenHarness uses a two-layer model:
   - owns repository protocol, skill routing, package routing, supporting scripts, and templates
 - `brainstorming`
   - core protocol skill for converging requirements before implementation when the task needs design work
+  - includes user problem, expected value, and scope framing before requirements are treated as clear
 - `exploring-solution-space`
   - core protocol skill for repository and web exploration before architecture is locked
-  - includes reflection before overview or detailed design is treated as ready
+  - includes product/value checks and reflection before overview or detailed design is treated as ready
 - `verification-before-completion`
   - core protocol skill that enforces evidence-before-claims at the end of work
 
@@ -52,11 +63,12 @@ OpenHarness uses a two-layer model:
 
 ### Requirements Convergence
 - `brainstorming`
-  - default when the task needs requirement convergence or design clarification before implementation
+  - default when the task needs requirement convergence, user/value framing, or design clarification before implementation
 
 ### Exploration And Architecture
 - `exploring-solution-space`
   - default after requirements are clear and before architecture or implementation details are locked
+  - pressure-tests architecture against user value, business impact, and implementation cost
 
 ### Implementation Execution
 - `test-driven-development`
