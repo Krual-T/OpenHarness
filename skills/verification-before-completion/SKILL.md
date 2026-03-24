@@ -42,6 +42,7 @@ BEFORE claiming any status or expressing satisfaction:
    - If NO: State actual status with evidence
    - If path is insufficient verification: state the blocked completion state and missing evidence
    - If YES: State claim WITH evidence
+   - Check traceability: requirements, design, and evidence should line up rather than merely coexist
 5. ONLY THEN: Make the claim
 
 Skip any step = lying, not verifying
@@ -121,6 +122,12 @@ Skip any step = lying, not verifying
 ```
 ✅ Re-read plan → Create checklist → Verify each → Report gaps or completion
 ❌ "Tests pass, phase complete"
+```
+
+**Stage-organized workflow evidence:**
+```
+✅ Verify stage gates, challenge closure, and requirement-to-evidence traceability before claiming workflow productization
+❌ "The docs look better now" / "The skill probably covers it"
 ```
 
 **Agent delegation:**

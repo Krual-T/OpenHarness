@@ -95,6 +95,25 @@ digraph brainstorming {
 - Present options conversationally with your recommendation and reasoning
 - Lead with your recommended option and explain why
 
+**Role injection during requirements convergence:**
+
+- inject the product perspective to challenge user value, target user, core scenario, success criteria, and priority
+- inject the CEO perspective to challenge timing, cost cap, strategic fit, and worst acceptable downside
+- do not let either perspective drift into free-form branding, organization design, or generic startup talk
+
+**Requirements gate before leaving brainstorming:**
+
+Before the package moves out of requirements convergence, the resulting requirements must contain:
+
+- a target user and core scenario
+- a single success metric
+- explicit non-goals
+- a cost cap or effort boundary
+- acceptance criteria
+- at least one counterexample that clarifies what should not count as success
+
+If these are still missing, continue converging requirements instead of pretending exploration can fix the gap later.
+
 **Presenting the design:**
 
 - Once you believe you understand what you're building, present the design
@@ -128,6 +147,7 @@ digraph brainstorming {
   - if no package exists yet, scaffold one first via the harness workflow, then write into that package
 - Use elements-of-style:writing-clearly-and-concisely skill if available
 - Commit the design document to git
+- If product perspective or CEO perspective raises a substantive challenge, record the disposition instead of silently absorbing it.
 
 **Spec Review Loop:**
 After writing the spec document:
@@ -163,6 +183,7 @@ If the user requests changes, make them and re-run the spec review loop. Otherwi
 - **Explore alternatives** - Always propose 2-3 approaches before settling
 - **Incremental validation** - Make the design explicit before moving on, but do not create unnecessary approval pauses
 - **Be flexible** - Go back and clarify when something doesn't make sense
+- **Stage gate before handoff** - `exploring-solution-space` should inherit a requirements doc with enough structure to challenge, not a poetic summary
 
 ## Visual Companion
 

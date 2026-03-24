@@ -471,6 +471,8 @@ def test_openharness_skill_is_repo_entry_skill() -> None:
     assert "runtime verification" in text
     assert "reflection pass" in text
     assert "bounded subagent discussion" in text
+    assert "role injection" in text
+    assert "stage gate" in text
 
 
 def test_openharness_skill_routes_runtime_work_through_capability_contract() -> None:
@@ -487,7 +489,7 @@ def test_skill_hub_declares_no_parallel_entry_skill() -> None:
     hub_path = REPO_ROOT / "skills" / "using-openharness" / "references" / "skill-hub.md"
     text = hub_path.read_text(encoding="utf-8")
     assert "repository entry skill" in text
-    assert "Do not keep a separate repository entry layer beside `openharness`." in text
+    assert "Do not keep a separate repository entry layer beside `using-openharness`." in text
     assert "`exploring-solution-space`" in text
     assert "reflection" in text
 
@@ -519,6 +521,8 @@ def test_skill_hub_uses_protocol_status_plus_stage_model() -> None:
     assert "### Debugging And Repair" in text
     assert "### Verification And Closure" in text
     assert "### Repository Memory And Maintenance" in text
+    assert "`using-openharness`" in text
+    assert "- `openharness`" not in text
 
 
 def test_optional_execution_skills_are_not_described_as_core_protocol() -> None:
@@ -538,6 +542,9 @@ def test_exploration_skill_requires_reflection_before_design_is_ready() -> None:
     assert "Only after `02-overview-design.md` is coherent" in text
     assert "reflection" in text
     assert "subagent" in text
+    assert "challenge closure" in text
+    assert "accept" in text
+    assert "defer" in text
 
 
 def test_docs_describe_reflective_design_loop() -> None:
@@ -579,6 +586,40 @@ def test_brainstorming_defaults_to_autonomous_continuation() -> None:
     assert "do not create unnecessary approval pauses" in text
 
 
+def test_brainstorming_skill_defines_role_injection_and_requirements_gate() -> None:
+    text = (REPO_ROOT / "skills" / "brainstorming" / "SKILL.md").read_text(encoding="utf-8")
+    assert "product perspective" in text
+    assert "CEO perspective" in text
+    assert "single success metric" in text
+    assert "non-goals" in text
+    assert "cost cap" in text
+    assert "acceptance criteria" in text
+    assert "counterexample" in text
+
+
+def test_exploration_skill_defines_stage_specific_role_injection() -> None:
+    text = (REPO_ROOT / "skills" / "exploring-solution-space" / "SKILL.md").read_text(encoding="utf-8")
+    assert "architecture perspective" in text
+    assert "testing perspective" in text
+    assert "risk perspective" in text
+    assert "stage gate" in text
+    assert "decision list" in text
+
+
+def test_skill_hub_mentions_stage_gates_and_role_injection_model() -> None:
+    text = (REPO_ROOT / "skills" / "using-openharness" / "references" / "skill-hub.md").read_text(
+        encoding="utf-8"
+    )
+    assert "role injection" in text
+    assert "stage gates" in text
+    assert "challenge closure" in text
+    assert "product perspective" in text
+    assert "CEO perspective" in text
+    assert "architecture perspective" in text
+    assert "testing perspective" in text
+    assert "risk perspective" in text
+
+
 def test_design_package_templates_include_verification_path_sections() -> None:
     overview = (
         REPO_ROOT
@@ -618,6 +659,11 @@ def test_design_package_templates_include_verification_path_sections() -> None:
     assert "Verification Path" in detailed
     assert "Fallback Path" in detailed
     assert "## Detailed Reflection" in detailed
+    assert "## Stage Gates" in overview
+    assert "## Stage Gates" in detailed
+    assert "## Decision Closure" in detailed
+    assert "## Traceability" in verification
+    assert "## Risk Acceptance" in verification
     assert "## Verification Path" in verification
     assert "Executed Path" in verification
     assert "## Residual Risks" in evidence
@@ -660,8 +706,8 @@ def test_design_package_templates_include_status_guidance() -> None:
 
     assert "Status should match the highest workflow checkpoint" in readme
     assert "requirements_ready -> overview_ready -> detailed_ready" in status
-    assert "Move to `in_progress` only when detailed design is concrete enough to execute." in detailed
-    assert "Use `verifying` only when implementation is complete enough" in verification
+    assert "只有当详细设计已经具体到可以执行时，才进入 `in_progress`。" in detailed
+    assert "只有当实现已经完成到足以采集新证据时，才进入 `verifying`。" in verification
 
 
 def test_runtime_capability_reference_defines_declaration_shape_and_writeback() -> None:
@@ -1834,6 +1880,7 @@ def test_validate_design_package_accepts_detailed_ready_with_filled_semantic_anc
         "## System Boundary\nA\n\n"
         "## Proposed Structure\nB\n\n"
         "## Key Flows\nC\n\n"
+        "## Stage Gates\nD0\n\n"
         "## Trade-offs\nD\n\n"
         "## Overview Reflection\nE\n",
         encoding="utf-8",
@@ -1846,11 +1893,25 @@ def test_validate_design_package_accepts_detailed_ready_with_filled_semantic_anc
         "- Planned Evidence:\n  - z\n\n"
         "## Files Added Or Changed\n- a\n\n"
         "## Interfaces\nb\n\n"
+        "## Stage Gates\ng\n\n"
+        "## Decision Closure\nh\n\n"
         "## Error Handling\nc\n\n"
         "## Detailed Reflection\nd\n",
         encoding="utf-8",
     )
-    (root / "05-verification.md").write_text("x\n", encoding="utf-8")
+    (root / "05-verification.md").write_text(
+        "# Verification\n\n"
+        "## Verification Path\n"
+        "- Planned Path:\n  - x\n"
+        "- Executed Path:\n  - y\n"
+        "- Path Notes:\n  - z\n\n"
+        "## Required Commands\n- uv run pytest\n\n"
+        "## Expected Outcomes\n- a\n\n"
+        "## Traceability\n- b\n\n"
+        "## Risk Acceptance\n- c\n\n"
+        "## Latest Result\n- d\n",
+        encoding="utf-8",
+    )
     (root / "06-evidence.md").write_text("x\n", encoding="utf-8")
     (root / "STATUS.yaml").write_text(
         "id: OH-906\n"

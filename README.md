@@ -77,7 +77,6 @@ This follows the same spirit described by OpenAI's harness engineering article: 
 
 Every meaningful task lives in `docs/task-packages/<task>/` as a package with stable files for:
 - requirements
-- exploration-backed overview design
 - overview design
 - detailed design
 - verification
@@ -137,6 +136,11 @@ A typical task looks like this:
 9. Completed packages are archived without losing history.
 
 The result is a repo that accumulates usable knowledge instead of accumulating invisible assumptions.
+
+The live workflow is now also explicitly stage-organized and role-injected:
+- stages remain the main path
+- product, CEO, architecture, testing, review, and risk perspectives are injected only where they sharpen the current stage
+- stage gates and challenge closure decide readiness, not document length alone
 
 ## Verification baseline
 
