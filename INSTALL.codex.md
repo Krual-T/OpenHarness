@@ -2,7 +2,7 @@
 
 Enable OpenHarness skills in Codex via native skill discovery.
 
-Before running any install command, ask the user which target directory should hold the OpenHarness clone and skill link. Do not default to `~` or any home-directory path unless the user explicitly chooses it.
+Before executing any installation commands, please ask the user to specify the target directory where the OpenHarness skill links should be placed. Unless explicitly specified by the user, do not default the skill links to `~` or any home directory path.
 
 ## Prerequisites
 
