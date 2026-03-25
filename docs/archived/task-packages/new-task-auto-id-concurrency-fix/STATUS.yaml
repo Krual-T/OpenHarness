@@ -1,0 +1,40 @@
+id: OH-024
+title: New Task Auto ID Concurrency Fix
+# Default flow: proposed -> requirements_ready -> overview_ready -> detailed_ready -> in_progress -> verifying -> archived
+# requirements_ready -> overview_ready -> detailed_ready are design-readiness checkpoints; later statuses imply earlier checkpoints are already materially complete.
+# `detailed_ready` is the normal resting point for design-complete work before implementation.
+# `archived` means the task package is implemented, verified, and no longer active.
+status: archived
+summary: 修复 new-task --auto-id 在并行执行时可能分配重复 task id 的竞争条件，使编号分配与任务包创建具备并发安全性。
+owner: codex
+created_at: 2026-03-25
+updated_at: 2026-03-25
+depends_on: []
+scope:
+  areas:
+    - skills/using-openharness/scripts/openharness_cli/commands.py
+    - skills/using-openharness/scripts/openharness_cli/repository.py
+    - skills/using-openharness/tests/openharness_cases/test_task_package_core.py
+done_criteria:
+  - "`new-task --auto-id` 在并行执行时不会生成重复 `task_id`，并且不会留下静默冲突的 task package。"
+  - "现有显式 `task_id` 用法与 `new-task task_name task_id title` 兼容路径保持不变。"
+  - 并发安全逻辑有自动化测试覆盖，至少能稳定复现旧缺陷并证明修复后通过。
+  - "`uv run python skills/using-openharness/scripts/openharness.py check-tasks` 与本包声明的测试命令通过。"
+verification:
+  required_commands:
+    - uv run pytest skills/using-openharness/tests/openharness_cases/test_task_package_core.py
+    - uv run python skills/using-openharness/scripts/openharness.py check-tasks
+  required_scenarios:
+    - "并行启动两个以上 `new-task --auto-id` 进程，确认每个新建 package 都拿到唯一 `task_id`，且结果能通过 `check-tasks`"
+  last_run_at: "2026-03-25T09:07:14Z"
+  last_run_result: "passed"
+  last_run_artifact: ""
+evidence:
+  docs:
+    - docs/archived/task-packages/new-task-auto-id-concurrency-fix/05-verification.md
+    - docs/archived/task-packages/new-task-auto-id-concurrency-fix/06-evidence.md
+  code:
+    - skills/using-openharness/scripts/openharness_cli/commands.py
+    - skills/using-openharness/scripts/openharness_cli/repository.py
+  tests:
+    - skills/using-openharness/tests/openharness_cases/test_task_package_core.py

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import contextlib
+import fcntl
 import json
 import re
 from datetime import datetime, timezone
@@ -145,12 +147,42 @@ def allocate_next_task_id(repo_root: Path, manifest: HarnessManifest | None = No
     return f"{prefix}-{next_number:0{max(width, 3)}d}"
 
 
-def create_task_package(request: TaskScaffoldRequest) -> Path:
-    manifest = load_manifest(request.repo_root)
+def _duplicate_task_id_exists(
+    repo_root: Path,
+    task_id: str,
+    manifest: HarnessManifest | None = None,
+) -> bool:
+    current_manifest = manifest or load_manifest(repo_root)
+    return any(package.task_id == task_id for package in discover_task_packages(repo_root, current_manifest))
+
+
+def _task_package_lock_path(repo_root: Path) -> Path:
+    return repo_root / ".harness" / "locks" / "new-task.lock"
+
+
+@contextlib.contextmanager
+def _task_package_creation_lock(repo_root: Path):
+    lock_path = _task_package_lock_path(repo_root)
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    with lock_path.open("w", encoding="utf-8") as handle:
+        fcntl.flock(handle.fileno(), fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+
+
+def _create_task_package_unlocked(
+    request: TaskScaffoldRequest,
+    manifest: HarnessManifest | None = None,
+) -> Path:
+    current_manifest = manifest or load_manifest(request.repo_root)
     task_name = slugify_task_name(request.task_name)
-    task_root = manifest.task_packages_root / task_name
+    task_root = current_manifest.task_packages_root / task_name
     if task_root.exists():
         raise FileExistsError(f"task package already exists: {task_root}")
+    if _duplicate_task_id_exists(request.repo_root, request.task_id, current_manifest):
+        raise ValueError(f"duplicate task id `{request.task_id}` already exists")
     skill_root = Path(__file__).resolve().parents[1]
     template_root = request.repo_root / "skills" / "using-openharness" / "references" / "templates"
     if not template_root.exists():
@@ -180,3 +212,36 @@ def create_task_package(request: TaskScaffoldRequest) -> Path:
             content = content.replace(source, target)
         (task_root / target_name).write_text(content, encoding="utf-8")
     return task_root
+
+
+def create_task_package(request: TaskScaffoldRequest) -> Path:
+    manifest = load_manifest(request.repo_root)
+    with _task_package_creation_lock(request.repo_root):
+        return _create_task_package_unlocked(request, manifest)
+
+
+def create_task_package_with_auto_id(
+    *,
+    repo_root: Path,
+    task_name: str,
+    title: str,
+    owner: str = "unassigned",
+    summary: str = "",
+    status: str = "proposed",
+) -> tuple[Path, str]:
+    manifest = load_manifest(repo_root)
+    with _task_package_creation_lock(repo_root):
+        task_id = allocate_next_task_id(repo_root, manifest)
+        task_root = _create_task_package_unlocked(
+            TaskScaffoldRequest(
+                repo_root=repo_root,
+                task_name=task_name,
+                task_id=task_id,
+                title=title,
+                owner=owner,
+                summary=summary,
+                status=status,
+            ),
+            manifest,
+        )
+    return task_root, task_id

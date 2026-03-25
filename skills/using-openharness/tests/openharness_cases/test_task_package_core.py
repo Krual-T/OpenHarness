@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import argparse
+
+import pytest
+
 from .common import (
     ACTIVE_STATUSES,
     Path,
@@ -16,6 +20,54 @@ from .common import (
     summarize_task_package,
     validate_task_package,
 )
+
+
+def _write_minimal_openharness_repo(repo_root: Path) -> None:
+    (repo_root / "skills" / "using-openharness" / "references" / "templates").mkdir(parents=True)
+    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
+        "version: 1\n"
+        "task_packages_root: docs/task-packages\n"
+        "archived_task_packages_root: docs/archived/task-packages\n"
+        "required_design_files:\n"
+        "  - README.md\n"
+        "  - STATUS.yaml\n"
+        "  - 01-requirements.md\n"
+        "  - 02-overview-design.md\n"
+        "  - 03-detailed-design.md\n"
+        "  - 05-verification.md\n"
+        "  - 06-evidence.md\n"
+        "workflow:\n"
+        "  default_status_flow:\n"
+        "    - proposed\n"
+        "    - archived\n",
+        encoding="utf-8",
+    )
+    for name, contents in {
+        "task-package.README.md": "# <DESIGN_ID> <TITLE>\n",
+        "task-package.STATUS.yaml": (
+            "id: <DESIGN_ID>\n"
+            "title: <TITLE>\n"
+            "status: <STATUS>\n"
+            "summary: <SUMMARY>\n"
+            "owner: <OWNER>\n"
+            "created_at: <DATE>\n"
+            "updated_at: <DATE>\n"
+            "done_criteria:\n"
+            "  - x\n"
+            "verification:\n"
+            "  required_commands: []\n"
+            "  required_scenarios: []\n"
+        ),
+        "task-package.01-requirements.md": "req\n",
+        "task-package.02-overview-design.md": "overview\n",
+        "task-package.03-detailed-design.md": "detailed\n",
+        "task-package.05-verification.md": "verify\n",
+        "task-package.06-evidence.md": "evidence\n",
+    }.items():
+        (repo_root / "skills" / "using-openharness" / "references" / "templates" / name).write_text(
+            contents,
+            encoding="utf-8",
+        )
 
 
 def test_manifest_points_to_task_package_roots() -> None:
@@ -106,51 +158,7 @@ def test_allocate_next_task_id_uses_existing_prefix_and_width(tmp_path: Path) ->
 
 def test_cmd_new_task_supports_auto_id(tmp_path: Path, capsys) -> None:
     repo_root = tmp_path / "repo"
-    (repo_root / "skills" / "using-openharness" / "references" / "templates").mkdir(parents=True)
-    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
-        "version: 1\n"
-        "task_packages_root: docs/task-packages\n"
-        "archived_task_packages_root: docs/archived/task-packages\n"
-        "required_design_files:\n"
-        "  - README.md\n"
-        "  - STATUS.yaml\n"
-        "  - 01-requirements.md\n"
-        "  - 02-overview-design.md\n"
-        "  - 03-detailed-design.md\n"
-        "  - 05-verification.md\n"
-        "  - 06-evidence.md\n"
-        "workflow:\n"
-        "  default_status_flow:\n"
-        "    - proposed\n"
-        "    - archived\n",
-        encoding="utf-8",
-    )
-    for name, contents in {
-        "task-package.README.md": "# <DESIGN_ID> <TITLE>\n",
-        "task-package.STATUS.yaml": (
-            "id: <DESIGN_ID>\n"
-            "title: <TITLE>\n"
-            "status: <STATUS>\n"
-            "summary: <SUMMARY>\n"
-            "owner: <OWNER>\n"
-            "created_at: <DATE>\n"
-            "updated_at: <DATE>\n"
-            "done_criteria:\n"
-            "  - x\n"
-            "verification:\n"
-            "  required_commands: []\n"
-            "  required_scenarios: []\n"
-        ),
-        "task-package.01-requirements.md": "req\n",
-        "task-package.02-overview-design.md": "overview\n",
-        "task-package.03-detailed-design.md": "detailed\n",
-        "task-package.05-verification.md": "verify\n",
-        "task-package.06-evidence.md": "evidence\n",
-    }.items():
-        (repo_root / "skills" / "using-openharness" / "references" / "templates" / name).write_text(
-            contents,
-            encoding="utf-8",
-        )
+    _write_minimal_openharness_repo(repo_root)
 
     existing = repo_root / "docs" / "task-packages" / "existing"
     existing.mkdir(parents=True)
@@ -173,7 +181,7 @@ def test_cmd_new_task_supports_auto_id(tmp_path: Path, capsys) -> None:
     )
 
     result = openharness.cmd_new_task(
-        __import__("argparse").Namespace(
+        argparse.Namespace(
             repo=str(repo_root),
             task_name="next-task",
             legacy_task_id="",
@@ -192,6 +200,92 @@ def test_cmd_new_task_supports_auto_id(tmp_path: Path, capsys) -> None:
     assert result == 0
     assert "Task id: OH-010" in captured.out
     assert "id: OH-010" in created.read_text(encoding="utf-8")
+
+
+def test_create_task_package_rejects_duplicate_task_id(tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    _write_minimal_openharness_repo(repo_root)
+
+    existing = repo_root / "docs" / "task-packages" / "existing"
+    existing.mkdir(parents=True)
+    for file_name in REQUIRED_TASK_PACKAGE_FILES:
+        (existing / file_name).write_text("# x\n", encoding="utf-8")
+    (existing / "STATUS.yaml").write_text(
+        "id: OH-010\n"
+        "title: Existing\n"
+        "status: proposed\n"
+        "summary: existing\n"
+        "owner: codex\n"
+        "created_at: 2026-03-24\n"
+        "updated_at: 2026-03-24\n"
+        "done_criteria:\n"
+        "  - x\n"
+        "verification:\n"
+        "  required_commands: []\n"
+        "  required_scenarios: []\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError, match="duplicate task id"):
+        create_task_package(
+            TaskScaffoldRequest(
+                repo_root=repo_root,
+                task_name="next-task",
+                task_id="OH-010",
+                title="Next Task",
+                owner="codex",
+                summary="duplicate id",
+            )
+        )
+
+
+def test_cmd_new_task_auto_id_rejects_duplicate_allocated_id(tmp_path: Path, capsys, monkeypatch: pytest.MonkeyPatch) -> None:
+    repo_root = tmp_path / "repo"
+    _write_minimal_openharness_repo(repo_root)
+
+    existing = repo_root / "docs" / "task-packages" / "existing"
+    existing.mkdir(parents=True)
+    for file_name in REQUIRED_TASK_PACKAGE_FILES:
+        (existing / file_name).write_text("# x\n", encoding="utf-8")
+    (existing / "STATUS.yaml").write_text(
+        "id: OH-010\n"
+        "title: Existing\n"
+        "status: proposed\n"
+        "summary: existing\n"
+        "owner: codex\n"
+        "created_at: 2026-03-24\n"
+        "updated_at: 2026-03-24\n"
+        "done_criteria:\n"
+        "  - x\n"
+        "verification:\n"
+        "  required_commands: []\n"
+        "  required_scenarios: []\n",
+        encoding="utf-8",
+    )
+
+    from openharness_cli import repository as repository_module
+
+    monkeypatch.setattr(repository_module, "allocate_next_task_id", lambda repo_root, manifest=None: "OH-010")
+
+    result = openharness.cmd_new_task(
+        argparse.Namespace(
+            repo=str(repo_root),
+            task_name="new-task",
+            legacy_task_id="",
+            legacy_title="",
+            task_id="",
+            title="New Task",
+            auto_id=True,
+            owner="codex",
+            summary="auto id",
+            status="proposed",
+        )
+    )
+
+    captured = capsys.readouterr()
+    assert result == 1
+    assert "duplicate task id" in captured.out
+    assert not (repo_root / "docs" / "task-packages" / "new-task").exists()
 
 
 def test_design_packages_validate_cleanly() -> None:
