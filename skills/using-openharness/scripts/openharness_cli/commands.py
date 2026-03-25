@@ -17,8 +17,8 @@ from .lifecycle import (
 from .models import TaskScaffoldRequest
 from .repository import (
     _utc_timestamp,
-    allocate_next_task_id,
     create_task_package,
+    create_task_package_with_auto_id,
     discover_task_packages,
     find_duplicate_task_ids,
     humanize_task_name,
@@ -123,24 +123,36 @@ def cmd_new_task(args: argparse.Namespace) -> int:
         return 1
 
     task_id = explicit_task_id or legacy_task_id
-    if auto_id:
-        task_id = allocate_next_task_id(repo_root)
-    if not task_id:
+    if not task_id and not auto_id:
         print("ERROR: new-task requires either an explicit task id or `--auto-id`")
         return 1
 
     title = explicit_title or legacy_title or humanize_task_name(args.task_name)
-    task_root = create_task_package(
-        TaskScaffoldRequest(
-            repo_root=repo_root,
-            task_name=args.task_name,
-            task_id=task_id,
-            title=title,
-            owner=args.owner,
-            summary=args.summary,
-            status=args.status,
-        )
-    )
+    try:
+        if auto_id:
+            task_root, task_id = create_task_package_with_auto_id(
+                repo_root=repo_root,
+                task_name=args.task_name,
+                title=title,
+                owner=args.owner,
+                summary=args.summary,
+                status=args.status,
+            )
+        else:
+            task_root = create_task_package(
+                TaskScaffoldRequest(
+                    repo_root=repo_root,
+                    task_name=args.task_name,
+                    task_id=task_id,
+                    title=title,
+                    owner=args.owner,
+                    summary=args.summary,
+                    status=args.status,
+                )
+            )
+    except (FileExistsError, ValueError) as exc:
+        print(f"ERROR: {exc}")
+        return 1
     print(f"Created task package: {task_root}")
     print(f"Task id: {task_id}")
     print(f"Title: {title}")
