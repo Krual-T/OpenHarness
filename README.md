@@ -50,7 +50,7 @@ That is the real harness.
 Tell Codex:
 
 ```text
-Fetch and follow instructions from https://raw.githubusercontent.com/Krual-T/OpenHarness/refs/heads/main/.codex/INSTALL.md
+Fetch and follow instructions from https://raw.githubusercontent.com/Krual-T/OpenHarness/refs/heads/main/INSTALL.codex.md
 ```
 
 Or install manually:
