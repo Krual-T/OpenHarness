@@ -21,6 +21,7 @@ Its job is to make exploration explicit:
 - record the findings that actually change architecture, boundaries, or verification strategy
 
 It does not define a second repository protocol. Repository-level stage flow, stage gates, and archive rules stay in `using-openharness`.
+Use bounded subagent discussion only when the architecture remains high-impact, uncertain, or hard to compare after the main exploration pass.
 
 ## Output
 
@@ -29,6 +30,8 @@ The primary output of this skill is:
 - `02-overview-design.md`
 
 This skill may also feed justified implementation constraints into `03-detailed-design.md`, but only after the overview is coherent enough to constrain implementation.
+`overview_ready` is the normal checkpoint once `02-overview-design.md` and its reflection pass are both coherent.
+`detailed_ready` is the normal checkpoint once `03-detailed-design.md` and its detailed reflection are concrete enough to execute.
 
 ## Process
 
@@ -42,6 +45,14 @@ This skill may also feed justified implementation constraints into `03-detailed-
 8. Run a detailed reflection pass focused on testing strategy, interfaces, migration order, and expected evidence.
 9. If important challenges are still open, keep exploring and write the challenge closure back into the package instead of force-advancing the stage.
 
+Use stage-organized role injection during exploration:
+- architecture perspective to challenge boundaries, interfaces, and main-path complexity
+- testing perspective to challenge observability, rollback clarity, and evidence shape
+- risk perspective to challenge high-impact residual risks without expanding scope indefinitely
+
+Keep a visible decision list in the task package when the exploration rejects or defers viable alternatives.
+Important challenges must be closed explicitly: accept the constraint, reject it with a reason, or defer it with a trigger and latest landing point.
+
 ## Rules
 
 - Do not skip local exploration.
@@ -52,3 +63,4 @@ This skill may also feed justified implementation constraints into `03-detailed-
 - Treat `02-overview-design.md` as the main artifact of exploration.
 - Do not treat `02-overview-design.md` or `03-detailed-design.md` as ready until the reflection pass is written down.
 - Keep challenge closure visible in the task package.
+- Do not treat a stage gate as satisfied just because the prose is longer.

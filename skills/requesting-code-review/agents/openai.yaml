@@ -1,0 +1,9 @@
+interface:
+  display_name: "Requesting Code Review"
+  short_description: "Prepare bounded review context before merge or task closure."
+  default_prompt: "Use this skill when an explicit review step is desired before merge or closure; prepare the bounded review context and act on the resulting findings."
+policy:
+  allow_implicit_invocation: false
+dependencies:
+  tools:
+    - shell

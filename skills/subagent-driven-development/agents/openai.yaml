@@ -1,0 +1,6 @@
+interface:
+  display_name: "Subagent-Driven Development"
+  short_description: "Execute a detailed task package through explicit bounded delegation."
+  default_prompt: "Use this skill only when the user explicitly wants delegated execution and the task package is already detailed enough to split into bounded subagent tasks."
+policy:
+  allow_implicit_invocation: false

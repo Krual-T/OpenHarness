@@ -1,0 +1,9 @@
+interface:
+  display_name: "Finishing a Development Branch"
+  short_description: "Close verified implementation work and choose an integration path."
+  default_prompt: "Use this skill only after implementation and verification are complete, then close the task package correctly and handle the explicit integration choice."
+policy:
+  allow_implicit_invocation: false
+dependencies:
+  tools:
+    - shell

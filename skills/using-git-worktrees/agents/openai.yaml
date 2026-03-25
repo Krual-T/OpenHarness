@@ -1,0 +1,9 @@
+interface:
+  display_name: "Using Git Worktrees"
+  short_description: "Create and validate isolated workspaces when execution needs them."
+  default_prompt: "Use this skill only when execution benefits from an isolated worktree or branch context, and verify the repository bootstrap and clean baseline inside that workspace."
+policy:
+  allow_implicit_invocation: false
+dependencies:
+  tools:
+    - shell

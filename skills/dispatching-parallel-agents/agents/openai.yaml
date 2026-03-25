@@ -1,0 +1,6 @@
+interface:
+  display_name: "Dispatching Parallel Agents"
+  short_description: "Coordinate independent subproblems through explicit parallel delegation."
+  default_prompt: "Use this skill only when the user explicitly wants parallel agent work and the task can be decomposed into independent domains without shared write scope."
+policy:
+  allow_implicit_invocation: false

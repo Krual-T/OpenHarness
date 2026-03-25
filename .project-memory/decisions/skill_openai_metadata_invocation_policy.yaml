@@ -1,0 +1,31 @@
+id: skill_openai_metadata_invocation_policy
+kind: decision
+title: Skill OpenAI metadata 采用隐式与显式触发分层
+scope:
+  repo: openharness
+  branch: main
+status: reviewed
+created_at: '2026-03-25T09:21:36Z'
+updated_at: '2026-03-25T09:21:36Z'
+confidence: 0.8
+last_verified_commit: 192d93dacdde34f0727f2d2ee50316173e533913
+intent_aliases:
+- skill openai metadata implicit policy
+tags:
+- skill
+- metadata
+- decision
+alternatives:
+- 所有技能都允许隐式触发
+consequences:
+- 每个新技能都需要显式判断触发策略并在 metadata 与测试中固定
+revisit_when:
+- 真实使用中出现明显误触发或漏触发，需要重新划分 implicit 边界时
+question: 仓库技能的 openai metadata 是否应该统一允许隐式触发
+decision: 不统一允许，核心流程技能保持 allow_implicit_invocation=true，执行型和收尾型技能按显式调用优先收敛
+rationale: 减少模糊语义误触发，同时保留 using-openharness 等核心流程技能的自动路由能力
+evidence:
+- path: docs/archived/task-packages/skill-openai-metadata-adoption/02-overview-design.md
+  kind: file
+- path: docs/archived/task-packages/skill-openai-metadata-adoption/03-detailed-design.md
+  kind: file

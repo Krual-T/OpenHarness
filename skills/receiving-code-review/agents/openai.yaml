@@ -1,0 +1,6 @@
+interface:
+  display_name: "Receiving Code Review"
+  short_description: "Evaluate review feedback rigorously before accepting or rejecting it."
+  default_prompt: "Use this skill when code review feedback arrives and needs technical validation before implementation so the response is evidence-backed rather than performative."
+policy:
+  allow_implicit_invocation: true

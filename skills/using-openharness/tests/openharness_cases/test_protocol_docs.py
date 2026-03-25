@@ -1,6 +1,51 @@
 from __future__ import annotations
 
+import yaml
+
 from .common import REPO_ROOT, SKILL_ROOT, openharness
+
+
+LIVE_REPO_SKILLS = [
+    "brainstorming",
+    "dispatching-parallel-agents",
+    "exploring-solution-space",
+    "finishing-a-development-branch",
+    "project-memory",
+    "receiving-code-review",
+    "requesting-code-review",
+    "subagent-driven-development",
+    "systematic-debugging",
+    "test-driven-development",
+    "using-git-worktrees",
+    "using-openharness",
+    "verification-before-completion",
+]
+
+IMPLICIT_SKILLS = {
+    "brainstorming",
+    "exploring-solution-space",
+    "project-memory",
+    "receiving-code-review",
+    "systematic-debugging",
+    "test-driven-development",
+    "using-openharness",
+    "verification-before-completion",
+}
+
+EXPLICIT_ONLY_SKILLS = {
+    "dispatching-parallel-agents",
+    "finishing-a-development-branch",
+    "requesting-code-review",
+    "subagent-driven-development",
+    "using-git-worktrees",
+}
+
+
+def _load_skill_metadata(skill_name: str) -> dict:
+    metadata_path = REPO_ROOT / "skills" / skill_name / "agents" / "openai.yaml"
+    data = yaml.safe_load(metadata_path.read_text(encoding="utf-8"))
+    assert isinstance(data, dict)
+    return data
 
 
 def test_openharness_skill_owns_supporting_scripts_and_templates() -> None:
@@ -12,6 +57,49 @@ def test_openharness_skill_owns_supporting_scripts_and_templates() -> None:
     assert (skill_root / "references" / "templates" / "task-package.README.md").exists()
     assert (skill_root / "references" / "templates" / "task-package.STATUS.yaml").exists()
     assert not (skill_root / "references" / "templates" / "task-package.04-implementation-plan.md").exists()
+
+
+def test_live_repo_skills_all_ship_openai_metadata() -> None:
+    for skill_name in LIVE_REPO_SKILLS:
+        metadata_path = REPO_ROOT / "skills" / skill_name / "agents" / "openai.yaml"
+        assert metadata_path.exists(), f"{skill_name} is missing agents/openai.yaml"
+
+
+def test_skill_openai_metadata_exposes_interface_fields() -> None:
+    for skill_name in LIVE_REPO_SKILLS:
+        metadata = _load_skill_metadata(skill_name)
+        interface = metadata.get("interface")
+        assert isinstance(interface, dict), f"{skill_name} metadata must define interface"
+        assert interface.get("display_name"), f"{skill_name} metadata must define interface.display_name"
+        assert interface.get("short_description"), f"{skill_name} metadata must define interface.short_description"
+        assert interface.get("default_prompt"), f"{skill_name} metadata must define interface.default_prompt"
+
+
+def test_skill_openai_metadata_declares_implicit_invocation_policy() -> None:
+    for skill_name in LIVE_REPO_SKILLS:
+        metadata = _load_skill_metadata(skill_name)
+        policy = metadata.get("policy")
+        assert isinstance(policy, dict), f"{skill_name} metadata must define policy"
+        assert isinstance(
+            policy.get("allow_implicit_invocation"), bool
+        ), f"{skill_name} metadata must define boolean policy.allow_implicit_invocation"
+
+
+def test_skill_openai_metadata_uses_repo_implicit_invocation_split() -> None:
+    for skill_name in IMPLICIT_SKILLS:
+        metadata = _load_skill_metadata(skill_name)
+        assert metadata["policy"]["allow_implicit_invocation"] is True
+
+    for skill_name in EXPLICIT_ONLY_SKILLS:
+        metadata = _load_skill_metadata(skill_name)
+        assert metadata["policy"]["allow_implicit_invocation"] is False
+
+
+def test_project_memory_metadata_declares_shell_dependency() -> None:
+    metadata = _load_skill_metadata("project-memory")
+    dependencies = metadata.get("dependencies")
+    assert isinstance(dependencies, dict)
+    assert dependencies.get("tools") == ["shell"]
 
 
 def test_openharness_single_cli_supports_all_subcommands() -> None:
