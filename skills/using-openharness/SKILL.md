@@ -79,10 +79,9 @@ Repository entry-skill responsibilities live here:
 
 ## Entry Protocol
 
-1. Read `AGENTS.md` first. Treat it as the repository map, not as the only fact source.
-2. Read `references/manifest.yaml` to discover the required task-package structure.
-3. Run `uv run python skills/using-openharness/scripts/openharness.py bootstrap` to list active task packages.
-4. Open the chosen package in this order:
+1. Read `references/manifest.yaml` to discover the required task-package structure.
+2. Run `uv run python skills/using-openharness/scripts/openharness.py bootstrap` to list active task packages.
+3. Open the chosen package in this order:
     - `README.md`
     - `STATUS.yaml`
     - `01-requirements.md`
@@ -90,7 +89,7 @@ Repository entry-skill responsibilities live here:
     - `03-detailed-design.md`
     - `05-verification.md`
     - `06-evidence.md`
-5. Implement only after the task package is internally consistent enough to act on.
+4. Implement only after the task package is internally consistent enough to act on.
 
 When you enter a new workflow stage, explicitly tell the user:
 
