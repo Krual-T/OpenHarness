@@ -1,0 +1,6 @@
+interface:
+  display_name: "Exploring Solution Space"
+  short_description: "Explore local and external constraints before locking architecture."
+  default_prompt: "Use this skill after requirements are clear to inspect the repository, research external references when needed, and write architecture conclusions into the active task package."
+policy:
+  allow_implicit_invocation: true

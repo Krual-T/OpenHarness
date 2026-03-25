@@ -1,0 +1,6 @@
+interface:
+  display_name: "Brainstorming"
+  short_description: "Converge requirements and scope before exploration or implementation."
+  default_prompt: "Use this skill to converge requirements, compare viable approaches, and write executable outcomes into the active task package before exploration or implementation."
+policy:
+  allow_implicit_invocation: true

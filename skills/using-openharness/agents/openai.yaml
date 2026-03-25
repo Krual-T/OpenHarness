@@ -1,0 +1,9 @@
+interface:
+  display_name: "Using OpenHarness"
+  short_description: "Route repository work through task-package protocol and skill selection."
+  default_prompt: "Use this skill first for repository workflow, task-package protocol, skill routing, and harness verification so work follows the repository's documented stages."
+policy:
+  allow_implicit_invocation: true
+dependencies:
+  tools:
+    - shell
