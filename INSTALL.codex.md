@@ -16,12 +16,12 @@ Before running any install command, ask the user which target directory should h
 
    Example result layout:
 
-   - OpenHarness clone: `<target dir>/openharness`
+   - OpenHarness clone: `.codex/skill-hub/openharness`
    - Skill link: `<target dir>/.agents/skills/openharness`
 
 2. **Clone the OpenHarness repository into the chosen target directory:**
    ```bash
-   git clone https://github.com/Krual-T/OpenHarness.git <target dir>/openharness
+   git clone https://github.com/Krual-T/OpenHarness.git .codex/skill-hub/openharness
    ```
 
 3. **Create the skills symlink inside the chosen target directory:**
@@ -49,7 +49,7 @@ You should see a symlink (or junction on Windows) pointing to your OpenHarness s
 ## Updating
 
 ```bash
-cd <target dir>/openharness && git pull
+cd .codex/skill-hub/openharness && git pull
 ```
 
 Skills update instantly through the symlink.
@@ -60,7 +60,7 @@ Skills update instantly through the symlink.
 rm <target dir>/.agents/skills/openharness
 ```
 
-Optionally delete the clone: `rm -rf <target dir>/openharness`.
+Optionally delete the clone: `rm -rf .codex/skill-hub/openharness`.
 
 ## Attribution
 
