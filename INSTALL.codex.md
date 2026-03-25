@@ -16,24 +16,24 @@ Before executing any installation commands, please ask the user to specify the t
 
    Example result layout:
 
-   - OpenHarness clone: `.codex/skill-hub/openharness`
+   - OpenHarness clone: `~/.agents/skill-hub/openharness`
    - Skill link: `<target dir>/.agents/skills/openharness`
 
 2. **Clone the OpenHarness repository into the chosen target directory:**
    ```bash
-   git clone https://github.com/Krual-T/OpenHarness.git .codex/skill-hub/openharness
+   git clone https://github.com/Krual-T/OpenHarness.git ~/.agents/skill-hub/openharness
    ```
 
 3. **Create the skills symlink inside the chosen target directory:**
    ```bash
    mkdir -p <target dir>/.agents/skills
-   ln -s <target dir>/openharness/skills <target dir>/.agents/skills/openharness
+   ln -s ~/.agents/skill-hub/openharness/skills <target dir>/.agents/skills/openharness
    ```
 
    **Windows (PowerShell):**
    ```powershell
    New-Item -ItemType Directory -Force -Path "<target dir>\\.agents\\skills"
-   cmd /c mklink /J "<target dir>\\.agents\\skills\\openharness" "<target dir>\\openharness\\skills"
+   cmd /c mklink /J "<target dir>\\.agents\\skills\\openharness" "~\\.agents\\skill-hub\\openharness\\skills"
    ```
 
 4. **Restart Codex** (quit and relaunch the CLI) to discover the skills.
@@ -60,7 +60,7 @@ Skills update instantly through the symlink.
 rm <target dir>/.agents/skills/openharness
 ```
 
-Optionally delete the clone: `rm -rf .codex/skill-hub/openharness`.
+Optionally delete the clone: `rm -rf ~/.agents/skill-hub/openharness`.
 
 ## Attribution
 
