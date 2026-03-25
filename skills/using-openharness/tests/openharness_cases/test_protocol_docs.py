@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
 import yaml
 
 from .common import REPO_ROOT, SKILL_ROOT, openharness
@@ -153,8 +154,18 @@ def test_openharness_script_uses_task_package_naming_in_public_symbols() -> None
 def test_task_package_commands_use_current_handlers_only() -> None:
     parser = openharness.build_parser()
     assert parser.parse_args(["check-tasks"]).handler == openharness.cmd_check_tasks
-    assert parser.parse_args(["new-task", "name", "OH-999", "Title"]).handler == openharness.cmd_new_task
+    assert (
+        parser.parse_args(["new-task", "name", "--task-id", "OH-999", "--title", "Title"]).handler
+        == openharness.cmd_new_task
+    )
     assert parser.parse_args(["transition", "name", "requirements_ready"]).handler == openharness.cmd_transition
+
+
+def test_new_task_rejects_legacy_positional_task_id_and_title() -> None:
+    parser = openharness.build_parser()
+
+    with pytest.raises(SystemExit):
+        parser.parse_args(["new-task", "name", "OH-999", "Title"])
 
 
 def test_openharness_skill_is_repo_entry_skill() -> None:

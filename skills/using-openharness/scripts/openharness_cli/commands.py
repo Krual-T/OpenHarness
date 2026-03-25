@@ -112,22 +112,20 @@ def cmd_check_tasks(args: argparse.Namespace) -> int:
 
 def cmd_new_task(args: argparse.Namespace) -> int:
     repo_root = Path(args.repo).resolve()
-    legacy_task_id = str(getattr(args, "legacy_task_id", "") or "").strip()
-    legacy_title = str(getattr(args, "legacy_title", "") or "").strip()
     explicit_task_id = str(getattr(args, "task_id", "") or "").strip()
     explicit_title = str(getattr(args, "title", "") or "").strip()
     auto_id = bool(getattr(args, "auto_id", False))
 
-    if auto_id and (explicit_task_id or legacy_task_id):
+    if auto_id and explicit_task_id:
         print("ERROR: `--auto-id` cannot be combined with an explicit task id")
         return 1
 
-    task_id = explicit_task_id or legacy_task_id
+    task_id = explicit_task_id
     if not task_id and not auto_id:
         print("ERROR: new-task requires either an explicit task id or `--auto-id`")
         return 1
 
-    title = explicit_title or legacy_title or humanize_task_name(args.task_name)
+    title = explicit_title or humanize_task_name(args.task_name)
     try:
         if auto_id:
             task_root, task_id = create_task_package_with_auto_id(

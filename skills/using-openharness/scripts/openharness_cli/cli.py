@@ -32,8 +32,6 @@ def build_parser(
         help="Create a new task package from harness templates.",
     )
     new_design_parser.add_argument("task_name", help="Directory slug or human-readable task name")
-    new_design_parser.add_argument("legacy_task_id", nargs="?", help="Stable task id, such as OR-016")
-    new_design_parser.add_argument("legacy_title", nargs="?", help="Human-readable task title")
     new_design_parser.add_argument("--task-id", default="", help="Stable task id; omit with `--auto-id` to allocate one")
     new_design_parser.add_argument("--title", default="", help="Human-readable task title")
     new_design_parser.add_argument("--auto-id", action="store_true", help="Allocate the next stable task id automatically")

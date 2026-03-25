@@ -184,8 +184,6 @@ def test_cmd_new_task_supports_auto_id(tmp_path: Path, capsys) -> None:
         argparse.Namespace(
             repo=str(repo_root),
             task_name="next-task",
-            legacy_task_id="",
-            legacy_title="",
             task_id="",
             title="Next Task",
             auto_id=True,
@@ -271,8 +269,6 @@ def test_cmd_new_task_auto_id_rejects_duplicate_allocated_id(tmp_path: Path, cap
         argparse.Namespace(
             repo=str(repo_root),
             task_name="new-task",
-            legacy_task_id="",
-            legacy_title="",
             task_id="",
             title="New Task",
             auto_id=True,
@@ -286,6 +282,28 @@ def test_cmd_new_task_auto_id_rejects_duplicate_allocated_id(tmp_path: Path, cap
     assert result == 1
     assert "duplicate task id" in captured.out
     assert not (repo_root / "docs" / "task-packages" / "new-task").exists()
+
+
+def test_cmd_new_task_requires_flag_based_task_id_when_not_auto_id(tmp_path: Path, capsys) -> None:
+    repo_root = tmp_path / "repo"
+    _write_minimal_openharness_repo(repo_root)
+
+    result = openharness.cmd_new_task(
+        argparse.Namespace(
+            repo=str(repo_root),
+            task_name="new-task",
+            task_id="",
+            title="New Task",
+            auto_id=False,
+            owner="codex",
+            summary="manual id required",
+            status="proposed",
+        )
+    )
+
+    captured = capsys.readouterr()
+    assert result == 1
+    assert "requires either an explicit task id or `--auto-id`" in captured.out
 
 
 def test_design_packages_validate_cleanly() -> None:

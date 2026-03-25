@@ -1,0 +1,45 @@
+id: OH-026
+title: Remove legacy new-task positional compatibility
+# Default flow: proposed -> requirements_ready -> overview_ready -> detailed_ready -> in_progress -> verifying -> archived
+# requirements_ready -> overview_ready -> detailed_ready are design-readiness checkpoints; later statuses imply earlier checkpoints are already materially complete.
+# `detailed_ready` is the normal resting point for design-complete work before implementation.
+# `archived` means the task package is implemented, verified, and no longer active.
+status: archived
+summary: Remove legacy positional argument compatibility from openharness new-task.
+owner: unassigned
+created_at: 2026-03-25
+updated_at: 2026-03-25
+depends_on: []
+scope:
+  areas:
+    - CLI
+    - protocol tests
+entrypoints:
+  - docs/archived/task-packages/remove-legacy-new-task-args/README.md
+  - docs/archived/task-packages/remove-legacy-new-task-args/01-requirements.md
+  - docs/archived/task-packages/remove-legacy-new-task-args/02-overview-design.md
+  - docs/archived/task-packages/remove-legacy-new-task-args/03-detailed-design.md
+done_criteria:
+  - new-task no longer accepts legacy positional task id and title arguments.
+  - Tests assert the flag-based path succeeds and the legacy positional path fails.
+  - Required verification commands pass and results are recorded.
+verification:
+  required_commands:
+    - uv run pytest skills/using-openharness/tests/test_openharness.py -k "new_task or legacy_positional or task_package_commands_use_current_handlers_only"
+    - uv run pytest skills/using-openharness/tests/test_openharness.py
+    - uv run python skills/using-openharness/scripts/openharness.py check-tasks
+  required_scenarios:
+    - Verify legacy positional new-task invocations are rejected at parse time.
+  last_run_at: "2026-03-25T10:30:10Z"
+  last_run_result: passed
+  last_run_artifact: docs/archived/task-packages/remove-legacy-new-task-args/05-verification.md
+evidence:
+  docs:
+    - docs/archived/task-packages/remove-legacy-new-task-args/05-verification.md
+    - docs/archived/task-packages/remove-legacy-new-task-args/06-evidence.md
+  code:
+    - skills/using-openharness/scripts/openharness_cli/cli.py
+    - skills/using-openharness/scripts/openharness_cli/commands.py
+  tests:
+    - skills/using-openharness/tests/openharness_cases/test_protocol_docs.py
+    - skills/using-openharness/tests/openharness_cases/test_task_package_core.py
