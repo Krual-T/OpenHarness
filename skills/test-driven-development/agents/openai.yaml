@@ -4,6 +4,3 @@ interface:
   default_prompt: "Use this skill before implementing a feature, bugfix, or behavior change so the work follows a red-green-refactor loop with a verified failing test first."
 policy:
   allow_implicit_invocation: true
-dependencies:
-  tools:
-    - shell

@@ -4,6 +4,3 @@ interface:
   default_prompt: "Use this skill to query, save, archive, audit, and validate repo-local workflows, facts, and decisions under .project-memory/. Query before re-discovering known project knowledge, trust only reusable results that survive the default guardrails, and archive incorrect or superseded objects instead of deleting them silently."
 policy:
   allow_implicit_invocation: true
-dependencies:
-  tools:
-    - shell

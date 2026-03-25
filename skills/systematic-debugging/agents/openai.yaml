@@ -4,6 +4,3 @@ interface:
   default_prompt: "Use this skill when a bug, failure, regression, or unexplained behavior appears so root cause investigation happens before any fix is attempted."
 policy:
   allow_implicit_invocation: true
-dependencies:
-  tools:
-    - shell

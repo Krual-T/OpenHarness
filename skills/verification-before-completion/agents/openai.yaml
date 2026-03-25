@@ -4,6 +4,3 @@ interface:
   default_prompt: "Use this skill before claiming work is complete, fixed, or passing so the strongest available verification path is executed and read first."
 policy:
   allow_implicit_invocation: true
-dependencies:
-  tools:
-    - shell

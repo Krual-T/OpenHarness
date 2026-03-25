@@ -97,11 +97,30 @@ def test_skill_openai_metadata_uses_repo_implicit_invocation_split() -> None:
         assert metadata["policy"]["allow_implicit_invocation"] is False
 
 
-def test_project_memory_metadata_declares_shell_dependency() -> None:
+def test_project_memory_metadata_does_not_declare_unofficial_shell_dependency() -> None:
     metadata = _load_skill_metadata("project-memory")
-    dependencies = metadata.get("dependencies")
-    assert isinstance(dependencies, dict)
-    assert dependencies.get("tools") == ["shell"]
+    assert "dependencies" not in metadata
+
+
+def test_skill_openai_metadata_uses_official_tool_dependency_shape() -> None:
+    for skill_name in LIVE_REPO_SKILLS:
+        metadata = _load_skill_metadata(skill_name)
+        dependencies = metadata.get("dependencies")
+        if dependencies is None:
+            continue
+
+        assert isinstance(dependencies, dict), f"{skill_name} dependencies must be a mapping"
+        tools = dependencies.get("tools")
+        assert isinstance(tools, list), f"{skill_name} dependencies.tools must be a list"
+
+        for tool in tools:
+            assert isinstance(tool, dict), f"{skill_name} tool dependency must be an object"
+            assert tool.get("type") == "mcp", (
+                f"{skill_name} only uses officially documented MCP dependencies"
+            )
+            assert isinstance(tool.get("value"), str) and tool["value"], (
+                f"{skill_name} MCP dependency must define non-empty value"
+            )
 
 
 def test_openharness_single_cli_supports_all_subcommands() -> None:
