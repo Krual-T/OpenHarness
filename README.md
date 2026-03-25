@@ -57,8 +57,8 @@ Or install manually:
 
 ```bash
 git clone https://github.com/Krual-T/OpenHarness.git ~/.codex/openharness
-mkdir -p ~/.codex/skills
-ln -s ~/.codex/openharness/skills ~/.codex/skills/openharness
+mkdir -p ~/.agents/skills
+ln -s ~/.codex/openharness/skills ~/.agents/skills/openharness
 ```
 
 Then restart Codex.
