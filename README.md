@@ -56,10 +56,12 @@ Fetch and follow instructions from https://raw.githubusercontent.com/Krual-T/Ope
 Or install manually:
 
 ```bash
-git clone https://github.com/Krual-T/OpenHarness.git ~/.codex/openharness
-mkdir -p ~/.agents/skills
-ln -s ~/.codex/openharness/skills ~/.agents/skills/openharness
+git clone https://github.com/Krual-T/OpenHarness.git <target dir>/openharness
+mkdir -p <target dir>/.agents/skills
+ln -s <target dir>/openharness/skills <target dir>/.agents/skills/openharness
 ```
+
+Codex should ask you which `<target dir>` to use before running those commands. The expected skill location is `<target dir>/.agents/skills/openharness`.
 
 Then restart Codex.
 
