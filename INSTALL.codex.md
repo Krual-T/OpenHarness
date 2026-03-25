@@ -1,6 +1,8 @@
 # Installing OpenHarness for Codex
 
-Enable OpenHarness skills in Codex via native skill discovery. Just clone and symlink.
+Enable OpenHarness skills in Codex via native skill discovery.
+
+Before running any install command, ask the user which target directory should hold the OpenHarness clone and skill link. Do not default to `~` or any home-directory path unless the user explicitly chooses it.
 
 ## Prerequisites
 
@@ -8,29 +10,38 @@ Enable OpenHarness skills in Codex via native skill discovery. Just clone and sy
 
 ## Installation
 
-1. **Clone the OpenHarness repository:**
+1. **Ask for the target directory first.**
+
+   Confirm a single `<target dir>` with the user before making filesystem changes.
+
+   Example result layout:
+
+   - OpenHarness clone: `<target dir>/openharness`
+   - Skill link: `<target dir>/.agents/skills/openharness`
+
+2. **Clone the OpenHarness repository into the chosen target directory:**
    ```bash
-   git clone https://github.com/Krual-T/OpenHarness.git ~/.codex/openharness
+   git clone https://github.com/Krual-T/OpenHarness.git <target dir>/openharness
    ```
 
-2. **Create the skills symlink:**
+3. **Create the skills symlink inside the chosen target directory:**
    ```bash
-   mkdir -p ~/.codex/skills
-   ln -s ~/.codex/openharness/skills ~/.agents/skills/openharness
+   mkdir -p <target dir>/.agents/skills
+   ln -s <target dir>/openharness/skills <target dir>/.agents/skills/openharness
    ```
 
    **Windows (PowerShell):**
    ```powershell
-   New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.codex\skills"
-   cmd /c mklink /J "$env:USERPROFILE\.agents\skills\openharness" "$env:USERPROFILE\.codex\openharness\skills"
+   New-Item -ItemType Directory -Force -Path "<target dir>\\.agents\\skills"
+   cmd /c mklink /J "<target dir>\\.agents\\skills\\openharness" "<target dir>\\openharness\\skills"
    ```
 
-3. **Restart Codex** (quit and relaunch the CLI) to discover the skills.
+4. **Restart Codex** (quit and relaunch the CLI) to discover the skills.
 
 ## Verify
 
 ```bash
-ls -la ~/.agents/skills/openharness
+ls -la <target dir>/.agents/skills/openharness
 ```
 
 You should see a symlink (or junction on Windows) pointing to your OpenHarness skills directory.
@@ -38,7 +49,7 @@ You should see a symlink (or junction on Windows) pointing to your OpenHarness s
 ## Updating
 
 ```bash
-cd ~/.codex/openharness && git pull
+cd <target dir>/openharness && git pull
 ```
 
 Skills update instantly through the symlink.
@@ -46,10 +57,10 @@ Skills update instantly through the symlink.
 ## Uninstalling
 
 ```bash
-rm ~/.agents/skills/openharness
+rm <target dir>/.agents/skills/openharness
 ```
 
-Optionally delete the clone: `rm -rf ~/.codex/openharness`.
+Optionally delete the clone: `rm -rf <target dir>/openharness`.
 
 ## Attribution
 
