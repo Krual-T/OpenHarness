@@ -2,7 +2,7 @@
 
 Enable OpenHarness skills in Codex via native skill discovery.
 
-Before executing any installation commands, please ask the user to specify the target directory where the OpenHarness skill links should be placed. Unless explicitly specified by the user, do not default the skill links to `~` or any home directory path.
+Before executing any installation commands, prompt the user to specify the target directory for the OpenHarness skill symlink. (Note: This applies only to the symlink directory; the cloned project is stored by default in `~/.agents/skill-hub`.)
 
 ## Prerequisites
 
