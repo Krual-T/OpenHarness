@@ -81,7 +81,7 @@ Repository entry-skill responsibilities live here:
 
 1. Read `AGENTS.md` first. Treat it as the repository map, not as the only fact source.
 2. Read `references/manifest.yaml` to discover the required task-package structure.
-3. Run `scripts/openharness.py bootstrap` to list active task packages.
+3. Run `uv run python skills/using-openharness/scripts/openharness.py bootstrap` to list active task packages.
 4. Open the chosen package in this order:
     - `README.md`
     - `STATUS.yaml`
@@ -233,11 +233,11 @@ Do not advance a stage while material challenges still float without a recorded 
 
 ## Verification
 
-- Run `scripts/openharness.py check-tasks` before claiming completion.
-- Run `scripts/openharness.py new-task <task_name> <task_id> <title>` to scaffold a new task package.
-- Run `scripts/openharness.py verify <task-name-or-id>` when a package declares required commands.
+- Run `uv run python skills/using-openharness/scripts/openharness.py check-tasks` before claiming completion.
+- Run `uv run python skills/using-openharness/scripts/openharness.py new-task <task_name> <task_id> <title>` to scaffold a new task package.
+- Run `uv run python skills/using-openharness/scripts/openharness.py verify <task-name-or-id>` when a package declares required commands.
 - `openharness.py` is the single harness CLI; use its subcommands instead of introducing parallel wrapper scripts.
-- For Python-first repositories, treat `uv run pytest` as the default minimum automated verification floor unless the repository already has a stronger automated path.
+- For Python-first repositories, prefer `uv run ...` commands unless the repository documents a stronger automated path.
 - Do not treat that Python floor as full runtime evidence; project-specific runtime verification still belongs in task packages.
 - If the package adds new reusable project knowledge, update `.project-memory/` in the same turn.
 - If a completed package is archived, rerun harness validation after the move and confirm it no longer appears in the default `bootstrap` active-package list.

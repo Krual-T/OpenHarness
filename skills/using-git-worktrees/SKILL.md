@@ -11,13 +11,9 @@ description: Use when starting implementation work that needs isolation from the
 - Primary stage: implementation execution
 - Trigger: use when execution needs an isolated workspace or branch context
 
-## Overview
+Git worktrees create isolated workspaces that share one repository history. Use them when isolation is genuinely helpful, not as a default ritual.
 
-Git worktrees create isolated workspaces sharing the same repository, allowing work on multiple branches simultaneously without switching.
-
-**Core principle:** Systematic directory selection + safety verification = reliable isolation.
-
-**Announce at start:** "I'm using the using-git-worktrees skill to set up an isolated workspace."
+**Core principle:** choose the location deliberately, verify ignore safety first, then run the repository's documented bootstrap and verification path.
 
 ## Directory Selection Process
 
@@ -26,57 +22,35 @@ Follow this priority order:
 ### 1. Check Existing Directories
 
 ```bash
-# Check in priority order
-ls -d .worktrees 2>/dev/null     # Preferred (hidden)
-ls -d worktrees 2>/dev/null      # Alternative
+ls -d .worktrees 2>/dev/null
+ls -d worktrees 2>/dev/null
 ```
 
-**If found:** Use that directory. If both exist, `.worktrees` wins.
+If both exist, `.worktrees` wins.
 
-### 2. Check CLAUDE.md
+### 2. Check Repository Guidance
 
-```bash
-grep -i "worktree.*director" CLAUDE.md 2>/dev/null
-```
-
-**If preference specified:** Use it without asking.
+- Read `AGENTS.md`.
+- Read the active task package if it mentions isolation or branch strategy.
+- If the repository already defines a preferred location, follow it.
 
 ### 3. Ask User
 
-If no directory exists and no CLAUDE.md preference:
-
-```
-No worktree directory found. Where should I create worktrees?
-
-1. .worktrees/ (project-local, hidden)
-2. ~/.config/openharness/worktrees/<project-name>/ (global location)
-
-Which would you prefer?
-```
+If no directory exists and repository guidance does not define a preference, ask where the worktree should live.
 
 ## Safety Verification
 
-### For Project-Local Directories (.worktrees or worktrees)
-
-**MUST verify directory is ignored before creating worktree:**
+For project-local directories (`.worktrees` or `worktrees`), verify the directory is ignored before creating a worktree:
 
 ```bash
-# Check if directory is ignored (respects local, global, and system gitignore)
 git check-ignore -q .worktrees 2>/dev/null || git check-ignore -q worktrees 2>/dev/null
 ```
 
-**If NOT ignored:**
+If the directory is not ignored:
 
-Per Jesse's rule "Fix broken things immediately":
-1. Add appropriate line to .gitignore
-2. Commit the change
-3. Proceed with worktree creation
-
-**Why critical:** Prevents accidentally committing worktree contents to repository.
-
-### For Global Directory (~/.config/openharness/worktrees)
-
-No .gitignore verification needed - outside project entirely.
+1. Add the ignore rule.
+2. Re-check ignore status.
+3. Only then create the worktree.
 
 ## Creation Steps
 
@@ -89,136 +63,29 @@ project=$(basename "$(git rev-parse --show-toplevel)")
 ### 2. Create Worktree
 
 ```bash
-# Determine full path
-case $LOCATION in
-  .worktrees|worktrees)
-    path="$LOCATION/$BRANCH_NAME"
-    ;;
-  ~/.config/openharness/worktrees/*)
-    path="~/.config/openharness/worktrees/$project/$BRANCH_NAME"
-    ;;
-esac
-
-# Create worktree with new branch
 git worktree add "$path" -b "$BRANCH_NAME"
 cd "$path"
 ```
 
 ### 3. Run Project Setup
 
-Auto-detect and run appropriate setup:
-
-```bash
-# Node.js
-if [ -f package.json ]; then npm install; fi
-
-# Rust
-if [ -f Cargo.toml ]; then cargo build; fi
-
-# Python
-if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-if [ -f pyproject.toml ]; then poetry install; fi
-
-# Go
-if [ -f go.mod ]; then go mod download; fi
-```
+Run the repository's documented bootstrap path. For Python repositories in this workspace, prefer the `uv run ...` commands documented in `AGENTS.md` or the task package instead of assuming `pip` or `poetry`.
 
 ### 4. Verify Clean Baseline
 
-Run tests to ensure worktree starts clean:
+Run the repository's verification command before starting implementation.
 
-```bash
-# Examples - use project-appropriate command
-npm test
-cargo test
-pytest
-go test ./...
-```
-
-**If tests fail:** Report failures, ask whether to proceed or investigate.
-
-**If tests pass:** Report ready.
-
-### 5. Report Location
-
-```
-Worktree ready at <full-path>
-Tests passing (<N> tests, 0 failures)
-Ready to implement <feature-name>
-```
-
-## Quick Reference
-
-| Situation | Action |
-|-----------|--------|
-| `.worktrees/` exists | Use it (verify ignored) |
-| `worktrees/` exists | Use it (verify ignored) |
-| Both exist | Use `.worktrees/` |
-| Neither exists | Check CLAUDE.md → Ask user |
-| Directory not ignored | Add to .gitignore + commit |
-| Tests fail during baseline | Report failures + ask |
-| No package.json/Cargo.toml | Skip dependency install |
+If the baseline fails, report that failure before continuing so new breakage is not mixed with old breakage.
 
 ## Common Mistakes
 
-### Skipping ignore verification
-
-- **Problem:** Worktree contents get tracked, pollute git status
-- **Fix:** Always use `git check-ignore` before creating project-local worktree
-
-### Assuming directory location
-
-- **Problem:** Creates inconsistency, violates project conventions
-- **Fix:** Follow priority: existing > CLAUDE.md > ask
-
-### Proceeding with failing tests
-
-- **Problem:** Can't distinguish new bugs from pre-existing issues
-- **Fix:** Report failures, get explicit permission to proceed
-
-### Hardcoding setup commands
-
-- **Problem:** Breaks on projects using different tools
-- **Fix:** Auto-detect from project files (package.json, etc.)
-
-## Example Workflow
-
-```
-You: I'm using the using-git-worktrees skill to set up an isolated workspace.
-
-[Check .worktrees/ - exists]
-[Verify ignored - git check-ignore confirms .worktrees/ is ignored]
-[Create worktree: git worktree add .worktrees/auth -b feature/auth]
-[Run npm install]
-[Run npm test - 47 passing]
-
-Worktree ready at /Users/jesse/myproject/.worktrees/auth
-Tests passing (47 tests, 0 failures)
-Ready to implement auth feature
-```
-
-## Red Flags
-
-**Never:**
-- Create worktree without verifying it's ignored (project-local)
-- Skip baseline test verification
-- Proceed with failing tests without asking
-- Assume directory location when ambiguous
-- Skip CLAUDE.md check
-
-**Always:**
-- Follow directory priority: existing > CLAUDE.md > ask
-- Verify directory is ignored for project-local
-- Auto-detect and run project setup
-- Verify clean test baseline
+- Creating a project-local worktree before verifying the directory is ignored.
+- Assuming a directory location without checking repository guidance.
+- Assuming an installer or setup tool when the repository already documents its own workflow.
+- Starting implementation on top of a failing baseline without recording it.
 
 ## Integration
 
-**Called by:**
-- **using-openharness** - Repository entry skill that decides whether isolated implementation work should start
-- **brainstorming** - Use only after the task package is detailed enough to implement
-- **subagent-driven-development** - REQUIRED before executing any tasks
-- Any skill needing isolated workspace
-
-**Pairs with:**
-- **finishing-a-development-branch** - REQUIRED for cleanup after work complete
+- `using-openharness` decides whether isolated execution is warranted.
+- `subagent-driven-development` may use this skill when the user explicitly wants delegated work in an isolated workspace.
+- `finishing-a-development-branch` handles cleanup once the work is complete.
