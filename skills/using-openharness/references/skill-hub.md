@@ -130,9 +130,9 @@ The live workflow also uses stage-organized role injection:
 - When a matching runtime capability exists, `using-openharness` should reuse the linked helper guidance.
 - When the runtime surface is mapped but helper coverage is missing, add one new narrow helper instead of hiding the gap inside task-local notes.
 - When no matching capability exists, the agent should open a bootstrap package before claiming supported runtime verification on that surface.
-- The shared contract lives in `references/runtime-capability-contract.md`.
-- The project-facing map guidance lives in `references/project-runtime-surface-map.md`.
-- The focused helper-addition workflow lives in `references/adding-project-runtime-helper.md`.
+- The shared contract lives in `runtime-capability-contract.md`.
+- The project-facing map guidance lives in `project-runtime-surface-map.md`.
+- The focused helper-addition workflow lives in `adding-project-runtime-helper.md`.
 
 ## Current Cleanup Rule
 - Prefer `using-openharness` when referring to the concrete repository entry skill.

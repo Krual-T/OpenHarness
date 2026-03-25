@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import yaml
 
 from .common import REPO_ROOT, SKILL_ROOT, openharness
@@ -236,6 +238,47 @@ def test_readme_describes_plug_and_play_harness_and_python_pytest_floor() -> Non
     assert "Python-first" in readme
     assert "`uv run pytest` is the default minimum automated verification floor" in readme
     assert "project-specific runtime verification" in readme
+
+
+def test_runtime_reference_docs_use_existing_sibling_paths() -> None:
+    expected_paths = {
+        REPO_ROOT / "skills" / "using-openharness" / "references" / "runtime-capability-contract.md": [
+            "project-runtime-surface-map.md",
+            "adding-project-runtime-helper.md",
+        ],
+        REPO_ROOT / "skills" / "using-openharness" / "references" / "project-runtime-surface-map.md": [
+            "adding-project-runtime-helper.md",
+        ],
+        REPO_ROOT / "skills" / "using-openharness" / "references" / "skill-hub.md": [
+            "runtime-capability-contract.md",
+            "project-runtime-surface-map.md",
+            "adding-project-runtime-helper.md",
+        ],
+    }
+
+    for doc_path, relative_targets in expected_paths.items():
+        text = doc_path.read_text(encoding="utf-8")
+        for relative_target in relative_targets:
+            assert f"`{relative_target}`" in text, f"{doc_path} must reference {relative_target}"
+            resolved_path = doc_path.parent / Path(relative_target)
+            assert resolved_path.exists(), f"{doc_path} points to missing sibling file {resolved_path}"
+
+
+def test_systematic_debugging_docs_do_not_advertise_retired_path() -> None:
+    retired_path = "skills/debugging/systematic-debugging"
+    allowed_path = "skills/systematic-debugging"
+    doc_paths = [
+        REPO_ROOT / "skills" / "systematic-debugging" / "test-academic.md",
+        REPO_ROOT / "skills" / "systematic-debugging" / "test-pressure-1.md",
+        REPO_ROOT / "skills" / "systematic-debugging" / "test-pressure-2.md",
+        REPO_ROOT / "skills" / "systematic-debugging" / "test-pressure-3.md",
+        REPO_ROOT / "skills" / "systematic-debugging" / "CREATION-LOG.md",
+    ]
+
+    for doc_path in doc_paths:
+        text = doc_path.read_text(encoding="utf-8")
+        assert retired_path not in text, f"{doc_path} still references retired skill path"
+        assert allowed_path in text, f"{doc_path} should reference the live skill path"
 
 
 def test_readme_describes_runtime_capability_contract() -> None:
