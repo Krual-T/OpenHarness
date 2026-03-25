@@ -55,7 +55,7 @@ A simple table is usually enough:
 5. If the repository cannot explain the surface, prerequisites, driver method, or evidence flow clearly, open a bootstrap package first.
 6. Record the chosen path back into the active task package before claiming runtime verification coverage.
 
-Use `references/adding-project-runtime-helper.md` when step 4 or step 5 applies.
+Use `adding-project-runtime-helper.md` when step 4 or step 5 applies.
 
 ## Adoption Notes
 
