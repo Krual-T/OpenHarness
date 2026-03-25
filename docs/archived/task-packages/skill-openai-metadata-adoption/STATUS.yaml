@@ -59,8 +59,6 @@ evidence:
     - skills/verification-before-completion/agents/openai.yaml
     - skills/brainstorming/SKILL.md
     - skills/exploring-solution-space/SKILL.md
-    - .project-memory/decisions/skill_openai_metadata_invocation_policy.yaml
-    - .project-memory/aliases.yaml
   tests:
     - skills/using-openharness/tests/test_openharness.py
     - skills/using-openharness/tests/openharness_cases/test_protocol_docs.py

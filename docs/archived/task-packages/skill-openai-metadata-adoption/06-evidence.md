@@ -33,8 +33,6 @@
 - skills/brainstorming/SKILL.md
 - skills/exploring-solution-space/SKILL.md
 - skills/using-openharness/tests/openharness_cases/test_protocol_docs.py
-- .project-memory/decisions/skill_openai_metadata_invocation_policy.yaml
-- .project-memory/aliases.yaml
 
 ## Commands
 - sed -n '1,220p' AGENTS.md
@@ -60,8 +58,6 @@
 - uv run pytest skills/using-openharness/tests/test_openharness.py -k "skill_openai_metadata or openai_yaml or implicit_invocation"
 - uv run pytest skills/using-openharness/tests/test_openharness.py
 - uv run python skills/using-openharness/scripts/openharness.py check-tasks
-- uv run python skills/project-memory/scripts/query_memory.py "skill openai metadata 隐式触发 策略"
-- uv run python skills/project-memory/scripts/save_decision.py skill_openai_metadata_invocation_policy ...
 - mv docs/task-packages/skill-openai-metadata-adoption docs/archived/task-packages/skill-openai-metadata-adoption
 - uv run python skills/using-openharness/scripts/openharness.py bootstrap
 
