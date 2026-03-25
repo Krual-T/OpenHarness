@@ -4,6 +4,3 @@ interface:
   default_prompt: "Use this skill only after implementation and verification are complete, then close the task package correctly and handle the explicit integration choice."
 policy:
   allow_implicit_invocation: false
-dependencies:
-  tools:
-    - shell
