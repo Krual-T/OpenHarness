@@ -4,7 +4,7 @@ title: Skill Protocol Deduplication
 # requirements_ready -> overview_ready -> detailed_ready are design-readiness checkpoints; later statuses imply earlier checkpoints are already materially complete.
 # `detailed_ready` is the normal resting point for design-complete work before implementation.
 # `archived` means the task package is implemented, verified, and no longer active.
-status: proposed
+status: archived
 summary: 收敛重复的仓库级协议与阶段制度，降低 skill 上下文膨胀和维护分叉
 owner: codex
 created_at: 2026-03-25
@@ -19,10 +19,10 @@ scope:
     - skills/exploring-solution-space
     - skills/subagent-driven-development
 entrypoints:
-  - docs/task-packages/skill-protocol-deduplication/README.md
-  - docs/task-packages/skill-protocol-deduplication/01-requirements.md
-  - docs/task-packages/skill-protocol-deduplication/02-overview-design.md
-  - docs/task-packages/skill-protocol-deduplication/03-detailed-design.md
+  - docs/archived/task-packages/skill-protocol-deduplication/README.md
+  - docs/archived/task-packages/skill-protocol-deduplication/01-requirements.md
+  - docs/archived/task-packages/skill-protocol-deduplication/02-overview-design.md
+  - docs/archived/task-packages/skill-protocol-deduplication/03-detailed-design.md
 done_criteria:
   - 明确区分仓库级常驻协议与按需加载的 skill 级指令。
   - 减少核心 skill 之间重复叙述的阶段制度、review 流程和写回规则。
@@ -31,12 +31,18 @@ verification:
   required_commands:
     - uv run python skills/using-openharness/scripts/openharness.py check-tasks
   required_scenarios: []
-  last_run_at: ""
-  last_run_result: ""
-  last_run_artifact: ""
+  last_run_at: "2026-03-25T15:15:08+08:00"
+  last_run_result: "passed"
+  last_run_artifact: "docs/archived/task-packages/skill-protocol-deduplication/05-verification.md"
 evidence:
   docs:
-    - docs/task-packages/skill-protocol-deduplication/05-verification.md
-    - docs/task-packages/skill-protocol-deduplication/06-evidence.md
-  code: []
+    - docs/archived/task-packages/skill-protocol-deduplication/05-verification.md
+    - docs/archived/task-packages/skill-protocol-deduplication/06-evidence.md
+  code:
+    - skills/using-openharness/SKILL.md
+    - skills/brainstorming/SKILL.md
+    - skills/exploring-solution-space/SKILL.md
+    - skills/subagent-driven-development/SKILL.md
+    - skills/requesting-code-review/SKILL.md
+    - skills/dispatching-parallel-agents/SKILL.md
   tests: []

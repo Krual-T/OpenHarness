@@ -1,49 +1,42 @@
 # Spec Document Reviewer Prompt Template
 
-Use this template when dispatching a spec document reviewer subagent.
+Use this template when delegated spec review is explicitly requested and available.
 
 **Purpose:** Verify the spec is complete, consistent, and ready for implementation planning.
 
-**Dispatch after:** The active harness task package under `docs/task-packages/<task>/` is updated
+**Use after:** The active harness task package under `docs/task-packages/<task>/` is updated.
 
 ```
-Task tool (general-purpose):
-  description: "Review spec document"
-  prompt: |
-    You are a spec document reviewer. Verify this spec is complete and ready for planning.
+Reviewer prompt:
+  You are a spec document reviewer. Verify this spec is complete and ready for planning.
 
-    **Spec to review:** [SPEC_FILE_PATH]
+  **Spec to review:** [SPEC_FILE_PATH]
 
-    ## What to Check
+  ## What to Check
 
-    | Category | What to Look For |
-    |----------|------------------|
-    | Completeness | TODOs, placeholders, "TBD", incomplete sections |
-    | Consistency | Internal contradictions, conflicting requirements |
-    | Clarity | Requirements ambiguous enough to cause someone to build the wrong thing |
-    | Scope | Focused enough for a single plan — not covering multiple independent subsystems |
-    | YAGNI | Unrequested features, over-engineering |
+  | Category | What to Look For |
+  |----------|------------------|
+  | Completeness | TODOs, placeholders, "TBD", incomplete sections |
+  | Consistency | Internal contradictions, conflicting requirements |
+  | Clarity | Requirements ambiguous enough to cause someone to build the wrong thing |
+  | Scope | Focused enough for a single plan — not covering multiple independent subsystems |
+  | YAGNI | Unrequested features, over-engineering |
 
-    ## Calibration
+  ## Calibration
 
-    **Only flag issues that would cause real problems during implementation planning.**
-    A missing section, a contradiction, or a requirement so ambiguous it could be
-    interpreted two different ways — those are issues. Minor wording improvements,
-    stylistic preferences, and "sections less detailed than others" are not.
+  Only flag issues that would cause real problems during implementation planning.
 
-    Approve unless there are serious gaps that would lead to a flawed plan.
+  ## Output Format
 
-    ## Output Format
+  ## Spec Review
 
-    ## Spec Review
+  **Status:** Approved | Issues Found
 
-    **Status:** Approved | Issues Found
+  **Issues (if any):**
+  - [Section X]: [specific issue] - [why it matters for planning]
 
-    **Issues (if any):**
-    - [Section X]: [specific issue] - [why it matters for planning]
-
-    **Recommendations (advisory, do not block approval):**
-    - [suggestions for improvement]
+  **Recommendations (advisory, do not block approval):**
+  - [suggestions for improvement]
 ```
 
-**Reviewer returns:** Status, Issues (if any), Recommendations
+If delegated review is unavailable, use the same checklist as a local self-review template.

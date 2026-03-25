@@ -11,97 +11,55 @@ description: Use when completing tasks, implementing major features, or before m
 - Primary stage: verification and closure
 - Trigger: use before merge or after major implementation waves when bounded review adds value
 
-Dispatch the local code-reviewer subagent to catch issues before they cascade. The reviewer gets precisely crafted context for evaluation — never your session's history. This keeps the reviewer focused on the work product, not your thought process, and preserves your own context for continued work.
-
-**Core principle:** Review early, review often.
+Prepare a bounded review context before merge or closure. If the current session permits delegated review and the user explicitly wants it, use that context for a reviewer subagent. Otherwise perform the same review checklist yourself in the current session.
 
 ## When to Request Review
 
 **Mandatory:**
-- After each task in subagent-driven development
-- After completing major feature
+- After a major feature or refactor
 - Before merge to main
+- Before claiming a broad change is safe
 
 **Optional but valuable:**
-- When stuck (fresh perspective)
-- Before refactoring (baseline check)
-- After fixing complex bug
+- When stuck
+- Before risky refactoring
+- After fixing a subtle bug
 
 ## How to Request
 
-**1. Get git SHAs:**
+**1. Get the diff range:**
+
 ```bash
-BASE_SHA=$(git rev-parse HEAD~1)  # or origin/main
+BASE_SHA=$(git rev-parse HEAD~1)
 HEAD_SHA=$(git rev-parse HEAD)
 ```
 
-**2. Dispatch code-reviewer subagent:**
+**2. Build review context:**
 
-Use the code-reviewer subagent type and fill the template at `references/code-reviewer.md`
+Use the template at `references/code-reviewer.md` to capture:
 
-**Placeholders:**
-- `{WHAT_WAS_IMPLEMENTED}` - What you just built
-- `{PLAN_OR_REQUIREMENTS}` - What it should do
-- `{BASE_SHA}` - Starting commit
-- `{HEAD_SHA}` - Ending commit
-- `{DESCRIPTION}` - Brief summary
+- what changed
+- what it was supposed to do
+- the diff range to inspect
+- any known risks or constraints
 
-**3. Act on feedback:**
+**3. Run the review and act on feedback:**
+
 - Fix Critical issues immediately
 - Fix Important issues before proceeding
-- Note Minor issues for later
-- Push back if reviewer is wrong (with reasoning)
+- Note Minor issues for later when appropriate
+- Push back with technical reasoning if a review conclusion is wrong
 
-## Example
+## Integration
 
-```
-[Just completed Task 2: Add verification function]
-
-You: Let me request code review before proceeding.
-
-BASE_SHA=$(git log --oneline | grep "Task 1" | head -1 | awk '{print $1}')
-HEAD_SHA=$(git rev-parse HEAD)
-
-[Dispatch code-reviewer subagent]
-  WHAT_WAS_IMPLEMENTED: Verification and repair functions for conversation index
-  PLAN_OR_REQUIREMENTS: Task 2 from the chosen execution plan artifact, or the relevant requirements/design section
-  BASE_SHA: a7981ec
-  HEAD_SHA: 3df7661
-  DESCRIPTION: Added verifyIndex() and repairIndex() with 4 issue types
-
-[Subagent returns]:
-  Strengths: Clean architecture, real tests
-  Issues:
-    Important: Missing progress indicators
-    Minor: Magic number (100) for reporting interval
-  Assessment: Ready to proceed
-
-You: [Fix progress indicators]
-[Continue to Task 3]
-```
-
-## Integration with Workflows
-
-**Subagent-Driven Development:**
-- Review after EACH task
-- Catch issues before they compound
-- Fix before moving to next task
-
-**Ad-Hoc Development:**
-- Review before merge
-- Review when stuck
+- In delegated workflows, review each substantial result before moving on.
+- In manual workflows, use the same checklist before merge or closure.
 
 ## Red Flags
 
-**Never:**
-- Skip review because "it's simple"
-- Ignore Critical issues
-- Proceed with unfixed Important issues
-- Argue with valid technical feedback
+- Skipping review because the change feels small.
+- Treating delegated review as mandatory when delegation is unavailable or not requested.
+- Proceeding with unfixed Important issues.
+- Arguing with valid technical feedback instead of checking it.
 
-**If reviewer wrong:**
-- Push back with technical reasoning
-- Show code/tests that prove it works
-- Request clarification
-
-See template at: references/code-reviewer.md
+See template at: `references/code-reviewer.md`
