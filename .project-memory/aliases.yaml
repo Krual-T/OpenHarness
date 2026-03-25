@@ -14,9 +14,6 @@ aliases:
   runtime surface map 怎么写:
     id: project_runtime_surface_map_protocol
     kind: fact
-  skill openai metadata implicit policy:
-    id: skill_openai_metadata_invocation_policy
-    kind: decision
   task package 应该用中文还是英文:
     id: task_package_language_policy_phase_one
     kind: decision
