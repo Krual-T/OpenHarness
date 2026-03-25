@@ -1,0 +1,43 @@
+id: OH-020
+title: Skill Environment Drift Cleanup
+# Default flow: proposed -> requirements_ready -> overview_ready -> detailed_ready -> in_progress -> verifying -> archived
+# requirements_ready -> overview_ready -> detailed_ready are design-readiness checkpoints; later statuses imply earlier checkpoints are already materially complete.
+# `detailed_ready` is the normal resting point for design-complete work before implementation.
+# `archived` means the task package is implemented, verified, and no longer active.
+status: proposed
+summary: 清理 skills 中引用旧环境、旧工具和当前仓库不可用能力的问题
+owner: codex
+created_at: 2026-03-25
+updated_at: 2026-03-25
+depends_on: []
+scope:
+  areas:
+    - skills
+    - AGENTS.md
+    - skills/using-openharness
+    - skills/using-git-worktrees
+    - skills/subagent-driven-development
+    - skills/requesting-code-review
+    - skills/receiving-code-review
+entrypoints:
+  - docs/task-packages/skill-environment-drift-cleanup/README.md
+  - docs/task-packages/skill-environment-drift-cleanup/01-requirements.md
+  - docs/task-packages/skill-environment-drift-cleanup/02-overview-design.md
+  - docs/task-packages/skill-environment-drift-cleanup/03-detailed-design.md
+done_criteria:
+  - 识别并收敛 skills 中对当前仓库无效或已过时的环境假设。
+  - 将受影响 skill 的指令改为与 AGENTS.md、using-openharness 和当前工具能力一致。
+  - 为后续维护建立最小防回归约束，避免再次引入旧环境术语或不可用工具名。
+verification:
+  required_commands:
+    - uv run python skills/using-openharness/scripts/openharness.py check-tasks
+  required_scenarios: []
+  last_run_at: ""
+  last_run_result: ""
+  last_run_artifact: ""
+evidence:
+  docs:
+    - docs/task-packages/skill-environment-drift-cleanup/05-verification.md
+    - docs/task-packages/skill-environment-drift-cleanup/06-evidence.md
+  code: []
+  tests: []
