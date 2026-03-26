@@ -54,12 +54,20 @@ def _load_skill_metadata(skill_name: str) -> dict:
 def test_openharness_skill_owns_supporting_scripts_and_templates() -> None:
     skill_root = REPO_ROOT / "skills" / "using-openharness"
     assert SKILL_ROOT == skill_root
-    assert (skill_root / "scripts" / "openharness.py").exists()
-    assert (skill_root / "tests" / "test_openharness.py").exists()
     assert (skill_root / "references" / "manifest.yaml").exists()
     assert (skill_root / "references" / "templates" / "task-package.README.md").exists()
     assert (skill_root / "references" / "templates" / "task-package.STATUS.yaml").exists()
     assert not (skill_root / "references" / "templates" / "task-package.04-implementation-plan.md").exists()
+
+
+def test_openharness_repo_self_tests_live_under_top_level_tests() -> None:
+    assert (REPO_ROOT / "tests" / "test_openharness.py").exists()
+    assert (REPO_ROOT / "tests" / "openharness_cases" / "test_cli_workflows.py").exists()
+    assert not (REPO_ROOT / "skills" / "using-openharness" / "tests" / "test_openharness.py").exists()
+
+
+def test_openharness_legacy_script_entrypoint_is_removed() -> None:
+    assert not (REPO_ROOT / "skills" / "using-openharness" / "scripts" / "openharness.py").exists()
 
 
 def test_live_repo_skills_all_ship_openai_metadata() -> None:

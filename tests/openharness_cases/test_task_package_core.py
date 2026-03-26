@@ -487,6 +487,63 @@ def test_validate_task_package_rejects_archived_status_in_active_root(tmp_path: 
     assert any("archived package must live under" in error for error in errors)
 
 
+def test_validate_task_package_allows_archived_legacy_reference_fallback(tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
+    (repo_root / "docs" / "archived" / "task-packages" / "archived-legacy").mkdir(parents=True)
+    (repo_root / "docs" / "archived" / "legacy" / "skills" / "using-openharness" / "scripts").mkdir(parents=True)
+    (repo_root / "docs" / "archived" / "legacy" / "skills" / "using-openharness" / "scripts" / "openharness.py").write_text(
+        "legacy snapshot\n",
+        encoding="utf-8",
+    )
+    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
+        "version: 1\n"
+        "task_packages_root: docs/task-packages\n"
+        "archived_task_packages_root: docs/archived/task-packages\n"
+        "required_design_files:\n"
+        "  - README.md\n"
+        "  - STATUS.yaml\n"
+        "  - 01-requirements.md\n"
+        "  - 02-overview-design.md\n"
+        "  - 03-detailed-design.md\n"
+        "  - 05-verification.md\n"
+        "  - 06-evidence.md\n"
+        "workflow:\n"
+        "  default_status_flow:\n"
+        "    - proposed\n"
+        "    - archived\n",
+        encoding="utf-8",
+    )
+    root = repo_root / "docs" / "archived" / "task-packages" / "archived-legacy"
+    for name in REQUIRED_TASK_PACKAGE_FILES:
+        (root / name).write_text("x\n", encoding="utf-8")
+    (root / "STATUS.yaml").write_text(
+        "id: OH-903\n"
+        "title: Archived Legacy\n"
+        "status: archived\n"
+        "summary: archived with legacy file reference\n"
+        "owner: codex\n"
+        "created_at: 2026-03-27\n"
+        "updated_at: 2026-03-27\n"
+        "done_criteria:\n"
+        "  - x\n"
+        "verification:\n"
+        "  required_commands:\n"
+        "    - uv run openharness check-tasks\n"
+        "  required_scenarios: []\n"
+        "evidence:\n"
+        "  code:\n"
+        "    - skills/using-openharness/scripts/openharness.py\n",
+        encoding="utf-8",
+    )
+
+    manifest = load_manifest(repo_root)
+    package = discover_task_packages(repo_root, manifest)[0]
+    errors = validate_task_package(package)
+
+    assert all("missing referenced path" not in error for error in errors)
+
+
 def test_validate_task_package_rejects_verifying_without_verification_path(tmp_path: Path) -> None:
     repo_root = tmp_path / "repo"
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)

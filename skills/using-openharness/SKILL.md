@@ -27,15 +27,15 @@ Use this skill to work inside repositories that organize tasks as end-to-end `ta
 
 ## Supporting Files
 
-`openharness` owns the canonical harness support files under:
+`openharness` owns the canonical harness runtime support files under:
 
-- `scripts/`
-- `tests/`
 - `references/templates/`
 - `references/skill-hub.md`
 - `references/runtime-capability-contract.md`
 - `references/project-runtime-surface-map.md`
 - `references/adding-project-runtime-helper.md`
+
+OpenHarness repository self-tests live under the top-level `tests/` tree, not under the skill directory.
 
 ## Role
 
