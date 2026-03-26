@@ -340,6 +340,17 @@ def test_install_doc_mentions_openharness_update() -> None:
     assert "openharness update" in text
 
 
+def test_active_protocol_docs_do_not_recommend_legacy_script_entrypoint() -> None:
+    for path in [
+        REPO_ROOT / "AGENTS.md",
+        REPO_ROOT / "AGENTS.examaple.md",
+        REPO_ROOT / "INSTALL.codex.md",
+        REPO_ROOT / "skills" / "using-openharness" / "SKILL.md",
+    ]:
+        text = path.read_text(encoding="utf-8")
+        assert "skills/using-openharness/scripts/openharness.py" not in text
+
+
 def test_brainstorming_defaults_to_autonomous_continuation() -> None:
     text = (REPO_ROOT / "skills" / "brainstorming" / "SKILL.md").read_text(encoding="utf-8")
     assert "continue automatically by default" in text
