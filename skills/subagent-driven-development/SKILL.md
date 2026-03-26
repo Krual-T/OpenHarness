@@ -39,7 +39,7 @@ If any of these are false, stay in the main session and execute manually.
 5. Review the result against the task package and declared verification path.
 6. If there are gaps, send the task back with concrete corrections.
 7. Mark the task complete in your local checklist only after the delegated result is verified.
-8. After all tasks are complete, run package-level verification, then update `05-verification.md`, `06-evidence.md`, and `STATUS.yaml`.
+8. After all tasks are complete, run package-level verification, then update `04-verification.md`, `05-evidence.md`, and `STATUS.yaml`.
 
 ## Model Selection
 
