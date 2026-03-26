@@ -38,8 +38,8 @@ verification:
   last_run_artifact: .harness/artifacts/OH-015/verification-runs/20260323T073348650956Z.json
 evidence:
   docs:
-  - docs/archived/task-packages/task-package-language-policy-and-localization/05-verification.md
-  - docs/archived/task-packages/task-package-language-policy-and-localization/06-evidence.md
+  - docs/archived/task-packages/task-package-language-policy-and-localization/04-verification.md
+  - docs/archived/task-packages/task-package-language-policy-and-localization/05-evidence.md
   code: []
   tests:
   - skills/using-openharness/tests/test_openharness.py

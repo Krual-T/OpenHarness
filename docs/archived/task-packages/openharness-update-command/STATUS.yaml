@@ -34,8 +34,8 @@ verification:
   last_run_artifact: .harness/artifacts/OH-028/verification-runs/20260326T144657651021Z.json
 evidence:
   docs:
-  - docs/archived/task-packages/openharness-update-command/05-verification.md
-  - docs/archived/task-packages/openharness-update-command/06-evidence.md
+  - docs/archived/task-packages/openharness-update-command/04-verification.md
+  - docs/archived/task-packages/openharness-update-command/05-evidence.md
   code:
   - openharness_cli/__init__.py
   - openharness_cli/cli.py

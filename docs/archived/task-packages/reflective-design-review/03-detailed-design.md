@@ -5,7 +5,7 @@
   - run `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
   - run `uv run pytest`
 - Fallback Path:
-  - if unrelated repository failures block verification, record the blocker in `05-verification.md` and do not claim completion until the package state is honest again
+  - if unrelated repository failures block verification, record the blocker in `04-verification.md` and do not claim completion until the package state is honest again
 - Planned Evidence:
   - updated workflow skills and core docs
   - tests that pin the reflection-loop wording

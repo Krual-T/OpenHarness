@@ -23,9 +23,9 @@ The writeback expectations should point back into the normal task-package flow:
 - `03-detailed-design.md`
   - record whether runtime verification is required
   - record the chosen surface, prerequisites, driver method, and expected observations
-- `05-verification.md`
+- `04-verification.md`
   - record the executed runtime path and the evidence that was actually gathered
-- `06-evidence.md`
+- `05-evidence.md`
   - record artifact paths, commands, helper references, residual risks, and follow-up actions
 
 ## Recommended Shape

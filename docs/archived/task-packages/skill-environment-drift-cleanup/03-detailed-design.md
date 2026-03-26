@@ -18,7 +18,7 @@
 - `skills/subagent-driven-development/SKILL.md`：移除不存在的任务面板与固定 reviewer 能力假设，改成与当前会话能力一致的表述。
 - `skills/requesting-code-review/SKILL.md`、`skills/receiving-code-review/SKILL.md`、`skills/dispatching-parallel-agents/SKILL.md`：修正旧能力名和误导性示例。
 - 必要时修改少量引用模板或说明文档，避免错误术语继续传播。
-- 本 task package 下的 `05-verification.md`、`06-evidence.md`、`STATUS.yaml`：记录执行证据并在完成后归档。
+- 本 task package 下的 `04-verification.md`、`05-evidence.md`、`STATUS.yaml`：记录执行证据并在完成后归档。
 
 ## Interfaces
 - 稳定边界是 `AGENTS.md`、`skills/using-openharness/SKILL.md` 和当前会话真实可用的工具能力。

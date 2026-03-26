@@ -120,7 +120,7 @@ The live workflow also uses stage-organized role injection:
 - OpenHarness is Python-first.
 - `uv run pytest` is the default minimum automated verification floor for Python-first repositories.
 - Passing `pytest` alone does not automatically mean runtime behavior is fully verified.
-- Stronger project-specific runtime verification belongs in task packages, especially `03-detailed-design.md` and `05-verification.md`.
+- Stronger project-specific runtime verification belongs in task packages, especially `03-detailed-design.md` and `04-verification.md`.
 
 ## Runtime Capability Contract
 - OpenHarness uses a runtime capability contract instead of pretending one universal runtime-debug skill can fit every repository.

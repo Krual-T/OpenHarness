@@ -41,8 +41,8 @@ verification:
   last_run_artifact: ""
 evidence:
   docs:
-    - docs/archived/task-packages/skill-openai-metadata-adoption/05-verification.md
-    - docs/archived/task-packages/skill-openai-metadata-adoption/06-evidence.md
+    - docs/archived/task-packages/skill-openai-metadata-adoption/04-verification.md
+    - docs/archived/task-packages/skill-openai-metadata-adoption/05-evidence.md
   code:
     - skills/brainstorming/agents/openai.yaml
     - skills/dispatching-parallel-agents/agents/openai.yaml

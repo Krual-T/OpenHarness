@@ -32,7 +32,7 @@ Do not treat a helper as reusable until it can declare at least:
 - observation points and evidence sources
 - success criteria
 - failure evidence expectations
-- writeback expectations for `03-detailed-design.md`, `05-verification.md`, and `06-evidence.md`
+- writeback expectations for `03-detailed-design.md`, `04-verification.md`, and `05-evidence.md`
 
 Keep each helper narrow:
 
@@ -59,9 +59,9 @@ These repository updates should keep the runtime story discoverable without crea
 - `03-detailed-design.md`
   - record whether the task will reuse an existing helper, add new helper coverage, or bootstrap first
   - record the chosen runtime surface, prerequisites, driving method, expected observations, and the helper path when one exists
-- `05-verification.md`
+- `04-verification.md`
   - record the executed runtime path, the evidence actually gathered, and whether the helper behaved as expected
-- `06-evidence.md`
+- `05-evidence.md`
   - record artifact paths, commands, helper references, residual risks, and follow-up cleanup such as missing helper refinements
 
 ## Boundary Notes

@@ -11,8 +11,8 @@ REQUIRED_TASK_PACKAGE_FILES = (
     "01-requirements.md",
     "02-overview-design.md",
     "03-detailed-design.md",
-    "05-verification.md",
-    "06-evidence.md",
+    "04-verification.md",
+    "05-evidence.md",
 )
 REQUIRED_STATUS_KEYS = (
     "id",
@@ -97,21 +97,21 @@ STATUS_SECTION_REQUIREMENTS: dict[str, tuple[tuple[str, str], ...]] = {
         ("03-detailed-design.md", "## Interfaces"),
         ("03-detailed-design.md", "## Error Handling"),
         ("03-detailed-design.md", "## Detailed Reflection"),
-        ("06-evidence.md", "## Files"),
-        ("06-evidence.md", "## Commands"),
-        ("06-evidence.md", "## Residual Risks"),
+        ("05-evidence.md", "## Files"),
+        ("05-evidence.md", "## Commands"),
+        ("05-evidence.md", "## Residual Risks"),
     ),
 }
 
 STATUS_LABEL_REQUIREMENTS: dict[str, tuple[tuple[str, str, str], ...]] = {
     "verifying": (
-        ("05-verification.md", "## Verification Path", "Planned Path"),
-        ("05-verification.md", "## Verification Path", "Executed Path"),
-        ("05-verification.md", "## Latest Result", ""),
+        ("04-verification.md", "## Verification Path", "Planned Path"),
+        ("04-verification.md", "## Verification Path", "Executed Path"),
+        ("04-verification.md", "## Latest Result", ""),
     ),
     "archived": (
-        ("05-verification.md", "## Verification Path", "Planned Path"),
-        ("05-verification.md", "## Verification Path", "Executed Path"),
-        ("05-verification.md", "## Latest Result", ""),
+        ("04-verification.md", "## Verification Path", "Planned Path"),
+        ("04-verification.md", "## Verification Path", "Executed Path"),
+        ("04-verification.md", "## Latest Result", ""),
     ),
 }

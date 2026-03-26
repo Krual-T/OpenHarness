@@ -23,7 +23,7 @@ The implementation has four parts:
      - current status must already be `verifying`
      - latest verification artifact must exist
      - latest verification result must be successful
-     - `05-verification.md` and `06-evidence.md` must already satisfy archive anchors
+     - `04-verification.md` and `05-evidence.md` must already satisfy archive anchors
 
 3. Structured verification-run artifacts
    - Every `verify` invocation writes a JSON record under `.harness/artifacts/<task-id>/verification-runs/`.
@@ -103,5 +103,5 @@ Reasoning:
 - I checked whether verification artifacts should live only in markdown docs. They should not. Docs remain the human narrative, but archive gating needs a structured run record the CLI can inspect directly.
 - I checked whether archive gating can rely on a simple `latest passed` flag. It should not. The artifact must also prove that it covers the current package content, otherwise old successful runs could be misused after later edits.
 - I checked whether `verify` should also auto-transition the package. It should not in this first wave. Verification execution and workflow intent are related but still distinct actions.
-- I checked whether archive gating should trust only `05-verification.md`. It should not. The docs should explain the evidence, but the archive gate should rely on the latest structured artifact so the check remains deterministic.
+- I checked whether archive gating should trust only `04-verification.md`. It should not. The docs should explain the evidence, but the archive gate should rely on the latest structured artifact so the check remains deterministic.
 - No bounded subagent discussion was used while drafting the overview because the main alternatives were already narrowed by archived `OH-006` and `OH-009`.

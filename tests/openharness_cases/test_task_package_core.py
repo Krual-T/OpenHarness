@@ -34,8 +34,8 @@ def _write_minimal_openharness_repo(repo_root: Path) -> None:
         "  - 01-requirements.md\n"
         "  - 02-overview-design.md\n"
         "  - 03-detailed-design.md\n"
-        "  - 05-verification.md\n"
-        "  - 06-evidence.md\n"
+        "  - 04-verification.md\n"
+        "  - 05-evidence.md\n"
         "workflow:\n"
         "  default_status_flow:\n"
         "    - proposed\n"
@@ -61,8 +61,8 @@ def _write_minimal_openharness_repo(repo_root: Path) -> None:
         "task-package.01-requirements.md": "req\n",
         "task-package.02-overview-design.md": "overview\n",
         "task-package.03-detailed-design.md": "detailed\n",
-        "task-package.05-verification.md": "verify\n",
-        "task-package.06-evidence.md": "evidence\n",
+        "task-package.04-verification.md": "verify\n",
+        "task-package.05-evidence.md": "evidence\n",
     }.items():
         (repo_root / "skills" / "using-openharness" / "references" / "templates" / name).write_text(
             contents,
@@ -121,8 +121,8 @@ def test_allocate_next_task_id_uses_existing_prefix_and_width(tmp_path: Path) ->
         "  - 01-requirements.md\n"
         "  - 02-overview-design.md\n"
         "  - 03-detailed-design.md\n"
-        "  - 05-verification.md\n"
-        "  - 06-evidence.md\n"
+        "  - 04-verification.md\n"
+        "  - 05-evidence.md\n"
         "workflow:\n"
         "  default_status_flow:\n"
         "    - proposed\n"
@@ -327,8 +327,8 @@ def test_find_duplicate_task_ids_reports_conflicts(tmp_path: Path) -> None:
         "  - 01-requirements.md\n"
         "  - 02-overview-design.md\n"
         "  - 03-detailed-design.md\n"
-        "  - 05-verification.md\n"
-        "  - 06-evidence.md\n"
+        "  - 04-verification.md\n"
+        "  - 05-evidence.md\n"
         "workflow:\n"
         "  default_status_flow:\n"
         "    - proposed\n"
@@ -394,8 +394,8 @@ def test_validate_task_package_rejects_unknown_status_and_missing_paths(tmp_path
         "  - 01-requirements.md\n"
         "  - 02-overview-design.md\n"
         "  - 03-detailed-design.md\n"
-        "  - 05-verification.md\n"
-        "  - 06-evidence.md\n"
+        "  - 04-verification.md\n"
+        "  - 05-evidence.md\n"
         "workflow:\n"
         "  default_status_flow:\n"
         "    - proposed\n"
@@ -408,8 +408,8 @@ def test_validate_task_package_rejects_unknown_status_and_missing_paths(tmp_path
         "01-requirements.md",
         "02-overview-design.md",
         "03-detailed-design.md",
-        "05-verification.md",
-        "06-evidence.md",
+        "04-verification.md",
+        "05-evidence.md",
     ):
         (root / name).write_text("x\n", encoding="utf-8")
     (root / "STATUS.yaml").write_text(
@@ -429,7 +429,7 @@ def test_validate_task_package_rejects_unknown_status_and_missing_paths(tmp_path
         "  required_commands: []\n"
         "evidence:\n"
         "  docs:\n"
-        "    - docs/task-packages/broken/06-evidence.md\n"
+        "    - docs/task-packages/broken/05-evidence.md\n"
         "    - docs/task-packages/broken/nope.md\n",
         encoding="utf-8",
     )
@@ -456,8 +456,8 @@ def test_validate_task_package_rejects_archived_status_in_active_root(tmp_path: 
         "  - 01-requirements.md\n"
         "  - 02-overview-design.md\n"
         "  - 03-detailed-design.md\n"
-        "  - 05-verification.md\n"
-        "  - 06-evidence.md\n"
+        "  - 04-verification.md\n"
+        "  - 05-evidence.md\n"
         "workflow:\n"
         "  default_status_flow:\n"
         "    - proposed\n"
@@ -506,8 +506,8 @@ def test_validate_task_package_allows_archived_legacy_reference_fallback(tmp_pat
         "  - 01-requirements.md\n"
         "  - 02-overview-design.md\n"
         "  - 03-detailed-design.md\n"
-        "  - 05-verification.md\n"
-        "  - 06-evidence.md\n"
+        "  - 04-verification.md\n"
+        "  - 05-evidence.md\n"
         "workflow:\n"
         "  default_status_flow:\n"
         "    - proposed\n"
@@ -558,8 +558,8 @@ def test_validate_task_package_rejects_verifying_without_verification_path(tmp_p
         "  - 01-requirements.md\n"
         "  - 02-overview-design.md\n"
         "  - 03-detailed-design.md\n"
-        "  - 05-verification.md\n"
-        "  - 06-evidence.md\n"
+        "  - 04-verification.md\n"
+        "  - 05-evidence.md\n"
         "workflow:\n"
         "  default_status_flow:\n"
         "    - proposed\n"
@@ -611,8 +611,8 @@ def test_validate_task_package_rejects_archived_without_verification_path(tmp_pa
         "  - 01-requirements.md\n"
         "  - 02-overview-design.md\n"
         "  - 03-detailed-design.md\n"
-        "  - 05-verification.md\n"
-        "  - 06-evidence.md\n"
+        "  - 04-verification.md\n"
+        "  - 05-evidence.md\n"
         "workflow:\n"
         "  default_status_flow:\n"
         "    - proposed\n"
@@ -661,7 +661,7 @@ def test_create_task_package_from_templates(tmp_path: Path) -> None:
     (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
         "version: 1\ntask_packages_root: docs/task-packages\narchived_task_packages_root: docs/archived/task-packages\nrequired_design_files:\n"
         "  - README.md\n  - STATUS.yaml\n  - 01-requirements.md\n  - 02-overview-design.md\n"
-        "  - 03-detailed-design.md\n  - 05-verification.md\n  - 06-evidence.md\n",
+        "  - 03-detailed-design.md\n  - 04-verification.md\n  - 05-evidence.md\n",
         encoding="utf-8",
     )
     template_root = repo_root / "skills" / "using-openharness" / "references" / "templates"
@@ -671,8 +671,8 @@ def test_create_task_package_from_templates(tmp_path: Path) -> None:
         "task-package.01-requirements.md": "req\n",
         "task-package.02-overview-design.md": "overview\n",
         "task-package.03-detailed-design.md": "detail\n",
-        "task-package.05-verification.md": "verify\n",
-        "task-package.06-evidence.md": "evidence\n",
+        "task-package.04-verification.md": "verify\n",
+        "task-package.05-evidence.md": "evidence\n",
     }.items():
         (template_root / file_name).write_text(content, encoding="utf-8")
 

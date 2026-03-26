@@ -18,8 +18,8 @@ Today a package can still pass validation while claiming a stronger readiness st
 - `requirements_ready` while `01-requirements.md` is still a placeholder shell
 - `overview_ready` while `02-overview-design.md` does not actually describe system boundary or architecture
 - `detailed_ready` while `03-detailed-design.md` lacks implementation landing points or runtime verification planning
-- `verifying` while `05-verification.md` has not recorded an executed path yet
-- `archived` while `06-evidence.md` does not record the concrete evidence a later reader would need
+- `verifying` while `04-verification.md` has not recorded an executed path yet
+- `archived` while `05-evidence.md` does not record the concrete evidence a later reader would need
 
 This creates several concrete risks:
 

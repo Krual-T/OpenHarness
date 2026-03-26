@@ -36,8 +36,8 @@ verification:
   last_run_artifact: .harness/artifacts/OH-018/verification-runs/20260324T160404498616Z.json
 evidence:
   docs:
-  - docs/archived/task-packages/workflow-stage-visibility-and-task-intake/05-verification.md
-  - docs/archived/task-packages/workflow-stage-visibility-and-task-intake/06-evidence.md
+  - docs/archived/task-packages/workflow-stage-visibility-and-task-intake/04-verification.md
+  - docs/archived/task-packages/workflow-stage-visibility-and-task-intake/05-evidence.md
   code:
   - skills/using-openharness/scripts/openharness.py
   - skills/using-openharness/SKILL.md

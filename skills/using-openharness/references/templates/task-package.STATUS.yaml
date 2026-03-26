@@ -27,7 +27,7 @@ verification:
   last_run_artifact: ""
 evidence:
   docs:
-    - docs/task-packages/<DESIGN_NAME>/05-verification.md
-    - docs/task-packages/<DESIGN_NAME>/06-evidence.md
+    - docs/task-packages/<DESIGN_NAME>/04-verification.md
+    - docs/task-packages/<DESIGN_NAME>/05-evidence.md
   code: []
   tests: []

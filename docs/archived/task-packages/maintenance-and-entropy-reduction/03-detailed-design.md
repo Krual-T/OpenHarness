@@ -26,7 +26,7 @@ If design is complete but implementation has not started yet, stay at `detailed_
 - 新增 `docs/archived/task-packages/maintenance-and-entropy-reduction/*`，作为维护流的 focused package 事实源。
 - 更新 `docs/archived/task-packages/harness-completion-roadmap/README.md`，让父包直接指向新的活跃子包。
 - 更新 `docs/archived/task-packages/harness-completion-roadmap/02-overview-design.md` 与 `03-detailed-design.md`，把维护流的 ownership 从“父包内的剩余流”收敛为“由 `OH-017` 接管的活跃子包”。
-- 更新 `docs/archived/task-packages/harness-completion-roadmap/05-verification.md` 与 `06-evidence.md`，记录这次拆包和校验证据。
+- 更新 `docs/archived/task-packages/harness-completion-roadmap/04-verification.md` 与 `05-evidence.md`，记录这次拆包和校验证据。
 
 ## Interfaces
 本包不引入新的仓库入口，而是复用现有接口：
@@ -37,7 +37,7 @@ If design is complete but implementation has not started yet, stay at `detailed_
 
 写回边界如下：
 
-- 审计结论与执行证据写回 `OH-017/05-verification.md`、`OH-017/06-evidence.md`。
+- 审计结论与执行证据写回 `OH-017/04-verification.md`、`OH-017/05-evidence.md`。
 - 会改变剩余路线图边界的结论写回 `OH-004`。
 - 会改变可复用仓库事实的结论写回 `.project-memory/`。
 - 会改变 live wording 或 drift guardrail 的结论写回 skill/docs/tests。
@@ -66,4 +66,4 @@ If design is complete but implementation has not started yet, stay at `detailed_
 - 我先挑战了测试策略。维护流最容易滑向“全是人工判断”，所以必须优先绑定已有命令与文本测试，而不是只写概念说明。
 - 我再挑战了接口边界。当前设计避免引入新的 entry skill 或总命令，保持维护流只是消费现有 `openharness`、`project-memory` 与 `pytest` 接口。
 - 我检查了迁移假设是否过于乐观。之所以把第一波实现锁定为 memory freshness，是因为仓库已经有真实 stale findings，而不是空想中的“未来可能需要维护”。
-- 我也检查了验证路径是否过强或过弱。把 `audit_memory.py --fail-on high` 作为完成门槛是合理的，但本轮只做设计，因此需要在 `05-verification.md` 里明确区分 baseline audit 与最终 closure。
+- 我也检查了验证路径是否过强或过弱。把 `audit_memory.py --fail-on high` 作为完成门槛是合理的，但本轮只做设计，因此需要在 `04-verification.md` 里明确区分 baseline audit 与最终 closure。

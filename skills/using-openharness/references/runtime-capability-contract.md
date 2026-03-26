@@ -37,10 +37,10 @@ The writeback expectations must stay inside the normal task-package flow:
   - record whether runtime verification is required
   - record the chosen runtime surface, prerequisites, driving method, and expected observations
   - state whether the task will reuse an existing helper or needs a bootstrap package first
-- `05-verification.md`
+- `04-verification.md`
   - record the executed runtime path and what evidence was actually gathered
   - state deviations, blockers, and blind spots explicitly
-- `06-evidence.md`
+- `05-evidence.md`
   - record artifact paths, commands, helper references, residual risks, and follow-up actions
 
 ## Routing Contract

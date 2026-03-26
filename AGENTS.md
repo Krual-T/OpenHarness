@@ -28,8 +28,8 @@
 - `01-requirements.md`：需求、目标、非目标、完成定义。
 - `02-overview-design.md`：总体设计、边界、主数据流/状态流。
 - `03-detailed-design.md`：详细设计，先写测试设计，再写实现落点、runtime 验证方式与实施顺序。
-- `05-verification.md`：验证方案与结果。
-- `06-evidence.md`：落地证据、命令、剩余 follow-up。
+- `04-verification.md`：验证方案与结果。
+- `05-evidence.md`：落地证据、命令、剩余 follow-up。
 
 默认阅读顺序：
 
@@ -40,8 +40,8 @@
 5. `docs/task-packages/<task>/01-requirements.md`
 6. `docs/task-packages/<task>/02-overview-design.md`
 7. `docs/task-packages/<task>/03-detailed-design.md`
-8. `docs/task-packages/<task>/05-verification.md`
-9. `docs/task-packages/<task>/06-evidence.md`
+8. `docs/task-packages/<task>/04-verification.md`
+9. `docs/task-packages/<task>/05-evidence.md`
 
 ## 2. 默认工作流
 
@@ -66,7 +66,7 @@
 
 ### 完成任务时
 
-- 先更新 `05-verification.md` 和 `06-evidence.md`。
+- 先更新 `04-verification.md` 和 `05-evidence.md`。
 - 再更新 `STATUS.yaml` 中的 `status`、`updated_at`、证据字段。
 - 当 task package 已实现完成、验证完成并且不再属于 active work 时，应将 `STATUS.yaml.status` 设为 `archived`，并把整个包从 `docs/task-packages/<task>/` 移动到 `docs/archived/task-packages/<task>/`。
 - 归档后必须同步修正该 package 内部引用，以及仓库内指向该 package 的证据或 memory 引用。

@@ -13,7 +13,7 @@
 - Planned Evidence:
 - pytest 通过输出。
 - `check-tasks` 通过输出。
-- 任务包中的 `05-verification.md`、`06-evidence.md` 和自动生成的验证记录。
+- 任务包中的 `04-verification.md`、`05-evidence.md` 和自动生成的验证记录。
 
 只有当详细设计已经具体到可以执行时，才进入 `in_progress`。
 如果设计已经完成但实现尚未开始，应保持在 `detailed_ready`。

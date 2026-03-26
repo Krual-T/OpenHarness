@@ -20,7 +20,7 @@ entrypoints:
   - docs/archived/task-packages/runtime-verification-baseline/03-detailed-design.md
 done_criteria:
   - The package defines a minimum verification ladder that applies even when no pre-existing runtime harness exists.
-  - The package defines what evidence belongs in `05-verification.md` and `06-evidence.md` for automated, task-local, and manual verification paths.
+  - The package defines what evidence belongs in `04-verification.md` and `05-evidence.md` for automated, task-local, and manual verification paths.
   - The package clarifies how verification evidence constrains package completion claims and the `verifying` status.
   - Follow-up implementation can update skills, templates, and harness CLI behavior from this package without rediscovering core semantics.
 verification:
@@ -30,13 +30,13 @@ verification:
   required_scenarios: []
 evidence:
   docs:
-    - docs/archived/task-packages/runtime-verification-baseline/05-verification.md
-    - docs/archived/task-packages/runtime-verification-baseline/06-evidence.md
+    - docs/archived/task-packages/runtime-verification-baseline/04-verification.md
+    - docs/archived/task-packages/runtime-verification-baseline/05-evidence.md
   code:
     - skills/using-openharness/scripts/openharness.py
     - skills/verification-before-completion/SKILL.md
     - skills/using-openharness/references/templates/task-package.03-detailed-design.md
-    - skills/using-openharness/references/templates/task-package.05-verification.md
-    - skills/using-openharness/references/templates/task-package.06-evidence.md
+    - skills/using-openharness/references/templates/task-package.04-verification.md
+    - skills/using-openharness/references/templates/task-package.05-evidence.md
   tests:
     - skills/using-openharness/tests/test_openharness.py

@@ -49,4 +49,4 @@ The project therefore needs a package that explains how a repository should grow
 - The model must work even when a repository starts with no runtime helper skills at all.
 - The model must support many small runtime helpers rather than one universal skill.
 - The workflow must preserve `using-openharness` as the only entry skill and keep runtime helpers as optional project-level extensions.
-- The writeback model must stay compatible with `03-detailed-design.md`, `05-verification.md`, and `06-evidence.md`.
+- The writeback model must stay compatible with `03-detailed-design.md`, `04-verification.md`, and `05-evidence.md`.

@@ -1,0 +1,58 @@
+id: OH-032
+title: Align Task Package File Numbering
+# Default flow: proposed -> requirements_ready -> overview_ready -> detailed_ready -> in_progress -> verifying -> archived
+# requirements_ready -> overview_ready -> detailed_ready are design-readiness checkpoints; later statuses imply earlier checkpoints are already materially complete.
+# `detailed_ready` is the normal resting point for design-complete work before implementation.
+# `archived` means the task package is implemented, verified, and no longer active.
+status: archived
+summary: Renumber task package verification and evidence files to a continuous sequence and update the harness protocol accordingly.
+owner: codex
+created_at: 2026-03-27
+updated_at: 2026-03-27
+depends_on: []
+scope:
+  areas:
+    - task package protocol
+    - templates
+    - validation
+    - tests
+    - active and archived task packages
+entrypoints:
+  - docs/archived/task-packages/task-package-file-numbering-alignment/README.md
+  - docs/archived/task-packages/task-package-file-numbering-alignment/01-requirements.md
+  - docs/archived/task-packages/task-package-file-numbering-alignment/02-overview-design.md
+  - docs/archived/task-packages/task-package-file-numbering-alignment/03-detailed-design.md
+done_criteria:
+  - Task package canonical filenames become `01-requirements.md`, `02-overview-design.md`, `03-detailed-design.md`, `04-verification.md`, `05-evidence.md`.
+  - Manifest, templates, validation rules, protocol docs, and tests use the new numbering consistently.
+  - Existing active and archived task packages are renamed and their internal references updated to the new numbering.
+  - Verification passes against the renumbered protocol and repository task packages.
+verification:
+  required_commands:
+    - "uv run pytest tests/openharness_cases/test_protocol_docs.py"
+    - "uv run pytest tests/openharness_cases/test_task_package_core.py"
+    - "uv run pytest tests/openharness_cases/test_cli_workflows.py"
+    - "uv run openharness check-tasks"
+  required_scenarios: []
+  last_run_at: "2026-03-27T00:00:00Z"
+  last_run_result: "passed"
+  last_run_artifact: ""
+evidence:
+  docs:
+    - docs/archived/task-packages/task-package-file-numbering-alignment/04-verification.md
+    - docs/archived/task-packages/task-package-file-numbering-alignment/05-evidence.md
+  code:
+    - AGENTS.md
+    - skills/using-openharness/references/manifest.yaml
+    - skills/using-openharness/references/runtime-capability-contract.md
+    - skills/using-openharness/references/project-runtime-surface-map.md
+    - skills/using-openharness/references/adding-project-runtime-helper.md
+    - skills/using-openharness/references/templates/task-package.README.md
+    - skills/using-openharness/references/templates/task-package.STATUS.yaml
+    - skills/using-openharness/references/templates/task-package.04-verification.md
+    - skills/using-openharness/references/templates/task-package.05-evidence.md
+    - openharness_cli/constants.py
+  tests:
+    - tests/openharness_cases/test_protocol_docs.py
+    - tests/openharness_cases/test_task_package_core.py
+    - tests/openharness_cases/test_cli_workflows.py

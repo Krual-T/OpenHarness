@@ -10,13 +10,13 @@
   - 若实现阶段需要更贴近真实 CLI，可再补一次从子进程并行调用 `new-task --auto-id` 的场景测试或手工验证，作为补充证据而不是唯一证据。
 - Fallback Path:
   - 如果稳定的真实并发子进程测试过于脆弱，就退回到可控的测试钩子或 monkeypatch，同样要求能稳定构造旧实现的竞争窗口。
-  - 如果完整测试被无关历史问题阻塞，至少保留聚焦测试与 `check-tasks` 的结果，并在 `05-verification.md` 明确记录阻塞原因；在这种情况下不能宣称本包已验证完成。
+  - 如果完整测试被无关历史问题阻塞，至少保留聚焦测试与 `check-tasks` 的结果，并在 `04-verification.md` 明确记录阻塞原因；在这种情况下不能宣称本包已验证完成。
   - 如果锁实现引入平台差异，优先缩小实现到当前仓库稳定支持的平台表面，并把未覆盖平台写成残余风险，而不是假装跨平台已经完成验证。
 - Planned Evidence:
   - 一个能证明旧缺陷存在的失败测试模型，以及修复后的通过结果。
   - `test_task_package_core.py` 通过结果。
   - `check-tasks` 通过结果。
-  - `06-evidence.md` 中记录新增 helper、测试点和并行场景观察结论。
+  - `05-evidence.md` 中记录新增 helper、测试点和并行场景观察结论。
 
 只有当详细设计已经具体到可以执行时，才进入 `in_progress`。
 如果设计已经完成但实现尚未开始，应保持在 `detailed_ready`。
@@ -88,7 +88,7 @@ repository 接口：
 2. 在 repository 层实现锁与并发安全 helper。
 3. 调整 `cmd_new_task()` 走新 helper。
 4. 补显式 `task_id` 冲突保护与相关测试。
-5. 跑测试与 `check-tasks`，回写 `05-verification.md` 和 `06-evidence.md`。
+5. 跑测试与 `check-tasks`，回写 `04-verification.md` 和 `05-evidence.md`。
 
 兼容策略：
 

@@ -33,8 +33,8 @@ verification:
   last_run_artifact: .harness/artifacts/001/verification-runs/20260324T142853752506Z.json
 evidence:
   docs:
-  - docs/archived/task-packages/gstack-methodology/05-verification.md
-  - docs/archived/task-packages/gstack-methodology/06-evidence.md
+  - docs/archived/task-packages/gstack-methodology/04-verification.md
+  - docs/archived/task-packages/gstack-methodology/05-evidence.md
   code:
   - skills/using-openharness/SKILL.md
   - skills/brainstorming/SKILL.md
@@ -43,7 +43,7 @@ evidence:
   - skills/using-openharness/references/skill-hub.md
   - skills/using-openharness/references/templates/task-package.02-overview-design.md
   - skills/using-openharness/references/templates/task-package.03-detailed-design.md
-  - skills/using-openharness/references/templates/task-package.05-verification.md
+  - skills/using-openharness/references/templates/task-package.04-verification.md
   - README.md
   tests:
   - skills/using-openharness/tests/test_openharness.py

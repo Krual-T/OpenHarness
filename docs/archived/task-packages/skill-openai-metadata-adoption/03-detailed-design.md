@@ -117,7 +117,7 @@
 1. 先为所有目标技能创建 `agents/openai.yaml`，其中只写最小必要字段。
 2. 再统一调整 `project-memory` 现有 metadata，使字段形状与其他技能一致。
 3. 然后补测试，固定文件存在性与策略分类。
-4. 最后跑验证命令并写回 `05-verification.md`、`06-evidence.md`。
+4. 最后跑验证命令并写回 `04-verification.md`、`05-evidence.md`。
 
 兼容策略：
 - `SKILL.md` 保持不动或只做最小冲突修正，因此旧的技能正文入口不会失效。

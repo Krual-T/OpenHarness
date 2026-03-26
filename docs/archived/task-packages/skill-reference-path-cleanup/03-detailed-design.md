@@ -34,8 +34,8 @@
   - 增加 live docs 引用有效性和 retired skill path 残留的文本断言，防止同类回归。
 - `docs/archived/task-packages/skill-reference-path-cleanup/README.md`
 - `docs/archived/task-packages/skill-reference-path-cleanup/STATUS.yaml`
-- `docs/archived/task-packages/skill-reference-path-cleanup/05-verification.md`
-- `docs/archived/task-packages/skill-reference-path-cleanup/06-evidence.md`
+- `docs/archived/task-packages/skill-reference-path-cleanup/04-verification.md`
+- `docs/archived/task-packages/skill-reference-path-cleanup/05-evidence.md`
   - 回写本轮设计、实现、验证证据。
 
 ## Interfaces
@@ -83,7 +83,7 @@
   2. 清理 `systematic-debugging` 下已确认的旧入口路径。
   3. 在 `test_protocol_docs.py` 中补路径存在性与旧入口残留断言。
   4. 跑 `pytest` 与 `check-tasks`。
-  5. 更新 `05-verification.md`、`06-evidence.md` 与 `STATUS.yaml`。
+  5. 更新 `04-verification.md`、`05-evidence.md` 与 `STATUS.yaml`。
 - 兼容策略是保持文档文件名不变，只改引用写法，因此不会影响外部入口或脚本命令。
 - 如果新增断言暴露出更多 live doc 失效路径，可在同一实施波次内继续纳入；若超出 `using-openharness` runtime capability 文档边界，则应停下重新评估是否拆包。
 

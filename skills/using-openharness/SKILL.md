@@ -88,8 +88,8 @@ Repository entry-skill responsibilities live here:
     - `01-requirements.md`
     - `02-overview-design.md`
     - `03-detailed-design.md`
-    - `05-verification.md`
-    - `06-evidence.md`
+    - `04-verification.md`
+    - `05-evidence.md`
 5. Implement only after the task package is internally consistent enough to act on.
 
 When you enter a new workflow stage, explicitly tell the user:
@@ -205,15 +205,15 @@ Do not advance a stage while material challenges still float without a recorded 
 - Record challenge closure when role injection or bounded subagent discussion changes the design.
 - Record the overview reflection pass in `02-overview-design.md`, including when a bounded subagent discussion was used and what it changed.
 - Record the detailed-design reflection pass in `03-detailed-design.md`, including when a bounded subagent discussion was used and what it changed.
-- Put planned versus executed verification path and results in `05-verification.md`.
-- Put changed files, commands, manual steps, residual risks, and remaining follow-ups in `06-evidence.md`.
+- Put planned versus executed verification path and results in `04-verification.md`.
+- Put changed files, commands, manual steps, residual risks, and remaining follow-ups in `05-evidence.md`.
 - Keep `STATUS.yaml.status` aligned with the highest workflow checkpoint that is actually complete; later statuses imply earlier checkpoints are already materially complete.
 
 ## Archive Protocol
 
 - Active work lives under `docs/task-packages/<task>/`.
 - Completed task packages that should no longer appear in active work move to `docs/archived/task-packages/<task>/`.
-- Before moving a completed package, update `05-verification.md` and `06-evidence.md`, then set `STATUS.yaml.status` to `archived` and refresh `updated_at`.
+- Before moving a completed package, update `04-verification.md` and `05-evidence.md`, then set `STATUS.yaml.status` to `archived` and refresh `updated_at`.
 - After moving the package, update package-local entrypoints/evidence paths and any repository references that still point to the old active location.
 - Archived packages remain historical fact sources and verification evidence, but they must not remain in the active task root.
 - `archived` should mean the task package is implemented, verified, and no longer active, not merely design-complete or relocated.

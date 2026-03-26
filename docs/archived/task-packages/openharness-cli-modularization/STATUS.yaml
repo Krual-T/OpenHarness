@@ -20,7 +20,7 @@ done_criteria:
 - skills/using-openharness/scripts/openharness.py 保留入口职责，但核心实现迁移到新增包。
 - skills/using-openharness/tests/test_openharness.py 保留入口职责，但实际测试按职责拆分到多个模块。
 - 入口兼容与现有 CLI 回归测试通过。
-- 05-verification.md 与 06-evidence.md 记录实际验证结果。
+- 04-verification.md 与 05-evidence.md 记录实际验证结果。
 verification:
   required_commands:
   - uv run pytest skills/using-openharness/tests/test_openharness.py
@@ -31,8 +31,8 @@ verification:
   last_run_artifact: .harness/artifacts/OH-019/verification-runs/20260324T165114774078Z.json
 evidence:
   docs:
-  - docs/archived/task-packages/openharness-cli-modularization/05-verification.md
-  - docs/archived/task-packages/openharness-cli-modularization/06-evidence.md
+  - docs/archived/task-packages/openharness-cli-modularization/04-verification.md
+  - docs/archived/task-packages/openharness-cli-modularization/05-evidence.md
   code:
   - skills/using-openharness/scripts/openharness.py
   - openharness_cli/__init__.py

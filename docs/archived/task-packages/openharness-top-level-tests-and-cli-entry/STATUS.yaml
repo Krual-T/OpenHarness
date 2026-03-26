@@ -39,8 +39,8 @@ verification:
   last_run_artifact: ""
 evidence:
   docs:
-    - docs/archived/task-packages/openharness-top-level-tests-and-cli-entry/05-verification.md
-    - docs/archived/task-packages/openharness-top-level-tests-and-cli-entry/06-evidence.md
+    - docs/archived/task-packages/openharness-top-level-tests-and-cli-entry/04-verification.md
+    - docs/archived/task-packages/openharness-top-level-tests-and-cli-entry/05-evidence.md
   code:
     - pyproject.toml
     - openharness_cli/validation.py

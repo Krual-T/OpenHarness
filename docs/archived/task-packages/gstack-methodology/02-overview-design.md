@@ -23,7 +23,7 @@
 2. `exploring-solution-space` / 总体设计前探索
 3. `02-overview-design.md`
 4. `03-detailed-design.md`
-5. `05-verification.md`
+5. `04-verification.md`
 
 第二层是在每个阶段注入角色视角：
 
@@ -39,7 +39,7 @@
 - `brainstorming` 结束前必须明确目标用户与核心场景、唯一成功指标、明确不做清单、成本上限，并给出可测试的验收标准与至少一个反例。
 - `02-overview-design.md` 结束前必须明确关键约束、接口边界、关键失败模式、降级或回滚思路。
 - `03-detailed-design.md` 结束前必须明确测试策略矩阵、可观测性要求、验证证据类型、迁移与回退边界。
-- `05-verification.md` 结束前必须明确需求到验证的追踪关系、剩余风险清单和接受理由。
+- `04-verification.md` 结束前必须明确需求到验证的追踪关系、剩余风险清单和接受理由。
 
 这个结构的关键约束是：
 

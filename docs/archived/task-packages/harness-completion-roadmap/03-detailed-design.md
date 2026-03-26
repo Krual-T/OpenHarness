@@ -12,7 +12,7 @@
 - Planned Evidence:
   - The archived `OH-017` package with a passing verification artifact and refreshed maintenance evidence.
   - The archived `OH-004` roadmap docs stating that no unfinished completion streams remain.
-  - Fresh `check-tasks`, `bootstrap`, and `pytest` results captured in `05-verification.md` and `06-evidence.md`.
+  - Fresh `check-tasks`, `bootstrap`, and `pytest` results captured in `04-verification.md` and `05-evidence.md`.
 
 ## Testing-First Design
 This roadmap package does not add runtime code directly. Its `tests` are repository-legibility checks:

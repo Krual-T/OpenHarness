@@ -29,8 +29,8 @@ verification:
   required_scenarios: []
 evidence:
   docs:
-    - docs/archived/task-packages/reflective-design-review/05-verification.md
-    - docs/archived/task-packages/reflective-design-review/06-evidence.md
+    - docs/archived/task-packages/reflective-design-review/04-verification.md
+    - docs/archived/task-packages/reflective-design-review/05-evidence.md
   code:
     - AGENTS.md
     - README.md

@@ -25,10 +25,10 @@ The package contract should land in the existing design docs:
   - declare the current verification floor
   - say whether runtime tests are required now or recommended next
   - explain the trigger for that choice
-- `05-verification.md`
+- `04-verification.md`
   - record what actually ran
   - say whether the result only satisfies the Python baseline or includes stronger runtime evidence
-- `06-evidence.md`
+- `05-evidence.md`
   - capture residual risk when completion rests on baseline-only evidence
   - capture explicit follow-up work if runtime tests were deferred
 
