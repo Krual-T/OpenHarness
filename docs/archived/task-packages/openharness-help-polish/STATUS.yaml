@@ -1,0 +1,40 @@
+id: OH-029
+title: 完善 OpenHarness CLI help 输出
+status: archived
+summary: 改进顶层与各子命令的帮助信息，使 update 等命令的 --help 更有内容。
+owner: codex
+created_at: 2026-03-26
+updated_at: '2026-03-26'
+depends_on: []
+scope:
+  areas:
+  - cli
+  - docs
+  - help-output
+entrypoints:
+- docs/archived/task-packages/openharness-help-polish/README.md
+- docs/archived/task-packages/openharness-help-polish/01-requirements.md
+- docs/archived/task-packages/openharness-help-polish/02-overview-design.md
+- docs/archived/task-packages/openharness-help-polish/03-detailed-design.md
+done_criteria:
+- 顶层 `openharness --help` 继续清晰列出所有子命令及其用途。
+- 每个主要子命令的 `--help` 都包含 description 或 example，而不只是参数列表。
+- '`update --help` 明确说明它会更新 OpenHarness clone 并刷新 CLI 安装。'
+- 自动化测试覆盖顶层和关键子命令的帮助文本。
+verification:
+  required_commands:
+  - uv run pytest skills/using-openharness/tests/openharness_cases/test_entrypoint.py
+    -k help
+  - uv run pytest skills/using-openharness/tests/openharness_cases/test_protocol_docs.py
+    -k help
+  - uv run python skills/using-openharness/scripts/openharness.py check-tasks
+  required_scenarios: []
+  last_run_at: '2026-03-26T15:00:46Z'
+  last_run_result: passed
+  last_run_artifact: .harness/artifacts/OH-029/verification-runs/20260326T150046240415Z.json
+evidence:
+  docs:
+  - docs/archived/task-packages/openharness-help-polish/05-verification.md
+  - docs/archived/task-packages/openharness-help-polish/06-evidence.md
+  code: []
+  tests: []
