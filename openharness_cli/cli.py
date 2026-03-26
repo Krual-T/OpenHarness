@@ -10,6 +10,7 @@ def build_parser(
     cmd_new_task,
     cmd_transition,
     cmd_verify,
+    cmd_update,
 ) -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Openharness repository workflow CLI.")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -55,5 +56,11 @@ def build_parser(
     verify_parser.add_argument("--repo", default=".", help="Repository root")
     verify_parser.add_argument("--check-tasks-only", action="store_true", help="Only validate task package protocol")
     verify_parser.set_defaults(handler=cmd_verify)
+
+    update_parser = subparsers.add_parser(
+        "update",
+        help="Update the OpenHarness clone and refresh the installed CLI tool.",
+    )
+    update_parser.set_defaults(handler=cmd_update)
 
     return parser

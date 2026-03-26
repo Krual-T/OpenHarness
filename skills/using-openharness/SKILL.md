@@ -234,6 +234,7 @@ Do not advance a stage while material challenges still float without a recorded 
 
 - Run `openharness check-tasks` before claiming completion. If the global command is not installed yet, fall back to `uv run python skills/using-openharness/scripts/openharness.py check-tasks`.
 - Run `openharness new-task <task_name> --task-id <task-id> --title <title>` to scaffold a new task package. If the global command is not installed yet, fall back to `uv run python skills/using-openharness/scripts/openharness.py new-task ...`.
+- Run `openharness update` to refresh the OpenHarness clone and installed CLI after setup. If the global command is not installed yet, fall back to the documented manual update steps.
 - Run `openharness verify <task-name-or-id>` when a package declares required commands. If the global command is not installed yet, fall back to `uv run python skills/using-openharness/scripts/openharness.py verify <task-name-or-id>`.
 - `openharness` is the preferred harness CLI. The legacy `openharness.py` script remains a compatibility entrypoint and should not gain divergent behavior.
 - For Python-first repositories, prefer `uv run ...` commands unless the repository documents a stronger automated path.

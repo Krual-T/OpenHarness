@@ -3,6 +3,7 @@ from __future__ import annotations
 from .common import (
     Path,
     REQUIRED_TASK_PACKAGE_FILES,
+    REPO_ROOT,
     argparse,
     json,
     load_manifest,
@@ -199,6 +200,47 @@ def test_bootstrap_reports_stage_guidance_in_text_output(tmp_path: Path, capsys)
     assert "next stage:" in captured.out
     assert "next step:" in captured.out
     assert "`overview_ready`" in captured.out
+
+
+def test_update_runs_git_pull_then_uv_tool_upgrade_in_repo_root(
+    capsys, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    calls: list[tuple[Path, str]] = []
+
+    def fake_run(repo: Path, command: str) -> int:
+        calls.append((repo, command))
+        return 0
+
+    monkeypatch.setattr(openharness, "_run_command", fake_run)
+
+    result = openharness.cmd_update(argparse.Namespace())
+
+    captured = capsys.readouterr()
+    assert result == 0
+    assert calls == [
+        (REPO_ROOT, "git pull"),
+        (REPO_ROOT, "uv tool upgrade openharness"),
+    ]
+    assert "Updated OpenHarness" in captured.out
+
+
+def test_update_stops_when_git_pull_fails(capsys, monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[tuple[Path, str]] = []
+
+    def fake_run(repo: Path, command: str) -> int:
+        calls.append((repo, command))
+        if command == "git pull":
+            return 1
+        return 0
+
+    monkeypatch.setattr(openharness, "_run_command", fake_run)
+
+    result = openharness.cmd_update(argparse.Namespace())
+
+    captured = capsys.readouterr()
+    assert result == 1
+    assert calls == [(REPO_ROOT, "git pull")]
+    assert "git pull failed" in captured.out
 
 
 def test_bootstrap_json_includes_stage_guidance(tmp_path: Path, capsys) -> None:
