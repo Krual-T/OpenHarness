@@ -8,7 +8,7 @@ status: archived
 summary: Remove legacy positional argument compatibility from openharness new-task.
 owner: unassigned
 created_at: 2026-03-25
-updated_at: 2026-03-25
+updated_at: 2026-03-26
 depends_on: []
 scope:
   areas:
@@ -38,8 +38,8 @@ evidence:
     - docs/archived/task-packages/remove-legacy-new-task-args/05-verification.md
     - docs/archived/task-packages/remove-legacy-new-task-args/06-evidence.md
   code:
-    - skills/using-openharness/scripts/openharness_cli/cli.py
-    - skills/using-openharness/scripts/openharness_cli/commands.py
+    - openharness_cli/cli.py
+    - openharness_cli/commands.py
   tests:
     - skills/using-openharness/tests/openharness_cases/test_protocol_docs.py
     - skills/using-openharness/tests/openharness_cases/test_task_package_core.py

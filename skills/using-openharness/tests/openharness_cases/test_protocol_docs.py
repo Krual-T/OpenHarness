@@ -327,6 +327,13 @@ def test_agents_md_routes_repo_skill_usage_through_openharness() -> None:
     assert "探索" in text
 
 
+def test_install_doc_describes_global_openharness_command_install_and_upgrade() -> None:
+    text = (REPO_ROOT / "INSTALL.codex.md").read_text(encoding="utf-8")
+    assert "uv tool install --editable" in text
+    assert "openharness bootstrap" in text
+    assert "已安装" in text or "existing" in text
+
+
 def test_brainstorming_defaults_to_autonomous_continuation() -> None:
     text = (REPO_ROOT / "skills" / "brainstorming" / "SKILL.md").read_text(encoding="utf-8")
     assert "continue automatically by default" in text

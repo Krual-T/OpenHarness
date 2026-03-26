@@ -4,7 +4,7 @@ status: archived
 summary: 拆分 using-openharness CLI 与测试，降低集中度并保持两个入口文件稳定
 owner: codex
 created_at: 2026-03-25
-updated_at: '2026-03-24'
+updated_at: '2026-03-26'
 depends_on: []
 scope:
   areas:
@@ -35,14 +35,15 @@ evidence:
   - docs/archived/task-packages/openharness-cli-modularization/06-evidence.md
   code:
   - skills/using-openharness/scripts/openharness.py
-  - skills/using-openharness/scripts/openharness_cli/__init__.py
-  - skills/using-openharness/scripts/openharness_cli/cli.py
-  - skills/using-openharness/scripts/openharness_cli/commands.py
-  - skills/using-openharness/scripts/openharness_cli/constants.py
-  - skills/using-openharness/scripts/openharness_cli/lifecycle.py
-  - skills/using-openharness/scripts/openharness_cli/models.py
-  - skills/using-openharness/scripts/openharness_cli/repository.py
-  - skills/using-openharness/scripts/openharness_cli/validation.py
+  - openharness_cli/__init__.py
+  - openharness_cli/cli.py
+  - openharness_cli/commands.py
+  - openharness_cli/constants.py
+  - openharness_cli/lifecycle.py
+  - openharness_cli/main.py
+  - openharness_cli/models.py
+  - openharness_cli/repository.py
+  - openharness_cli/validation.py
   tests:
   - skills/using-openharness/tests/test_openharness.py
   - skills/using-openharness/tests/openharness_cases/__init__.py

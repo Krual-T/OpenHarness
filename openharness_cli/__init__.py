@@ -5,6 +5,15 @@ from .constants import (
     REQUIRED_TASK_PACKAGE_FILES,
     VERIFYABLE_STATUSES,
 )
+from .main import (
+    build_parser,
+    cmd_bootstrap,
+    cmd_check_tasks,
+    cmd_new_task,
+    cmd_transition,
+    cmd_verify,
+    main,
+)
 from .models import HarnessManifest, TaskPackage, TaskScaffoldRequest
 from .repository import (
     _current_date,
@@ -28,6 +37,12 @@ __all__ = [
     "ACTIVE_STATUSES",
     "REQUIRED_TASK_PACKAGE_FILES",
     "VERIFYABLE_STATUSES",
+    "build_parser",
+    "cmd_bootstrap",
+    "cmd_check_tasks",
+    "cmd_new_task",
+    "cmd_transition",
+    "cmd_verify",
     "HarnessManifest",
     "TaskPackage",
     "TaskScaffoldRequest",
@@ -46,4 +61,5 @@ __all__ = [
     "slugify_task_name",
     "summarize_task_package",
     "validate_task_package",
+    "main",
 ]
