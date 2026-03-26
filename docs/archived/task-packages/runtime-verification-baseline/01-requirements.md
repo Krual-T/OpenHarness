@@ -24,7 +24,7 @@ OpenHarness therefore needs a reusable baseline that is credible in low-automati
 ## Required Outcomes
 1. Define a verification ladder for no-harness or weak-harness repositories.
 2. Define the minimum evidence shape expected for each verification path.
-3. Define how the ladder affects completion claims, especially `verifying` and the handoff into `05-verification.md` and `06-evidence.md`.
+3. Define how the ladder affects completion claims, especially `verifying` and the handoff into `04-verification.md` and `05-evidence.md`.
 4. Define when weak verification is acceptable and when the agent must escalate, defer completion, or explicitly record residual risk.
 5. Provide enough structure that follow-up implementation can update skills, templates, and CLI behavior intentionally.
 

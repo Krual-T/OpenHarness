@@ -9,7 +9,7 @@
 - Planned Evidence:
 - 受影响 skill 文档与模板已更新
 - 针对新协议的仓库测试已补充并通过
-- `05-verification.md` 和 `06-evidence.md` 记录实施与验证结果
+- `04-verification.md` 和 `05-evidence.md` 记录实施与验证结果
 
 Move to `in_progress` only when detailed design is concrete enough to execute.
 If design is complete but implementation has not started yet, stay at `detailed_ready`.
@@ -25,9 +25,9 @@ If design is complete but implementation has not started yet, stay at `detailed_
   - 说明“按阶段组织、按角色注入”的总体结构。
 - `docs/archived/task-packages/gstack-methodology/03-detailed-design.md`
   - 明确阶段与角色的映射、职责边界和收敛协议。
-- `docs/archived/task-packages/gstack-methodology/05-verification.md`
+- `docs/archived/task-packages/gstack-methodology/04-verification.md`
   - 记录本轮 skill productization 的验证路径与结果。
-- `docs/archived/task-packages/gstack-methodology/06-evidence.md`
+- `docs/archived/task-packages/gstack-methodology/05-evidence.md`
   - 记录残余风险与后续事项。
 - `skills/using-openharness/SKILL.md`
   - 落地入口协议中的角色注入、阶段门禁与挑战闭环。
@@ -41,7 +41,7 @@ If design is complete but implementation has not started yet, stay at `detailed_
   - 为 overview 模板增加 stage gate 槽位。
 - `skills/using-openharness/references/templates/task-package.03-detailed-design.md`
   - 为 detailed 模板增加 challenge closure 槽位。
-- `skills/using-openharness/references/templates/task-package.05-verification.md`
+- `skills/using-openharness/references/templates/task-package.04-verification.md`
   - 为 verification 模板增加 traceability 槽位。
 - `skills/using-openharness/tests/test_openharness.py`
   - 用仓库测试钉住新协议文案与模板结构。
@@ -89,7 +89,7 @@ If design is complete but implementation has not started yet, stay at `detailed_
 3. `03-detailed-design.md`
    - 主代理：设计主代理
    - 注入角色：架构视角、测试视角
-4. `05-verification.md`
+4. `04-verification.md`
    - 主代理：验证主代理
    - 注入角色：review 视角、风险视角
 
@@ -105,7 +105,7 @@ If design is complete but implementation has not started yet, stay at `detailed_
    - 必须产出：关键约束、接口边界、关键失败模式、降级或回滚方向
 3. `03-detailed-design.md`
    - 必须产出：测试策略矩阵、可观测性要求、实现落点、迁移顺序、验证证据类型
-4. `05-verification.md`
+4. `04-verification.md`
    - 必须产出：需求到验证的追踪表、剩余风险清单、风险接受理由
 
 建议的反思检查项如下：

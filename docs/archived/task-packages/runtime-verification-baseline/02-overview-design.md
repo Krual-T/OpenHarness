@@ -24,8 +24,8 @@ The baseline should distinguish four verification paths:
 This gives OpenHarness a minimum common language:
 
 - `03-detailed-design.md` states the intended verification path up front
-- `05-verification.md` records which path actually ran and with what results
-- `06-evidence.md` captures the exact commands, manual steps, artifacts, and residual risks
+- `04-verification.md` records which path actually ran and with what results
+- `05-evidence.md` captures the exact commands, manual steps, artifacts, and residual risks
 - `STATUS.yaml` and completion claims can distinguish "verification performed" from "verification still insufficient"
 
 The recommended semantic rule is:
@@ -81,8 +81,8 @@ Reasoning:
 Concretely, the first implementation wave should:
 
 - update `03-detailed-design.md` conventions so packages declare an intended verification path and fallback path
-- update `05-verification.md` conventions so packages record which path actually ran, its result, and any mismatch versus plan
-- update `06-evidence.md` conventions so commands, manual steps, artifacts, and residual risks are recorded in a comparable shape
+- update `04-verification.md` conventions so packages record which path actually ran, its result, and any mismatch versus plan
+- update `05-evidence.md` conventions so commands, manual steps, artifacts, and residual risks are recorded in a comparable shape
 - update `skills/verification-before-completion/SKILL.md` so it recognizes commands, manual scenarios, and blocked-completion cases rather than only command success
 - update `skills/using-openharness/SKILL.md` and templates so runtime verification planning is explicit before implementation
 - extend `openharness.py verify` only enough to expose or summarize declared scenarios and later structured verification metadata, not to become a second orchestration framework
@@ -93,8 +93,8 @@ The second implementation wave can then decide whether stronger machine-readable
 1. A task reaches detailed design and chooses an intended verification path.
 2. Implementation proceeds with that intended path recorded in `03-detailed-design.md`.
 3. During `verifying`, the agent gathers fresh evidence using the strongest available path.
-4. `05-verification.md` records results in a format that matches the chosen path.
-5. `06-evidence.md` records commands, manual procedures, artifacts, and unresolved limits.
+4. `04-verification.md` records results in a format that matches the chosen path.
+5. `05-evidence.md` records commands, manual procedures, artifacts, and unresolved limits.
 6. If evidence is insufficient, the task does not upgrade its claim; it either narrows scope, adds stronger verification, or records follow-up work.
 
 This package is upstream of:

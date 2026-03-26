@@ -35,7 +35,7 @@ That means the earlier bootstrap framing was solving the wrong problem. The real
 1. Define `pytest` as the minimum acceptable verification floor for Python work when runtime tests are incomplete.
 2. Define how packages should distinguish `required now` from `recommended next` for runtime tests.
 3. Define how runtime tests may be built in parallel with other Python tests when task risk justifies it.
-4. Define how `03-detailed-design.md`, `05-verification.md`, and `06-evidence.md` should record verification strength and remaining gaps.
+4. Define how `03-detailed-design.md`, `04-verification.md`, and `05-evidence.md` should record verification strength and remaining gaps.
 5. Define how the tighter status meanings from `OH-006` apply when a task has only the Python baseline versus stronger runtime evidence.
 6. Keep the package concrete enough that a later implementation round can update docs, templates, and verification guidance directly from it.
 

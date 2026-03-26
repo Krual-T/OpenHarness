@@ -19,7 +19,7 @@ This package should define the narrow onboarding workflow for adding one reusabl
 1. Define the decision rule between `reuse existing helper`, `add new helper`, and `open bootstrap package first`.
 2. Define the minimum contract that a new project runtime helper must satisfy before it is treated as reusable.
 3. Define which repository surfaces must be updated when adding a new helper.
-4. Define how helper usage and helper creation write back into `03-detailed-design.md`, `05-verification.md`, and `06-evidence.md`.
+4. Define how helper usage and helper creation write back into `03-detailed-design.md`, `04-verification.md`, and `05-evidence.md`.
 5. Keep `using-openharness` as the only entry skill while allowing repositories to grow multiple runtime helpers naturally.
 
 ## Non-Goals

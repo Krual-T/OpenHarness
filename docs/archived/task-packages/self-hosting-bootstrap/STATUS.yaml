@@ -30,8 +30,8 @@ verification:
   required_scenarios: []
 evidence:
   docs:
-    - docs/archived/task-packages/self-hosting-bootstrap/05-verification.md
-    - docs/archived/task-packages/self-hosting-bootstrap/06-evidence.md
+    - docs/archived/task-packages/self-hosting-bootstrap/04-verification.md
+    - docs/archived/task-packages/self-hosting-bootstrap/05-evidence.md
   code:
     - pyproject.toml
     - skills/using-openharness/scripts/openharness.py

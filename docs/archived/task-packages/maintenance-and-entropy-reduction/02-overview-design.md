@@ -40,7 +40,7 @@
 4. 把 findings 分成两类：
    - 可以在 `OH-017` 里直接落地的 bounded cleanup。
    - 会引入新协议、新模板或新命令的扩展性工作。
-5. 对第一类 findings，直接在 `OH-017` 中实现并把证据写回 `05-verification.md`、`06-evidence.md`，必要时更新 `.project-memory/` 或 live docs/tests。
+5. 对第一类 findings，直接在 `OH-017` 中实现并把证据写回 `04-verification.md`、`05-evidence.md`，必要时更新 `.project-memory/` 或 live docs/tests。
 6. 对第二类 findings，先回写 `OH-017` 的结论，再脚手架新的 child package。
 7. 只有当维护流的剩余边界发生变化时，才回写 `OH-004`。
 

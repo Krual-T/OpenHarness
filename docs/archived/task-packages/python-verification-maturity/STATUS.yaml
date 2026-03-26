@@ -37,7 +37,7 @@ verification:
   required_scenarios: []
 evidence:
   docs:
-    - docs/archived/task-packages/python-verification-maturity/05-verification.md
-    - docs/archived/task-packages/python-verification-maturity/06-evidence.md
+    - docs/archived/task-packages/python-verification-maturity/04-verification.md
+    - docs/archived/task-packages/python-verification-maturity/05-evidence.md
   code: []
   tests: []

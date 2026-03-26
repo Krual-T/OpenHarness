@@ -31,8 +31,8 @@ verification:
   last_run_artifact: ""
 evidence:
   docs:
-    - docs/archived/task-packages/new-task-auto-id-concurrency-fix/05-verification.md
-    - docs/archived/task-packages/new-task-auto-id-concurrency-fix/06-evidence.md
+    - docs/archived/task-packages/new-task-auto-id-concurrency-fix/04-verification.md
+    - docs/archived/task-packages/new-task-auto-id-concurrency-fix/05-evidence.md
   code:
     - openharness_cli/commands.py
     - openharness_cli/repository.py

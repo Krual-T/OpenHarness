@@ -93,7 +93,7 @@ def _next_step(package: TaskPackage) -> str:
             "and transition to `verifying` when fresh evidence can be gathered."
         ),
         "verifying": (
-            "Run declared verification, refresh `05-verification.md` and `06-evidence.md`, "
+            "Run declared verification, refresh `04-verification.md` and `05-evidence.md`, "
             "then transition to `archived` after passing evidence is recorded."
         ),
         "archived": "No next step. The package is complete and archived.",

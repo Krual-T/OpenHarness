@@ -33,8 +33,8 @@ verification:
   last_run_artifact: .harness/artifacts/OH-027/verification-runs/20260326T142933341515Z.json
 evidence:
   docs:
-  - docs/archived/task-packages/openharness-global-cli/05-verification.md
-  - docs/archived/task-packages/openharness-global-cli/06-evidence.md
+  - docs/archived/task-packages/openharness-global-cli/04-verification.md
+  - docs/archived/task-packages/openharness-global-cli/05-evidence.md
   code:
   - pyproject.toml
   - openharness_cli/__init__.py

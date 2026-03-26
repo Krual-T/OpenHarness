@@ -24,8 +24,8 @@ If design is complete but implementation has not started yet, stay at `detailed_
 - `skills/using-openharness/tests/test_openharness.py`
 - `skills/using-openharness/references/templates/task-package.02-overview-design.md`
 - `skills/using-openharness/references/templates/task-package.03-detailed-design.md`
-- `skills/using-openharness/references/templates/task-package.05-verification.md`
-- `skills/using-openharness/references/templates/task-package.06-evidence.md`
+- `skills/using-openharness/references/templates/task-package.04-verification.md`
+- `skills/using-openharness/references/templates/task-package.05-evidence.md`
 
 ## Interfaces
 - Add a small internal representation in `openharness.py` for markdown semantic anchors:

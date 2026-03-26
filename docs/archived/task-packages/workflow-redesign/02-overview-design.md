@@ -17,8 +17,8 @@ It does not yet add heavy runtime modules; it only defines where runtime verific
   - `01-requirements.md`
   - `02-overview-design.md`
   - `03-detailed-design.md`
-  - `05-verification.md`
-  - `06-evidence.md`
+  - `04-verification.md`
+  - `05-evidence.md`
 - Default workflow becomes:
   - `using-openharness`
   - `brainstorming` -> write `01`

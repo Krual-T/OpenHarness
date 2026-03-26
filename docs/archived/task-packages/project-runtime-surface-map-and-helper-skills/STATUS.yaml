@@ -37,7 +37,7 @@ verification:
   last_run_artifact: .harness/artifacts/OH-014/verification-runs/20260323T093902228131Z.json
 evidence:
   docs:
-  - docs/archived/task-packages/project-runtime-surface-map-and-helper-skills/05-verification.md
-  - docs/archived/task-packages/project-runtime-surface-map-and-helper-skills/06-evidence.md
+  - docs/archived/task-packages/project-runtime-surface-map-and-helper-skills/04-verification.md
+  - docs/archived/task-packages/project-runtime-surface-map-and-helper-skills/05-evidence.md
   code: []
   tests: []

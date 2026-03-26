@@ -11,13 +11,13 @@
   - 最后运行仓库任务包校验：
     - `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
 - Fallback Path:
-  - 如果完整测试因无关历史问题失败，至少要保留聚焦测试和 `check-tasks` 结果，并在 `05-verification.md` 里明确写出阻塞点，不能宣称本包已完成验证。
+  - 如果完整测试因无关历史问题失败，至少要保留聚焦测试和 `check-tasks` 结果，并在 `04-verification.md` 里明确写出阻塞点，不能宣称本包已完成验证。
   - 如果 CLI 输出断言因为文案微调失败，应优先统一代码与测试口径，而不是删掉阶段播报。
 - Planned Evidence:
   - 聚焦测试从失败转为通过的结果。
   - 完整 `test_openharness.py` 的通过结果。
   - `check-tasks` 对 active / archived package 的校验结果。
-  - `06-evidence.md` 中记录新增或修改的脚本、技能文档和 README。
+  - `05-evidence.md` 中记录新增或修改的脚本、技能文档和 README。
 
 只有当详细设计已经具体到可以执行时，才进入 `in_progress`。
 如果设计已经完成但实现尚未开始，应保持在 `detailed_ready`。

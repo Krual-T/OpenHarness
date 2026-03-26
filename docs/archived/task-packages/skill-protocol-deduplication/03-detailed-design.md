@@ -17,7 +17,7 @@
 - `skills/using-openharness/SKILL.md`：保留仓库级单一权威协议，不把关键规则拆散。
 - `skills/brainstorming/SKILL.md`、`skills/exploring-solution-space/SKILL.md`：去掉重复的仓库级制度，只保留阶段专属动作与输出要求。
 - `skills/subagent-driven-development/SKILL.md` 以及少量 helper skill：删除自带的平行闭环，改为引用仓库入口层和当前会话能力。
-- 本 task package 下的 `05-verification.md`、`06-evidence.md`、`STATUS.yaml`：记录验证结果并在完成后归档。
+- 本 task package 下的 `04-verification.md`、`05-evidence.md`、`STATUS.yaml`：记录验证结果并在完成后归档。
 
 ## Interfaces
 - 稳定接口是 `using-openharness` 提供的仓库级协议：任务包结构、阶段流、写回位置和归档要求。

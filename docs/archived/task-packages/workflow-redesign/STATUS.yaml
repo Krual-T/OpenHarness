@@ -29,8 +29,8 @@ verification:
   required_scenarios: []
 evidence:
   docs:
-    - docs/archived/task-packages/workflow-redesign/05-verification.md
-    - docs/archived/task-packages/workflow-redesign/06-evidence.md
+    - docs/archived/task-packages/workflow-redesign/04-verification.md
+    - docs/archived/task-packages/workflow-redesign/05-evidence.md
   code:
     - AGENTS.md
     - README.md

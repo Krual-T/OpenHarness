@@ -80,7 +80,7 @@ Reasoning:
 4. Detailed design produces a concrete `03-detailed-design.md`, which after reflection moves the package to `detailed_ready`.
 5. Implementation or execution work moves the package to `in_progress`.
 6. Once execution is complete enough to run the declared verification path, the package enters `verifying`.
-7. Fresh evidence is written into `05-verification.md` and `06-evidence.md`.
+7. Fresh evidence is written into `04-verification.md` and `05-evidence.md`.
 8. Only after that evidence is credible and complete does the package move to `archived` and relocate to the archive root.
 
 Current local constraints that shape the solution:

@@ -33,13 +33,13 @@ For each status that claims a meaningful readiness checkpoint, define a small se
 4. `verifying`
    - detailed anchors must already be satisfied
    - existing verification-path rule from `OH-006` still applies
-   - `05-verification.md` must contain non-placeholder content for:
+   - `04-verification.md` must contain non-placeholder content for:
      - `Planned Path`
      - `Executed Path`
      - `Latest Result`
 5. `archived`
    - verifying anchors must already be satisfied
-   - `06-evidence.md` must contain non-placeholder content for:
+   - `05-evidence.md` must contain non-placeholder content for:
      - `## Files`
      - `## Commands`
      - `## Residual Risks`
@@ -80,5 +80,5 @@ Reasoning:
 - I considered checking only for heading presence. That is too weak because a package could keep the default placeholder shell and still pass.
 - I considered a richer markdown parser that scores prose quality or diagram presence. That is too subjective and brittle for a first enforcement wave.
 - I checked whether requiring reflection sections would overfit to current workflow wording. It should not; reflection is already part of the current repository protocol and is explicitly taught in workflow skills.
-- I checked whether `06-evidence.md` should require every section for `archived`. It should not in the first wave; requiring `Files`, `Commands`, and `Residual Risks` captures the minimum evidence shape without over-constraining manual-step edge cases.
+- I checked whether `05-evidence.md` should require every section for `archived`. It should not in the first wave; requiring `Files`, `Commands`, and `Residual Risks` captures the minimum evidence shape without over-constraining manual-step edge cases.
 - No bounded subagent discussion was used because the main design decision is local, incremental, and already framed by archived `OH-006`.

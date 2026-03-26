@@ -44,7 +44,7 @@ verification:
   last_run_artifact: .harness/artifacts/OH-012/verification-runs/20260322T164921906572Z.json
 evidence:
   docs:
-  - docs/archived/task-packages/skill-taxonomy-and-stage-model/05-verification.md
-  - docs/archived/task-packages/skill-taxonomy-and-stage-model/06-evidence.md
+  - docs/archived/task-packages/skill-taxonomy-and-stage-model/04-verification.md
+  - docs/archived/task-packages/skill-taxonomy-and-stage-model/05-evidence.md
   code: []
   tests: []

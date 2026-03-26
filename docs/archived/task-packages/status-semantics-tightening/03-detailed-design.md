@@ -2,7 +2,7 @@
 
 ## Runtime Verification Plan
 - Verification Path: repository automation for this task package, using harness validation and repository tests
-- Fallback Path: if repository tests fail for unrelated reasons, record the blocking failure in `05-verification.md` and keep the package below any completion claim
+- Fallback Path: if repository tests fail for unrelated reasons, record the blocking failure in `04-verification.md` and keep the package below any completion claim
 - Planned Evidence:
   - `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
   - `uv run pytest`
@@ -25,7 +25,7 @@
   - `validate_design_package` rejects `archived` packages that declare no verification path
 - Third implementation wave now completed for template guidance:
   - task-package templates now remind authors that status should match the highest completed workflow checkpoint
-  - `03-detailed-design.md` and `05-verification.md` templates now call out the intended boundary for `in_progress` and `verifying`
+  - `03-detailed-design.md` and `04-verification.md` templates now call out the intended boundary for `in_progress` and `verifying`
 - Fourth implementation wave now completed for workflow skill wording:
   - `using-openharness` now states the intended boundary for `in_progress`, `verifying`, and `archived`
   - `exploring-solution-space` now ties coherent reflected design output to `overview_ready` and `detailed_ready`

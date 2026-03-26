@@ -7,8 +7,8 @@
 - Fallback Path:
   - If full historical wording cleanup cannot land safely in one round, update active protocol surfaces first and mark remaining archived-package cleanup explicitly in evidence.
 - Planned Evidence:
-  - `05-verification.md` should record design validation and repository test results after the terminology and status-semantics rollout.
-  - `06-evidence.md` should record which historical packages were explicitly marked as legacy archive semantics and which follow-ups remain.
+  - `04-verification.md` should record design validation and repository test results after the terminology and status-semantics rollout.
+  - `05-evidence.md` should record which historical packages were explicitly marked as legacy archive semantics and which follow-ups remain.
 
 Move to `in_progress` only when detailed design is concrete enough to execute.
 

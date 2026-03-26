@@ -30,10 +30,10 @@ verification:
     - README and INSTALL agree on target-directory-first installation guidance.
   last_run_at: "2026-03-25"
   last_run_result: "passed"
-  last_run_artifact: "docs/archived/task-packages/install-target-dir/05-verification.md"
+  last_run_artifact: "docs/archived/task-packages/install-target-dir/04-verification.md"
 evidence:
   docs:
-    - docs/archived/task-packages/install-target-dir/05-verification.md
-    - docs/archived/task-packages/install-target-dir/06-evidence.md
+    - docs/archived/task-packages/install-target-dir/04-verification.md
+    - docs/archived/task-packages/install-target-dir/05-evidence.md
   code: []
   tests: []

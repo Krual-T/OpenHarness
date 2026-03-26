@@ -40,8 +40,8 @@ verification:
   last_run_artifact: .harness/artifacts/OH-016/verification-runs/20260323T100004667275Z.json
 evidence:
   docs:
-  - docs/archived/task-packages/adding-project-runtime-helper/05-verification.md
-  - docs/archived/task-packages/adding-project-runtime-helper/06-evidence.md
+  - docs/archived/task-packages/adding-project-runtime-helper/04-verification.md
+  - docs/archived/task-packages/adding-project-runtime-helper/05-evidence.md
   code:
   - README.md
   - skills/using-openharness/SKILL.md

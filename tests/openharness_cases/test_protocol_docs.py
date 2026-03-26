@@ -437,7 +437,7 @@ def test_design_package_templates_include_verification_path_sections() -> None:
         / "using-openharness"
         / "references"
         / "templates"
-        / "task-package.05-verification.md"
+        / "task-package.04-verification.md"
     ).read_text(encoding="utf-8")
     evidence = (
         REPO_ROOT
@@ -445,7 +445,7 @@ def test_design_package_templates_include_verification_path_sections() -> None:
         / "using-openharness"
         / "references"
         / "templates"
-        / "task-package.06-evidence.md"
+        / "task-package.05-evidence.md"
     ).read_text(encoding="utf-8")
 
     assert "## Overview Reflection" in overview
@@ -495,7 +495,7 @@ def test_design_package_templates_include_status_guidance() -> None:
         / "using-openharness"
         / "references"
         / "templates"
-        / "task-package.05-verification.md"
+        / "task-package.04-verification.md"
     ).read_text(encoding="utf-8")
 
     assert "Status should match the highest workflow checkpoint" in readme
@@ -525,8 +525,8 @@ def test_runtime_capability_reference_defines_declaration_shape_and_writeback() 
     assert "success criteria" in text
     assert "failure evidence" in text
     assert "03-detailed-design.md" in text
-    assert "05-verification.md" in text
-    assert "06-evidence.md" in text
+    assert "04-verification.md" in text
+    assert "05-evidence.md" in text
     assert "## Routing Contract" in text
     assert "reuse an existing runtime helper" in text
     assert "add one new runtime helper" in text
@@ -562,8 +562,8 @@ def test_project_runtime_surface_map_reference_defines_minimum_contents_and_boot
     assert "open a bootstrap package first" in text
     assert "adding-project-runtime-helper.md" in text
     assert "03-detailed-design.md" in text
-    assert "05-verification.md" in text
-    assert "06-evidence.md" in text
+    assert "04-verification.md" in text
+    assert "05-evidence.md" in text
 
 
 def test_project_runtime_surface_map_template_provides_adoption_shape() -> None:
@@ -583,8 +583,8 @@ def test_project_runtime_surface_map_template_provides_adoption_shape() -> None:
     assert "bootstrap package" in text
     assert "add one narrow helper" in text
     assert "03-detailed-design.md" in text
-    assert "05-verification.md" in text
-    assert "06-evidence.md" in text
+    assert "04-verification.md" in text
+    assert "05-evidence.md" in text
 
 
 def test_project_runtime_helper_reference_defines_reuse_add_bootstrap_and_repo_updates() -> None:
@@ -610,8 +610,8 @@ def test_project_runtime_helper_reference_defines_reuse_add_bootstrap_and_repo_u
     assert "helper skill path" in text
     assert "skill-hub" in text
     assert "03-detailed-design.md" in text
-    assert "05-verification.md" in text
-    assert "06-evidence.md" in text
+    assert "04-verification.md" in text
+    assert "05-evidence.md" in text
 
 
 def test_task_package_templates_default_to_chinese_narrative_with_english_anchors() -> None:
@@ -645,7 +645,7 @@ def test_task_package_templates_default_to_chinese_narrative_with_english_anchor
         / "using-openharness"
         / "references"
         / "templates"
-        / "task-package.05-verification.md"
+        / "task-package.04-verification.md"
     ).read_text(encoding="utf-8")
     evidence = (
         REPO_ROOT
@@ -653,7 +653,7 @@ def test_task_package_templates_default_to_chinese_narrative_with_english_anchor
         / "using-openharness"
         / "references"
         / "templates"
-        / "task-package.06-evidence.md"
+        / "task-package.05-evidence.md"
     ).read_text(encoding="utf-8")
 
     for text in (requirements, overview, detailed, verification, evidence):

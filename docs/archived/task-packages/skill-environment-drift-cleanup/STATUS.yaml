@@ -34,11 +34,11 @@ verification:
   required_scenarios: []
   last_run_at: "2026-03-25T15:15:08+08:00"
   last_run_result: "passed"
-  last_run_artifact: "docs/archived/task-packages/skill-environment-drift-cleanup/05-verification.md"
+  last_run_artifact: "docs/archived/task-packages/skill-environment-drift-cleanup/04-verification.md"
 evidence:
   docs:
-    - docs/archived/task-packages/skill-environment-drift-cleanup/05-verification.md
-    - docs/archived/task-packages/skill-environment-drift-cleanup/06-evidence.md
+    - docs/archived/task-packages/skill-environment-drift-cleanup/04-verification.md
+    - docs/archived/task-packages/skill-environment-drift-cleanup/05-evidence.md
   code:
     - skills/using-openharness/SKILL.md
     - skills/using-git-worktrees/SKILL.md

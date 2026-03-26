@@ -34,8 +34,8 @@ verification:
   required_scenarios: []
 evidence:
   docs:
-    - docs/archived/task-packages/task-package-completion-semantics/05-verification.md
-    - docs/archived/task-packages/task-package-completion-semantics/06-evidence.md
+    - docs/archived/task-packages/task-package-completion-semantics/04-verification.md
+    - docs/archived/task-packages/task-package-completion-semantics/05-evidence.md
   code:
     - AGENTS.md
     - skills/using-openharness/SKILL.md
@@ -43,6 +43,6 @@ evidence:
     - skills/using-openharness/references/templates/task-package.README.md
     - skills/using-openharness/references/templates/task-package.STATUS.yaml
     - skills/using-openharness/references/templates/task-package.03-detailed-design.md
-    - skills/using-openharness/references/templates/task-package.05-verification.md
+    - skills/using-openharness/references/templates/task-package.04-verification.md
   tests:
     - skills/using-openharness/tests/test_openharness.py

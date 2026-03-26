@@ -37,7 +37,7 @@ verification:
   required_scenarios: []
 evidence:
   docs:
-    - docs/archived/task-packages/skill-taxonomy-and-compatibility-cleanup/05-verification.md
-    - docs/archived/task-packages/skill-taxonomy-and-compatibility-cleanup/06-evidence.md
+    - docs/archived/task-packages/skill-taxonomy-and-compatibility-cleanup/04-verification.md
+    - docs/archived/task-packages/skill-taxonomy-and-compatibility-cleanup/05-evidence.md
   code: []
   tests: []

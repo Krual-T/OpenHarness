@@ -34,7 +34,7 @@ verification:
   last_run_artifact: .harness/artifacts/OH-029/verification-runs/20260326T150046240415Z.json
 evidence:
   docs:
-  - docs/archived/task-packages/openharness-help-polish/05-verification.md
-  - docs/archived/task-packages/openharness-help-polish/06-evidence.md
+  - docs/archived/task-packages/openharness-help-polish/04-verification.md
+  - docs/archived/task-packages/openharness-help-polish/05-evidence.md
   code: []
   tests: []

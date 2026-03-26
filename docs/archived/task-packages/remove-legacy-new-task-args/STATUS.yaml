@@ -32,11 +32,11 @@ verification:
     - Verify legacy positional new-task invocations are rejected at parse time.
   last_run_at: "2026-03-25T10:30:10Z"
   last_run_result: passed
-  last_run_artifact: docs/archived/task-packages/remove-legacy-new-task-args/05-verification.md
+  last_run_artifact: docs/archived/task-packages/remove-legacy-new-task-args/04-verification.md
 evidence:
   docs:
-    - docs/archived/task-packages/remove-legacy-new-task-args/05-verification.md
-    - docs/archived/task-packages/remove-legacy-new-task-args/06-evidence.md
+    - docs/archived/task-packages/remove-legacy-new-task-args/04-verification.md
+    - docs/archived/task-packages/remove-legacy-new-task-args/05-evidence.md
   code:
     - openharness_cli/cli.py
     - openharness_cli/commands.py
