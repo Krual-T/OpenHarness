@@ -25,8 +25,8 @@ Guide completion of development work by closing the task package correctly, then
 
 **Before presenting options, verify the task package reflects completed work:**
 
-- `05-verification.md` has fresh verification results
-- `06-evidence.md` has changed files, commands, and residual risk
+- `04-verification.md` has fresh verification results
+- `05-evidence.md` has changed files, commands, and residual risk
 - `STATUS.yaml` matches the real state of the work
 
 Then verify the required commands and the project test suite pass:
@@ -173,7 +173,7 @@ git worktree remove <worktree-path>
 ## Common Mistakes
 
 **Treating implementation complete as task complete**
-- **Problem:** Merge code before `05-verification.md`, `06-evidence.md`, and `STATUS.yaml` are aligned
+- **Problem:** Merge code before `04-verification.md`, `05-evidence.md`, and `STATUS.yaml` are aligned
 - **Fix:** Close the task package before offering options
 
 **Skipping verification**
