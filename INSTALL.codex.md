@@ -65,7 +65,7 @@ ls -la <target dir>/.agents/skills/openharness
 
 You should see a symlink (or junction on Windows) pointing to your OpenHarness skills directory.
 
-Then verify the global CLI:
+Then verify the global CLI from the target project's root directory:
 
 ```bash
 openharness bootstrap
@@ -103,11 +103,8 @@ openharness update
 openharness verify <task-name-or-id>
 ```
 
-The legacy script path remains available as a fallback:
-
-```bash
-uv run python ~/.agents/skill-hub/openharness/skills/using-openharness/scripts/openharness.py bootstrap
-```
+All active workflow docs use `openharness <cmd>` as the only documented entrypoint.
+If you are not currently in the target project's root directory, pass `--repo <project-root>` explicitly.
 
 ## Uninstalling
 
