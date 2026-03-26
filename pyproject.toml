@@ -24,4 +24,4 @@ dev = [
 packages = ["openharness_cli"]
 
 [tool.pytest.ini_options]
-testpaths = ["skills/using-openharness/tests"]
+testpaths = ["tests"]

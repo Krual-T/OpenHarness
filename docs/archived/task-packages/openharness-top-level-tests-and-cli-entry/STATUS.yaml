@@ -1,0 +1,54 @@
+id: OH-031
+title: Move OpenHarness Tests To Top Level And Remove Script Compatibility Entry
+# Default flow: proposed -> requirements_ready -> overview_ready -> detailed_ready -> in_progress -> verifying -> archived
+# requirements_ready -> overview_ready -> detailed_ready are design-readiness checkpoints; later statuses imply earlier checkpoints are already materially complete.
+# `detailed_ready` is the normal resting point for design-complete work before implementation.
+# `archived` means the task package is implemented, verified, and no longer active.
+status: archived
+summary: Move OpenHarness self-tests to the repository top-level tests tree, remove the legacy skill script entrypoint, and preserve archived references through legacy snapshots.
+owner: codex
+created_at: 2026-03-27
+updated_at: 2026-03-27
+depends_on: []
+scope:
+  areas:
+    - test layout
+    - CLI entrypoints
+    - protocol docs
+entrypoints:
+  - docs/archived/task-packages/openharness-top-level-tests-and-cli-entry/README.md
+  - docs/archived/task-packages/openharness-top-level-tests-and-cli-entry/01-requirements.md
+  - docs/archived/task-packages/openharness-top-level-tests-and-cli-entry/02-overview-design.md
+  - docs/archived/task-packages/openharness-top-level-tests-and-cli-entry/03-detailed-design.md
+done_criteria:
+  - OpenHarness self-tests live under the repository top-level `tests/` tree rather than `skills/using-openharness/tests/`.
+  - The legacy script entrypoint `skills/using-openharness/scripts/openharness.py` is removed.
+  - Archived task packages continue validating through `docs/archived/legacy/` snapshots without rewriting historical package contents.
+  - Repository docs and tests no longer treat the removed script path as a supported entrypoint.
+  - Verification passes against the new top-level test layout and current task-package protocol.
+verification:
+  required_commands:
+    - "uv run pytest tests/openharness_cases/test_entrypoint.py"
+    - "uv run pytest tests/openharness_cases/test_protocol_docs.py"
+    - "uv run pytest tests/openharness_cases/test_task_package_core.py"
+    - "uv run pytest tests/openharness_cases/test_cli_workflows.py"
+    - "uv run openharness check-tasks"
+  required_scenarios: []
+  last_run_at: "2026-03-27T00:00:00Z"
+  last_run_result: "passed"
+  last_run_artifact: ""
+evidence:
+  docs:
+    - docs/archived/task-packages/openharness-top-level-tests-and-cli-entry/05-verification.md
+    - docs/archived/task-packages/openharness-top-level-tests-and-cli-entry/06-evidence.md
+  code:
+    - pyproject.toml
+    - openharness_cli/validation.py
+    - skills/using-openharness/SKILL.md
+  tests:
+    - tests/test_openharness.py
+    - tests/openharness_cases/common.py
+    - tests/openharness_cases/test_cli_workflows.py
+    - tests/openharness_cases/test_entrypoint.py
+    - tests/openharness_cases/test_protocol_docs.py
+    - tests/openharness_cases/test_task_package_core.py

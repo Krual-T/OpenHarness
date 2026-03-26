@@ -3,20 +3,11 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
-import sys
 
 import pytest
 
-SKILL_ROOT = Path(__file__).resolve().parents[2]
-SCRIPTS_ROOT = SKILL_ROOT / "scripts"
-TESTS_ROOT = SKILL_ROOT / "tests"
-if str(SCRIPTS_ROOT) not in sys.path:
-    sys.path.insert(0, str(SCRIPTS_ROOT))
-if str(TESTS_ROOT) not in sys.path:
-    sys.path.insert(0, str(TESTS_ROOT))
-
-import openharness
-from openharness import (
+import openharness_cli as openharness
+from openharness_cli import (
     ACTIVE_STATUSES,
     TaskScaffoldRequest,
     REQUIRED_TASK_PACKAGE_FILES,
@@ -31,4 +22,5 @@ from openharness import (
 )
 
 
-REPO_ROOT = Path(__file__).resolve().parents[4]
+REPO_ROOT = Path(__file__).resolve().parents[2]
+SKILL_ROOT = REPO_ROOT / "skills" / "using-openharness"

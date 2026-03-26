@@ -91,6 +91,18 @@ def _label_has_meaningful_content(path: Path, section_heading: str, label: str) 
     return False
 
 
+def _referenced_path_exists(package: TaskPackage, raw_path: object) -> bool:
+    repo_root = package.manifest.repo_root
+    normalized = str(raw_path)
+    direct_path = (repo_root / normalized).resolve()
+    if direct_path.exists():
+        return True
+    if package.status_name != "archived":
+        return False
+    legacy_path = (repo_root / "docs" / "archived" / "legacy" / normalized).resolve()
+    return legacy_path.exists()
+
+
 def validate_task_package(package: TaskPackage) -> list[str]:
     errors: list[str] = []
     repo_root = package.manifest.repo_root
@@ -138,8 +150,7 @@ def validate_task_package(package: TaskPackage) -> list[str]:
             )
         last_run_artifact = str(verification.get("last_run_artifact") or "").strip()
         if last_run_artifact:
-            artifact_path = (repo_root / last_run_artifact).resolve()
-            if not artifact_path.exists():
+            if not _referenced_path_exists(package, last_run_artifact):
                 errors.append(
                     f"missing referenced path `{last_run_artifact}` in {package.root / 'STATUS.yaml'}"
                 )
@@ -148,8 +159,7 @@ def validate_task_package(package: TaskPackage) -> list[str]:
         raw_paths = package.status.get(key)
         if isinstance(raw_paths, list):
             for raw_path in raw_paths:
-                path = (repo_root / str(raw_path)).resolve()
-                if not path.exists():
+                if not _referenced_path_exists(package, raw_path):
                     errors.append(f"missing referenced path `{raw_path}` in {package.root / 'STATUS.yaml'}")
 
     if isinstance(evidence, dict):
@@ -157,8 +167,7 @@ def validate_task_package(package: TaskPackage) -> list[str]:
             raw_paths = evidence.get(group)
             if isinstance(raw_paths, list):
                 for raw_path in raw_paths:
-                    path = (repo_root / str(raw_path)).resolve()
-                    if not path.exists():
+                    if not _referenced_path_exists(package, raw_path):
                         errors.append(f"missing referenced path `{raw_path}` in {package.root / 'STATUS.yaml'}")
 
     for file_name, heading in STATUS_SECTION_REQUIREMENTS.get(package.status_name, ()):
