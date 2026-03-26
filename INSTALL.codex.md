@@ -49,7 +49,7 @@ You should see a symlink (or junction on Windows) pointing to your OpenHarness s
 ## Updating
 
 ```bash
-cd .codex/skill-hub/openharness && git pull
+cd .agents/skill-hub/openharness && git pull
 ```
 
 Skills update instantly through the symlink.
