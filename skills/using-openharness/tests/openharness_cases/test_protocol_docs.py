@@ -127,7 +127,7 @@ def test_skill_openai_metadata_uses_official_tool_dependency_shape() -> None:
 def test_openharness_single_cli_supports_all_subcommands() -> None:
     parser = openharness.build_parser()
     choices = parser._subparsers._group_actions[0].choices  # type: ignore[attr-defined]
-    assert set(choices) == {"bootstrap", "check-tasks", "new-task", "transition", "verify"}
+    assert set(choices) == {"bootstrap", "check-tasks", "new-task", "transition", "verify", "update"}
 
 
 def test_openharness_script_uses_task_package_naming_in_public_symbols() -> None:
@@ -159,6 +159,7 @@ def test_task_package_commands_use_current_handlers_only() -> None:
         == openharness.cmd_new_task
     )
     assert parser.parse_args(["transition", "name", "requirements_ready"]).handler == openharness.cmd_transition
+    assert parser.parse_args(["update"]).handler == openharness.cmd_update
 
 
 def test_new_task_rejects_legacy_positional_task_id_and_title() -> None:
@@ -332,6 +333,11 @@ def test_install_doc_describes_global_openharness_command_install_and_upgrade() 
     assert "uv tool install --editable" in text
     assert "openharness bootstrap" in text
     assert "已安装" in text or "existing" in text
+
+
+def test_install_doc_mentions_openharness_update() -> None:
+    text = (REPO_ROOT / "INSTALL.codex.md").read_text(encoding="utf-8")
+    assert "openharness update" in text
 
 
 def test_brainstorming_defaults_to_autonomous_continuation() -> None:

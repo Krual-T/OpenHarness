@@ -30,6 +30,10 @@ from .validation import validate_task_package
 from . import lifecycle
 
 
+def _openharness_repo_root() -> Path:
+    return Path(__file__).resolve().parents[1]
+
+
 def cmd_bootstrap(args: argparse.Namespace) -> int:
     repo_root = Path(args.repo).resolve()
     manifest = load_manifest(repo_root)
@@ -267,4 +271,20 @@ def cmd_verify(args: argparse.Namespace) -> int:
         print(f"Recorded verification artifact: {artifact_path}")
     if saw_insufficient_verification:
         return 1
+    return 0
+
+
+def cmd_update(args: argparse.Namespace) -> int:
+    repo_root = _openharness_repo_root()
+    git_pull_result = lifecycle._run_command(repo_root, "git pull")
+    if git_pull_result != 0:
+        print("ERROR: git pull failed; refusing to continue with tool upgrade.")
+        return 1
+
+    upgrade_result = lifecycle._run_command(repo_root, "uv tool upgrade openharness")
+    if upgrade_result != 0:
+        print("ERROR: `uv tool upgrade openharness` failed.")
+        return 1
+
+    print(f"Updated OpenHarness from {repo_root}")
     return 0

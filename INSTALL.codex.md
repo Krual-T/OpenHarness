@@ -80,11 +80,11 @@ uv tool install --editable ~/.agents/skill-hub/openharness
 ## Updating
 
 ```bash
-cd ~/.agents/skill-hub/openharness && git pull
-uv tool upgrade openharness
+openharness update
 ```
 
-Skills update instantly through the symlink. The CLI environment should be refreshed with `uv tool upgrade openharness`.
+This command updates the OpenHarness clone and then refreshes the installed CLI tool.
+Skills still update through the symlink because the source clone is the same repository.
 
 ## Existing Installations
 
@@ -99,6 +99,7 @@ After that, you can use:
 ```bash
 openharness bootstrap
 openharness check-tasks
+openharness update
 openharness verify <task-name-or-id>
 ```
 

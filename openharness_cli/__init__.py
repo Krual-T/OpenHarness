@@ -11,6 +11,7 @@ from .main import (
     cmd_check_tasks,
     cmd_new_task,
     cmd_transition,
+    cmd_update,
     cmd_verify,
     main,
 )
@@ -42,6 +43,7 @@ __all__ = [
     "cmd_check_tasks",
     "cmd_new_task",
     "cmd_transition",
+    "cmd_update",
     "cmd_verify",
     "HarnessManifest",
     "TaskPackage",
