@@ -50,7 +50,7 @@
 - 先读 `AGENTS.md`，建立仓库地图。
 - 先把 `using-openharness` 视为本仓库的默认入口技能；任何可能涉及仓库协议、task package、验证流或技能路由的工作，都先从它开始判断该走哪个 skill。
 - 再读 `skills/using-openharness/references/manifest.yaml`，确认 harness 协议。
-- 运行 `uv run python skills/using-openharness/scripts/openharness.py bootstrap` 查看当前 active task packages。
+- 优先运行 `openharness bootstrap` 查看当前 active task packages；若全局命令尚未安装，再回退到 `uv run python skills/using-openharness/scripts/openharness.py bootstrap`。
 - 只在 task package 足够清晰时开始实现；若任务边界缺失，先补任务包而不是直接改代码。
 
 ### 执行任务时
@@ -104,7 +104,7 @@
 - 影响使用方式、配置方式、架构分层的改动，应同步更新对应 task package。
 - 需求变化先写 `01-requirements.md`；探索结论与总体设计变化写 `02-overview-design.md`；测试设计、实现落点、runtime 验证方式变化写 `03-detailed-design.md`。
 - 完成前至少运行：
-    - `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
+    - `openharness check-tasks`；若全局命令尚未安装，则回退到 `uv run python skills/using-openharness/scripts/openharness.py check-tasks`
     - 当前 task package 在 `STATUS.yaml.verification.required_commands` 中声明的命令
 - 若本轮只是补设计，仍应保证 task package 协议完整。
 

@@ -80,7 +80,7 @@ Repository entry-skill responsibilities live here:
 ## Entry Protocol
 
 1. Read `references/manifest.yaml` to discover the required task-package structure.
-2. Run `uv run python skills/using-openharness/scripts/openharness.py bootstrap` to list active task packages.
+2. Run `openharness bootstrap` to list active task packages. If the global command is not installed yet, fall back to `uv run python skills/using-openharness/scripts/openharness.py bootstrap`.
 3. Open the chosen package in this order:
     - `README.md`
     - `STATUS.yaml`
@@ -232,10 +232,10 @@ Do not advance a stage while material challenges still float without a recorded 
 
 ## Verification
 
-- Run `uv run python skills/using-openharness/scripts/openharness.py check-tasks` before claiming completion.
-- Run `uv run python skills/using-openharness/scripts/openharness.py new-task <task_name> <task_id> <title>` to scaffold a new task package.
-- Run `uv run python skills/using-openharness/scripts/openharness.py verify <task-name-or-id>` when a package declares required commands.
-- `openharness.py` is the single harness CLI; use its subcommands instead of introducing parallel wrapper scripts.
+- Run `openharness check-tasks` before claiming completion. If the global command is not installed yet, fall back to `uv run python skills/using-openharness/scripts/openharness.py check-tasks`.
+- Run `openharness new-task <task_name> --task-id <task-id> --title <title>` to scaffold a new task package. If the global command is not installed yet, fall back to `uv run python skills/using-openharness/scripts/openharness.py new-task ...`.
+- Run `openharness verify <task-name-or-id>` when a package declares required commands. If the global command is not installed yet, fall back to `uv run python skills/using-openharness/scripts/openharness.py verify <task-name-or-id>`.
+- `openharness` is the preferred harness CLI. The legacy `openharness.py` script remains a compatibility entrypoint and should not gain divergent behavior.
 - For Python-first repositories, prefer `uv run ...` commands unless the repository documents a stronger automated path.
 - Do not treat that Python floor as full runtime evidence; project-specific runtime verification still belongs in task packages.
 - If the package adds new reusable project knowledge, update `.project-memory/` in the same turn.

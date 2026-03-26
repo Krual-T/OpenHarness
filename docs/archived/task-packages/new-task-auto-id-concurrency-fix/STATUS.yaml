@@ -8,12 +8,12 @@ status: archived
 summary: 修复 new-task --auto-id 在并行执行时可能分配重复 task id 的竞争条件，使编号分配与任务包创建具备并发安全性。
 owner: codex
 created_at: 2026-03-25
-updated_at: 2026-03-25
+updated_at: 2026-03-26
 depends_on: []
 scope:
   areas:
-    - skills/using-openharness/scripts/openharness_cli/commands.py
-    - skills/using-openharness/scripts/openharness_cli/repository.py
+    - openharness_cli/commands.py
+    - openharness_cli/repository.py
     - skills/using-openharness/tests/openharness_cases/test_task_package_core.py
 done_criteria:
   - "`new-task --auto-id` 在并行执行时不会生成重复 `task_id`，并且不会留下静默冲突的 task package。"
@@ -34,7 +34,7 @@ evidence:
     - docs/archived/task-packages/new-task-auto-id-concurrency-fix/05-verification.md
     - docs/archived/task-packages/new-task-auto-id-concurrency-fix/06-evidence.md
   code:
-    - skills/using-openharness/scripts/openharness_cli/commands.py
-    - skills/using-openharness/scripts/openharness_cli/repository.py
+    - openharness_cli/commands.py
+    - openharness_cli/repository.py
   tests:
     - skills/using-openharness/tests/openharness_cases/test_task_package_core.py

@@ -1,0 +1,56 @@
+id: OH-027
+title: 为 OpenHarness 提供全局命令入口
+status: archived
+summary: 将长路径 uv run python 调用收敛为可安装的 openharness 全局命令，并补充安装与迁移说明。
+owner: codex
+created_at: 2026-03-26
+updated_at: '2026-03-26'
+depends_on: []
+scope:
+  areas:
+  - packaging
+  - cli
+  - installation-docs
+entrypoints:
+- docs/archived/task-packages/openharness-global-cli/README.md
+- docs/archived/task-packages/openharness-global-cli/01-requirements.md
+- docs/archived/task-packages/openharness-global-cli/02-overview-design.md
+- docs/archived/task-packages/openharness-global-cli/03-detailed-design.md
+done_criteria:
+- 仓库自身可以作为 Python 工具安装，并暴露 `openharness` 全局命令入口。
+- 现有 `skills/using-openharness/scripts/openharness.py` 继续可用，不破坏已有测试与技能引用。
+- 安装文档明确区分技能安装与全局命令安装，并说明已安装用户如何补启用新命令。
+- 自动化测试覆盖 CLI 入口与文档关键说明。
+verification:
+  required_commands:
+  - uv run pytest skills/using-openharness/tests/openharness_cases/test_entrypoint.py
+  - uv run pytest skills/using-openharness/tests/openharness_cases/test_protocol_docs.py
+  - uv run pytest skills/using-openharness/tests/openharness_cases/test_cli_workflows.py
+  - uv run python skills/using-openharness/scripts/openharness.py check-tasks
+  required_scenarios: []
+  last_run_at: '2026-03-26T14:29:33Z'
+  last_run_result: passed
+  last_run_artifact: .harness/artifacts/OH-027/verification-runs/20260326T142933341515Z.json
+evidence:
+  docs:
+  - docs/archived/task-packages/openharness-global-cli/05-verification.md
+  - docs/archived/task-packages/openharness-global-cli/06-evidence.md
+  code:
+  - pyproject.toml
+  - openharness_cli/__init__.py
+  - openharness_cli/main.py
+  - openharness_cli/cli.py
+  - openharness_cli/commands.py
+  - openharness_cli/constants.py
+  - openharness_cli/lifecycle.py
+  - openharness_cli/models.py
+  - openharness_cli/repository.py
+  - openharness_cli/validation.py
+  - skills/using-openharness/scripts/openharness.py
+  - INSTALL.codex.md
+  - AGENTS.md
+  - skills/using-openharness/SKILL.md
+  tests:
+  - skills/using-openharness/tests/openharness_cases/test_entrypoint.py
+  - skills/using-openharness/tests/openharness_cases/test_protocol_docs.py
+  - skills/using-openharness/tests/openharness_cases/test_cli_workflows.py

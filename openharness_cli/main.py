@@ -1,21 +1,12 @@
-#!/usr/bin/env python3
-
 from __future__ import annotations
 
-from pathlib import Path
-import sys
-
-REPO_ROOT = Path(__file__).resolve().parents[3]
-if str(REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(REPO_ROOT))
-
-from openharness_cli import (
+from .constants import (
     ACTIVE_STATUSES,
-    HarnessManifest,
     REQUIRED_TASK_PACKAGE_FILES,
-    TaskPackage,
-    TaskScaffoldRequest,
     VERIFYABLE_STATUSES,
+)
+from .models import HarnessManifest, TaskPackage, TaskScaffoldRequest
+from .repository import (
     _current_date,
     _load_yaml,
     _utc_now,
@@ -30,11 +21,11 @@ from openharness_cli import (
     resolve_task_package,
     slugify_task_name,
     summarize_task_package,
-    validate_task_package,
 )
-from openharness_cli import lifecycle
-from openharness_cli.cli import build_parser as _build_parser
-from openharness_cli.commands import (
+from .validation import validate_task_package
+from . import lifecycle
+from .cli import build_parser as _build_parser
+from .commands import (
     cmd_bootstrap as _cmd_bootstrap,
     cmd_check_tasks as _cmd_check_tasks,
     cmd_new_task as _cmd_new_task,
@@ -81,7 +72,3 @@ def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     return args.handler(args)
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())

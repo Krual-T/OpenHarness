@@ -2,11 +2,19 @@
 
 Enable OpenHarness skills in Codex via native skill discovery.
 
+This installation has two parts:
+
+- install the OpenHarness skills so Codex can discover them
+- install the global `openharness` CLI so you can run `openharness <cmd>` directly
+
+The CLI installation does not require any changes to the target project's `pyproject.toml`.
+
 Before executing any installation commands, prompt the user to specify the target directory for the OpenHarness skill symlink. (Note: This applies only to the symlink directory; the cloned project is stored by default in `~/.agents/skill-hub`.)
 
 ## Prerequisites
 
 - Git
+- `uv`
 
 ## Installation
 
@@ -19,12 +27,23 @@ Before executing any installation commands, prompt the user to specify the targe
    - OpenHarness clone: `~/.agents/skill-hub/openharness`
    - Skill link: `<target dir>/.agents/skills/openharness`
 
-2. **Clone the OpenHarness repository into the chosen target directory:**
+2. **Clone the OpenHarness repository into the local skill hub:**
    ```bash
    git clone https://github.com/Krual-T/OpenHarness.git ~/.agents/skill-hub/openharness
    ```
 
-3. **Create the skills symlink inside the chosen target directory:**
+3. **Install the global `openharness` command:**
+   ```bash
+   uv tool install --editable ~/.agents/skill-hub/openharness
+   ```
+
+   After this, the following commands should work:
+   ```bash
+   openharness bootstrap
+   openharness check-tasks
+   ```
+
+4. **Create the skills symlink inside the chosen target directory:**
    ```bash
    mkdir -p <target dir>/.agents/skills
    ln -s ~/.agents/skill-hub/openharness/skills <target dir>/.agents/skills/openharness
@@ -36,7 +55,7 @@ Before executing any installation commands, prompt the user to specify the targe
    cmd /c mklink /J "<target dir>\\.agents\\skills\\openharness" "~\\.agents\\skill-hub\\openharness\\skills"
    ```
 
-4. **Restart Codex** (quit and relaunch the CLI) to discover the skills.
+5. **Restart Codex** (quit and relaunch the CLI) to discover the skills.
 
 ## Verify
 
@@ -46,18 +65,59 @@ ls -la <target dir>/.agents/skills/openharness
 
 You should see a symlink (or junction on Windows) pointing to your OpenHarness skills directory.
 
+Then verify the global CLI:
+
+```bash
+openharness bootstrap
+```
+
+If the command is not found, rerun:
+
+```bash
+uv tool install --editable ~/.agents/skill-hub/openharness
+```
+
 ## Updating
 
 ```bash
-cd .agents/skill-hub/openharness && git pull
+cd ~/.agents/skill-hub/openharness && git pull
+uv tool upgrade openharness
 ```
 
-Skills update instantly through the symlink.
+Skills update instantly through the symlink. The CLI environment should be refreshed with `uv tool upgrade openharness`.
+
+## Existing Installations
+
+If you already installed the OpenHarness skill symlink before the global CLI existed, this existing installation only needs one extra command:
+
+```bash
+uv tool install --editable ~/.agents/skill-hub/openharness
+```
+
+After that, you can use:
+
+```bash
+openharness bootstrap
+openharness check-tasks
+openharness verify <task-name-or-id>
+```
+
+The legacy script path remains available as a fallback:
+
+```bash
+uv run python ~/.agents/skill-hub/openharness/skills/using-openharness/scripts/openharness.py bootstrap
+```
 
 ## Uninstalling
 
 ```bash
 rm <target dir>/.agents/skills/openharness
+```
+
+Remove the global CLI if needed:
+
+```bash
+uv tool uninstall openharness
 ```
 
 Optionally delete the clone: `rm -rf ~/.agents/skill-hub/openharness`.
