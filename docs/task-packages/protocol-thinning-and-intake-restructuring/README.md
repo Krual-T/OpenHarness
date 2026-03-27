@@ -7,7 +7,8 @@
 - 本轮默认不为了兼容旧结构而保留重复承载面；是否保留某个旧表面，必须由本包重新证明其必要性。
 
 ## Current Status
-- 当前处于 `verifying`：第一波实现已经落地，当前正在核对入口减重、协议文案收口和仓库回归是否都成立；后续如继续推进，将进入下一波对 entry skill 和 child skills 的进一步减重。
+- 当前处于 `verifying`：第二波实现已经把 `using-openharness` 收回到入口路由与归档协议，把 `skill-hub` 收回到技能目录与引用索引，并用协议测试锁住“不再重复讲角色注入、stage gate、runtime 总述”的边界。
+- 当前验证重点是确认这一波减重没有破坏 CLI、协议文档和 task package 校验；child skills 本轮经复查后维持 stage-local 动作定位，没有继续额外收缩。
 
 ## Read This First
 - `STATUS.yaml`

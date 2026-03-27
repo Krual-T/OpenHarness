@@ -41,12 +41,15 @@ verification:
   - Bootstrap text output is thinner while stage visibility remains intact.
   - README and AGENTS.md stop repeating the reflective process loop and keep their
     narrowed responsibilities.
-  last_run_at: "2026-03-27"
+  last_run_at: '2026-03-27'
   last_run_result: passed
-  last_run_artifact: ""
+  last_run_artifact: ''
 evidence:
   docs:
   - docs/task-packages/protocol-thinning-and-intake-restructuring/04-verification.md
   - docs/task-packages/protocol-thinning-and-intake-restructuring/05-evidence.md
-  code: []
-  tests: []
+  code:
+  - skills/using-openharness/SKILL.md
+  - skills/using-openharness/references/skill-hub.md
+  tests:
+  - tests/openharness_cases/test_protocol_docs.py

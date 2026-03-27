@@ -185,10 +185,9 @@ def test_openharness_skill_is_repo_entry_skill() -> None:
     assert "only repository entry skill" in text
     assert "exploring-solution-space" in text
     assert "runtime verification" in text
-    assert "reflection pass" in text
-    assert "bounded subagent discussion" in text
-    assert "role injection" in text
-    assert "stage gate" in text
+    assert "Role injection" not in text
+    assert "Stage Gates" not in text
+    assert "Challenge Closure" not in text
 
 
 def test_openharness_skill_routes_runtime_work_through_capability_contract() -> None:
@@ -207,19 +206,19 @@ def test_skill_hub_declares_no_parallel_entry_skill() -> None:
     assert "repository entry skill" in text
     assert "Do not keep a separate repository entry layer beside `using-openharness`." in text
     assert "`exploring-solution-space`" in text
-    assert "reflection" in text
+    assert "role injection" not in text
+    assert "runtime capability contract" not in text
 
 
 def test_skill_hub_describes_runtime_capability_layer() -> None:
     hub_path = REPO_ROOT / "skills" / "using-openharness" / "references" / "skill-hub.md"
     text = hub_path.read_text(encoding="utf-8")
-    assert "runtime capability contract" in text
-    assert "runtime surface map" in text
-    assert "runtime helper skills" in text
-    assert "add one new narrow helper" in text
-    assert "bootstrap package" in text
-    assert "adding-project-runtime-helper.md" in text
+    assert "runtime-capability-contract.md" in text
     assert "project-runtime-surface-map.md" in text
+    assert "adding-project-runtime-helper.md" in text
+    assert "runtime capability contract" not in text
+    assert "runtime surface map" not in text
+    assert "add one new narrow helper" not in text
 
 
 def test_skill_hub_uses_protocol_status_plus_stage_model() -> None:
@@ -230,15 +229,16 @@ def test_skill_hub_uses_protocol_status_plus_stage_model() -> None:
     assert "### Optional Helper Skills" in text
     assert "### Imported Generic Skills" in text
     assert "## Workflow Stages And Triggers" in text
-    assert "### Entry And Routing" in text
-    assert "### Requirements Convergence" in text
-    assert "### Exploration And Architecture" in text
-    assert "### Implementation Execution" in text
-    assert "### Debugging And Repair" in text
-    assert "### Verification And Closure" in text
-    assert "### Repository Memory And Maintenance" in text
+    assert "Entry And Routing" in text
+    assert "Requirements Convergence" in text
+    assert "Exploration And Architecture" in text
+    assert "Implementation Execution" in text
+    assert "Debugging And Repair" in text
+    assert "Verification And Closure" in text
+    assert "Repository Memory And Maintenance" in text
     assert "`using-openharness`" in text
     assert "- `openharness`" not in text
+    assert "## Writing Guidance Surface" not in text
 
 
 def test_optional_execution_skills_are_not_described_as_core_protocol() -> None:
@@ -398,18 +398,18 @@ def test_exploration_skill_defines_stage_specific_role_injection() -> None:
     assert "decision list" in text
 
 
-def test_skill_hub_mentions_stage_gates_and_role_injection_model() -> None:
+def test_skill_hub_stays_as_inventory_not_second_protocol_manual() -> None:
     text = (REPO_ROOT / "skills" / "using-openharness" / "references" / "skill-hub.md").read_text(
         encoding="utf-8"
     )
-    assert "role injection" in text
-    assert "stage gates" in text
-    assert "challenge closure" in text
-    assert "product perspective" in text
-    assert "CEO perspective" in text
-    assert "architecture perspective" in text
-    assert "testing perspective" in text
-    assert "risk perspective" in text
+    assert "role injection" not in text
+    assert "stage gates" not in text
+    assert "challenge closure" not in text
+    assert "product perspective" not in text
+    assert "CEO perspective" not in text
+    assert "architecture perspective" not in text
+    assert "testing perspective" not in text
+    assert "risk perspective" not in text
 
 
 def test_using_openharness_requires_explicit_stage_checkpoints() -> None:
@@ -655,9 +655,6 @@ def test_stage_skills_and_hub_expose_split_task_package_writing_guidance() -> No
     verification_text = (
         REPO_ROOT / "skills" / "verification-before-completion" / "SKILL.md"
     ).read_text(encoding="utf-8")
-    hub_text = (
-        REPO_ROOT / "skills" / "using-openharness" / "references" / "skill-hub.md"
-    ).read_text(encoding="utf-8")
 
     assert "requirements-writing-guidance.md" in skill_text
     assert "overview-design-writing-guidance.md" in skill_text
@@ -669,16 +666,10 @@ def test_stage_skills_and_hub_expose_split_task_package_writing_guidance() -> No
     assert "detailed-design-writing-guidance.md" in exploration_text
     assert "verification-writing-guidance.md" in verification_text
     assert "evidence-writing-guidance.md" in verification_text
-    assert "requirements-writing-guidance.md" in hub_text
-    assert "overview-design-writing-guidance.md" in hub_text
-    assert "detailed-design-writing-guidance.md" in hub_text
-    assert "verification-writing-guidance.md" in hub_text
-    assert "evidence-writing-guidance.md" in hub_text
     assert "author-entry.md" in skill_text
     assert "author-entry.md" in brainstorming_text
     assert "author-entry.md" in exploration_text
     assert "author-entry.md" in verification_text
-    assert "author-entry.md" in hub_text
 
 
 def test_author_entry_reference_exists_and_routes_to_all_writing_guidance() -> None:
