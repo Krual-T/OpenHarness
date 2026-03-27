@@ -51,6 +51,21 @@ The live workflow also uses stage-organized role injection:
 
 ## Workflow Stages And Triggers
 
+## Writing Guidance Surface
+
+- `requirements-writing-guidance.md`
+  - repository reference for how to write `01-requirements.md`
+- `overview-design-writing-guidance.md`
+  - repository reference for how to write `02-overview-design.md`
+- `detailed-design-writing-guidance.md`
+  - repository reference for how to write `03-detailed-design.md`
+- `verification-writing-guidance.md`
+  - repository reference for how to write `04-verification.md`
+- `evidence-writing-guidance.md`
+  - repository reference for how to write `05-evidence.md`
+- these references complement stage skills by explaining document purpose, required questions, document boundaries, and common failure modes
+- they keep long-form writing guidance out of `SKILL.md` and out of task-package templates
+
 ### Entry And Routing
 - `using-openharness`
   - default first step for repository workflow and task-package routing

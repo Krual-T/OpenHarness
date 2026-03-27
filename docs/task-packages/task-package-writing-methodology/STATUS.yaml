@@ -1,0 +1,59 @@
+id: OH-033
+title: Task Package Writing Methodology
+# Default flow: proposed -> requirements_ready -> overview_ready -> detailed_ready -> in_progress -> verifying -> archived
+# requirements_ready -> overview_ready -> detailed_ready are design-readiness checkpoints; later statuses imply earlier checkpoints are already materially complete.
+# `detailed_ready` is the normal resting point for design-complete work before implementation.
+# `archived` means the task package is implemented, verified, and no longer active.
+status: verifying
+summary: Define how OpenHarness should teach authors to write each task-package document and where that guidance should live.
+owner: codex
+created_at: 2026-03-27
+updated_at: 2026-03-27
+depends_on: []
+scope:
+  areas:
+    - skills/using-openharness
+    - docs/task-packages
+    - docs/archived/task-packages
+    - openharness_cli
+entrypoints:
+  - docs/task-packages/task-package-writing-methodology/README.md
+  - docs/task-packages/task-package-writing-methodology/01-requirements.md
+  - docs/task-packages/task-package-writing-methodology/02-overview-design.md
+  - docs/task-packages/task-package-writing-methodology/03-detailed-design.md
+done_criteria:
+  - 明确 task package 文档写作指导的缺口、用户背景和本轮范围。
+  - 明确 `SKILL.md`、模板、`references/` 三层职责边界。
+  - 给出参考 OpenSpec 后的推荐落地结构与不采纳项。
+  - 把后续实施步骤具体化到可执行的详细设计。
+  - 新增分阶段、分文档 guidance 并把它们接入仓库入口协议与对应 stage skill。
+  - 让相关 skill 向“skill 讲动作和信息采集、guidance 讲写法、template 讲提示”收敛。
+  - 把五份 guidance 从问题清单升级为包含 Section Mapping、最低判定标准和 Exit Check 的方法论文档。
+verification:
+  required_commands:
+    - uv run openharness check-tasks
+    - uv run pytest tests/openharness_cases/test_protocol_docs.py -q
+  required_scenarios:
+    - 五份分阶段 guidance 存在，旧总指南被移除，并被对应协议表面引用。
+    - 五份 guidance 都具备 Section Mapping、最低判定标准和 Exit Check，不再只是问题清单。
+    - 活跃任务包在完成本轮实现后仍能通过 task package 校验。
+  last_run_at: "2026-03-27"
+  last_run_result: passed
+  last_run_artifact: ""
+evidence:
+  docs:
+    - docs/task-packages/task-package-writing-methodology/04-verification.md
+    - docs/task-packages/task-package-writing-methodology/05-evidence.md
+  code:
+    - skills/using-openharness/SKILL.md
+    - skills/brainstorming/SKILL.md
+    - skills/exploring-solution-space/SKILL.md
+    - skills/verification-before-completion/SKILL.md
+    - skills/using-openharness/references/skill-hub.md
+    - skills/using-openharness/references/requirements-writing-guidance.md
+    - skills/using-openharness/references/overview-design-writing-guidance.md
+    - skills/using-openharness/references/detailed-design-writing-guidance.md
+    - skills/using-openharness/references/verification-writing-guidance.md
+    - skills/using-openharness/references/evidence-writing-guidance.md
+  tests:
+    - tests/openharness_cases/test_protocol_docs.py
