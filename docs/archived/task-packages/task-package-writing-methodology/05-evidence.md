@@ -10,12 +10,12 @@
 - 无
 
 ## Files
-- docs/task-packages/task-package-writing-methodology/README.md
-- docs/task-packages/task-package-writing-methodology/STATUS.yaml
-- docs/task-packages/task-package-writing-methodology/02-overview-design.md
-- docs/task-packages/task-package-writing-methodology/03-detailed-design.md
-- docs/task-packages/task-package-writing-methodology/04-verification.md
-- docs/task-packages/task-package-writing-methodology/05-evidence.md
+- docs/archived/task-packages/task-package-writing-methodology/README.md
+- docs/archived/task-packages/task-package-writing-methodology/STATUS.yaml
+- docs/archived/task-packages/task-package-writing-methodology/02-overview-design.md
+- docs/archived/task-packages/task-package-writing-methodology/03-detailed-design.md
+- docs/archived/task-packages/task-package-writing-methodology/04-verification.md
+- docs/archived/task-packages/task-package-writing-methodology/05-evidence.md
 - skills/using-openharness/references/requirements-writing-guidance.md
 - skills/using-openharness/references/overview-design-writing-guidance.md
 - skills/using-openharness/references/detailed-design-writing-guidance.md

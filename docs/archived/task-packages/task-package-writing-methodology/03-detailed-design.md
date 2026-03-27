@@ -21,15 +21,15 @@
 如果设计已经完成但实现尚未开始，应保持在 `detailed_ready`。
 
 ## Files Added Or Changed
-- `docs/task-packages/task-package-writing-methodology/README.md`
+- `docs/archived/task-packages/task-package-writing-methodology/README.md`
   - 更新本包摘要和当前状态，让入口页反映这轮真实目标。
-- `docs/task-packages/task-package-writing-methodology/STATUS.yaml`
+- `docs/archived/task-packages/task-package-writing-methodology/STATUS.yaml`
   - 记录状态、完成标准和后续验证命令。
-- `docs/task-packages/task-package-writing-methodology/01-requirements.md`
+- `docs/archived/task-packages/task-package-writing-methodology/01-requirements.md`
   - 写清用户背景、问题陈述和需求门槛。
-- `docs/task-packages/task-package-writing-methodology/02-overview-design.md`
+- `docs/archived/task-packages/task-package-writing-methodology/02-overview-design.md`
   - 固化推荐的信息架构分层和 OpenSpec 借鉴策略。
-- `docs/task-packages/task-package-writing-methodology/03-detailed-design.md`
+- `docs/archived/task-packages/task-package-writing-methodology/03-detailed-design.md`
   - 把实施顺序、接口边界和失败路径写具体。
 - `skills/using-openharness/references/requirements-writing-guidance.md`
 - `skills/using-openharness/references/overview-design-writing-guidance.md`
