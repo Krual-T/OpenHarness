@@ -85,11 +85,16 @@ Repository entry-skill responsibilities live here:
 
 ## Entry Protocol
 
+Before choosing the first visible action, decide whether active task context is actually needed before foregrounding `openharness bootstrap`.
+
 1. Read `references/manifest.yaml` to discover the required task-package structure.
-2. Run `openharness bootstrap` to list active task packages.
-3. If the user needs a Chinese-first writing entrypoint, open `references/author-entry.md` before diving into individual stage guidance docs.
-4. Run `openharness` from the project root by default. If you are currently in a subdirectory, pass `--repo <project-root>` explicitly.
-5. Open the chosen package in this order:
+2. Decide whether the user is primarily asking to continue active task-package work, inspect current workflow state, or choose among active packages.
+3. Only foreground `openharness bootstrap` when the next action depends on active task-package state.
+4. When active task context is not the current task axis, `openharness bootstrap` may stay background-only while you first inspect the repository surface that actually matches the request.
+5. If you do need active task context, run `openharness bootstrap` to list active task packages.
+6. If the user needs a Chinese-first writing entrypoint, open `references/author-entry.md` before diving into individual stage guidance docs.
+7. Run `openharness` from the project root by default. If you are currently in a subdirectory, pass `--repo <project-root>` explicitly.
+8. Open the chosen package in this order:
     - `README.md`
     - `STATUS.yaml`
     - `01-requirements.md`
@@ -97,13 +102,19 @@ Repository entry-skill responsibilities live here:
     - `03-detailed-design.md`
     - `04-verification.md`
     - `05-evidence.md`
-6. Implement only after the task package is internally consistent enough to act on.
+9. Implement only after the task package is internally consistent enough to act on.
 
 When you enter a new workflow stage, explicitly tell the user:
 
 - current stage
 - what was just completed
 - next planned step
+
+When reporting that stage context to the user, translate workflow state into natural task-oriented language.
+
+- Keep the update centered on the user request, the key fact you just established, and the next move that follows from it.
+- Do not paste raw execution logs, path dumps, or tool-status labels into the main reply.
+- Avoid presenting `Explored`, `Ran ...`, or similar command-playback markers as the headline structure of the user-visible update.
 
 If no package exists and brainstorming has just converged enough to hand off into exploration, scaffold the package first, then report the new package path and continue.
 
