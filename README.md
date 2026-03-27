@@ -133,8 +133,8 @@ A typical task looks like this:
 4. If no task package exists yet, the agent scaffolds one after brainstorming has converged and before exploration starts.
 5. `exploring-solution-space` explores the local repo and the web before architecture is locked in.
 6. At each stage handoff, the agent should make the current stage and next planned step explicit instead of silently pushing forward.
-7. The agent drafts overview design, then runs a reflection pass and can use bounded subagent discussion before treating architecture as ready.
-8. The agent drafts detailed testing-first design, then runs a second reflection pass and can use bounded subagent discussion before implementation.
+7. The agent drafts overview design and detailed testing-first design before implementation.
+8. Readiness is decided in the task package through clear stage checks, not by stretching the entry surface into a long process manual.
 9. The agent implements against the package contract.
 10. Runtime verification, verification, and evidence are written back into the package.
 11. Completed packages are archived without losing history.
