@@ -647,6 +647,27 @@ def test_stage_skills_and_hub_expose_split_task_package_writing_guidance() -> No
     assert "detailed-design-writing-guidance.md" in hub_text
     assert "verification-writing-guidance.md" in hub_text
     assert "evidence-writing-guidance.md" in hub_text
+    assert "author-entry.md" in skill_text
+    assert "author-entry.md" in brainstorming_text
+    assert "author-entry.md" in exploration_text
+    assert "author-entry.md" in verification_text
+    assert "author-entry.md" in hub_text
+
+
+def test_author_entry_reference_exists_and_routes_to_all_writing_guidance() -> None:
+    entry_path = REPO_ROOT / "skills" / "using-openharness" / "references" / "author-entry.md"
+    text = entry_path.read_text(encoding="utf-8")
+
+    assert entry_path.exists()
+    assert "# Author Entry" in text
+    assert "requirements-writing-guidance.md" in text
+    assert "overview-design-writing-guidance.md" in text
+    assert "detailed-design-writing-guidance.md" in text
+    assert "verification-writing-guidance.md" in text
+    assert "evidence-writing-guidance.md" in text
+    assert "brainstorming" in text
+    assert "exploring-solution-space" in text
+    assert "verification-before-completion" in text
 
 
 def test_project_runtime_surface_map_template_provides_adoption_shape() -> None:

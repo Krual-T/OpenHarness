@@ -202,6 +202,62 @@ def test_bootstrap_reports_stage_guidance_in_text_output(tmp_path: Path, capsys)
     assert "`overview_ready`" in captured.out
 
 
+def test_bootstrap_reports_author_entry_when_present(tmp_path: Path, capsys) -> None:
+    repo_root = tmp_path / "repo"
+    references_root = repo_root / "skills" / "using-openharness" / "references"
+    references_root.mkdir(parents=True)
+    (repo_root / "docs" / "task-packages" / "visible-stage").mkdir(parents=True)
+    (references_root / "manifest.yaml").write_text(
+        "version: 1\n"
+        "task_packages_root: docs/task-packages\n"
+        "archived_task_packages_root: docs/archived/task-packages\n"
+        "required_design_files:\n"
+        "  - README.md\n"
+        "  - STATUS.yaml\n"
+        "  - 01-requirements.md\n"
+        "  - 02-overview-design.md\n"
+        "  - 03-detailed-design.md\n"
+        "  - 04-verification.md\n"
+        "  - 05-evidence.md\n"
+        "workflow:\n"
+        "  default_status_flow:\n"
+        "    - proposed\n"
+        "    - requirements_ready\n"
+        "    - overview_ready\n"
+        "    - detailed_ready\n"
+        "    - in_progress\n"
+        "    - verifying\n"
+        "    - archived\n",
+        encoding="utf-8",
+    )
+    (references_root / "author-entry.md").write_text("# Author Entry\n", encoding="utf-8")
+    root = repo_root / "docs" / "task-packages" / "visible-stage"
+    for name in REQUIRED_TASK_PACKAGE_FILES:
+        (root / name).write_text("# x\n", encoding="utf-8")
+    (root / "STATUS.yaml").write_text(
+        "id: OH-962\n"
+        "title: Visible Stage Author Entry\n"
+        "status: requirements_ready\n"
+        "summary: author entry surface\n"
+        "owner: codex\n"
+        "created_at: 2026-03-27\n"
+        "updated_at: 2026-03-27\n"
+        "done_criteria:\n"
+        "  - x\n"
+        "verification:\n"
+        "  required_commands: []\n"
+        "  required_scenarios: []\n",
+        encoding="utf-8",
+    )
+
+    result = openharness.cmd_bootstrap(argparse.Namespace(repo=str(repo_root), json=False, all=False))
+
+    captured = capsys.readouterr()
+    assert result == 0
+    assert "author entry:" in captured.out
+    assert "author-entry.md" in captured.out
+
+
 def test_update_runs_git_pull_then_uv_tool_upgrade_in_repo_root(
     capsys, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -299,6 +355,62 @@ def test_bootstrap_json_includes_stage_guidance(tmp_path: Path, capsys) -> None:
     assert task["current_stage"] == "detailed_ready"
     assert task["next_stage"] == "in_progress"
     assert "implementation" in task["next_step"]
+
+
+def test_bootstrap_json_includes_author_entry_when_present(tmp_path: Path, capsys) -> None:
+    repo_root = tmp_path / "repo"
+    references_root = repo_root / "skills" / "using-openharness" / "references"
+    references_root.mkdir(parents=True)
+    (repo_root / "docs" / "task-packages" / "visible-stage").mkdir(parents=True)
+    (references_root / "manifest.yaml").write_text(
+        "version: 1\n"
+        "task_packages_root: docs/task-packages\n"
+        "archived_task_packages_root: docs/archived/task-packages\n"
+        "required_design_files:\n"
+        "  - README.md\n"
+        "  - STATUS.yaml\n"
+        "  - 01-requirements.md\n"
+        "  - 02-overview-design.md\n"
+        "  - 03-detailed-design.md\n"
+        "  - 04-verification.md\n"
+        "  - 05-evidence.md\n"
+        "workflow:\n"
+        "  default_status_flow:\n"
+        "    - proposed\n"
+        "    - requirements_ready\n"
+        "    - overview_ready\n"
+        "    - detailed_ready\n"
+        "    - in_progress\n"
+        "    - verifying\n"
+        "    - archived\n",
+        encoding="utf-8",
+    )
+    (references_root / "author-entry.md").write_text("# Author Entry\n", encoding="utf-8")
+    root = repo_root / "docs" / "task-packages" / "visible-stage"
+    for name in REQUIRED_TASK_PACKAGE_FILES:
+        (root / name).write_text("# x\n", encoding="utf-8")
+    (root / "STATUS.yaml").write_text(
+        "id: OH-963\n"
+        "title: Visible Stage Json Author Entry\n"
+        "status: detailed_ready\n"
+        "summary: author entry json\n"
+        "owner: codex\n"
+        "created_at: 2026-03-27\n"
+        "updated_at: 2026-03-27\n"
+        "done_criteria:\n"
+        "  - x\n"
+        "verification:\n"
+        "  required_commands: []\n"
+        "  required_scenarios: []\n",
+        encoding="utf-8",
+    )
+
+    result = openharness.cmd_bootstrap(argparse.Namespace(repo=str(repo_root), json=True, all=False))
+
+    captured = capsys.readouterr()
+    payload = json.loads(captured.out)
+    assert result == 0
+    assert payload["author_entry"]["path"].endswith("author-entry.md")
 
 
 def test_verify_records_artifact_and_status_metadata(

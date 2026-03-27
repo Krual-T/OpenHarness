@@ -35,6 +35,7 @@ Use this skill to work inside repositories that organize tasks as end-to-end `ta
 - `references/detailed-design-writing-guidance.md`
 - `references/verification-writing-guidance.md`
 - `references/evidence-writing-guidance.md`
+- `references/author-entry.md`
 - `references/skill-hub.md`
 - `references/runtime-capability-contract.md`
 - `references/project-runtime-surface-map.md`
@@ -86,8 +87,9 @@ Repository entry-skill responsibilities live here:
 
 1. Read `references/manifest.yaml` to discover the required task-package structure.
 2. Run `openharness bootstrap` to list active task packages.
-3. Run `openharness` from the project root by default. If you are currently in a subdirectory, pass `--repo <project-root>` explicitly.
-4. Open the chosen package in this order:
+3. If the user needs a Chinese-first writing entrypoint, open `references/author-entry.md` before diving into individual stage guidance docs.
+4. Run `openharness` from the project root by default. If you are currently in a subdirectory, pass `--repo <project-root>` explicitly.
+5. Open the chosen package in this order:
     - `README.md`
     - `STATUS.yaml`
     - `01-requirements.md`
@@ -95,7 +97,7 @@ Repository entry-skill responsibilities live here:
     - `03-detailed-design.md`
     - `04-verification.md`
     - `05-evidence.md`
-5. Implement only after the task package is internally consistent enough to act on.
+6. Implement only after the task package is internally consistent enough to act on.
 
 When you enter a new workflow stage, explicitly tell the user:
 
@@ -125,10 +127,12 @@ Use child skills under `using-openharness` like this:
 - `brainstorming`
     - use when the task is still ambiguous, under-specified, or needs requirements convergence
     - primary output goes into `01-requirements.md`
+    - Chinese-first routing should also point the author at `references/author-entry.md` and then `references/requirements-writing-guidance.md`
 - `exploring-solution-space`
     - use after requirements are clear and before architecture or implementation details are locked in
     - combines local repository exploration with web research when external/current information matters
     - writes architectural conclusions into `02-overview-design.md` first, and only feeds implementation constraints into `03-detailed-design.md` when exploration has made them concrete enough
+    - Chinese-first routing should also point the author at `references/author-entry.md`, then `references/overview-design-writing-guidance.md` or `references/detailed-design-writing-guidance.md` as needed
 - direct implementation
     - use only when `01`, `02`, and `03` are already clear enough
 
@@ -202,6 +206,7 @@ Do not advance a stage while material challenges still float without a recorded 
 - task-package Markdown narrative should be Chinese-first for maintainer readability.
 - In phase one, section titles, commands, status values, YAML keys, file names, and paths stay English.
 - Use the stage-matched writing guidance when you need to know how to write a task-package document:
+  - `references/author-entry.md` as the Chinese-first author routing page
   - `references/requirements-writing-guidance.md` for `01-requirements.md`
   - `references/overview-design-writing-guidance.md` for `02-overview-design.md`
   - `references/detailed-design-writing-guidance.md` for `03-detailed-design.md`

@@ -34,43 +34,55 @@ def _openharness_repo_root() -> Path:
     return Path(__file__).resolve().parents[1]
 
 
+def _author_entry_info(repo_root: Path) -> dict[str, str] | None:
+    author_entry = repo_root / "skills" / "using-openharness" / "references" / "author-entry.md"
+    if not author_entry.exists():
+        return None
+    return {
+        "path": str(author_entry),
+        "summary": "Chinese-first author entry for task-package writing guidance.",
+    }
+
+
 def cmd_bootstrap(args: argparse.Namespace) -> int:
     repo_root = Path(args.repo).resolve()
     manifest = load_manifest(repo_root)
     packages = discover_task_packages(repo_root, manifest)
+    author_entry = _author_entry_info(repo_root)
     if not args.all:
         packages = [package for package in packages if package.status_name in ACTIVE_STATUSES]
     if args.json:
-        print(
-            json.dumps(
+        payload = {
+            "repo": str(repo_root),
+            "manifest": str(manifest.path),
+            "task_packages_root": str(manifest.task_packages_root),
+            "archived_task_packages_root": str(manifest.archived_task_packages_root),
+            "task_packages": [
                 {
-                    "repo": str(repo_root),
-                    "manifest": str(manifest.path),
-                    "task_packages_root": str(manifest.task_packages_root),
-                    "archived_task_packages_root": str(manifest.archived_task_packages_root),
-                    "task_packages": [
-                        {
-                            "id": package.task_id,
-                            "name": package.name,
-                            "title": package.title,
-                            "status": package.status_name,
-                            "summary": package.summary,
-                            "owner": package.owner,
-                            "root": str(package.root),
-                            "required_commands": list(package.required_commands),
-                            "required_scenarios": list(package.required_scenarios),
-                            **describe_stage(package),
-                        }
-                        for package in packages
-                    ],
-                },
-                ensure_ascii=False,
-                indent=2,
-            )
+                    "id": package.task_id,
+                    "name": package.name,
+                    "title": package.title,
+                    "status": package.status_name,
+                    "summary": package.summary,
+                    "owner": package.owner,
+                    "root": str(package.root),
+                    "required_commands": list(package.required_commands),
+                    "required_scenarios": list(package.required_scenarios),
+                    **describe_stage(package),
+                }
+                for package in packages
+            ],
+        }
+        if author_entry is not None:
+            payload["author_entry"] = author_entry
+        print(
+            json.dumps(payload, ensure_ascii=False, indent=2)
         )
         return 0
     print(f"Harness manifest: {manifest.path}")
     print(f"Task package root: {manifest.task_packages_root}")
+    if author_entry is not None:
+        print(f"author entry: {author_entry['path']}")
     if not packages:
         print("No matching task packages found.")
         return 0

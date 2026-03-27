@@ -53,6 +53,9 @@ The live workflow also uses stage-organized role injection:
 
 ## Writing Guidance Surface
 
+- `author-entry.md`
+  - Chinese-first author routing page for task-package writing
+  - points maintainers to the current stage and the matching writing guidance without duplicating the guidance bodies
 - `requirements-writing-guidance.md`
   - repository reference for how to write `01-requirements.md`
 - `overview-design-writing-guidance.md`
@@ -65,6 +68,7 @@ The live workflow also uses stage-organized role injection:
   - repository reference for how to write `05-evidence.md`
 - these references complement stage skills by explaining document purpose, required questions, document boundaries, and common failure modes
 - they keep long-form writing guidance out of `SKILL.md` and out of task-package templates
+- `author-entry.md` sits above them as the shortest discoverability layer for Chinese-first users
 
 ### Entry And Routing
 - `using-openharness`
