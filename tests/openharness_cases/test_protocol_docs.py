@@ -266,9 +266,12 @@ def test_exploration_skill_requires_reflection_before_design_is_ready() -> None:
 def test_docs_describe_reflective_design_loop() -> None:
     readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
     agents = (REPO_ROOT / "AGENTS.md").read_text(encoding="utf-8")
-    assert "reflection" in readme
-    assert "reflection" in agents
-    assert "subagent" in readme or "子智能体" in agents
+    entry_skill = (REPO_ROOT / "skills" / "using-openharness" / "SKILL.md").read_text(encoding="utf-8")
+    assert "reflection" not in readme
+    assert "reflection" not in agents
+    assert "reflection" in entry_skill
+    assert "subagent" not in readme
+    assert "子智能体" in agents or "subagent" in entry_skill
 
 
 def test_readme_describes_plug_and_play_harness_and_python_pytest_floor() -> None:
@@ -331,9 +334,11 @@ def test_readme_describes_runtime_capability_contract() -> None:
 def test_agents_md_routes_repo_skill_usage_through_openharness() -> None:
     agents_path = REPO_ROOT / "AGENTS.md"
     text = agents_path.read_text(encoding="utf-8")
-    assert "`using-openharness` 视为本仓库的默认入口技能" in text
-    assert "先经过 `using-openharness` 做 skill routing" in text
-    assert "探索" in text
+    assert "仓库地图" in text
+    assert "默认工作流、阶段方法、写作方法论和 task package 结构协议都不放在这里" in text
+    assert "先经过 `using-openharness` 做 skill routing" not in text
+    assert "## 2. 默认工作流" not in text
+    assert "### 设计任务包协议" not in text
 
 
 def test_install_doc_describes_global_openharness_command_install_and_upgrade() -> None:
@@ -798,8 +803,8 @@ def test_repo_protocol_documents_task_package_language_policy() -> None:
     agents = (REPO_ROOT / "AGENTS.md").read_text(encoding="utf-8")
     openharness_skill = (REPO_ROOT / "skills" / "using-openharness" / "SKILL.md").read_text(encoding="utf-8")
 
-    assert "task package 的 Markdown 正文默认使用中文" in agents
-    assert "章节标题、命令、状态值、YAML 键名、文件名与路径保持英文" in agents
+    assert "task package 的 Markdown 正文默认使用中文" not in agents
+    assert "章节标题、命令、状态值、YAML 键名、文件名与路径保持英文" not in agents
     assert "task-package Markdown narrative should be Chinese-first" in openharness_skill
     assert "section titles, commands, status values, YAML keys, file names, and paths stay English" in openharness_skill
 
