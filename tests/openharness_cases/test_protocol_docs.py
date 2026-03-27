@@ -566,6 +566,89 @@ def test_project_runtime_surface_map_reference_defines_minimum_contents_and_boot
     assert "05-evidence.md" in text
 
 
+def test_task_package_writing_guidance_references_define_stage_contracts() -> None:
+    references_root = REPO_ROOT / "skills" / "using-openharness" / "references"
+    expected = {
+        "requirements-writing-guidance.md": "01-requirements.md",
+        "overview-design-writing-guidance.md": "02-overview-design.md",
+        "detailed-design-writing-guidance.md": "03-detailed-design.md",
+        "verification-writing-guidance.md": "04-verification.md",
+        "evidence-writing-guidance.md": "05-evidence.md",
+    }
+
+    assert not (references_root / "task-package-writing-guide.md").exists()
+
+    for filename, target_doc in expected.items():
+        text = (references_root / filename).read_text(encoding="utf-8")
+        assert target_doc in text
+        assert "Questions This Document Must Answer" in text
+        assert "Section Mapping" in text
+        assert "Boundary With Adjacent Documents" in text
+        assert "Common Failure Modes" in text
+        assert "Minimum Acceptable Shape" in text
+        assert "Exit Check" in text
+
+    requirements = (references_root / "requirements-writing-guidance.md").read_text(encoding="utf-8")
+    assert "acceptance criteria" in requirements
+    assert "cost cap" in requirements
+    assert "counterexample" in requirements
+
+    overview = (references_root / "overview-design-writing-guidance.md").read_text(encoding="utf-8")
+    assert "key failure modes" in overview
+    assert "challenge closure" in overview
+    assert "Stage Gates" in overview
+
+    detailed = (references_root / "detailed-design-writing-guidance.md").read_text(encoding="utf-8")
+    assert "observability" in detailed
+    assert "testing-first" in detailed
+    assert "Runtime Verification Plan" in detailed
+
+    verification = (references_root / "verification-writing-guidance.md").read_text(
+        encoding="utf-8"
+    )
+    assert "fresh" in verification
+    assert "Required Commands" in verification
+    assert "Expected Outcomes" in verification
+    assert "Latest Result" in verification
+
+    evidence = (references_root / "evidence-writing-guidance.md").read_text(encoding="utf-8")
+    assert "final verification command" in evidence
+    assert "Artifact Paths" in evidence
+    assert "Manual Steps" in evidence
+
+
+def test_stage_skills_and_hub_expose_split_task_package_writing_guidance() -> None:
+    skill_text = (REPO_ROOT / "skills" / "using-openharness" / "SKILL.md").read_text(encoding="utf-8")
+    brainstorming_text = (REPO_ROOT / "skills" / "brainstorming" / "SKILL.md").read_text(
+        encoding="utf-8"
+    )
+    exploration_text = (REPO_ROOT / "skills" / "exploring-solution-space" / "SKILL.md").read_text(
+        encoding="utf-8"
+    )
+    verification_text = (
+        REPO_ROOT / "skills" / "verification-before-completion" / "SKILL.md"
+    ).read_text(encoding="utf-8")
+    hub_text = (
+        REPO_ROOT / "skills" / "using-openharness" / "references" / "skill-hub.md"
+    ).read_text(encoding="utf-8")
+
+    assert "requirements-writing-guidance.md" in skill_text
+    assert "overview-design-writing-guidance.md" in skill_text
+    assert "detailed-design-writing-guidance.md" in skill_text
+    assert "verification-writing-guidance.md" in skill_text
+    assert "evidence-writing-guidance.md" in skill_text
+    assert "requirements-writing-guidance.md" in brainstorming_text
+    assert "overview-design-writing-guidance.md" in exploration_text
+    assert "detailed-design-writing-guidance.md" in exploration_text
+    assert "verification-writing-guidance.md" in verification_text
+    assert "evidence-writing-guidance.md" in verification_text
+    assert "requirements-writing-guidance.md" in hub_text
+    assert "overview-design-writing-guidance.md" in hub_text
+    assert "detailed-design-writing-guidance.md" in hub_text
+    assert "verification-writing-guidance.md" in hub_text
+    assert "evidence-writing-guidance.md" in hub_text
+
+
 def test_project_runtime_surface_map_template_provides_adoption_shape() -> None:
     text = (
         REPO_ROOT

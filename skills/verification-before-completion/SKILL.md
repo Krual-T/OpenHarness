@@ -48,6 +48,19 @@ BEFORE claiming any status or expressing satisfaction:
 Skip any step = lying, not verifying
 ```
 
+## Stage Writeback
+
+Before claiming closure, write the verification stage artifacts so they can answer the right questions:
+
+- `04-verification.md`
+  - use `references/verification-writing-guidance.md`
+  - record planned path, executed path, traceability, result, and accepted residual risk
+- `05-evidence.md`
+  - use `references/evidence-writing-guidance.md`
+  - record changed files, executed commands, artifact paths, manual steps, residual risks, and follow-ups
+
+If either document still reads like a placeholder, the stage is not actually closed.
+
 ## Common Failures
 
 | Claim | Requires | Not Sufficient |

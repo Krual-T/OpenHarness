@@ -30,6 +30,11 @@ Use this skill to work inside repositories that organize tasks as end-to-end `ta
 `openharness` owns the canonical harness runtime support files under:
 
 - `references/templates/`
+- `references/requirements-writing-guidance.md`
+- `references/overview-design-writing-guidance.md`
+- `references/detailed-design-writing-guidance.md`
+- `references/verification-writing-guidance.md`
+- `references/evidence-writing-guidance.md`
 - `references/skill-hub.md`
 - `references/runtime-capability-contract.md`
 - `references/project-runtime-surface-map.md`
@@ -196,6 +201,13 @@ Do not advance a stage while material challenges still float without a recorded 
 
 - task-package Markdown narrative should be Chinese-first for maintainer readability.
 - In phase one, section titles, commands, status values, YAML keys, file names, and paths stay English.
+- Use the stage-matched writing guidance when you need to know how to write a task-package document:
+  - `references/requirements-writing-guidance.md` for `01-requirements.md`
+  - `references/overview-design-writing-guidance.md` for `02-overview-design.md`
+  - `references/detailed-design-writing-guidance.md` for `03-detailed-design.md`
+  - `references/verification-writing-guidance.md` for `04-verification.md`
+  - `references/evidence-writing-guidance.md` for `05-evidence.md`
+- Keep skill text focused on stage actions rather than duplicating long-form writing guidance.
 - Keep `README.md` short; it is the human entrypoint.
 - Keep `STATUS.yaml` machine-readable; it is the harness state source.
 - Put problem framing in `01-requirements.md`.

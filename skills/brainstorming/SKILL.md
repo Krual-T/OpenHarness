@@ -32,9 +32,11 @@ do not create unnecessary approval pauses.
 2. Offer the visual companion only if upcoming questions are genuinely visual.
 3. Ask clarifying questions only when the repository and user request still leave a high-impact ambiguity.
 4. Propose 2-3 viable approaches with trade-offs and a clear recommendation.
-5. Write the converged requirements into `01-requirements.md`.
-6. Self-check the result against the requirements gate defined in `using-openharness`.
-7. Hand off to `exploring-solution-space` once the requirements are concrete enough to challenge.
+5. Collect the requirement-stage facts needed to write `01-requirements.md`: user, scenario, pain, timing, constraints, success metric, non-goals, and at least one counterexample.
+6. Write the converged requirements into `01-requirements.md` using `references/requirements-writing-guidance.md`.
+7. Check that the draft can answer the guidance questions, not just fill the headings.
+8. Self-check the result against the requirements gate defined in `using-openharness`.
+9. Hand off to `exploring-solution-space` once the requirements are concrete enough to challenge.
 
 Brainstorming ends when `01-requirements.md` is strong enough for exploration, not when the prose becomes longer.
 
@@ -57,11 +59,21 @@ Brainstorming ends when `01-requirements.md` is strong enough for exploration, n
 - Use the CEO perspective to challenge timing, cost cap, strategic fit, and worst acceptable downside.
 - Record substantive challenge closure in the task package instead of leaving it only in chat.
 
+**What information must be gathered in this stage:**
+
+- Who is affected and in what concrete scenario?
+- What current pain or confusion makes this worth doing now?
+- What result must be true when this round is done?
+- What must stay out of scope even if it sounds related?
+- What constraints or costs bound this round?
+- What example would look similar on the surface but should still be excluded?
+
 **Requirements gate before leaving brainstorming:**
 
 - The repository-level requirements gate lives in `using-openharness`.
 - The requirements gate must include target user, core scenario, single success metric, non-goals, cost cap, acceptance criteria, and at least one counterexample.
 - If target user, core scenario, success metric, non-goals, effort boundary, acceptance criteria, or counterexample are still missing, keep converging requirements instead of pretending exploration will fix it later.
+- If `01-requirements.md` still cannot answer the questions defined in `references/requirements-writing-guidance.md`, keep converging requirements instead of moving on.
 
 ## After Brainstorming
 
