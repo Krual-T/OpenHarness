@@ -19,10 +19,10 @@
 - skills/using-openharness/references/skill-hub.md
 - tests/openharness_cases/test_cli_workflows.py
 - tests/openharness_cases/test_protocol_docs.py
-- docs/task-packages/protocol-thinning-and-intake-restructuring/README.md
-- docs/task-packages/protocol-thinning-and-intake-restructuring/STATUS.yaml
-- docs/task-packages/protocol-thinning-and-intake-restructuring/04-verification.md
-- docs/task-packages/protocol-thinning-and-intake-restructuring/05-evidence.md
+- docs/archived/task-packages/protocol-thinning-and-intake-restructuring/README.md
+- docs/archived/task-packages/protocol-thinning-and-intake-restructuring/STATUS.yaml
+- docs/archived/task-packages/protocol-thinning-and-intake-restructuring/04-verification.md
+- docs/archived/task-packages/protocol-thinning-and-intake-restructuring/05-evidence.md
 
 ## Commands
 - `uv run openharness transition protocol-thinning-and-intake-restructuring in_progress`
