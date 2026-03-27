@@ -79,8 +79,6 @@ def cmd_bootstrap(args: argparse.Namespace) -> int:
             json.dumps(payload, ensure_ascii=False, indent=2)
         )
         return 0
-    print(f"Harness manifest: {manifest.path}")
-    print(f"Task package root: {manifest.task_packages_root}")
     if author_entry is not None:
         print(f"author entry: {author_entry['path']}")
     if not packages:
