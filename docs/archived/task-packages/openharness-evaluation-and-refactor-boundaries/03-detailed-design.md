@@ -36,15 +36,15 @@
 如果设计已经完成但实现尚未开始，应保持在 `detailed_ready`。
 
 ## Files Added Or Changed
-- `docs/task-packages/openharness-evaluation-and-refactor-boundaries/02-overview-design.md`
+- `docs/archived/task-packages/openharness-evaluation-and-refactor-boundaries/02-overview-design.md`
   - 已经承载总体边界、案例选择策略和对照层次，是后续 detailed 落点的前提。
-- `docs/task-packages/openharness-evaluation-and-refactor-boundaries/03-detailed-design.md`
+- `docs/archived/task-packages/openharness-evaluation-and-refactor-boundaries/03-detailed-design.md`
   - 本轮要把案例抽取顺序、对照方法、结论分类法和下一轮拆包规则写具体，避免后续再次从头定义方法。
-- `docs/task-packages/openharness-evaluation-and-refactor-boundaries/04-verification.md`
+- `docs/archived/task-packages/openharness-evaluation-and-refactor-boundaries/04-verification.md`
   - 后续需要记录这轮分析实际采用了哪些证据路径、哪些结论证据充分、哪些仍然不足。
-- `docs/task-packages/openharness-evaluation-and-refactor-boundaries/05-evidence.md`
+- `docs/archived/task-packages/openharness-evaluation-and-refactor-boundaries/05-evidence.md`
   - 后续需要收集用到的归档包、外部来源、命令和残余风险。
-- `docs/task-packages/openharness-evaluation-and-refactor-boundaries/STATUS.yaml`
+- `docs/archived/task-packages/openharness-evaluation-and-refactor-boundaries/STATUS.yaml`
   - 需要随着阶段推进更新状态与完成定义，确保后续重构任务可以从这里接手。
 
 本轮不应修改协议实现文件、CLI、模板或测试，因为这会把“评估设计”和“重构实现”混成一轮。

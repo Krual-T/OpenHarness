@@ -19,7 +19,7 @@
 - 已将正式评估结论写回 `OH-036`，并明确哪些结论已证实、哪些仍属推断。
 - Path Notes:
 - 当前路径已经足以支撑“正式评估结论”这一轮目标，因为内部案例、当前命令结果与外部对照都已落到文档证据中。
-- 当前路径还不足以宣称整个评估 stream 已经 `archived`，因为下一轮重构仍在活跃进行中，且本包当前更适合作为 `OH-037` 的事实前提保留在 active task packages 中。
+- 当前路径现在已经足以支撑本包归档，因为后续 focused package `OH-037` 已完成并归档，`OH-036` 继续留在 active task packages 已不再增加新的执行价值。
 - 先前一度怀疑 `bootstrap --json` 与 `STATUS.yaml` 存在状态刷新不一致，但本次串行重跑没有复现；因此目前只能把它保留为历史可疑信号，而不能继续当作已复现缺陷写入结论。
 
 只有当实现已经完成到足以采集新证据时，才进入 `verifying`。
@@ -45,7 +45,7 @@
   - 保留 task package / 状态 / verification / archive 闭环
   - 削减重复协议与无收益的固定流程义务
   - 重组入口层、CLI 输出和 skill 承载分工
-- 当前缺口是：这些结论还没有在一个新的后续重构 task package 中被正式接手，因此本包尚不应宣称完成闭环。
+- 当前闭环状态是：这些结论已经由 `OH-037` 正式接手且后续执行已归档，因此本包现在适合作为历史事实源归档。
 
 ## Risk Acceptance
 - 当前接受的风险一：内部案例主要来自归档包而非你个人口述案例。之所以可接受，是因为这些归档包已经是仓库内正式事实源，足以承担第一轮评估依据。
@@ -111,6 +111,6 @@
 
 ## Latest Result
 - 当前结果是：`OH-036` 已完成正式评估结论写回，内部案例与外部对照已收口为可执行边界，并已按协议保持在 `verifying`。
-- 本次 fresh verification 中，`bootstrap --json` 与当前 `STATUS.yaml` 一致，active packages 都正确显示为 `verifying`。因此“入口层与状态源边界需要重组”仍是设计判断和历史经验判断，但这次没有新增复现证据。
+- 本次 fresh verification 中，`bootstrap --json` 与当前 `STATUS.yaml` 一致，当前 active package 只剩 `OH-036`。`OH-037` 已经归档，因此 `OH-036` 现在可以退出 active 区并转为历史事实源。
 - Latest Artifact:
 - 无独立 artifact；当前证据主要是仓库文件、归档 package 内容、外部正式资料与命令输出。

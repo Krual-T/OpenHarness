@@ -3,23 +3,23 @@
 > 章节标题保留英文；正文默认使用中文；命令、状态值、YAML 键名、文件名与路径保持英文。
 
 ## Residual Risks
-- `OH-037` 虽已存在，但当前只处于需求层；如果后续有人跳过 `OH-036` 的正式结论，直接展开 `OH-037` 设计，仍可能把个人偏好重新包装成方案。
+- 后续如果有人跳过 `OH-036` 的正式评估结论，直接重开新一轮结构改造，仍可能把个人偏好重新包装成方案；但这已不再是 `OH-037` 是否会继续设计的问题，因为 `OH-037` 已完成归档。
 - 对固定 `reflection` 义务的收益判断，目前主要来自归档包中留下的结构变化与验证写回；如果后续需要更强证据，仍可能需要补真实会话级案例。
 - 先前怀疑过 `bootstrap` 与 `STATUS.yaml` 可能存在阶段不一致，但本次串行验证没有复现，当前仍缺最小复现场景。
 
 ## Manual Steps
 - 无额外人工运行时步骤。
 - 若后续要补你个人真实使用案例，应在新的 follow-up 中单独记录，不混入本轮已有仓库事实。
-- `OH-037` 在进入 overview 前，应先把本包列为事实前提，而不是重新做一轮泛评估。
+- 后续若再开 focused package，应先把本包列为事实前提，而不是重新做一轮泛评估。
 
 ## Files
-- docs/task-packages/openharness-evaluation-and-refactor-boundaries/README.md
-- docs/task-packages/openharness-evaluation-and-refactor-boundaries/STATUS.yaml
-- docs/task-packages/openharness-evaluation-and-refactor-boundaries/01-requirements.md
-- docs/task-packages/openharness-evaluation-and-refactor-boundaries/02-overview-design.md
-- docs/task-packages/openharness-evaluation-and-refactor-boundaries/03-detailed-design.md
-- docs/task-packages/openharness-evaluation-and-refactor-boundaries/04-verification.md
-- docs/task-packages/openharness-evaluation-and-refactor-boundaries/05-evidence.md
+- docs/archived/task-packages/openharness-evaluation-and-refactor-boundaries/README.md
+- docs/archived/task-packages/openharness-evaluation-and-refactor-boundaries/STATUS.yaml
+- docs/archived/task-packages/openharness-evaluation-and-refactor-boundaries/01-requirements.md
+- docs/archived/task-packages/openharness-evaluation-and-refactor-boundaries/02-overview-design.md
+- docs/archived/task-packages/openharness-evaluation-and-refactor-boundaries/03-detailed-design.md
+- docs/archived/task-packages/openharness-evaluation-and-refactor-boundaries/04-verification.md
+- docs/archived/task-packages/openharness-evaluation-and-refactor-boundaries/05-evidence.md
 - docs/archived/task-packages/workflow-transition-and-verification-artifacts/STATUS.yaml
 - docs/archived/task-packages/workflow-transition-and-verification-artifacts/04-verification.md
 - docs/archived/task-packages/workflow-transition-and-verification-artifacts/05-evidence.md
@@ -96,7 +96,6 @@
 - 当前 fresh verification 没有再次观察到 `bootstrap --json` 与 `STATUS.yaml` 不一致，因此这部分仍应视为待复核的历史怀疑，而不是本次新增证据。
 
 ## Follow-ups
-- `OH-037` 仅在 `OH-036` 被接受为事实源后，才进入 `02-overview-design.md`；在此之前不要继续展开设计。
 - 基于本包结论，下一轮 focused package 的主题应围绕“协议减重与入口重组”，而不是继续补更多 guidance。
 - 单独调查 `openharness transition` 成功后 `bootstrap` / `bootstrap --json` 仍读到旧阶段的原因，判断是否为真实 CLI 缺陷。
 - 如果后续需要更强的收益证据，再补充你个人真实使用案例，但不要让它替代已有仓库事实源。
