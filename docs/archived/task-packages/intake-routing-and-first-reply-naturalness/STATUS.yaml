@@ -1,0 +1,44 @@
+id: OH-035
+title: Intake Routing And First Reply Naturalness
+# Default flow: proposed -> requirements_ready -> overview_ready -> detailed_ready -> in_progress -> verifying -> archived
+# requirements_ready -> overview_ready -> detailed_ready are design-readiness checkpoints; later statuses imply earlier checkpoints are already materially complete.
+# `detailed_ready` is the normal resting point for design-complete work before implementation.
+# `archived` means the task package is implemented, verified, and no longer active.
+status: archived
+summary: 收敛 OpenHarness 的 intake routing 与首轮回复边界，明确 bootstrap 何时应前置、何时只作为后台上下文，以及阶段播报怎样保持自然。
+owner: codex
+created_at: 2026-03-27
+updated_at: 2026-03-27
+depends_on: []
+scope:
+  areas:
+    - skills/using-openharness
+    - skills/brainstorming
+    - openharness_cli
+    - tests/openharness_cases
+entrypoints:
+  - docs/archived/task-packages/intake-routing-and-first-reply-naturalness/README.md
+  - docs/archived/task-packages/intake-routing-and-first-reply-naturalness/01-requirements.md
+  - docs/archived/task-packages/intake-routing-and-first-reply-naturalness/02-overview-design.md
+  - docs/archived/task-packages/intake-routing-and-first-reply-naturalness/03-detailed-design.md
+done_criteria:
+  - 明确区分哪些任务类型应以前台 `bootstrap` 作为入口，哪些任务类型只应把它作为后台上下文。
+  - 定义首轮用户可见回复的最小自然度约束，使其既保留阶段信息，又不直接回放内部执行日志。
+  - 给出需要修改的协议、CLI、测试与文档落点，以及对应验证方式。
+verification:
+  required_commands:
+    - uv run pytest tests/openharness_cases/test_protocol_docs.py -q
+    - uv run openharness check-tasks
+  required_scenarios:
+    - 面向仓库整体评估、协议审查、局部问题讨论和活跃任务推进这几类请求，入口动作的主轴判断清楚可区分。
+    - 用户可见首轮回复能够交代当前阶段、刚完成的动作和下一步，但不再表现为命令日志或状态机回放。
+  last_run_at: "2026-03-27T00:00:00Z"
+  last_run_result: "passed"
+  last_run_artifact: "docs/archived/task-packages/intake-routing-and-first-reply-naturalness/04-verification.md"
+evidence:
+  docs:
+    - docs/archived/task-packages/intake-routing-and-first-reply-naturalness/04-verification.md
+    - docs/archived/task-packages/intake-routing-and-first-reply-naturalness/05-evidence.md
+  code: []
+  tests:
+    - tests/openharness_cases/test_protocol_docs.py

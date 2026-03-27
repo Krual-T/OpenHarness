@@ -83,6 +83,8 @@ Brainstorming ends when `01-requirements.md` is strong enough for exploration, n
 - Continue into `exploring-solution-space` by default unless the user explicitly asked for a review checkpoint or the remaining ambiguity is too risky to carry forward.
 - If no package exists yet, do not scaffold one at the first vague idea.
 - When brainstorming is complete and you are about to enter exploration, scaffold the task package before invoking `exploring-solution-space`.
+- Do not lead with tool-log labels or command playback in the user-visible handoff.
+- Keep the handoff centered on what was clarified, what remains uncertain, and why exploration is the next step.
 
 ## Key Principles
 

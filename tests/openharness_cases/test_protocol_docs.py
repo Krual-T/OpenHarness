@@ -414,6 +414,28 @@ def test_using_openharness_requires_explicit_stage_checkpoints() -> None:
     assert "next planned step" in text
 
 
+def test_using_openharness_routes_bootstrap_by_request_axis() -> None:
+    text = (REPO_ROOT / "skills" / "using-openharness" / "SKILL.md").read_text(encoding="utf-8")
+    assert "decide whether active task context is actually needed before foregrounding `openharness bootstrap`" in text
+    assert "When active task context is not the current task axis" in text
+    assert "`openharness bootstrap` may stay background-only" in text
+    assert "Only foreground `openharness bootstrap` when the next action depends on active task-package state" in text
+
+
+def test_using_openharness_requires_natural_user_visible_stage_updates() -> None:
+    text = (REPO_ROOT / "skills" / "using-openharness" / "SKILL.md").read_text(encoding="utf-8")
+    assert "translate workflow state into natural task-oriented language" in text
+    assert "Do not paste raw execution logs" in text
+    assert "`Explored`" in text
+    assert "`Ran ...`" in text
+
+
+def test_brainstorming_keeps_user_updates_focused_on_problem_not_log_labels() -> None:
+    text = (REPO_ROOT / "skills" / "brainstorming" / "SKILL.md").read_text(encoding="utf-8")
+    assert "Do not lead with tool-log labels or command playback in the user-visible handoff." in text
+    assert "Keep the handoff centered on what was clarified, what remains uncertain, and why exploration is the next step." in text
+
+
 def test_design_package_templates_include_verification_path_sections() -> None:
     overview = (
         REPO_ROOT
