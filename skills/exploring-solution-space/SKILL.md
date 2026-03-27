@@ -41,11 +41,12 @@ This skill may also feed justified implementation constraints into `03-detailed-
 4. Summarize local constraints, viable options, and the recommended direction.
 5. Gather the overview-stage facts needed to write `02-overview-design.md`: coverage surface, excluded surface, main structure, key boundaries, main flow, fallback direction, and at least one rejected alternative.
 6. Write the architectural conclusion into `02-overview-design.md` using `references/overview-design-writing-guidance.md`, including the overview-gate items required by `using-openharness`.
-7. Run an overview reflection pass: challenge the main path, compare at least one viable alternative, and check for missing verification implications.
-8. Only after `02-overview-design.md` is coherent, gather the detailed-stage facts needed for `03-detailed-design.md`: verification path, fallback path, implementation landing points, interfaces, migration order, expected evidence, and failure modes.
-9. Write implementation-facing conclusions into `03-detailed-design.md` using `references/detailed-design-writing-guidance.md`.
-10. Run a detailed reflection pass focused on testing strategy, interfaces, migration order, and expected evidence.
-11. If important challenges are still open, keep exploring and write the challenge closure back into the package instead of force-advancing the stage.
+7. If the user needs a Chinese-first entrypoint, route through `references/author-entry.md` before or alongside the overview/detailed guidance references.
+8. Run an overview reflection pass: challenge the main path, compare at least one viable alternative, and check for missing verification implications.
+9. Only after `02-overview-design.md` is coherent, gather the detailed-stage facts needed for `03-detailed-design.md`: verification path, fallback path, implementation landing points, interfaces, migration order, expected evidence, and failure modes.
+10. Write implementation-facing conclusions into `03-detailed-design.md` using `references/detailed-design-writing-guidance.md`.
+11. Run a detailed reflection pass focused on testing strategy, interfaces, migration order, and expected evidence.
+12. If important challenges are still open, keep exploring and write the challenge closure back into the package instead of force-advancing the stage.
 
 Use stage-organized role injection during exploration:
 - architecture perspective to challenge boundaries, interfaces, and main-path complexity

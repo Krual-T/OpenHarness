@@ -49,6 +49,7 @@
 
 - 先读 `AGENTS.md`，建立仓库地图。
 - 先把 `using-openharness` 视为本仓库的默认入口技能；任何可能涉及仓库协议、task package、验证流或技能路由的工作，都先从它开始判断该走哪个 skill。
+- 如果你是中文作者，或看不懂英文 skill，优先看 `skills/using-openharness/references/author-entry.md`；它负责把你导向当前阶段对应的正式 writing guidance。
 - 再读 `skills/using-openharness/references/manifest.yaml`，确认 harness 协议。
 - 优先运行 `openharness bootstrap` 查看当前 active task packages。
 - 默认在项目根目录运行 `openharness`；如果当前不在项目根目录，显式传入 `--repo <项目根目录>`。

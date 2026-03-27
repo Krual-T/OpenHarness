@@ -52,6 +52,7 @@ Skip any step = lying, not verifying
 
 Before claiming closure, write the verification stage artifacts so they can answer the right questions:
 
+- if the user needs a Chinese-first entrypoint, route through `references/author-entry.md` before or alongside the verification/evidence guidance
 - `04-verification.md`
   - use `references/verification-writing-guidance.md`
   - record planned path, executed path, traceability, result, and accepted residual risk

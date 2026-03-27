@@ -35,8 +35,9 @@ do not create unnecessary approval pauses.
 5. Collect the requirement-stage facts needed to write `01-requirements.md`: user, scenario, pain, timing, constraints, success metric, non-goals, and at least one counterexample.
 6. Write the converged requirements into `01-requirements.md` using `references/requirements-writing-guidance.md`.
 7. Check that the draft can answer the guidance questions, not just fill the headings.
-8. Self-check the result against the requirements gate defined in `using-openharness`.
-9. Hand off to `exploring-solution-space` once the requirements are concrete enough to challenge.
+8. If the user needs a Chinese-first entrypoint, route through `references/author-entry.md` before or alongside `references/requirements-writing-guidance.md`.
+9. Self-check the result against the requirements gate defined in `using-openharness`.
+10. Hand off to `exploring-solution-space` once the requirements are concrete enough to challenge.
 
 Brainstorming ends when `01-requirements.md` is strong enough for exploration, not when the prose becomes longer.
 
