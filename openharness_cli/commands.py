@@ -46,8 +46,12 @@ def _author_entry_info(repo_root: Path) -> dict[str, str] | None:
 
 def cmd_bootstrap(args: argparse.Namespace) -> int:
     repo_root = Path(args.repo).resolve()
-    manifest = load_manifest(repo_root)
-    packages = discover_task_packages(repo_root, manifest)
+    try:
+        manifest = load_manifest(repo_root)
+        packages = discover_task_packages(repo_root, manifest)
+    except (FileNotFoundError, ValueError) as exc:
+        print(f"ERROR: {exc}")
+        return 1
     author_entry = _author_entry_info(repo_root)
     if not args.all:
         packages = [package for package in packages if package.status_name in ACTIVE_STATUSES]
@@ -100,8 +104,12 @@ def cmd_bootstrap(args: argparse.Namespace) -> int:
 
 def cmd_check_tasks(args: argparse.Namespace) -> int:
     repo_root = Path(args.repo).resolve()
-    manifest = load_manifest(repo_root)
-    packages = discover_task_packages(repo_root, manifest)
+    try:
+        manifest = load_manifest(repo_root)
+        packages = discover_task_packages(repo_root, manifest)
+    except (FileNotFoundError, ValueError) as exc:
+        print(f"ERROR: {exc}")
+        return 1
     errors: list[str] = []
     if not packages:
         errors.append(
@@ -162,7 +170,7 @@ def cmd_new_task(args: argparse.Namespace) -> int:
                     status=args.status,
                 )
             )
-    except (FileExistsError, ValueError) as exc:
+    except (FileExistsError, FileNotFoundError, ValueError) as exc:
         print(f"ERROR: {exc}")
         return 1
     print(f"Created task package: {task_root}")
@@ -173,10 +181,10 @@ def cmd_new_task(args: argparse.Namespace) -> int:
 
 def cmd_transition(args: argparse.Namespace) -> int:
     repo_root = Path(args.repo).resolve()
-    manifest = load_manifest(repo_root)
     try:
+        manifest = load_manifest(repo_root)
         package = resolve_task_package(repo_root, args.task, manifest)
-    except ValueError as exc:
+    except (FileNotFoundError, ValueError) as exc:
         print(f"ERROR: {exc}")
         return 1
 
@@ -216,8 +224,12 @@ def cmd_transition(args: argparse.Namespace) -> int:
 
 def cmd_verify(args: argparse.Namespace) -> int:
     repo_root = Path(args.repo).resolve()
-    manifest = load_manifest(repo_root)
-    packages = discover_task_packages(repo_root, manifest)
+    try:
+        manifest = load_manifest(repo_root)
+        packages = discover_task_packages(repo_root, manifest)
+    except (FileNotFoundError, ValueError) as exc:
+        print(f"ERROR: {exc}")
+        return 1
     errors: list[str] = []
     if not packages:
         errors.append(

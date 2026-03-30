@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import argparse
-
 import pytest
 
 from .common import (
@@ -195,9 +194,10 @@ def test_cmd_new_task_supports_auto_id(tmp_path: Path, capsys) -> None:
 
     captured = capsys.readouterr()
     created = repo_root / "docs" / "task-packages" / "next-task" / "STATUS.yaml"
+    status = openharness._load_yaml(created)
     assert result == 0
     assert "Task id: OH-010" in captured.out
-    assert "id: OH-010" in created.read_text(encoding="utf-8")
+    assert status["id"] == "OH-010"
 
 
 def test_create_task_package_rejects_duplicate_task_id(tmp_path: Path) -> None:
@@ -690,7 +690,8 @@ def test_create_task_package_from_templates(tmp_path: Path) -> None:
     assert task_root == repo_root / "docs" / "task-packages" / "harness-replay"
     assert (task_root / "README.md").read_text(encoding="utf-8") == "# OH-016 Harness Replay\n"
     assert not (task_root / "04-implementation-plan.md").exists()
-    assert "summary: Replay scenarios." in (task_root / "STATUS.yaml").read_text(encoding="utf-8")
+    status = openharness._load_yaml(task_root / "STATUS.yaml")
+    assert status["summary"] == "Replay scenarios."
 
 
 def test_key_repo_skills_are_vendored_locally() -> None:

@@ -45,6 +45,21 @@
   - 打开 `03-detailed-design.md` 模板
   - 同时对照 `detailed-design-writing-guidance.md`
 
+## STATUS.yaml 写作安全规则
+
+- 如果你在 `STATUS.yaml` 里写的是整句自然语言，而且句子里带反引号、冒号，或其他容易被 YAML 误判为结构的符号，直接用双引号，也就是 `double quotes`，包住整句。
+- 尤其是 `summary`、`done_criteria`、`verification.required_scenarios` 这几处，最容易把“带文件名的说明句”写坏。
+- 可以把这条规则记成一句例子：`02-overview-design.md` guidance: explain the boundary.
+
+Few-shot：
+
+- 推荐：
+  - `summary: "`02-overview-design.md` guidance: explain the boundary."`
+  - `- "`03-detailed-design.md` needs `testing-first` guidance."`
+- 不推荐：
+  - `summary: `02-overview-design.md` guidance: explain the boundary.`
+  - `- `03-detailed-design.md` needs `testing-first` guidance.`
+
 ## What This Page Does Not Do
 
 - 本页不替代五份 guidance 正文。

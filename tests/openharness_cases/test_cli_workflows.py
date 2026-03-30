@@ -146,6 +146,52 @@ def test_transition_rejects_skipped_forward_moves(tmp_path: Path, capsys) -> Non
     assert "status: proposed" in (root / "STATUS.yaml").read_text(encoding="utf-8")
 
 
+def test_bootstrap_reports_yaml_quote_hint_for_invalid_status_yaml(tmp_path: Path, capsys) -> None:
+    repo_root = tmp_path / "repo"
+    (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
+    (repo_root / "docs" / "task-packages" / "bad-yaml").mkdir(parents=True)
+    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
+        "version: 1\n"
+        "task_packages_root: docs/task-packages\n"
+        "archived_task_packages_root: docs/archived/task-packages\n"
+        "required_design_files:\n"
+        "  - README.md\n"
+        "  - STATUS.yaml\n"
+        "  - 01-requirements.md\n"
+        "  - 02-overview-design.md\n"
+        "  - 03-detailed-design.md\n"
+        "  - 04-verification.md\n"
+        "  - 05-evidence.md\n",
+        encoding="utf-8",
+    )
+    root = repo_root / "docs" / "task-packages" / "bad-yaml"
+    for name in REQUIRED_TASK_PACKAGE_FILES:
+        if name != "STATUS.yaml":
+            (root / name).write_text("x\n", encoding="utf-8")
+    (root / "STATUS.yaml").write_text(
+        "id: OH-998\n"
+        "title: Bad YAML\n"
+        "status: proposed\n"
+        "summary: `02-overview-design.md` guidance: fix quoting\n"
+        "owner: codex\n"
+        "created_at: 2026-03-30\n"
+        "updated_at: 2026-03-30\n"
+        "done_criteria:\n"
+        "  - x\n"
+        "verification:\n"
+        "  required_commands: []\n"
+        "  required_scenarios: []\n",
+        encoding="utf-8",
+    )
+
+    result = openharness.cmd_bootstrap(argparse.Namespace(repo=str(repo_root), json=True, all=False))
+
+    captured = capsys.readouterr()
+    assert result == 1
+    assert "wrap the whole sentence in double quotes" in captured.out
+    assert 'summary: "`02-overview-design.md` guidance: fix quoting"' in captured.out
+
+
 def test_bootstrap_reports_stage_guidance_in_text_output(tmp_path: Path, capsys) -> None:
     repo_root = tmp_path / "repo"
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)

@@ -15,7 +15,15 @@ from .models import HarnessManifest, TaskPackage, TaskScaffoldRequest
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
-    data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    try:
+        data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    except yaml.YAMLError as exc:
+        raise ValueError(
+            f"failed to parse YAML at {path}. "
+            "If a STATUS.yaml sentence contains backticks or other YAML-sensitive punctuation, "
+            'wrap the whole sentence in double quotes, for example: '
+            'summary: "`02-overview-design.md` guidance: fix quoting"'
+        ) from exc
     if data is None:
         return {}
     if not isinstance(data, dict):
@@ -208,7 +216,22 @@ def _create_task_package_unlocked(
     for template in sorted(template_root.glob("task-package.*")):
         target_name = template.name.removeprefix("task-package.")
         content = template.read_text(encoding="utf-8")
-        for source, target in replacements.items():
+        template_replacements = dict(replacements)
+        if target_name == "STATUS.yaml":
+            template_replacements.update(
+                {
+                    "<DESIGN_ID>": json.dumps(request.task_id, ensure_ascii=False),
+                    "<TITLE>": json.dumps(request.title, ensure_ascii=False),
+                    "<OWNER>": json.dumps(request.owner, ensure_ascii=False),
+                    "<STATUS>": json.dumps(request.status, ensure_ascii=False),
+                    "<SUMMARY>": json.dumps(
+                        request.summary or f"Describe the goal of {request.title}.",
+                        ensure_ascii=False,
+                    ),
+                    "<DATE>": json.dumps("YYYY-MM-DD", ensure_ascii=False),
+                }
+            )
+        for source, target in template_replacements.items():
             content = content.replace(source, target)
         (task_root / target_name).write_text(content, encoding="utf-8")
     return task_root
