@@ -1,0 +1,52 @@
+id: OH-038
+title: Human-Agent Design Doc Upgrade
+status: verifying
+summary: Strengthen overview and detailed design guidance for human-agent collaboration,
+  including diagram guidance.
+owner: codex
+created_at: 2026-03-30
+updated_at: '2026-03-30'
+depends_on: []
+scope:
+  areas:
+  - skills/using-openharness/references
+  - skills/using-openharness/references/templates
+  - tests/openharness_cases
+entrypoints:
+- docs/task-packages/human-agent-design-doc-upgrade/README.md
+- docs/task-packages/human-agent-design-doc-upgrade/01-requirements.md
+- docs/task-packages/human-agent-design-doc-upgrade/02-overview-design.md
+- docs/task-packages/human-agent-design-doc-upgrade/03-detailed-design.md
+done_criteria:
+- '`02-overview-design.md` guidance and template explicitly add human-agent collaboration
+  design requirements instead of only architecture-summary prompts.'
+- '`03-detailed-design.md` guidance and template explicitly add module internals,
+  interface precision, data semantics, failure handling, and implementation-sequencing
+  requirements needed for agent execution.'
+- The overview and detailed guidance explain when `PlantUML` diagrams are recommended
+  and what kinds of diagrams belong in each document.
+- Existing protocol tests are extended to cover the new writing contract and task
+  scaffolds still pass.
+verification:
+  required_commands:
+  - uv run pytest tests/openharness_cases/test_protocol_docs.py tests/openharness_cases/test_cli_workflows.py
+    tests/openharness_cases/test_task_package_core.py
+  required_scenarios:
+  - '`openharness new-task` 生成的 `02-overview-design.md` 与 `03-detailed-design.md`
+    模板仍然满足协议测试。'
+  - guidance 文档能明确回答人和 agent 协作开发所需的结构化设计问题。
+  last_run_at: '2026-03-30T08:05:39Z'
+  last_run_result: failed
+  last_run_artifact: .harness/artifacts/OH-038/verification-runs/20260330T080539614631Z.json
+evidence:
+  docs:
+  - docs/task-packages/human-agent-design-doc-upgrade/04-verification.md
+  - docs/task-packages/human-agent-design-doc-upgrade/05-evidence.md
+  code:
+  - skills/using-openharness/references/overview-design-writing-guidance.md
+  - skills/using-openharness/references/detailed-design-writing-guidance.md
+  - skills/using-openharness/references/templates/task-package.02-overview-design.md
+  - skills/using-openharness/references/templates/task-package.03-detailed-design.md
+  tests:
+  - tests/openharness_cases/test_protocol_docs.py
+  - tests/openharness_cases/test_cli_workflows.py
