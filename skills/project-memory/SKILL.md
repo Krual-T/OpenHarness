@@ -23,10 +23,10 @@ Use this skill when:
 ## Rules
 - Treat `.project-memory/workflows/*.yaml`, `.project-memory/facts/*.yaml`, and `.project-memory/decisions/*.yaml` as the source of truth.
 - Treat `.project-memory/index.sqlite` as a disposable cache; rebuild it from YAML when needed.
-- Run project-memory scripts directly from the skill root via `scripts/...` paths.
+- Use the official CLI entrypoint `openharness project-memory ...` from the repository root by default. If you are not in the project root, pass `--repo <project-root>` on the `project-memory` command group.
 - `PyYAML` is a required dependency of these scripts and is expected to be available from this project's `pyproject.toml`; if it is missing, fix the project environment instead of falling back to ad-hoc local installs.
 - Query memory before re-discovering an already-known workflow, fact, or decision.
-- Validate a hit against current files or run `check_stale.py` before relying on it.
+- Validate a hit against current files or run `openharness project-memory check-stale` before relying on it.
 - Save only evidence-backed memory objects. Do not store secrets, tokens, or raw chat transcripts.
 - Prefer adding aliases to an existing object over creating duplicate objects.
 - Treat query results as reusable only when they survive the default score, confidence, and freshness guardrails.
@@ -38,19 +38,19 @@ Use this skill when:
 Query known memory objects:
 
 ```bash
-scripts/query_memory.py "workspace api 调试流程"
+openharness project-memory query "workspace api 调试流程"
 ```
 
 Include stale or blocked candidates only when you are explicitly auditing why a result was hidden:
 
 ```bash
-scripts/query_memory.py "workspace api 调试流程" --include-unusable
+openharness project-memory query "workspace api 调试流程" --include-unusable
 ```
 
 Save a validated workflow:
 
 ```bash
-scripts/save_workflow.py trace_order_api \
+openharness project-memory save-workflow trace_order_api \
   --title "Trace order create API" \
   --summary "Reusable workflow for following the order create endpoint" \
   --alias "订单创建接口怎么走" \
@@ -65,7 +65,7 @@ scripts/save_workflow.py trace_order_api \
 Save a validated fact:
 
 ```bash
-scripts/save_fact.py workspace_files_content_semantics \
+openharness project-memory save-fact workspace_files_content_semantics \
   --title "workspace/files.content 表示工作区文件内容" \
   --statement "workspace/files.data.content 表示工作区真实文件内容，不是聊天消息文本" \
   --alias "workspace files content 是什么" \
@@ -78,7 +78,7 @@ scripts/save_fact.py workspace_files_content_semantics \
 Save a validated decision:
 
 ```bash
-scripts/save_decision.py cei_qa_parallel_upgrade_path \
+openharness project-memory save-decision cei_qa_parallel_upgrade_path \
   --title "cei-qa 升级采用并行新增链路" \
   --question "cei-qa 是否应该直接替换旧链路" \
   --decision "不直接替换，保留旧链路并新增新链路" \
@@ -95,19 +95,19 @@ scripts/save_decision.py cei_qa_parallel_upgrade_path \
 Check for stale workflows:
 
 ```bash
-scripts/check_stale.py --write-status
+openharness project-memory check-stale --write-status
 ```
 
 Audit stale objects, alias collisions, low confidence, and missing metadata:
 
 ```bash
-scripts/audit_memory.py
+openharness project-memory audit
 ```
 
 Archive or deprecate an incorrect memory object:
 
 ```bash
-scripts/archive_memory.py workspace_files_content_semantics \
+openharness project-memory archive workspace_files_content_semantics \
   --kind fact \
   --status archived \
   --reason "事实已失效，后续不应继续复用" \
@@ -117,7 +117,7 @@ scripts/archive_memory.py workspace_files_content_semantics \
 Deprecate an old object and move its aliases to a replacement:
 
 ```bash
-scripts/archive_memory.py workspace_files_content_semantics_v1 \
+openharness project-memory archive workspace_files_content_semantics_v1 \
   --kind fact \
   --status deprecated \
   --reason "已被 v2 取代" \
@@ -126,13 +126,13 @@ scripts/archive_memory.py workspace_files_content_semantics_v1 \
 ```
 
 ## Expected Flow
-1. Run `query_memory.py` first.
-2. If a memory object matches, inspect its evidence paths or run `check_stale.py`.
+1. Run `openharness project-memory query ...` first.
+2. If a memory object matches, inspect its evidence paths or run `openharness project-memory check-stale`.
 3. If no good match exists, investigate normally.
-4. If a script fails because a declared dependency is missing, add or repair it in the repo environment before continuing.
+4. If a command fails because a declared dependency is missing, add or repair it in the repo environment before continuing.
 5. After the result is validated, save the workflow, fact, or decision with aliases and evidence.
 6. If an object is incorrect or replaced, archive it with a reason and optional successor instead of deleting it.
-7. Use `audit_memory.py` periodically or when results feel noisy.
+7. Use `openharness project-memory audit` periodically or when results feel noisy.
 8. Reuse the stored object on the next similar question only if it is still reusable under the default guardrails.
 
 ## Post-Use Reflection

@@ -1,0 +1,45 @@
+id: OH-039
+title: Integrate Project Memory Into OpenHarness CLI
+status: archived
+summary: Add project-memory subcommands to the official openharness CLI and align
+  live skills, docs, and tests with the new entrypoint.
+owner: codex
+created_at: 2026-03-30
+updated_at: '2026-03-30'
+depends_on: []
+scope:
+  areas:
+  - openharness_cli
+  - skills/project-memory
+  - skills/using-openharness
+  - tests/openharness_cases
+entrypoints:
+- docs/archived/task-packages/project-memory-cli-integration/README.md
+- docs/archived/task-packages/project-memory-cli-integration/01-requirements.md
+- docs/archived/task-packages/project-memory-cli-integration/02-overview-design.md
+- docs/archived/task-packages/project-memory-cli-integration/03-detailed-design.md
+done_criteria:
+- '`openharness` 提供可用的 `project-memory` 子命令树，覆盖当前 skill 中维护与查询所需的标准入口。'
+- 活跃 `project-memory` skill 与相关协议文档改为优先使用 `openharness project-memory ...`，旧脚本路径只保留为实现细节或兼容说明。
+- 自动化测试覆盖 CLI 子命令暴露、转发行为和活跃文档约束，并在仓库内通过验证。
+verification:
+  required_commands:
+  - uv run pytest tests/openharness_cases/test_cli_workflows.py tests/openharness_cases/test_protocol_docs.py
+    tests/openharness_cases/test_entrypoint.py tests/openharness_cases/test_task_package_core.py
+  - uv run openharness check-tasks
+  required_scenarios: []
+  last_run_at: '2026-03-30T08:22:47Z'
+  last_run_result: passed
+  last_run_artifact: .harness/artifacts/OH-039/verification-runs/20260330T082247648257Z.json
+evidence:
+  docs:
+  - docs/archived/task-packages/project-memory-cli-integration/04-verification.md
+  - docs/archived/task-packages/project-memory-cli-integration/05-evidence.md
+  code:
+  - openharness_cli/cli.py
+  - openharness_cli/commands.py
+  - openharness_cli/main.py
+  - skills/project-memory/SKILL.md
+  tests:
+  - tests/openharness_cases/test_cli_workflows.py
+  - tests/openharness_cases/test_protocol_docs.py

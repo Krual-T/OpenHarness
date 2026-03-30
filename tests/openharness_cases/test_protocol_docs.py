@@ -135,7 +135,7 @@ def test_skill_openai_metadata_uses_official_tool_dependency_shape() -> None:
 def test_openharness_single_cli_supports_all_subcommands() -> None:
     parser = openharness.build_parser()
     choices = parser._subparsers._group_actions[0].choices  # type: ignore[attr-defined]
-    assert set(choices) == {"bootstrap", "check-tasks", "new-task", "transition", "verify", "update"}
+    assert set(choices) == {"bootstrap", "check-tasks", "new-task", "project-memory", "transition", "verify", "update"}
 
 
 def test_openharness_script_uses_task_package_naming_in_public_symbols() -> None:
@@ -166,6 +166,7 @@ def test_task_package_commands_use_current_handlers_only() -> None:
         parser.parse_args(["new-task", "name", "--task-id", "OH-999", "--title", "Title"]).handler
         == openharness.cmd_new_task
     )
+    assert parser.parse_args(["project-memory", "query", "test"]).handler == openharness.cmd_project_memory
     assert parser.parse_args(["transition", "name", "requirements_ready"]).handler == openharness.cmd_transition
     assert parser.parse_args(["update"]).handler == openharness.cmd_update
 
@@ -198,6 +199,13 @@ def test_openharness_skill_routes_runtime_work_through_capability_contract() -> 
     assert "multiple runtime helper skills" in text
     assert "add one new narrow helper" in text
     assert "bootstrap package" in text
+
+
+def test_project_memory_skill_uses_openharness_cli_entrypoint() -> None:
+    text = (REPO_ROOT / "skills" / "project-memory" / "SKILL.md").read_text(encoding="utf-8")
+    assert "openharness project-memory query" in text
+    assert "openharness project-memory save-fact" in text
+    assert "scripts/query_memory.py" not in text
 
 
 def test_skill_hub_declares_no_parallel_entry_skill() -> None:
@@ -476,10 +484,18 @@ def test_design_package_templates_include_verification_path_sections() -> None:
     ).read_text(encoding="utf-8")
 
     assert "## Overview Reflection" in overview
+    assert "模块" in overview
+    assert "接口" in overview
+    assert "数据" in overview
+    assert "PlantUML" in overview
     assert "## Runtime Verification Plan" in detailed
     assert "Verification Path" in detailed
     assert "Fallback Path" in detailed
     assert "## Detailed Reflection" in detailed
+    assert "模块内部" in detailed
+    assert "数据语义" in detailed
+    assert "异常" in detailed
+    assert "PlantUML" in detailed
     assert "## Stage Gates" in overview
     assert "## Stage Gates" in detailed
     assert "## Decision Closure" in detailed
@@ -624,11 +640,19 @@ def test_task_package_writing_guidance_references_define_stage_contracts() -> No
     assert "key failure modes" in overview
     assert "challenge closure" in overview
     assert "Stage Gates" in overview
+    assert "模块" in overview
+    assert "接口" in overview
+    assert "数据" in overview
+    assert "PlantUML" in overview
 
     detailed = (references_root / "detailed-design-writing-guidance.md").read_text(encoding="utf-8")
     assert "observability" in detailed
     assert "testing-first" in detailed
     assert "Runtime Verification Plan" in detailed
+    assert "模块内部" in detailed
+    assert "数据语义" in detailed
+    assert "异常" in detailed
+    assert "PlantUML" in detailed
 
     verification = (references_root / "verification-writing-guidance.md").read_text(
         encoding="utf-8"

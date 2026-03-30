@@ -347,6 +347,52 @@ def test_update_stops_when_git_pull_fails(capsys, monkeypatch: pytest.MonkeyPatc
     assert "git pull failed" in captured.out
 
 
+def test_project_memory_query_runs_wrapped_script_in_target_repo(
+    tmp_path: Path, capsys, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    repo_root = tmp_path / "repo"
+    repo_root.mkdir()
+    calls: list[tuple[Path, str]] = []
+
+    def fake_run(repo: Path, command: str) -> int:
+        calls.append((repo, command))
+        return 0
+
+    monkeypatch.setattr(openharness, "_run_command", fake_run)
+
+    result = openharness.cmd_project_memory(
+        argparse.Namespace(
+            repo=str(repo_root),
+            project_memory_command="query",
+            script_args=["workspace api 调试流程", "--json"],
+        )
+    )
+
+    captured = capsys.readouterr()
+    assert result == 0
+    assert calls == [
+        (
+            repo_root.resolve(),
+            "uv run python /home/Shaokun.Tang/Projects/openharness/skills/project-memory/scripts/query_memory.py 'workspace api 调试流程' --json "
+            f"--repo-root {repo_root.resolve()}",
+        )
+    ]
+    assert captured.out == ""
+
+
+def test_project_memory_parser_accepts_nested_subcommands() -> None:
+    parser = openharness.build_parser()
+
+    args = parser.parse_args(
+        ["project-memory", "--repo", "/tmp/repo", "save-fact", "memory_id", "--title", "Title"]
+    )
+
+    assert args.handler == openharness.cmd_project_memory
+    assert args.project_memory_command == "save-fact"
+    assert args.repo == "/tmp/repo"
+    assert args.script_args == ["memory_id", "--title", "Title"]
+
+
 def test_bootstrap_json_includes_stage_guidance(tmp_path: Path, capsys) -> None:
     repo_root = tmp_path / "repo"
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)

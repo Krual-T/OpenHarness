@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shlex
 from pathlib import Path
 
 from .constants import ACTIVE_STATUSES, VERIFYABLE_STATUSES
@@ -30,8 +31,32 @@ from .validation import validate_task_package
 from . import lifecycle
 
 
+PROJECT_MEMORY_SCRIPT_BY_COMMAND = {
+    "query": "query_memory.py",
+    "check-stale": "check_stale.py",
+    "audit": "audit_memory.py",
+    "archive": "archive_memory.py",
+    "save-fact": "save_fact.py",
+    "save-workflow": "save_workflow.py",
+    "save-decision": "save_decision.py",
+}
+
+
 def _openharness_repo_root() -> Path:
     return Path(__file__).resolve().parents[1]
+
+
+def _resolve_project_memory_script(repo_root: Path, script_name: str) -> Path | None:
+    candidates = (
+        repo_root / "skills" / "project-memory" / "scripts" / script_name,
+        repo_root / ".agents" / "skills" / "openharness" / "project-memory" / "scripts" / script_name,
+        _openharness_repo_root() / "skills" / "project-memory" / "scripts" / script_name,
+    )
+    for candidate in candidates:
+        resolved = candidate.resolve()
+        if resolved.exists():
+            return resolved
+    return None
 
 
 def _author_entry_info(repo_root: Path) -> dict[str, str] | None:
@@ -177,6 +202,35 @@ def cmd_new_task(args: argparse.Namespace) -> int:
     print(f"Task id: {task_id}")
     print(f"Title: {title}")
     return 0
+
+
+def cmd_project_memory(args: argparse.Namespace) -> int:
+    repo_root = Path(args.repo).resolve()
+    script_name = PROJECT_MEMORY_SCRIPT_BY_COMMAND.get(args.project_memory_command)
+    if script_name is None:
+        print(f"ERROR: unknown project-memory command `{args.project_memory_command}`")
+        return 1
+
+    script_path = _resolve_project_memory_script(repo_root, script_name)
+    if script_path is None:
+        print(
+            "ERROR: project-memory script not found for command "
+            f"`{args.project_memory_command}` in repo-local or bundled skill paths."
+        )
+        return 1
+
+    command = shlex.join(
+        [
+            "uv",
+            "run",
+            "python",
+            str(script_path),
+            *list(args.script_args),
+            "--repo-root",
+            str(repo_root),
+        ]
+    )
+    return lifecycle._run_command(repo_root, command)
 
 
 def cmd_transition(args: argparse.Namespace) -> int:

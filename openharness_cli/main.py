@@ -29,6 +29,7 @@ from .commands import (
     cmd_bootstrap as _cmd_bootstrap,
     cmd_check_tasks as _cmd_check_tasks,
     cmd_new_task as _cmd_new_task,
+    cmd_project_memory as _cmd_project_memory,
     cmd_transition as _cmd_transition,
     cmd_update as _cmd_update,
     cmd_verify as _cmd_verify,
@@ -50,6 +51,11 @@ def cmd_new_task(args):
     return _cmd_new_task(args)
 
 
+def cmd_project_memory(args):
+    lifecycle._run_command = globals()["_run_command"]
+    return _cmd_project_memory(args)
+
+
 def cmd_transition(args):
     return _cmd_transition(args)
 
@@ -69,6 +75,7 @@ def build_parser():
         cmd_bootstrap=cmd_bootstrap,
         cmd_check_tasks=cmd_check_tasks,
         cmd_new_task=cmd_new_task,
+        cmd_project_memory=cmd_project_memory,
         cmd_transition=cmd_transition,
         cmd_verify=cmd_verify,
         cmd_update=cmd_update,

@@ -12,6 +12,7 @@ def build_parser(
     cmd_bootstrap,
     cmd_check_tasks,
     cmd_new_task,
+    cmd_project_memory,
     cmd_transition,
     cmd_verify,
     cmd_update,
@@ -79,6 +80,44 @@ def build_parser(
     new_design_parser.add_argument("--status", default="proposed", help="Initial status")
     new_design_parser.add_argument("--repo", default=".", help="Repository root")
     new_design_parser.set_defaults(handler=cmd_new_task)
+
+    project_memory_parser = subparsers.add_parser(
+        "project-memory",
+        help="Run project-memory workflows through the official OpenHarness CLI.",
+        description="Run project-memory workflows through the official OpenHarness CLI.",
+        epilog=(
+            "Examples:\n"
+            "  openharness project-memory query \"workspace api 调试流程\"\n"
+            "  openharness project-memory --repo /path/to/repo check-stale --write-status\n"
+            "  openharness project-memory save-fact fact_id --title \"Fact Title\""
+        ),
+        formatter_class=_HelpFormatter,
+    )
+    project_memory_parser.add_argument("--repo", default=".", help="Repository root")
+    project_memory_subparsers = project_memory_parser.add_subparsers(
+        dest="project_memory_command", required=True
+    )
+    for command_name, help_text in (
+        ("query", "Query known project-memory objects."),
+        ("check-stale", "Check whether project-memory objects are stale."),
+        ("audit", "Audit project-memory objects for common issues."),
+        ("archive", "Archive or deprecate a project-memory object."),
+        ("save-fact", "Save or update a validated project-memory fact."),
+        ("save-workflow", "Save or update a validated project-memory workflow."),
+        ("save-decision", "Save or update a validated project-memory decision."),
+    ):
+        command_parser = project_memory_subparsers.add_parser(
+            command_name,
+            help=help_text,
+            description=help_text,
+            formatter_class=_HelpFormatter,
+        )
+        command_parser.add_argument(
+            "script_args",
+            nargs=argparse.REMAINDER,
+            help="Arguments forwarded to the underlying project-memory script.",
+        )
+        command_parser.set_defaults(handler=cmd_project_memory)
 
     transition_parser = subparsers.add_parser(
         "transition",
