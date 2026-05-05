@@ -1,0 +1,33 @@
+id: OH-040
+title: Pluggable Runtime Validation Workflows
+status: proposed
+summary: 探索 OpenHarness 的可插拔 runtime 级验证机制，并以 lark-cli 相关工作流作为首个参考样例。
+owner: codex
+created_at: 2026-05-06
+updated_at: 2026-05-06
+depends_on: []
+scope:
+  areas:
+    - runtime-validation
+    - skills
+    - cli
+    - workflow
+entrypoints:
+  - docs/task-packages/pluggable-runtime-validation-workflows/README.md
+  - docs/task-packages/pluggable-runtime-validation-workflows/01-requirements.md
+done_criteria:
+  - 明确 OpenHarness 为什么需要可插拔 runtime 级验证路径。
+  - 明确项目专属 runtime 工作流需要被 OpenHarness 发现、配置、执行和报告的意图。
+  - 明确 lark-cli 工作流只是首个参考样例，而不是通用机制本身。
+verification:
+  required_commands: []
+  required_scenarios: []
+  last_run_at: ""
+  last_run_result: ""
+  last_run_artifact: ""
+evidence:
+  docs:
+    - docs/task-packages/pluggable-runtime-validation-workflows/README.md
+    - docs/task-packages/pluggable-runtime-validation-workflows/01-requirements.md
+  code: []
+  tests: []
