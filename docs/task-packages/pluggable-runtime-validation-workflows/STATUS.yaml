@@ -1,33 +1,38 @@
 id: OH-040
 title: Pluggable Runtime Validation Workflows
-status: proposed
-summary: 探索 OpenHarness 的可插拔 runtime 级验证机制，并以 lark-cli 相关工作流作为首个参考样例。
+status: overview_ready
+summary: 设计 OpenHarness 的 Runtime Workflow Package 协议，让项目专属 runtime 验证工作流可被 agent
+  渐进发现、纳入验证计划并写回 task package。
 owner: codex
 created_at: 2026-05-06
-updated_at: 2026-05-06
+updated_at: '2026-05-06'
 depends_on: []
 scope:
   areas:
-    - runtime-validation
-    - skills
-    - cli
-    - workflow
+  - runtime-validation
+  - skills
+  - cli
+  - workflow
 entrypoints:
-  - docs/task-packages/pluggable-runtime-validation-workflows/README.md
-  - docs/task-packages/pluggable-runtime-validation-workflows/01-requirements.md
+- docs/task-packages/pluggable-runtime-validation-workflows/README.md
+- docs/task-packages/pluggable-runtime-validation-workflows/01-requirements.md
+- docs/task-packages/pluggable-runtime-validation-workflows/02-overview-design.md
 done_criteria:
-  - 明确 OpenHarness 为什么需要可插拔 runtime 级验证路径。
-  - 明确项目专属 runtime 工作流需要被 OpenHarness 发现、配置、执行和报告的意图。
-  - 明确 lark-cli 工作流只是首个参考样例，而不是通用机制本身。
+- 明确 RWP 与旧 helper、普通 skill、普通脚本、临时命令的区别。
+- 明确 RWP 目录包、渐进式披露、统一运行外壳和 task package 写回协议。
+- 明确 agent 应在哪些 OpenHarness skill 和 guidance 中主动发现并纳入 RWP。
+- 明确 RWP 必须说明环境准备、runtime 观察、日志或证据来源、成功标准和失败证据。
+- 明确 lark-cli 工作流只是首个参考样例，而不是通用机制本身。
 verification:
   required_commands: []
   required_scenarios: []
-  last_run_at: ""
-  last_run_result: ""
-  last_run_artifact: ""
+  last_run_at: ''
+  last_run_result: ''
+  last_run_artifact: ''
 evidence:
   docs:
-    - docs/task-packages/pluggable-runtime-validation-workflows/README.md
-    - docs/task-packages/pluggable-runtime-validation-workflows/01-requirements.md
+  - docs/task-packages/pluggable-runtime-validation-workflows/README.md
+  - docs/task-packages/pluggable-runtime-validation-workflows/01-requirements.md
+  - docs/task-packages/pluggable-runtime-validation-workflows/02-overview-design.md
   code: []
   tests: []

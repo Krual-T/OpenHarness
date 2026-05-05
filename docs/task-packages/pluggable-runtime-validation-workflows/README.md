@@ -8,8 +8,8 @@
 - `lark-cli` 只作为第一个参考样例，用来验证这套机制是否能承接真实项目中的外部系统交互验证。
 
 ## Current Status
-- Status: `proposed`
-- 当前只记录任务意图，不展开 adapter 协议、skill 结构、CLI 命令或实现方案。
+- Status: `overview_ready`
+- 当前已经收敛出 RWP 总体方向：以目录包注册 runtime workflow，由 OpenHarness CLI 渐进披露并提供统一运行外壳，由现有 skills 和 task package 文档闭环负责主动纳入与证据写回。
 
 ## Read This First
 - `STATUS.yaml`

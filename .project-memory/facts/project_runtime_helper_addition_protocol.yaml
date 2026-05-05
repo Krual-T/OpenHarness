@@ -1,0 +1,33 @@
+id: project_runtime_helper_addition_protocol
+kind: fact
+title: OpenHarness 项目运行时 helper 新增流程已产品化
+scope:
+  repo: openharness
+  branch: main
+status: reviewed
+created_at: '2026-03-23T09:55:42Z'
+updated_at: '2026-03-23T12:33:18Z'
+confidence: 0.8
+owner: codex
+last_verified_commit: 4f5f20a93be2a7dcfb644afcbd4f904ffa9244dc
+intent_aliases:
+- 什么时候新增 project runtime helper
+- 什么时候新增 runtime helper
+- runtime helper 怎么新增
+tags:
+- runtime
+- protocol
+- onboarding
+- helper
+applies_to:
+- skills/using-openharness/SKILL.md
+- skills/using-openharness/references/adding-project-runtime-helper.md
+- skills/using-openharness/references/project-runtime-surface-map.md
+statement: OpenHarness 通过 skills/using-openharness/references/adding-project-runtime-helper.md
+  定义项目运行时 helper 的新增流程；当运行时表面已映射且现有 helper 不匹配时，应新增一个窄 helper 并回写运行时表面图、03、05、06；只有在表面、前置条件、驱动方式或证据流仍不清晰时才先开
+  bootstrap package。
+evidence:
+- path: skills/using-openharness/references/adding-project-runtime-helper.md
+  kind: file
+- path: docs/archived/task-packages/adding-project-runtime-helper/README.md
+  kind: file
