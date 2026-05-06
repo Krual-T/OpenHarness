@@ -3,14 +3,15 @@
 > 章节标题保留英文；正文默认使用中文；命令、状态值、YAML 键名、文件名与路径保持英文。
 
 ## System Boundary
-本轮覆盖 OpenHarness 对 `Runtime Workflow Package`（暂称 `RWP`）的协议、发现路径、agent 路由规则、CLI 最小外壳和 task package 写回要求。
+本轮覆盖 OpenHarness 对 `Runtime Workflow Package`（`RWP`）的协议、发现路径、agent 路由规则、CLI 最小外壳、runtime API 和 task package 写回要求。
 
 覆盖面包括：
 
 - 将旧的 runtime `helper` 表述替换或降级为 RWP 协议，避免继续使用过泛的“辅助技能”概念。
-- 定义项目内 RWP 目录包的发现原则：RWP 不使用 `SKILL.md`，不被 Codex 等 agent 自动加载，而由 OpenHarness CLI 渐进披露。
-- 定义 `workflow.md` 的职责：提供类似 skill meta 的 `name` 和 `description`，并在正文说明这个 runtime workflow 的用途、环境、运行驱动、观察证据、成功标准、失败证据、限制和写回要求。
-- 定义 `openharness rwp` 的最小 CLI 表面：列出摘要、读取详情、运行指定 RWP 的统一外壳。
+- 定义项目内 RWP 目录包的发现原则：RWP 统一放在 `.harness/rwp/workflows/<workflow-name>/workflow.md`，不使用 `SKILL.md`，不被 Codex 等 agent 自动加载，而由 OpenHarness CLI 渐进披露。
+- 定义 `workflow.md` 的职责：提供类似 skill meta 的 `name` 和 `description`，并在正文说明这个 runtime workflow 的用途、环境、可用脚本、观察证据、成功标准、失败证据、限制和写回要求。
+- 定义 `openharness rwp` 的最小 CLI 表面：列出摘要、读取详情、显式运行指定 workflow 的脚本。
+- 定义 `openharness.rwp` runtime API：脚本可以直接 `from openharness.rwp import get_logger` 获取标准 logger。
 - 改造现有 OpenHarness skill 与写作 guidance，让 agent 在入口、探索、详细设计和完成前验证阶段主动考虑 RWP。
 - 明确 RWP 运行结果、日志或其他 runtime 观察证据如何进入 `04-verification.md` 和 `05-evidence.md`。
 
@@ -26,25 +27,33 @@
 推荐结构分为四层：
 
 1. `RWP directory package`
-   - 每个项目可在固定目录下放多个 RWP，例如 `.rwp/<workflow-name>/`。
-   - 每个 RWP 至少有 `workflow.md`。
+   - 每个项目在 `.harness/rwp/workflows/` 下放多个 RWP。
+   - 每个 RWP 目录至少有 `workflow.md` 和 `scripts/`。
    - `workflow.md` 开头使用轻量 meta 头，最小字段是 `name` 和 `description`。
    - 正文承载 agent-readable 的详细说明，而不是脚本入口注册表。
+   - `libs/` 只承载项目自有复用代码。
+   - `logs/` 只承载运行证据与观察结果。
 
 2. `OpenHarness CLI discovery and runner shell`
    - `openharness rwp list` 只读取并输出 RWP 摘要，支持渐进式披露。
    - `openharness rwp show <name>` 输出指定 RWP 的完整 `workflow.md`。
-   - `openharness rwp run <name> ...` 调用该 RWP 的运行入口，并把后续参数透传给 RWP 自己解释。
+   - `openharness rwp run <name> <script.py> [args...]` 运行该 workflow `scripts/` 下显式指定的脚本。
    - CLI 不理解 Lark、浏览器、数据库或任何 workflow 内部业务语义；它只负责发现、读取、调用、返回退出码，并为后续 verification artifact 记录提供稳定输出。
 
-3. `Agent routing rules in existing skills`
+3. `OpenHarness runtime API and project env`
+   - OpenHarness 提供 `from openharness.rwp import get_logger`。
+   - `get_logger()` 可以不带参数，脚本无需自己管理日志目录。
+   - `openharness rwp run` 会自动尝试加载 `.harness/.env` 和 `.harness/rwp/.env`。
+   - 项目自定义的 auth/token/client 逻辑仍由项目自己的 `libs/` 提供。
+
+4. `Agent routing rules in existing skills`
    - `using-openharness` 负责入口判断：当任务可能涉及真实 runtime 行为时，agent 应查询 RWP 摘要，而不是只看 task package 的普通验证命令。
    - `exploring-solution-space` 负责探索阶段：根据任务包、代码触达面和 RWP 描述判断候选，并在 `02-overview-design.md` 记录是否采用、拒绝或延期。
    - `03-detailed-design.md` guidance 负责把选中的 RWP 写进测试优先设计，包括环境、运行驱动、观察点、成功标准、失败证据和预期写回。
    - `verification-before-completion` 负责完成前核对：如果设计纳入 RWP，必须执行、记录阻塞原因，或明确说明为什么本轮不能执行。
    - `04-verification.md` / `05-evidence.md` guidance 负责 fresh evidence、日志观察、artifact、残余风险和未覆盖缺口。
 
-4. `Task-package evidence loop`
+5. `Task-package evidence loop`
    - `03-detailed-design.md` 写计划：为什么选这个 RWP，预期运行什么，预期观察什么。
    - `04-verification.md` 写实际执行：运行命令、退出码、关键日志或 observation、偏差和 blocker。
    - `05-evidence.md` 写证据索引：artifact 路径、命令、人工步骤、残余风险和后续改进点。
@@ -53,18 +62,18 @@
 
 - `summary`: `list` 只暴露 `name` 和 `description`，供 agent 低成本判断相关性。
 - `detail`: `show` 暴露完整 `workflow.md`，供 agent 决定是否纳入本任务。
-- `execution`: `run` 执行 RWP 自己的入口，并让 task package 记录 runtime 证据。
+- `execution`: `run` 执行 workflow 脚本，并让 task package 记录 runtime 证据。
 
 ## Key Flows
 主路径：
 
 1. agent 进入 OpenHarness 任务，读取 active task package。
-2. 如果任务可能涉及真实 runtime 行为，agent 运行或等价调用 `openharness rwp list` 获取摘要。
+2. 如果任务可能涉及真实 runtime 行为，主智能体直接派子智能体运行 `openharness rwp list` 获取摘要。
 3. agent 根据 `name`、`description`、任务包和代码触达面判断候选 RWP；候选较多或判断成本高时，可以让子智能体只基于摘要和任务上下文做候选筛选。
 4. agent 对候选执行 `openharness rwp show <name>`，只读取相关 RWP 的详细说明。
 5. overview 阶段记录采用、拒绝或延期的 RWP 结论。
 6. detailed 阶段把选中的 RWP 纳入 runtime verification plan。
-7. verification 阶段通过 `openharness rwp run <name> ...` 或文档声明的等价入口执行；如果无法执行，记录 blocker 和残余风险。
+7. verification 阶段通过 `openharness rwp run <name> <script.py> [args...]` 执行；如果无法执行，记录 blocker 和残余风险。
 8. evidence 阶段把命令、日志观察、artifact、失败证据或缺口写回。
 
 失败信号：
