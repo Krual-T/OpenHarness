@@ -37,7 +37,7 @@
   - 提供 `get_logger()`。
 - `tests/openharness_cases/*`
   - 锁住 parser、RWP 发现、run 行为、环境加载和 runtime API。
-- `docs/task-packages/pluggable-runtime-validation-workflows/*`
+- `docs/archived/task-packages/pluggable-runtime-validation-workflows/*`
   - 同步 task package 的 02/03/04/05 文档与状态。
 
 这些落点合理的原因是：CLI、repository、models 和 runtime API 分别承载解析、发现、数据形态和脚本侧调用点，测试则必须跟着这些契约一起变化。

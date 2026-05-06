@@ -33,4 +33,4 @@
 
 ## Latest Result
 - Latest Result: `uv run openharness verify pluggable-runtime-validation-workflows` 已 fresh 执行并通过；artifact 记录 `uv run pytest` 与 `uv run openharness check-tasks` 均为 exit code 0。
-- Latest Artifact: `.harness/artifacts/OH-040/verification-runs/20260506T054240807815Z.json`
+- Latest Artifact: `.harness/artifacts/OH-040/verification-runs/20260506T054719836818Z.json`

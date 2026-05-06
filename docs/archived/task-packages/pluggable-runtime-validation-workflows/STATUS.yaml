@@ -1,6 +1,6 @@
 id: OH-040
 title: Pluggable Runtime Validation Workflows
-status: verifying
+status: archived
 summary: 设计 OpenHarness 的 Runtime Workflow Package 协议，让项目专属 runtime 验证工作流可被 agent
   渐进发现、纳入验证计划并写回 task package。
 owner: codex
@@ -14,12 +14,12 @@ scope:
   - cli
   - workflow
 entrypoints:
-- docs/task-packages/pluggable-runtime-validation-workflows/README.md
-- docs/task-packages/pluggable-runtime-validation-workflows/01-requirements.md
-- docs/task-packages/pluggable-runtime-validation-workflows/02-overview-design.md
-- docs/task-packages/pluggable-runtime-validation-workflows/03-detailed-design.md
-- docs/task-packages/pluggable-runtime-validation-workflows/04-verification.md
-- docs/task-packages/pluggable-runtime-validation-workflows/05-evidence.md
+- docs/archived/task-packages/pluggable-runtime-validation-workflows/README.md
+- docs/archived/task-packages/pluggable-runtime-validation-workflows/01-requirements.md
+- docs/archived/task-packages/pluggable-runtime-validation-workflows/02-overview-design.md
+- docs/archived/task-packages/pluggable-runtime-validation-workflows/03-detailed-design.md
+- docs/archived/task-packages/pluggable-runtime-validation-workflows/04-verification.md
+- docs/archived/task-packages/pluggable-runtime-validation-workflows/05-evidence.md
 done_criteria:
 - 明确 RWP 与旧 helper、普通 skill、普通脚本、临时命令的区别。
 - 明确 RWP 目录包、渐进式披露、统一运行外壳和 task package 写回协议。
@@ -31,17 +31,17 @@ verification:
   - uv run pytest
   - uv run openharness check-tasks
   required_scenarios: []
-  last_run_at: '2026-05-06T05:42:40Z'
+  last_run_at: '2026-05-06T05:47:50Z'
   last_run_result: passed
-  last_run_artifact: .harness/artifacts/OH-040/verification-runs/20260506T054240807815Z.json
+  last_run_artifact: .harness/artifacts/OH-040/verification-runs/20260506T054750122414Z.json
 evidence:
   docs:
-  - docs/task-packages/pluggable-runtime-validation-workflows/README.md
-  - docs/task-packages/pluggable-runtime-validation-workflows/01-requirements.md
-  - docs/task-packages/pluggable-runtime-validation-workflows/02-overview-design.md
-  - docs/task-packages/pluggable-runtime-validation-workflows/03-detailed-design.md
-  - docs/task-packages/pluggable-runtime-validation-workflows/04-verification.md
-  - docs/task-packages/pluggable-runtime-validation-workflows/05-evidence.md
+  - docs/archived/task-packages/pluggable-runtime-validation-workflows/README.md
+  - docs/archived/task-packages/pluggable-runtime-validation-workflows/01-requirements.md
+  - docs/archived/task-packages/pluggable-runtime-validation-workflows/02-overview-design.md
+  - docs/archived/task-packages/pluggable-runtime-validation-workflows/03-detailed-design.md
+  - docs/archived/task-packages/pluggable-runtime-validation-workflows/04-verification.md
+  - docs/archived/task-packages/pluggable-runtime-validation-workflows/05-evidence.md
   code:
   - README.md
   - pyproject.toml

@@ -25,7 +25,7 @@ statement: OpenHarness runtime-aware verification now uses Runtime Workflow Pack
   execute explicit Python scripts with openharness rwp run <workflow> <script.py>
   [args...], and write selected workflows plus runtime evidence back into task packages.
 evidence:
-- path: docs/task-packages/pluggable-runtime-validation-workflows/README.md
+- path: docs/archived/task-packages/pluggable-runtime-validation-workflows/README.md
   kind: file
 - path: skills/using-openharness/references/runtime-workflow-packages.md
   kind: file

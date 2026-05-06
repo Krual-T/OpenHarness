@@ -40,7 +40,7 @@
   - final verification command；执行 `uv run pytest` 与 `uv run openharness check-tasks`，两条 required commands 均为 exit code 0。
 
 ## Artifact Paths
-- `.harness/artifacts/OH-040/verification-runs/20260506T054240807815Z.json`
+- `.harness/artifacts/OH-040/verification-runs/20260506T054719836818Z.json`
   - 由 `uv run openharness verify pluggable-runtime-validation-workflows` 生成，记录最终 required commands snapshot 与 exit codes。
 
 ## Follow-ups
