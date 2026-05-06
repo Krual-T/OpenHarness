@@ -105,10 +105,27 @@ Planned Evidence:
 - 子 Agent 审核是协议类对象的强候选证据，但如果无法执行，必须在 `04-verification.md` 中记录残余风险。
 
 ## Stage Gates
-用中文写清楚 detailed 要进入下一阶段前必须具备哪些硬性产出，例如测试策略、可观测性要求、模块内部职责、数据语义、迁移顺序和预期证据类型。
+`03-detailed-design.md` 进入 implementation 前，必须满足以下条件：
+
+- 已明确每个 live 文件的具体语义改动和不改范围。
+- 已明确主验证路径是协议审查、子 Agent dry run、人工复核和 `uv run openharness check-tasks`。
+- 已明确 pytest 不是主路径，只是可选薄防回归。
+- 已明确 forbidden interpretations：
+  - TDD 不替代 design。
+  - `testing-first` 不等于 pytest-first。
+  - `pytest floor` 不覆盖所有验证对象。
+  - 非自动测试不等于免验证。
+- 已明确如果 dry run 缺失，不能宣称协议行为已经充分验证。
+- 已明确后续 `04-verification.md` 需要按需求逐项记录 traceability、执行路径、偏差、限制和 residual risks。
 
 ## Decision Closure
-用中文记录关键挑战如何被处理，只允许写清楚接受、拒绝或延期，以及对应理由、替代方案或触发条件。
+接受：pytest 不是本轮主验证路径。本轮主对象是协议 wording 和 agent 行为引导，最强证据来自协议审查、子 Agent dry run 和人工复核。
+
+接受：测试文件默认不改。这样避免重复犯 OH-043 要解决的问题：为了证明协议语义而写形式主义 pytest。只有当具体短 wording 存在高回归风险时，才允许补极薄辅助测试。
+
+接受：TDD 不削弱，只收窄适用对象。代码类、CLI、解析器、校验器、状态机和可观察代码契约仍应优先使用 TDD / 自动测试。
+
+延期：是否需要薄文本测试，延期到 implementation 阶段看到具体 wording 后再判断。触发条件是某个短边界句如果回归会重新诱导 agent 误读，而且该句可以用低噪声断言锁住。
 
 ## Error Handling
 主要静默失败风险是 agent 看到 `testing-first`、`pytest floor` 或 TDD 的强硬语气后，继续误读成“所有任务先 pytest”。这类错误不会通过 `check-tasks` 暴露，因为任务包结构仍然可能有效。
@@ -123,10 +140,36 @@ Planned Evidence:
 另一个失败路径是过度收缩 TDD，导致代码类改动也不写自动测试。处理方式是在 TDD skill 中保留 red-green-refactor 对可执行行为的强要求，只收窄适用对象，不削弱代码类验证纪律。
 
 ## Migration Notes
-用中文描述迁移顺序、兼容策略、落地阶段和回滚注意事项，说明切换点与回滚触发点。
+实施顺序：
+
+1. 先改 `skills/test-driven-development/SKILL.md`，收窄触发边界并写清 forbidden interpretations。
+2. 再改 `skills/using-openharness/references/detailed-design-writing-guidance.md`，把 `testing-first` 改成“先完成实现设计，再准备适合对象的测试或验证”。
+3. 再改 `skills/using-openharness/SKILL.md`，保持阶段流稳定，并调整 `03-detailed-design.md` owns `testing-first` 的解释。
+4. 再改 `README.md`，把 Python-first pytest floor 描述成代码类自动化基线，而不是所有任务的唯一验证路径。
+5. 最后根据实际 wording 判断是否需要极薄辅助文本测试；默认不改 `tests/openharness_cases/test_protocol_docs.py`。
+6. 实施完成后进入 verification，执行协议审查、子 Agent dry run、人工复核和 `uv run openharness check-tasks`，再写回 `04-verification.md` 和 `05-evidence.md`。
+
+兼容策略：
+
+- 不改变 task package 阶段流和状态值。
+- 不改变 `verification-before-completion` 的 fresh evidence 门槛。
+- 不改变 runtime capability routing。
+- 不改变 archived package 的历史事实。
+
+回滚触发点：
+
+- 如果改动后 TDD 被读成“可执行代码也不需要测试”，回滚 TDD skill 的收窄 wording，重新强调代码类对象仍需 red-green-refactor。
+- 如果改动后 README 让人误以为 Python-first 项目不需要 pytest 基线，回滚 README 表述并补充“代码类改动仍默认自动化验证”。
+- 如果子 Agent dry run 显示 agent 仍选择对协议类对象 pytest-first，不能进入完成状态；回到 live wording 继续修正。
 
 ## Recommended Diagrams
-如果关键交互、状态变化或数据关系仅靠文字容易歧义，用中文说明推荐补哪些 `PlantUML` 图，例如时序图、状态图或数据关系图；图不能替代文字里的接口、数据语义和异常说明。
+本轮不补 `PlantUML` 图。实现关系主要是 live wording 的责任边界和迁移顺序，文字已经足够表达；补图容易夸大为新的流程系统。
 
 ## Detailed Reflection
-用中文记录对测试策略、接口边界、迁移假设和验证路径的反思。
+测试策略反思：本轮最容易犯的错误是继续把 pytest 当作主验证路径。已接受 pytest 默认不改，只在高价值短 wording 防回归时作为辅助。主验证必须是协议审查、子 Agent dry run、人工复核和 `check-tasks` 的组合。
+
+接口边界反思：TDD skill、detailed design guidance、using-openharness 和 README 的责任边界已经拆开。TDD skill 只管实现内循环；detailed guidance 负责实施前设计顺序；using-openharness 负责阶段流；README 负责对外验证基线。
+
+迁移假设反思：先改 TDD skill 再改 detailed guidance 可以先消除最强误导源，但必须随后同步 entry skill 和 README，否则旧的 pytest floor wording 仍可能把 agent 拉回全局 pytest-first。
+
+验证路径反思：子 Agent dry run 是本轮最关键证据。如果它缺失，只能说明文档结构和人工复核可追溯，不能充分证明 agent 行为已经被修正。
