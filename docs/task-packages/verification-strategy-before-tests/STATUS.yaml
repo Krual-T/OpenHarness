@@ -16,6 +16,7 @@ scope:
   - task-package-guidance
 collaboration:
   task_type: protocol/architecture
+  design_review_mode: stepwise
 entrypoints:
 - docs/task-packages/verification-strategy-before-tests/README.md
 - docs/task-packages/verification-strategy-before-tests/01-requirements.md
