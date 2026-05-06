@@ -94,7 +94,18 @@
 接受的中间方案：自动测试是强证据路径之一，不是唯一入口。设计先行，证据路径按对象选择；当对象不适合 pytest 时，必须用更贴合对象的审查、dry run、runtime 或人工场景证据补足。
 
 ## Recommended Diagrams
-如果某些结构关系仅靠文字容易歧义，用中文说明推荐补哪些 `PlantUML` 图，例如系统上下文图、模块图或主流程图；图不能替代文字里的边界、约束和例外。
+本轮不补 `PlantUML` 图。
+
+原因是核心关系已经由两层文字模型表达清楚：外层是既有 task package 阶段流，内层是 `03-detailed-design.md` 里的“实现设计 -> 验证对象 -> 证据路径 -> expected evidence”子流程。补流程图容易让读者误以为 OpenHarness 新增了“验证对象分类”这类正式阶段，反而削弱本轮要保持阶段流稳定的约束。
+
+如果后续 detailed design 发现具体文件改动之间存在复杂依赖，再在 `03-detailed-design.md` 推荐补实现级时序图或责任边界图。
 
 ## Overview Reflection
-用中文记录一轮反思，明确你挑战过哪些备选方案、风险假设和验证影响，并写明挑战是接受、拒绝还是延期。
+本轮反思挑战了四个关键假设：
+
+- 接受：TDD 仍然应保留。它对可执行代码行为、CLI、解析器、校验器和状态机仍然有明确价值，但它的位置是 detailed design 之后、implementation 之前的实现内循环。
+- 拒绝：全局 pytest-first。该方案会让 agent 在文档语义、协作协议、skill 行为和 agent 工作流上写形式主义测试，无法证明真实行为成立。
+- 拒绝：非代码任务只靠人工判断。该方案避免了错误 pytest，但会破坏 fresh evidence、traceability 和残余风险记录，不符合 `verification-before-completion`。
+- 接受：子 Agent 审核是协议、skill 行为和 agent 工作流类对象的强候选证据路径，但不是唯一默认；detailed design 仍需根据验证对象选择最强证据组合。
+
+挑战关闭结论：`03-detailed-design.md` 不再重新争论方法论，而要落到具体实施面：哪些 live skill / guidance / README / tests 要改，wording 如何避免“先测试再设计”的误读，哪些对象需要自动测试，哪些对象需要协议审查、dry run 或人工场景证据，以及 `04-verification.md` 和 `05-evidence.md` 应记录什么。
