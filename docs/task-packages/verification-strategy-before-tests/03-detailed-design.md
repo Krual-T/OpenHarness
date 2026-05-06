@@ -3,18 +3,33 @@
 > 章节标题保留英文；正文默认使用中文；命令、状态值、YAML 键名、文件名与路径保持英文。
 
 ## Runtime Verification Plan
-- Verification Path:
-- 用中文列出将执行的验证路径，命令本身保持英文原样；先写主验证路径，再写 fallback。
-- Fallback Path:
-- 用中文说明如果主验证路径被阻塞时如何处理，以及何时不能宣称完成。
-- Planned Evidence:
-- 用中文写明预计要产出的证据、产物或观察结果，并说明后续 `04-verification.md` 需要收什么。
+Verification Path:
+
+1. 先完成本 `03-detailed-design.md`，把实现落点、接口边界、行为契约、误用风险、迁移顺序和证据路径写清楚；在 detailed design 未完成前，不安排 pytest-first 或 live docs 改动。
+2. Implementation 阶段按 detailed design 修改 live protocol / guidance / README wording。
+3. Verification 阶段以协议审查和子 Agent dry run 为主证据，检查新 wording 是否仍会诱导 agent 把 TDD 提前到 design 之前，或对非可执行对象硬写 pytest。
+4. 执行 `uv run openharness check-tasks`，只用于证明 task package 结构和状态写回没有破坏仓库协议。
+5. 人工复核关键 wording，确认它表达的是“先设计，再按验证对象选择证据路径”，而不是“先测试再设计”。
+
+Fallback Path:
+
+- 如果子 Agent dry run 无法执行，不能宣称协议行为已经充分验证；`04-verification.md` 必须把缺失 dry run 记录为 residual risk，并用人工协议审查 + `uv run openharness check-tasks` 作为不足但可追溯的 fallback。
+- 如果后续发现某个旧误导性 wording 很容易回归，可以追加极薄的 `tests/openharness_cases/test_protocol_docs.py` 文本边界测试；该测试只能作为辅助防回归，不作为主验证路径，也不能替代协议审查。
+- 如果 `check-tasks` 失败，先修复 task package 结构或状态写回，再继续实施；不能把失败结构作为已知风险带入完成状态。
+
+Planned Evidence:
+
+- 子 Agent 协议审查或 dry run 的结论摘要，重点观察是否还会选择 pytest-first 来验证协议、skill 行为或 agent 工作流。
+- 人工复核记录，说明关键 live wording 是否符合“detailed design 先行、证据路径按对象选择”的结论。
+- `uv run openharness check-tasks` 的 fresh 输出。
+- 如果采用可选薄文本测试，记录该测试只覆盖防回归 wording，不覆盖 agent 行为本身。
+- `04-verification.md` 需要写清 traceability：每条核心需求由哪类证据支撑，哪些证据不足，以及残余风险是什么。
 
 只有当详细设计已经具体到可以执行时，才进入 `in_progress`。
 如果设计已经完成但实现尚未开始，应保持在 `detailed_ready`。
 
 ## Files Added Or Changed
-本轮只修改 live protocol / guidance / tests，不修改 archived task packages，不新增 CLI、Runtime Workflow Package 或测试框架。
+本轮只修改 live protocol / guidance / README，不修改 archived task packages，不新增 CLI、Runtime Workflow Package 或测试框架。测试文件不是计划主改动面；只有发现具体 wording 回归风险值得自动锁定时，才追加极薄的辅助文本边界测试。
 
 - `skills/test-driven-development/SKILL.md`
   - 修正 TDD 的触发边界，把它定义成 detailed design 之后、implementation 之前的实现内循环。
@@ -30,8 +45,9 @@
   - 保留 Python-first `uv run pytest` 自动化基线，但说明它主要覆盖代码类改动，不是所有任务的唯一验证路径。
   - 明确 runtime、协议、skill 行为和 agent 工作流仍需要在 task package 中设计更贴合对象的证据路径。
 - `tests/openharness_cases/test_protocol_docs.py`
-  - 补充协议文档测试，只锁定关键边界：TDD 不替代 design、pytest floor 不等于所有任务都必须 pytest、detailed guidance 必须表达“测试或验证”。
-  - 不写只证明长文本片段存在的形式主义断言。
+  - 默认不改。
+  - 仅当 implementation 过程中发现某个短 wording 边界存在高回归风险时，才补充极薄的辅助文本测试。
+  - 即使补充测试，也只证明防回归 wording，没有资格作为协议行为的主证据。
 
 确认的非改动范围：
 
