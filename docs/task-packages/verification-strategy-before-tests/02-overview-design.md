@@ -34,7 +34,27 @@
 关键约束是依赖方向只能从设计推导验证，不能反过来让“必须先写 pytest”决定设计。测试是一类证据路径，不是 OpenHarness 唯一的合规入口。
 
 ## Key Flows
-用中文描述主流程、状态流或信息流，帮助维护者快速建立模型，并指出关键失败信号会在哪里出现；如果安全、一致性或兼容性约束会改变主路径，也要写清楚。
+主流程仍然保持 OpenHarness 既有 task package 阶段：
+
+1. `01-requirements.md` 定义问题、目标用户、验收标准、非目标和约束。
+2. `02-overview-design.md` 定义系统边界、总体结构、关键取舍和架构级失败模式。
+3. `03-detailed-design.md` 先完成实现设计，再从设计结论推导验证对象和证据路径。
+4. Implementation 按 `03-detailed-design.md` 执行；如果验证对象适合 TDD，就先写失败测试再实现；如果不适合自动测试，就按已设计的协议审查、dry run、runtime workflow、人工场景验证或结构检查执行。
+5. `04-verification.md` 记录实际执行了哪些验证、结果、偏差、限制、traceability 和残余风险。
+6. `05-evidence.md` 沉淀变更文件、命令、子 Agent 审查结果、dry run 记录、人工步骤和产物路径。
+
+`03-detailed-design.md` 内部有一个子流程，但它不是新的 task package 阶段：
+
+1. 先回答实现设计问题：改动落点、接口边界、行为契约、数据语义、失败模式、误用风险和迁移顺序。
+2. 再识别验证对象：可执行代码行为、CLI 契约、解析器规则、校验器逻辑、状态机、文档语义、协作协议、skill 行为、agent 工作流、runtime 观察或机械结构改动。
+3. 再选择证据路径：TDD / 自动测试、ATDD/BDD 风格验收例子、协议审查、子 Agent dry run、runtime workflow、人工场景验证、结构检查或组合路径。
+4. 最后写清 expected evidence，让 `04-verification.md` 和 `05-evidence.md` 知道后续必须收什么。
+
+关键失败信号有三类：
+
+- 在 `03-detailed-design.md` 之前就要求先写 pytest，说明 TDD 被错误提前成总流程入口。
+- `03-detailed-design.md` 没有实现细节，只写“验证策略”，说明设计被证据选择替代。
+- `04-verification.md` 只有 pytest 或 `check-tasks`，但没有证明协议、skill 行为、agent 工作流或 runtime 观察真的成立，说明证据路径与验证对象错配。
 
 ## Stage Gates
 用中文写清楚 overview 要进入下一阶段前必须具备哪些硬性产出，例如关键约束、边界决定、关键数据/状态模型、失败模式与降级或回滚方向。
