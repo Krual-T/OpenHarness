@@ -56,13 +56,53 @@ Planned Evidence:
 - 不修改 archived task packages。
 
 ## Interfaces
-用中文写清楚这轮改动暴露或依赖的接口、契约和稳定边界，并说明关键 `observability` 入口、接口精度和边界条件。
+这轮没有运行时代码接口，主要接口是 agent 可读的协议契约。
+
+- `skills/test-driven-development/SKILL.md`
+  - 输入前提：task package 已经完成足够 detailed design，且验证对象是可执行行为、CLI、解析器、校验器、状态机或可观察代码契约。
+  - 输出行为：进入 red-green-refactor，实现前先写能失败的测试，再写最小实现，再重构。
+  - 禁止解释：TDD 不能替代 `01-requirements.md`、`02-overview-design.md` 或 `03-detailed-design.md`；不能因为任务有“变更”二字就对协议、文档语义、skill 行为或 agent 工作流硬写 pytest。
+- `skills/using-openharness/references/detailed-design-writing-guidance.md`
+  - 输入前提：overview 已收敛，正在把总体方向落到可执行设计。
+  - 输出契约：`03` 先写实现落点、接口边界、行为契约、失败模式、误用风险和迁移顺序，再从这些设计结论推导验证对象与证据路径。
+  - `testing-first` 精度：表示“先准备适合对象的测试或验证，再落实现”，不是“先写 pytest”。
+- `skills/using-openharness/SKILL.md`
+  - 保持外层阶段流：`01 -> 02 -> 03 -> implementation -> 04 -> 05`。
+  - `03-detailed-design.md` owns `testing-first` 的意思是 `03` 内写清 testing / verification order，不是 detailed design 之前先写测试。
+- `README.md`
+  - `uv run pytest` 是 Python-first 代码类改动的默认自动化基线。
+  - 该基线不证明 runtime 行为、协议语义、skill 行为或 agent 工作流已经成立；这些对象必须在 task package 中选择更贴合的证据路径。
+
+关键 observability 入口：
+
+- 协议审查和子 Agent dry run 能观察 agent 是否仍把 TDD 提前到 design 之前，或对非可执行对象硬写 pytest。
+- `uv run openharness check-tasks` 能观察 task package 结构和状态写回是否仍有效。
+- 可选薄文本测试只能观察短 wording 是否回归，不能观察 agent 实际行为。
 
 ## Module Internals
-用中文说明关键模块的内部职责分解，至少写清编排、校验、状态更新、副作用或适配层分别落在哪里。
+这轮没有新增模块，内部职责按文档面分配：
+
+- TDD skill 负责实现内循环边界：什么情况下进入 red-green-refactor，什么情况下不应调用 TDD。
+- Detailed design guidance 负责实施前设计顺序：先把实现设计写清楚，再选择验证对象、证据路径和 expected evidence。
+- OpenHarness entry skill 负责阶段编排：保持 task package 阶段流稳定，并把 detailed design、implementation、verification 的责任边界说清。
+- README 负责产品级承诺：把 Python-first pytest floor 描述成代码类自动化基线，而不是全局验证制度。
+- Verification / evidence guidance 保持原职责：记录 fresh evidence、traceability、manual steps、artifact paths 和 residual risks；本轮不改它们的核心行为。
 
 ## Data Semantics
-用中文说明关键数据结构、字段语义、状态转换或一致性约束；如果关系复杂，说明是否需要用 `PlantUML` 状态图、类图或关系图辅助表达。
+核心数据不是代码结构，而是“验证对象类型 -> 证据路径”的语义映射：
+
+- 可执行代码行为、CLI、解析器、校验器、状态机、可观察代码契约 -> TDD / 自动测试。
+- 协作协议、skill 行为、agent 工作流、文档语义 -> 协议审查、子 Agent dry run、场景复盘或人工复核。
+- runtime 行为 -> Runtime Workflow Package 或项目定义的 runtime 验证路径。
+- task package 结构和状态写回 -> `uv run openharness check-tasks`。
+- 机械改动 -> 最小目标命令、结构检查或格式检查。
+
+一致性约束：
+
+- 一个任务可以包含多个验证对象，因此可以组合多条证据路径。
+- 自动测试是强证据之一，但不是所有对象的默认路径。
+- `check-tasks` 只证明结构协议，不证明文档语义或 agent 行为。
+- 子 Agent 审核是协议类对象的强候选证据，但如果无法执行，必须在 `04-verification.md` 中记录残余风险。
 
 ## Stage Gates
 用中文写清楚 detailed 要进入下一阶段前必须具备哪些硬性产出，例如测试策略、可观测性要求、模块内部职责、数据语义、迁移顺序和预期证据类型。
@@ -71,7 +111,16 @@ Planned Evidence:
 用中文记录关键挑战如何被处理，只允许写清楚接受、拒绝或延期，以及对应理由、替代方案或触发条件。
 
 ## Error Handling
-用中文说明失败路径、误用风险、校验边界和如何避免静默出错，至少写出一个静默出错风险，并交代异常如何传播或回退。
+主要静默失败风险是 agent 看到 `testing-first`、`pytest floor` 或 TDD 的强硬语气后，继续误读成“所有任务先 pytest”。这类错误不会通过 `check-tasks` 暴露，因为任务包结构仍然可能有效。
+
+处理方式：
+
+- 在 TDD skill 和 detailed design guidance 中明确 forbidden interpretation：TDD 不替代 design，pytest 不覆盖所有验证对象。
+- 在 README 和 using-openharness 中保留 Python-first 自动化基线，但补上适用边界。
+- 在验证阶段使用协议审查和子 Agent dry run 专门观察该误读点。
+- 如果 dry run 缺失，完成主张必须降级，并在 `04-verification.md` 和 `05-evidence.md` 写明 residual risk。
+
+另一个失败路径是过度收缩 TDD，导致代码类改动也不写自动测试。处理方式是在 TDD skill 中保留 red-green-refactor 对可执行行为的强要求，只收窄适用对象，不削弱代码类验证纪律。
 
 ## Migration Notes
 用中文描述迁移顺序、兼容策略、落地阶段和回滚注意事项，说明切换点与回滚触发点。
