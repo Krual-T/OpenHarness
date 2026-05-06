@@ -45,4 +45,4 @@
 ## Latest Result
 - 最近一次验证结果：`uv run openharness verify design-decision-review-mode` 通过；子智能体复审通过，未发现阻断问题。
 - Latest Artifact:
-  - `.harness/artifacts/OH-042/verification-runs/20260506T103938431619Z.json`
+  - `.harness/artifacts/OH-042/verification-runs/20260506T104044347750Z.json`

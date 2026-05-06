@@ -1,6 +1,6 @@
 id: OH-042
 title: Design Decision Review Mode
-status: verifying
+status: archived
 summary: Productize decision-by-decision design confirmation as the default design-stage
   collaboration mode for non-mechanical OpenHarness development tasks.
 owner: codex
@@ -17,10 +17,10 @@ collaboration:
   task_type: protocol/architecture
   design_review_mode: stepwise
 entrypoints:
-- docs/task-packages/design-decision-review-mode/README.md
-- docs/task-packages/design-decision-review-mode/01-requirements.md
-- docs/task-packages/design-decision-review-mode/02-overview-design.md
-- docs/task-packages/design-decision-review-mode/03-detailed-design.md
+- docs/archived/task-packages/design-decision-review-mode/README.md
+- docs/archived/task-packages/design-decision-review-mode/01-requirements.md
+- docs/archived/task-packages/design-decision-review-mode/02-overview-design.md
+- docs/archived/task-packages/design-decision-review-mode/03-detailed-design.md
 done_criteria:
 - 明确逐项设计确认作为非机械开发任务设计阶段的默认协作范式。
 - 明确 mechanical、standard development、protocol/architecture 的分类与触发强度。
@@ -32,12 +32,12 @@ verification:
   - uv run openharness check-tasks
   required_scenarios:
   - 子智能体从使用者视角审查逐项设计确认协议是否可执行。
-  last_run_at: '2026-05-06T10:39:38Z'
+  last_run_at: '2026-05-06T10:40:44Z'
   last_run_result: passed
-  last_run_artifact: .harness/artifacts/OH-042/verification-runs/20260506T103938431619Z.json
+  last_run_artifact: .harness/artifacts/OH-042/verification-runs/20260506T104044347750Z.json
 evidence:
   docs:
-  - docs/task-packages/design-decision-review-mode/04-verification.md
-  - docs/task-packages/design-decision-review-mode/05-evidence.md
+  - docs/archived/task-packages/design-decision-review-mode/04-verification.md
+  - docs/archived/task-packages/design-decision-review-mode/05-evidence.md
   code: []
   tests: []

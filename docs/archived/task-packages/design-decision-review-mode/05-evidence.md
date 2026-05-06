@@ -24,11 +24,11 @@
   - 新增 overview 级 confirmed design points 写回要求，并说明 `auto` 也要记录关键 decision points。
 - `skills/using-openharness/references/detailed-design-writing-guidance.md`
   - 新增 detailed 级 confirmed design points 写回要求。
-- `docs/task-packages/design-decision-review-mode/STATUS.yaml`
+- `docs/archived/task-packages/design-decision-review-mode/STATUS.yaml`
   - 记录本任务的 `collaboration.task_type: protocol/architecture` 和 `collaboration.design_review_mode: stepwise`，并声明验证命令和协议审查场景。
-- `docs/task-packages/design-decision-review-mode/04-verification.md`
+- `docs/archived/task-packages/design-decision-review-mode/04-verification.md`
   - 记录验证路径、执行结果、子智能体审查结果和残余风险。
-- `docs/task-packages/design-decision-review-mode/05-evidence.md`
+- `docs/archived/task-packages/design-decision-review-mode/05-evidence.md`
   - 记录本轮证据索引。
 
 ## Commands
@@ -38,9 +38,9 @@
 - final verification command: `uv run openharness verify design-decision-review-mode`
 
 ## Artifact Paths
-- `.harness/artifacts/OH-042/verification-runs/20260506T103938431619Z.json`
-- 验证结论记录在 `docs/task-packages/design-decision-review-mode/04-verification.md`。
-- 证据索引记录在 `docs/task-packages/design-decision-review-mode/05-evidence.md`。
+- `.harness/artifacts/OH-042/verification-runs/20260506T104044347750Z.json`
+- 验证结论记录在 `docs/archived/task-packages/design-decision-review-mode/04-verification.md`。
+- 证据索引记录在 `docs/archived/task-packages/design-decision-review-mode/05-evidence.md`。
 
 ## Follow-ups
 - 暂无单独后续任务。

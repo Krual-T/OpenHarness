@@ -32,7 +32,7 @@
   - 增加 `03-detailed-design.md` 应记录 detailed 级已确认设计点的写作要求。
 - `skills/using-openharness/references/templates/task-package.STATUS.yaml`
   - 增加 `collaboration` 字段示例，用于表达已确认的任务类型和设计协作模式。
-- `docs/task-packages/design-decision-review-mode/STATUS.yaml`
+- `docs/archived/task-packages/design-decision-review-mode/STATUS.yaml`
   - 写入本任务已经确认的 `collaboration.task_type` 与 `collaboration.design_review_mode`，避免后续会话只能依赖聊天记录恢复协作上下文。
 
 本轮不新增 skill、不新增 CLI、不新增 task package Markdown 文件。`STATUS.yaml` 增加可选机器可读字段，但不改变 `status:` 阶段状态机。
