@@ -161,6 +161,15 @@ def cmd_check_tasks(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_init(args: argparse.Namespace) -> int:
+    repo_root = Path(args.repo).resolve()
+    harness_root = repo_root / ".harness"
+    harness_root.mkdir(parents=True, exist_ok=True)
+    (harness_root / ".gitignore").write_text("*\n", encoding="utf-8")
+    print(f"Initialized OpenHarness local directory: {harness_root}")
+    return 0
+
+
 def cmd_new_task(args: argparse.Namespace) -> int:
     repo_root = Path(args.repo).resolve()
     explicit_task_id = str(getattr(args, "task_id", "") or "").strip()

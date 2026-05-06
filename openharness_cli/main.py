@@ -28,6 +28,7 @@ from .cli import build_parser as _build_parser
 from .commands import (
     cmd_bootstrap as _cmd_bootstrap,
     cmd_check_tasks as _cmd_check_tasks,
+    cmd_init as _cmd_init,
     cmd_new_task as _cmd_new_task,
     cmd_project_memory as _cmd_project_memory,
     cmd_rwp as _cmd_rwp,
@@ -46,6 +47,10 @@ def cmd_bootstrap(args):
 
 def cmd_check_tasks(args):
     return _cmd_check_tasks(args)
+
+
+def cmd_init(args):
+    return _cmd_init(args)
 
 
 def cmd_new_task(args):
@@ -80,6 +85,7 @@ def build_parser():
     return _build_parser(
         cmd_bootstrap=cmd_bootstrap,
         cmd_check_tasks=cmd_check_tasks,
+        cmd_init=cmd_init,
         cmd_new_task=cmd_new_task,
         cmd_project_memory=cmd_project_memory,
         cmd_rwp=cmd_rwp,

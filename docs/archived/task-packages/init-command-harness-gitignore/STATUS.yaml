@@ -1,0 +1,48 @@
+id: "OH-041"
+title: "Init Command Harness Gitignore"
+# Default flow: proposed -> requirements_ready -> overview_ready -> detailed_ready -> in_progress -> verifying -> archived
+# requirements_ready -> overview_ready -> detailed_ready are design-readiness checkpoints; later statuses imply earlier checkpoints are already materially complete.
+# `detailed_ready` is the normal resting point for design-complete work before implementation.
+# `archived` means the task package is implemented, verified, and no longer active.
+# If a sentence here contains backticks or other YAML-sensitive punctuation, wrap the whole sentence in double quotes.
+# Example: summary: "`02-overview-design.md` guidance: explain the boundary."
+status: "archived"
+summary: "Add an init command that prepares .harness/.gitignore to ignore all harness-local files."
+owner: "codex"
+created_at: "2026-05-06"
+updated_at: "2026-05-06"
+depends_on: []
+scope:
+  areas:
+    - openharness_cli
+    - tests
+entrypoints:
+  - docs/archived/task-packages/init-command-harness-gitignore/README.md
+  - docs/archived/task-packages/init-command-harness-gitignore/01-requirements.md
+  - docs/archived/task-packages/init-command-harness-gitignore/02-overview-design.md
+  - docs/archived/task-packages/init-command-harness-gitignore/03-detailed-design.md
+done_criteria:
+  - "`openharness init` creates `.harness/.gitignore` under the selected repo."
+  - "The generated `.gitignore` ignores all `.harness` contents with `*`."
+  - "The command is covered by focused CLI tests."
+verification:
+  required_commands:
+    - "uv run pytest tests/openharness_cases/test_cli_workflows.py -q"
+    - "uv run pytest -q"
+  required_scenarios: []
+  last_run_at: "2026-05-06"
+  last_run_result: "passed"
+  last_run_artifact: ""
+evidence:
+  docs:
+    - docs/archived/task-packages/init-command-harness-gitignore/04-verification.md
+    - docs/archived/task-packages/init-command-harness-gitignore/05-evidence.md
+  code:
+    - openharness_cli/cli.py
+    - openharness_cli/commands.py
+    - openharness_cli/main.py
+    - openharness_cli/__init__.py
+    - .harness/.gitignore
+  tests:
+    - tests/openharness_cases/test_cli_workflows.py
+    - tests/openharness_cases/test_protocol_docs.py

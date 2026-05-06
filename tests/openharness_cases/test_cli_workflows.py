@@ -347,6 +347,29 @@ def test_update_stops_when_git_pull_fails(capsys, monkeypatch: pytest.MonkeyPatc
     assert "git pull failed" in captured.out
 
 
+def test_init_parser_accepts_repo_argument() -> None:
+    parser = openharness.build_parser()
+
+    args = parser.parse_args(["init", "--repo", "/tmp/example-repo"])
+
+    assert args.handler == openharness.cmd_init
+    assert args.repo == "/tmp/example-repo"
+
+
+def test_init_creates_harness_gitignore_that_ignores_everything(
+    tmp_path: Path, capsys
+) -> None:
+    repo_root = tmp_path / "repo"
+    repo_root.mkdir()
+
+    result = openharness.cmd_init(argparse.Namespace(repo=str(repo_root)))
+
+    captured = capsys.readouterr()
+    assert result == 0
+    assert (repo_root / ".harness" / ".gitignore").read_text(encoding="utf-8") == "*\n"
+    assert str(repo_root / ".harness") in captured.out
+
+
 def test_project_memory_query_runs_wrapped_script_in_target_repo(
     tmp_path: Path, capsys, monkeypatch: pytest.MonkeyPatch
 ) -> None:

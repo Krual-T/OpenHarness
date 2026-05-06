@@ -11,6 +11,7 @@ def build_parser(
     *,
     cmd_bootstrap,
     cmd_check_tasks,
+    cmd_init,
     cmd_new_task,
     cmd_project_memory,
     cmd_rwp,
@@ -24,6 +25,7 @@ def build_parser(
             "Examples:\n"
             "  openharness bootstrap\n"
             "  openharness check-tasks\n"
+            "  openharness init\n"
             "  openharness update"
         ),
         formatter_class=_HelpFormatter,
@@ -46,6 +48,20 @@ def build_parser(
     bootstrap_parser.add_argument("--json", action="store_true", help="Print JSON output")
     bootstrap_parser.add_argument("--all", action="store_true", help="Include non-active task packages")
     bootstrap_parser.set_defaults(handler=cmd_bootstrap)
+
+    init_parser = subparsers.add_parser(
+        "init",
+        help="Initialize OpenHarness local repository files.",
+        description="Initialize OpenHarness local repository files.",
+        epilog=(
+            "Example:\n"
+            "  openharness init\n"
+            "  openharness init --repo /path/to/repo"
+        ),
+        formatter_class=_HelpFormatter,
+    )
+    init_parser.add_argument("--repo", default=".", help="Repository root")
+    init_parser.set_defaults(handler=cmd_init)
 
     check_parser = subparsers.add_parser(
         "check-tasks",

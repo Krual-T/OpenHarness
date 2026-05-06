@@ -138,6 +138,7 @@ def test_openharness_single_cli_supports_all_subcommands() -> None:
     assert set(choices) == {
         "bootstrap",
         "check-tasks",
+        "init",
         "new-task",
         "project-memory",
         "rwp",
@@ -156,6 +157,7 @@ def test_openharness_script_uses_task_package_naming_in_public_symbols() -> None
     assert hasattr(openharness, "summarize_task_package")
     assert hasattr(openharness, "slugify_task_name")
     assert hasattr(openharness, "cmd_check_tasks")
+    assert hasattr(openharness, "cmd_init")
     assert hasattr(openharness, "cmd_new_task")
     assert not hasattr(openharness, "DesignPackage")
     assert not hasattr(openharness, "DesignScaffoldRequest")
@@ -171,6 +173,7 @@ def test_openharness_script_uses_task_package_naming_in_public_symbols() -> None
 def test_task_package_commands_use_current_handlers_only() -> None:
     parser = openharness.build_parser()
     assert parser.parse_args(["check-tasks"]).handler == openharness.cmd_check_tasks
+    assert parser.parse_args(["init"]).handler == openharness.cmd_init
     assert (
         parser.parse_args(["new-task", "name", "--task-id", "OH-999", "--title", "Title"]).handler
         == openharness.cmd_new_task
