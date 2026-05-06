@@ -79,6 +79,11 @@ Brainstorming ends when `01-requirements.md` is strong enough for exploration, n
 ## After Brainstorming
 
 - Write the validated requirements into the active task package under `docs/task-packages/<task>/`.
+- After requirements converge, propose one task classification and ask the human to confirm it before it drives design-stage behavior:
+  - `mechanical`: formatting, naming, path references, local text, simple configuration, or other low-judgment changes.
+  - `standard development`: ordinary feature work, fixes, documentation protocol adjustments, or verification strategy adjustments that need design but do not reshape long-term architecture.
+  - `protocol/architecture`: changes that affect long-term protocol, skill behavior, directory structure, public interfaces, agent routing, verification paths, or cross-task reuse.
+- Write `collaboration.task_type` in `STATUS.yaml` only after the human confirms the classification. If the field is absent, the classification is not yet a confirmed task fact.
 - Update `02-overview-design.md` or `03-detailed-design.md` only when the requirement discussion already proved a design constraint that belongs there.
 - Continue into `exploring-solution-space` by default unless the user explicitly asked for a review checkpoint or the remaining ambiguity is too risky to carry forward.
 - If no package exists yet, do not scaffold one at the first vague idea.

@@ -1,6 +1,6 @@
 id: OH-042
 title: Design Decision Review Mode
-status: detailed_ready
+status: verifying
 summary: Productize decision-by-decision design confirmation as the default design-stage
   collaboration mode for non-mechanical OpenHarness development tasks.
 owner: codex
@@ -28,11 +28,13 @@ done_criteria:
 - 明确已确认设计点写回 `02-overview-design.md` 或 `03-detailed-design.md` 的规则。
 - 更新相关 skills、writing guidance，并通过协议审查验证行为规则。
 verification:
-  required_commands: []
-  required_scenarios: []
-  last_run_at: ''
-  last_run_result: ''
-  last_run_artifact: ''
+  required_commands:
+  - uv run openharness check-tasks
+  required_scenarios:
+  - 子智能体从使用者视角审查逐项设计确认协议是否可执行。
+  last_run_at: '2026-05-06T10:39:38Z'
+  last_run_result: passed
+  last_run_artifact: .harness/artifacts/OH-042/verification-runs/20260506T103938431619Z.json
 evidence:
   docs:
   - docs/task-packages/design-decision-review-mode/04-verification.md

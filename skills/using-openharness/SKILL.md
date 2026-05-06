@@ -102,6 +102,44 @@ Before choosing the first visible action, decide whether active task context is 
     - `05-evidence.md`
 9. Implement only after the task package is internally consistent enough to act on.
 
+## Task Classification And Design Review Mode
+
+`STATUS.yaml` may contain optional machine-readable collaboration state:
+
+```yaml
+collaboration:
+  task_type: protocol/architecture
+  design_review_mode: stepwise
+```
+
+`collaboration.task_type` is written only after the human confirms the task classification.
+Valid values are `mechanical`, `standard development`, and `protocol/architecture`.
+If the field is absent, do not treat the classification as confirmed.
+Before entering `02-overview-design.md` or `03-detailed-design.md`, if `collaboration.task_type` is absent, propose one classification and wait for human confirmation before using the classification to choose the design flow.
+
+`collaboration.design_review_mode` is written only after the human confirms the design-stage collaboration mode.
+Valid values are `stepwise` and `auto`.
+If the field is absent for a non-mechanical task entering design, propose the mode instead of assuming it.
+
+When a development task is not clearly mechanical and is about to enter `02-overview-design.md` or `03-detailed-design.md`, proactively offer stepwise design confirmation.
+Use this shape:
+
+```text
+这个任务已确认属于 <classification>。接下来会进入 <overview/detailed> 设计阶段。
+
+我建议按逐项设计确认推进：我会每次提出一个设计点，包含推荐方案、理由、影响范围和确认问题；你确认后我写回 task package，再进入下一个点。
+
+当前预计有 N 个设计点。先从 1/N 开始。
+```
+
+For `mechanical` tasks, do not default to stepwise confirmation; state that the task is mechanical, then modify and verify directly.
+For `standard development` tasks, proactively offer stepwise confirmation before design, while allowing the human to choose coarser granularity or `auto`.
+Coarser design-point granularity is still `stepwise`; only write `auto` when the human authorizes the agent to continue without stopping at each point.
+For `protocol/architecture` tasks, default to stepwise confirmation unless the human explicitly authorizes `auto`.
+
+This section only owns entry-time interpretation and routing.
+The task classification rule lives in `brainstorming`; stepwise execution rules live in `exploring-solution-space`.
+
 When you enter a new workflow stage, explicitly tell the user:
 
 - current stage

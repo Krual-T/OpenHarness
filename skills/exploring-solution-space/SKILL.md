@@ -33,6 +33,47 @@ This skill may also feed justified implementation constraints into `03-detailed-
 `overview_ready` is the normal checkpoint once `02-overview-design.md` and its reflection pass are both coherent.
 `detailed_ready` is the normal checkpoint once `03-detailed-design.md` and its detailed reflection are concrete enough to execute.
 
+## Stepwise Design Confirmation
+
+For non-mechanical tasks, use `STATUS.yaml.collaboration` to understand the confirmed collaboration state.
+Before entering overview or detailed design, if `collaboration.task_type` is absent, propose one task classification and wait for human confirmation.
+Write the confirmed value to `collaboration.task_type` before deciding whether stepwise design confirmation applies.
+If the confirmed task type is `mechanical`, do not default to stepwise confirmation.
+If `collaboration.design_review_mode` is absent when entering overview or detailed design, propose stepwise design confirmation before drafting the stage.
+
+Use one design point at a time:
+
+```text
+设计点 N/M：<短标题>
+
+推荐方案：
+<推荐做法>
+
+理由：
+<主要取舍>
+
+影响范围：
+<写入 02 还是 03，会影响哪些 skill/guidance/code>
+
+请确认：
+<明确的确认问题>
+```
+
+Rules:
+
+- `N/M` is collaboration progress, not the stage gate.
+- If new design points appear during exploration, update `M` and explain why.
+- `确认`, `ok`, `可以`, `继续`, and `下一个` confirm only the current design point.
+- `自主推进`, `你决定`, and `不用每点确认` mean the human authorizes `auto`; write `collaboration.design_review_mode: auto`, then keep recording key decision points.
+- When the human confirms stepwise mode, write `collaboration.design_review_mode: stepwise`.
+- If the human asks for coarser design points but still wants to confirm points, keep `collaboration.design_review_mode: stepwise`.
+- If the human changes the current point, restate the final version, write it back, then continue.
+- If the human reverses an earlier point, update the existing `02` or `03` entry first. If the reversal changes overview boundaries, update `02` before continuing `03`.
+- Write each confirmed design point back into the task package promptly; do not save all writeback until the end.
+
+Completing `N/M` does not make the stage ready by itself.
+The `02` and `03` stage gates still decide readiness.
+
 ## Process
 
 1. Read `01-requirements.md` and restate the concrete question being explored.

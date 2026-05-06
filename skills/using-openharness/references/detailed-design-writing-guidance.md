@@ -57,6 +57,14 @@
 - `Detailed Reflection`
   - 再次挑战测试策略、接口边界、迁移顺序、预期证据是否足够支撑实施。
 
+## Confirmed Design Points
+
+如果 detailed 阶段使用逐项设计确认，`03-detailed-design.md` 必须记录已经确认的 implementation-facing design decision points。
+这些记录应落在最匹配的章节中，例如 `Runtime Verification Plan`、`Files Added Or Changed`、`Interfaces`、`Module Internals`、`Data Semantics`、`Stage Gates`、`Decision Closure`、`Error Handling` 或 `Migration Notes`。
+
+记录应说明结论、理由、影响范围和后续验证证据。
+不要只把确认留在聊天里；用户选择 `auto` 时也仍然要记录关键 decision points。
+
 ## Boundary With Adjacent Documents
 
 - 这里写“怎么落地”，不是重新争论总体方向。

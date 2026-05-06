@@ -14,6 +14,10 @@ updated_at: <DATE>
 depends_on: []
 scope:
   areas: []
+# Optional collaboration state. Write these only after the human confirms the value.
+# task_type: mechanical | standard development | protocol/architecture
+# design_review_mode: stepwise | auto
+collaboration: {}
 entrypoints:
   - docs/task-packages/<DESIGN_NAME>/README.md
   - docs/task-packages/<DESIGN_NAME>/01-requirements.md

@@ -47,6 +47,15 @@
   - 写真正挑战过什么。
   - 反思结论必须带 `challenge closure`，也就是接受、拒绝或延期，而不是只写“考虑过”。
 
+## Confirmed Design Points
+
+如果 overview 阶段使用逐项设计确认，`02-overview-design.md` 必须记录已经确认的 overview 级 design decision points。
+这些记录应落在最匹配的章节中，例如 `System Boundary`、`Proposed Structure`、`Key Flows`、`Stage Gates`、`Trade-offs` 或 `Overview Reflection`。
+
+记录应说明结论、理由和影响范围。
+不要只把确认留在聊天里；用户选择 `auto` 时也仍然要记录关键 decision points。
+不要把 detailed 级文件、字段、命令或迁移步骤塞进 `02`；这些内容应进入 `03-detailed-design.md`。
+
 ## Boundary With Adjacent Documents
 
 - 这里写“整体怎么组织”，不写“每个文件具体改什么实现细节”。
