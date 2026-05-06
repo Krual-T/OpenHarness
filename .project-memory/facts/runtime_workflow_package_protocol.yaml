@@ -1,0 +1,31 @@
+id: runtime_workflow_package_protocol
+kind: fact
+title: OpenHarness Runtime Workflow Package protocol
+scope:
+  repo: openharness
+  branch: main
+status: reviewed
+created_at: '2026-05-06T05:43:35Z'
+updated_at: '2026-05-06T05:43:35Z'
+confidence: 0.8
+last_verified_commit: 9804fc45838c95292bf8282114cdc9d766722604
+intent_aliases:
+- RWP 协议是什么
+- runtime workflow package 怎么接入
+- openharness rwp 怎么用
+tags:
+- runtime
+- rwp
+- protocol
+applies_to:
+- skills/using-openharness/references/runtime-workflow-packages.md
+- skills/using-openharness/references/runtime-capability-contract.md
+statement: OpenHarness runtime-aware verification now uses Runtime Workflow Packages
+  under .harness/rwp/workflows; agents discover them with openharness rwp list/show,
+  execute explicit Python scripts with openharness rwp run <workflow> <script.py>
+  [args...], and write selected workflows plus runtime evidence back into task packages.
+evidence:
+- path: docs/task-packages/pluggable-runtime-validation-workflows/README.md
+  kind: file
+- path: skills/using-openharness/references/runtime-workflow-packages.md
+  kind: file

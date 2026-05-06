@@ -13,6 +13,7 @@ def build_parser(
     cmd_check_tasks,
     cmd_new_task,
     cmd_project_memory,
+    cmd_rwp,
     cmd_transition,
     cmd_verify,
     cmd_update,
@@ -118,6 +119,49 @@ def build_parser(
             help="Arguments forwarded to the underlying project-memory script.",
         )
         command_parser.set_defaults(handler=cmd_project_memory)
+
+    rwp_parser = subparsers.add_parser(
+        "rwp",
+        help="Discover and run Runtime Workflow Packages.",
+        description="Discover and run Runtime Workflow Packages.",
+        epilog=(
+            "Examples:\n"
+            "  openharness rwp list\n"
+            "  openharness rwp show lark-message-runtime-validation\n"
+            "  openharness rwp run lark-message-runtime-validation send_message_smoke.py"
+        ),
+        formatter_class=_HelpFormatter,
+    )
+    rwp_parser.add_argument("--repo", default=".", help="Repository root")
+    rwp_subparsers = rwp_parser.add_subparsers(dest="rwp_command", required=True)
+
+    rwp_list_parser = rwp_subparsers.add_parser(
+        "list",
+        help="List Runtime Workflow Package summaries.",
+        description="List Runtime Workflow Package summaries.",
+        formatter_class=_HelpFormatter,
+    )
+    rwp_list_parser.set_defaults(handler=cmd_rwp)
+
+    rwp_show_parser = rwp_subparsers.add_parser(
+        "show",
+        help="Show a Runtime Workflow Package workflow.md.",
+        description="Show a Runtime Workflow Package workflow.md.",
+        formatter_class=_HelpFormatter,
+    )
+    rwp_show_parser.add_argument("workflow", help="Runtime workflow name or directory slug")
+    rwp_show_parser.set_defaults(handler=cmd_rwp)
+
+    rwp_run_parser = rwp_subparsers.add_parser(
+        "run",
+        help="Run an explicit Python script from a Runtime Workflow Package.",
+        description="Run an explicit Python script from a Runtime Workflow Package.",
+        formatter_class=_HelpFormatter,
+    )
+    rwp_run_parser.add_argument("workflow", help="Runtime workflow name or directory slug")
+    rwp_run_parser.add_argument("script", help="Python script under the workflow scripts directory")
+    rwp_run_parser.add_argument("script_args", nargs=argparse.REMAINDER, help="Arguments forwarded to the script")
+    rwp_run_parser.set_defaults(handler=cmd_rwp)
 
     transition_parser = subparsers.add_parser(
         "transition",

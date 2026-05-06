@@ -94,9 +94,8 @@ OpenHarness uses a two-layer model:
   - `verification-writing-guidance.md`
   - `evidence-writing-guidance.md`
 - Runtime capability references live in:
-  - `runtime-capability-contract.md`
-  - `project-runtime-surface-map.md`
-  - `adding-project-runtime-helper.md`
+- `runtime-capability-contract.md`
+  - `runtime-workflow-packages.md`
 
 ## Current Cleanup Rule
 - Prefer `using-openharness` when referring to the concrete repository entry skill.

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shlex
 from pathlib import Path
 
@@ -20,10 +21,13 @@ from .repository import (
     _utc_timestamp,
     create_task_package,
     create_task_package_with_auto_id,
+    discover_runtime_workflow_packages,
     discover_task_packages,
     find_duplicate_task_ids,
     humanize_task_name,
     load_manifest,
+    resolve_runtime_workflow_package,
+    resolve_runtime_workflow_script,
     resolve_task_package,
     summarize_task_package,
 )
@@ -231,6 +235,75 @@ def cmd_project_memory(args: argparse.Namespace) -> int:
         ]
     )
     return lifecycle._run_command(repo_root, command)
+
+
+def _load_env_file(path: Path) -> dict[str, str]:
+    if not path.exists():
+        return {}
+    values: dict[str, str] = {}
+    for line_number, raw_line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if "=" not in line:
+            raise ValueError(f"invalid env line {line_number} in {path}: expected KEY=VALUE")
+        key, value = line.split("=", 1)
+        key = key.strip()
+        if not key:
+            raise ValueError(f"invalid env line {line_number} in {path}: empty key")
+        value = value.strip()
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
+            value = value[1:-1]
+        values[key] = value
+    return values
+
+
+def _load_rwp_env(repo_root: Path) -> dict[str, str]:
+    values: dict[str, str] = {}
+    for path in (repo_root / ".harness" / ".env", repo_root / ".harness" / "rwp" / ".env"):
+        values.update(_load_env_file(path))
+    return values
+
+
+def cmd_rwp(args: argparse.Namespace) -> int:
+    repo_root = Path(args.repo).resolve()
+    command = args.rwp_command
+    try:
+        if command == "list":
+            packages = discover_runtime_workflow_packages(repo_root)
+            if not packages:
+                print("No runtime workflow packages found.")
+                return 0
+            for package in packages:
+                rel_root = package.root.relative_to(repo_root)
+                print(f"- {package.name} - {package.description}")
+                print(f"  path: {rel_root}")
+            return 0
+        if command == "show":
+            package = resolve_runtime_workflow_package(repo_root, args.workflow)
+            print(package.workflow_path.read_text(encoding="utf-8"), end="")
+            return 0
+        if command == "run":
+            script_path = resolve_runtime_workflow_script(repo_root, args.workflow, args.script)
+            env_values = _load_rwp_env(repo_root)
+            old_values = {key: os.environ.get(key) for key in env_values}
+            try:
+                os.environ.update(env_values)
+                command_line = shlex.join(
+                    ["uv", "run", "python", str(script_path), *list(args.script_args)]
+                )
+                return lifecycle._run_command(repo_root, command_line)
+            finally:
+                for key, old_value in old_values.items():
+                    if old_value is None:
+                        os.environ.pop(key, None)
+                    else:
+                        os.environ[key] = old_value
+    except ValueError as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    print(f"ERROR: unknown rwp command `{command}`")
+    return 1
 
 
 def cmd_transition(args: argparse.Namespace) -> int:

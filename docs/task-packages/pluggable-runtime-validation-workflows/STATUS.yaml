@@ -1,6 +1,6 @@
 id: OH-040
 title: Pluggable Runtime Validation Workflows
-status: detailed_ready
+status: verifying
 summary: 设计 OpenHarness 的 Runtime Workflow Package 协议，让项目专属 runtime 验证工作流可被 agent
   渐进发现、纳入验证计划并写回 task package。
 owner: codex
@@ -18,6 +18,8 @@ entrypoints:
 - docs/task-packages/pluggable-runtime-validation-workflows/01-requirements.md
 - docs/task-packages/pluggable-runtime-validation-workflows/02-overview-design.md
 - docs/task-packages/pluggable-runtime-validation-workflows/03-detailed-design.md
+- docs/task-packages/pluggable-runtime-validation-workflows/04-verification.md
+- docs/task-packages/pluggable-runtime-validation-workflows/05-evidence.md
 done_criteria:
 - 明确 RWP 与旧 helper、普通 skill、普通脚本、临时命令的区别。
 - 明确 RWP 目录包、渐进式披露、统一运行外壳和 task package 写回协议。
@@ -25,16 +27,37 @@ done_criteria:
 - 明确 RWP 必须说明环境准备、runtime 观察、日志或证据来源、成功标准和失败证据。
 - 明确 lark-cli 工作流只是首个参考样例，而不是通用机制本身。
 verification:
-  required_commands: []
+  required_commands:
+  - uv run pytest
+  - uv run openharness check-tasks
   required_scenarios: []
-  last_run_at: ''
-  last_run_result: ''
-  last_run_artifact: ''
+  last_run_at: '2026-05-06T05:42:40Z'
+  last_run_result: passed
+  last_run_artifact: .harness/artifacts/OH-040/verification-runs/20260506T054240807815Z.json
 evidence:
   docs:
   - docs/task-packages/pluggable-runtime-validation-workflows/README.md
   - docs/task-packages/pluggable-runtime-validation-workflows/01-requirements.md
   - docs/task-packages/pluggable-runtime-validation-workflows/02-overview-design.md
   - docs/task-packages/pluggable-runtime-validation-workflows/03-detailed-design.md
-  code: []
-  tests: []
+  - docs/task-packages/pluggable-runtime-validation-workflows/04-verification.md
+  - docs/task-packages/pluggable-runtime-validation-workflows/05-evidence.md
+  code:
+  - README.md
+  - pyproject.toml
+  - openharness/__init__.py
+  - openharness/rwp.py
+  - openharness_cli/__init__.py
+  - openharness_cli/cli.py
+  - openharness_cli/commands.py
+  - openharness_cli/main.py
+  - openharness_cli/models.py
+  - openharness_cli/repository.py
+  - skills/using-openharness/SKILL.md
+  - skills/using-openharness/references/runtime-capability-contract.md
+  - skills/using-openharness/references/runtime-workflow-packages.md
+  - skills/using-openharness/references/skill-hub.md
+  - skills/using-openharness/references/templates/runtime-workflow-package.workflow.md
+  tests:
+  - tests/openharness_cases/test_protocol_docs.py
+  - tests/openharness_cases/test_rwp_workflows.py

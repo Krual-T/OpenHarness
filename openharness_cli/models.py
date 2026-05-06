@@ -129,3 +129,11 @@ class TaskScaffoldRequest:
     owner: str = "unassigned"
     summary: str = ""
     status: str = "proposed"
+
+
+@dataclass(slots=True, frozen=True)
+class RuntimeWorkflowPackage:
+    root: Path
+    workflow_path: Path
+    name: str
+    description: str

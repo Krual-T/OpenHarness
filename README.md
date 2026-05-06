@@ -113,15 +113,16 @@ OpenHarness assumes a practical truth of agentic software work:
 
 That means key decisions should move out of chat threads and into versioned artifacts. The repo becomes the working memory, not just the code container.
 
-### 5. A runtime capability contract instead of a fake universal debug skill
+### 5. Runtime Workflow Packages instead of a fake universal debug skill
 
 OpenHarness does not assume one generic runtime-debug skill can cover API, browser, worker, migration, and observability work equally well.
 
-Instead, it defines a runtime capability contract:
+Instead, it defines Runtime Workflow Package (RWP) support:
 - the core harness decides when runtime-aware routing applies
-- repositories should keep a runtime surface map and can expose multiple narrow runtime helper skills for different runtime surfaces
-- if a task needs a mapped runtime surface but no reusable helper yet, the agent should add one new narrow helper instead of stretching one generic debug skill
-- if a task needs a surface the repository has not declared yet, the agent should open a bootstrap task package before claiming runtime verification coverage
+- repositories can declare runtime workflow packages under `.harness/rwp/workflows`
+- agents use `openharness rwp list` and `openharness rwp show` for progressive disclosure instead of loading every workflow into context
+- runtime execution uses `openharness rwp run <workflow> <script.py> [args...]`
+- selected workflows, execution plans, observations, and evidence are written back into `03-detailed-design.md`, `04-verification.md`, and `05-evidence.md`
 
 ## The OpenHarness workflow
 
@@ -153,7 +154,7 @@ OpenHarness does not pretend every repository already has the same runtime harne
 For Python-first repositories, `uv run pytest` is the default minimum automated verification floor.
 That floor is intentionally weaker than full runtime or integration evidence.
 When a task depends on project-specific runtime behavior, project-specific runtime verification must be designed and recorded in the task package rather than guessed globally.
-When repositories mature beyond that minimum, the runtime capability contract is what tells the agent whether to reuse an existing helper, add one new narrow helper, or open a bootstrap task package first.
+When repositories mature beyond that minimum, Runtime Workflow Package support is what tells the agent how to discover, inspect, execute, and record project-specific runtime validation.
 
 ## Why this works
 

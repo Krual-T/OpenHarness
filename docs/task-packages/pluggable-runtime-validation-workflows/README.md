@@ -8,8 +8,8 @@
 - `lark-cli` 只作为第一个参考样例，用来验证这套机制是否能承接真实项目中的外部系统交互验证。
 
 ## Current Status
-- Status: `overview_ready`
-- 当前已经收敛出 RWP 总体方向：以目录包注册 runtime workflow，由 OpenHarness CLI 渐进披露并提供统一运行外壳，由现有 skills 和 task package 文档闭环负责主动纳入与证据写回。
+- Status: `verifying`
+- 当前已实现 RWP 最小协议表面：`openharness rwp list/show/run`、`.harness/rwp/workflows/` 发现、`.env` 加载、`openharness.rwp.get_logger()` runtime API，以及 RWP 相关 skill/guidance 文档迁移。最终验证 artifact 已写入 `04-verification.md` 与 `05-evidence.md`。
 
 ## Read This First
 - `STATUS.yaml`

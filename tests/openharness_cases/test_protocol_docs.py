@@ -135,7 +135,16 @@ def test_skill_openai_metadata_uses_official_tool_dependency_shape() -> None:
 def test_openharness_single_cli_supports_all_subcommands() -> None:
     parser = openharness.build_parser()
     choices = parser._subparsers._group_actions[0].choices  # type: ignore[attr-defined]
-    assert set(choices) == {"bootstrap", "check-tasks", "new-task", "project-memory", "transition", "verify", "update"}
+    assert set(choices) == {
+        "bootstrap",
+        "check-tasks",
+        "new-task",
+        "project-memory",
+        "rwp",
+        "transition",
+        "verify",
+        "update",
+    }
 
 
 def test_openharness_script_uses_task_package_naming_in_public_symbols() -> None:
@@ -167,6 +176,7 @@ def test_task_package_commands_use_current_handlers_only() -> None:
         == openharness.cmd_new_task
     )
     assert parser.parse_args(["project-memory", "query", "test"]).handler == openharness.cmd_project_memory
+    assert parser.parse_args(["rwp", "list"]).handler == openharness.cmd_rwp
     assert parser.parse_args(["transition", "name", "requirements_ready"]).handler == openharness.cmd_transition
     assert parser.parse_args(["update"]).handler == openharness.cmd_update
 
@@ -194,11 +204,11 @@ def test_openharness_skill_is_repo_entry_skill() -> None:
 def test_openharness_skill_routes_runtime_work_through_capability_contract() -> None:
     skill_path = REPO_ROOT / "skills" / "using-openharness" / "SKILL.md"
     text = skill_path.read_text(encoding="utf-8")
-    assert "runtime capability" in text
-    assert "runtime surface map" in text
-    assert "multiple runtime helper skills" in text
-    assert "add one new narrow helper" in text
-    assert "bootstrap package" in text
+    assert "Runtime Workflow Package" in text
+    assert "openharness rwp list" in text
+    assert "openharness rwp show" in text
+    assert "openharness rwp run" in text
+    assert "03-detailed-design.md" in text
 
 
 def test_project_memory_skill_uses_openharness_cli_entrypoint() -> None:
@@ -222,10 +232,8 @@ def test_skill_hub_describes_runtime_capability_layer() -> None:
     hub_path = REPO_ROOT / "skills" / "using-openharness" / "references" / "skill-hub.md"
     text = hub_path.read_text(encoding="utf-8")
     assert "runtime-capability-contract.md" in text
-    assert "project-runtime-surface-map.md" in text
-    assert "adding-project-runtime-helper.md" in text
+    assert "runtime-workflow-packages.md" in text
     assert "runtime capability contract" not in text
-    assert "runtime surface map" not in text
     assert "add one new narrow helper" not in text
 
 
@@ -293,16 +301,11 @@ def test_readme_describes_plug_and_play_harness_and_python_pytest_floor() -> Non
 def test_runtime_reference_docs_use_existing_sibling_paths() -> None:
     expected_paths = {
         REPO_ROOT / "skills" / "using-openharness" / "references" / "runtime-capability-contract.md": [
-            "project-runtime-surface-map.md",
-            "adding-project-runtime-helper.md",
-        ],
-        REPO_ROOT / "skills" / "using-openharness" / "references" / "project-runtime-surface-map.md": [
-            "adding-project-runtime-helper.md",
+            "runtime-workflow-packages.md",
         ],
         REPO_ROOT / "skills" / "using-openharness" / "references" / "skill-hub.md": [
             "runtime-capability-contract.md",
-            "project-runtime-surface-map.md",
-            "adding-project-runtime-helper.md",
+            "runtime-workflow-packages.md",
         ],
     }
 
@@ -333,10 +336,10 @@ def test_systematic_debugging_docs_do_not_advertise_retired_path() -> None:
 
 def test_readme_describes_runtime_capability_contract() -> None:
     readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
-    assert "runtime capability contract" in readme
-    assert "runtime surface map" in readme
-    assert "add one new narrow helper" in readme
-    assert "bootstrap task package" in readme
+    assert "Runtime Workflow Package" in readme
+    assert "openharness rwp list" in readme
+    assert ".harness/rwp/workflows" in readme
+    assert "03-detailed-design.md" in readme
 
 
 def test_agents_md_routes_repo_skill_usage_through_openharness() -> None:
@@ -558,52 +561,49 @@ def test_runtime_capability_reference_defines_declaration_shape_and_writeback() 
 
     assert "## Capability Layers" in text
     assert "core protocol" in text
-    assert "project runtime surface map" in text
-    assert "runtime helper skills" in text
+    assert "Runtime Workflow Package" in text
     assert "## Declaration Shape" in text
-    assert "runtime surface" in text
+    assert ".harness/rwp/workflows" in text
     assert "prerequisites" in text
-    assert "driving method" in text
-    assert "observation points" in text
+    assert "scripts/" in text
+    assert "runtime observation" in text
     assert "success criteria" in text
     assert "failure evidence" in text
     assert "03-detailed-design.md" in text
     assert "04-verification.md" in text
     assert "05-evidence.md" in text
     assert "## Routing Contract" in text
-    assert "reuse an existing runtime helper" in text
-    assert "add one new runtime helper" in text
-    assert "bootstrap package" in text
-    assert "adding-project-runtime-helper.md" in text
-    assert "project-runtime-surface-map.md" in text
+    assert "openharness rwp list" in text
+    assert "openharness rwp show" in text
+    assert "openharness rwp run" in text
+    assert "runtime-workflow-packages.md" in text
 
 
-def test_project_runtime_surface_map_reference_defines_minimum_contents_and_bootstrap_flow() -> None:
+def test_runtime_workflow_package_reference_defines_minimum_contents_and_selection_flow() -> None:
     text = (
         REPO_ROOT
         / "skills"
         / "using-openharness"
         / "references"
-        / "project-runtime-surface-map.md"
+        / "runtime-workflow-packages.md"
     ).read_text(encoding="utf-8")
 
-    assert "# Project Runtime Surface Map" in text
-    assert "## Minimum Contents" in text
-    assert "runtime surface" in text
-    assert "purpose" in text
+    assert "# Runtime Workflow Packages" in text
+    assert "## Package Shape" in text
+    assert ".harness/rwp/workflows" in text
+    assert "workflow.md" in text
+    assert "name" in text
+    assert "description" in text
     assert "prerequisites" in text
-    assert "driver method" in text
-    assert "observation points" in text
+    assert "scripts/" in text
+    assert "runtime observation" in text
     assert "success criteria" in text
     assert "failure evidence" in text
-    assert "helper skill or bootstrap package" in text
-    assert "## Helper Boundary Rules" in text
-    assert "one dominant runtime surface" in text
-    assert "## Bootstrap Path" in text
-    assert "reuse the linked helper" in text
-    assert "add one narrow helper" in text
-    assert "open a bootstrap package first" in text
-    assert "adding-project-runtime-helper.md" in text
+    assert "## Selection Flow" in text
+    assert "subagent" in text
+    assert "openharness rwp list" in text
+    assert "openharness rwp show" in text
+    assert "openharness rwp run" in text
     assert "03-detailed-design.md" in text
     assert "04-verification.md" in text
     assert "05-evidence.md" in text
@@ -712,52 +712,43 @@ def test_author_entry_reference_exists_and_routes_to_all_writing_guidance() -> N
     assert "verification-before-completion" in text
 
 
-def test_project_runtime_surface_map_template_provides_adoption_shape() -> None:
+def test_runtime_workflow_package_template_provides_adoption_shape() -> None:
     text = (
         REPO_ROOT
         / "skills"
         / "using-openharness"
         / "references"
         / "templates"
-        / "project-runtime-surface-map.md"
+        / "runtime-workflow-package.workflow.md"
     ).read_text(encoding="utf-8")
 
-    assert "# Project Runtime Surface Map" in text
-    assert "## How To Use This Map" in text
-    assert "| Surface | Purpose | Prerequisites | Driver | Evidence | Helper Or Bootstrap |" in text
-    assert "helper skill" in text
-    assert "bootstrap package" in text
-    assert "add one narrow helper" in text
+    assert "name: <RWP_NAME>" in text
+    assert "description: <DESCRIPTION>" in text
+    assert "# Runtime Workflow Package" in text
+    assert "## Scripts" in text
+    assert "## Runtime Observation" in text
+    assert "## Success Criteria" in text
+    assert "## Failure Evidence" in text
     assert "03-detailed-design.md" in text
     assert "04-verification.md" in text
     assert "05-evidence.md" in text
 
 
-def test_project_runtime_helper_reference_defines_reuse_add_bootstrap_and_repo_updates() -> None:
+def test_runtime_workflow_package_reference_defines_env_and_logger_boundaries() -> None:
     text = (
         REPO_ROOT
         / "skills"
         / "using-openharness"
         / "references"
-        / "adding-project-runtime-helper.md"
+        / "runtime-workflow-packages.md"
     ).read_text(encoding="utf-8")
 
-    assert "# Adding Project Runtime Helper" in text
-    assert "## Decision Rule" in text
-    assert "reuse existing helper" in text
-    assert "add new helper" in text
-    assert "bootstrap first" in text
-    assert "## Minimum Helper Contract" in text
-    assert "owning runtime surface" in text
-    assert "driver commands or scripts" in text
-    assert "failure evidence expectations" in text
-    assert "## Repository Surfaces To Update" in text
-    assert "runtime surface map" in text
-    assert "helper skill path" in text
-    assert "skill-hub" in text
-    assert "03-detailed-design.md" in text
-    assert "04-verification.md" in text
-    assert "05-evidence.md" in text
+    assert ".harness/.env" in text
+    assert ".harness/rwp/.env" in text
+    assert "from openharness.rwp import get_logger" in text
+    assert "libs/" in text
+    assert "logs/" in text
+    assert "OpenHarness does not define workflow-specific script names" in text
 
 
 def test_task_package_templates_default_to_chinese_narrative_with_english_anchors() -> None:

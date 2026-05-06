@@ -5,7 +5,7 @@ from .constants import (
     REQUIRED_TASK_PACKAGE_FILES,
     VERIFYABLE_STATUSES,
 )
-from .models import HarnessManifest, TaskPackage, TaskScaffoldRequest
+from .models import HarnessManifest, RuntimeWorkflowPackage, TaskPackage, TaskScaffoldRequest
 from .repository import (
     _current_date,
     _load_yaml,
@@ -30,6 +30,7 @@ from .commands import (
     cmd_check_tasks as _cmd_check_tasks,
     cmd_new_task as _cmd_new_task,
     cmd_project_memory as _cmd_project_memory,
+    cmd_rwp as _cmd_rwp,
     cmd_transition as _cmd_transition,
     cmd_update as _cmd_update,
     cmd_verify as _cmd_verify,
@@ -56,6 +57,11 @@ def cmd_project_memory(args):
     return _cmd_project_memory(args)
 
 
+def cmd_rwp(args):
+    lifecycle._run_command = globals()["_run_command"]
+    return _cmd_rwp(args)
+
+
 def cmd_transition(args):
     return _cmd_transition(args)
 
@@ -76,6 +82,7 @@ def build_parser():
         cmd_check_tasks=cmd_check_tasks,
         cmd_new_task=cmd_new_task,
         cmd_project_memory=cmd_project_memory,
+        cmd_rwp=cmd_rwp,
         cmd_transition=cmd_transition,
         cmd_verify=cmd_verify,
         cmd_update=cmd_update,

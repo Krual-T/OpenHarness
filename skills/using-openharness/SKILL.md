@@ -38,8 +38,7 @@ Use this skill to work inside repositories that organize tasks as end-to-end `ta
 - `references/author-entry.md`
 - `references/skill-hub.md`
 - `references/runtime-capability-contract.md`
-- `references/project-runtime-surface-map.md`
-- `references/adding-project-runtime-helper.md`
+- `references/runtime-workflow-packages.md`
 
 OpenHarness repository self-tests live under the top-level `tests/` tree, not under the skill directory.
 
@@ -58,7 +57,7 @@ It decides:
 - when to stay in task-package docs
 - when to invoke `brainstorming`
 - when to invoke `exploring-solution-space`
-- when runtime work should reuse an existing helper, add one new narrow helper, or open a bootstrap package
+- when runtime work should use a Runtime Workflow Package (RWP), record a missing RWP gap, or keep the task code-only
 - when to run harness verification
 
 All repo-facing workflow skills should be treated as subordinate to `openharness`, not as parallel systems.
@@ -119,16 +118,16 @@ If no package exists and brainstorming has just converged enough to hand off int
 
 ## Runtime Capability Routing
 
-When a task depends on real runtime behavior rather than code-only changes, `using-openharness` should route through the runtime capability contract instead of improvising a universal debug flow.
+When a task depends on real runtime behavior rather than code-only changes, `using-openharness` should route through the Runtime Workflow Package (RWP) protocol instead of improvising a universal debug flow.
 
 Use this runtime routing loop:
 
 1. Check whether the task is code-only or requires runtime-aware verification.
-2. Look for the repository's runtime capability contract, project runtime surface map, linked helper guidance, and helper-addition guidance.
-3. If a matching runtime surface exists and a linked helper already fits the task, reuse the linked project runtime helper and write the planned plus executed evidence back into the active task package.
-4. If the surface exists but helper coverage is missing, add one new narrow helper, link it from the runtime surface map, and record the helper contract plus writeback plan in the active task package.
-5. If no matching capability exists or the surface is still underspecified, open or update a bootstrap package for that runtime surface before claiming runtime verification coverage.
-6. Keep project runtime helpers optional and narrow. One repository may host multiple runtime helper skills, but they must not become parallel entry skills.
+2. If runtime-aware verification may apply, prefer assigning a subagent to run `openharness rwp list` and select candidate RWPs from the summary descriptions.
+3. Have the subagent use `openharness rwp show <workflow>` only for strong candidates, then report the recommended RWP, rejected near matches, and writeback points.
+4. Record the selected RWP or the missing-RWP gap in `03-detailed-design.md`; do not leave the decision only in chat.
+5. During verification, run the chosen workflow script with `openharness rwp run <workflow> <script.py> [args...]` when prerequisites allow it.
+6. Write executed commands, stdout/stderr summaries, runtime observations, blockers, artifact paths, and residual risks back into `04-verification.md` and `05-evidence.md`.
 
 ## Skill Routing
 
@@ -197,7 +196,7 @@ For non-package work that still touches repository workflow, start from `openhar
 
 - `openharness` defines the repository protocol and skill order.
 - `openharness` is the only repository entry skill; do not maintain a second entry root.
-- runtime capability routing belongs in `openharness`, but project-specific runtime helpers remain optional project-level extensions.
+- runtime capability routing belongs in `openharness`, while project-specific Runtime Workflow Packages remain project-level extensions under `.harness/rwp/workflows/`.
 - `brainstorming` must not invent a parallel spec system or a second task root.
 - `exploring-solution-space` must not become a parallel task system; it exists to produce `02` first and only then inform `03` where justified.
 - `03-detailed-design.md` owns testing-first implementation detail inside the fixed package protocol.

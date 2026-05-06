@@ -11,12 +11,13 @@ from .main import (
     cmd_check_tasks,
     cmd_new_task,
     cmd_project_memory,
+    cmd_rwp,
     cmd_transition,
     cmd_update,
     cmd_verify,
     main,
 )
-from .models import HarnessManifest, TaskPackage, TaskScaffoldRequest
+from .models import HarnessManifest, RuntimeWorkflowPackage, TaskPackage, TaskScaffoldRequest
 from .repository import (
     _current_date,
     _load_yaml,
@@ -44,10 +45,12 @@ __all__ = [
     "cmd_check_tasks",
     "cmd_new_task",
     "cmd_project_memory",
+    "cmd_rwp",
     "cmd_transition",
     "cmd_update",
     "cmd_verify",
     "HarnessManifest",
+    "RuntimeWorkflowPackage",
     "TaskPackage",
     "TaskScaffoldRequest",
     "_current_date",
