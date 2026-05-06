@@ -93,6 +93,7 @@ def test_rwp_run_executes_explicit_python_script_and_loads_env_files(
         seen_env["OPENHARNESS_BASE"] = os.environ.get("OPENHARNESS_BASE")
         seen_env["OPENHARNESS_OVERRIDE"] = os.environ.get("OPENHARNESS_OVERRIDE")
         seen_env["OPENHARNESS_RWP_ONLY"] = os.environ.get("OPENHARNESS_RWP_ONLY")
+        seen_env["PYTHONPATH"] = os.environ.get("PYTHONPATH")
         return 0
 
     monkeypatch.setattr(openharness, "_run_command", fake_run)
@@ -111,11 +112,43 @@ def test_rwp_run_executes_explicit_python_script_and_loads_env_files(
     assert calls == [
         f"uv run python {script_path} --target sandbox",
     ]
-    assert seen_env == {
-        "OPENHARNESS_BASE": "base",
-        "OPENHARNESS_OVERRIDE": "rwp",
-        "OPENHARNESS_RWP_ONLY": "enabled",
-    }
+    assert seen_env["OPENHARNESS_BASE"] == "base"
+    assert seen_env["OPENHARNESS_OVERRIDE"] == "rwp"
+    assert seen_env["OPENHARNESS_RWP_ONLY"] == "enabled"
+    assert seen_env["PYTHONPATH"] is not None
+    assert str(Path(openharness.__file__).resolve().parents[1]) in seen_env["PYTHONPATH"].split(os.pathsep)
+
+
+def test_rwp_run_exposes_openharness_runtime_api_to_project_python(
+    tmp_path: Path
+) -> None:
+    repo_root = tmp_path / "repo"
+    workflow_root = _write_workflow(
+        repo_root,
+        "runtime-api",
+        name="runtime-api",
+        description="Validate OpenHarness runtime API import.",
+    )
+    script_path = workflow_root / "scripts" / "runtime_api.py"
+    script_path.write_text(
+        "from pathlib import Path\n"
+        "from openharness.rwp import get_logger\n"
+        "Path('runtime-api-result.txt').write_text(get_logger().name, encoding='utf-8')\n",
+        encoding="utf-8",
+    )
+
+    result = openharness.cmd_rwp(
+        argparse.Namespace(
+            repo=str(repo_root),
+            rwp_command="run",
+            workflow="runtime-api",
+            script="runtime_api.py",
+            script_args=[],
+        )
+    )
+
+    assert result == 0
+    assert (repo_root / "runtime-api-result.txt").read_text(encoding="utf-8") == "openharness.rwp"
 
 
 def test_rwp_run_rejects_missing_script_name(tmp_path: Path, capsys) -> None:

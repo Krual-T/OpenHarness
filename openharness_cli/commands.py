@@ -271,6 +271,12 @@ def _load_rwp_env(repo_root: Path) -> dict[str, str]:
     values: dict[str, str] = {}
     for path in (repo_root / ".harness" / ".env", repo_root / ".harness" / "rwp" / ".env"):
         values.update(_load_env_file(path))
+    runtime_api_root = Path(__file__).resolve().parents[1]
+    existing_pythonpath = values.get("PYTHONPATH") or os.environ.get("PYTHONPATH") or ""
+    pythonpath_entries = [str(runtime_api_root)]
+    if existing_pythonpath:
+        pythonpath_entries.append(existing_pythonpath)
+    values["PYTHONPATH"] = os.pathsep.join(pythonpath_entries)
     return values
 
 
