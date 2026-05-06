@@ -1,6 +1,6 @@
 id: OH-042
 title: Design Decision Review Mode
-status: overview_ready
+status: detailed_ready
 summary: Productize decision-by-decision design confirmation as the default design-stage
   collaboration mode for non-mechanical OpenHarness development tasks.
 owner: codex
@@ -13,6 +13,9 @@ scope:
   - design-stage
   - skills
   - task-package-guidance
+collaboration:
+  task_type: protocol/architecture
+  design_review_mode: stepwise
 entrypoints:
 - docs/task-packages/design-decision-review-mode/README.md
 - docs/task-packages/design-decision-review-mode/01-requirements.md
@@ -23,7 +26,7 @@ done_criteria:
 - 明确 mechanical、standard development、protocol/architecture 的分类与触发强度。
 - 明确 agent 应主动提出该模式，而不是依赖用户先要求。
 - 明确已确认设计点写回 `02-overview-design.md` 或 `03-detailed-design.md` 的规则。
-- 更新相关 skills、writing guidance 和协议测试。
+- 更新相关 skills、writing guidance，并通过协议审查验证行为规则。
 verification:
   required_commands: []
   required_scenarios: []
