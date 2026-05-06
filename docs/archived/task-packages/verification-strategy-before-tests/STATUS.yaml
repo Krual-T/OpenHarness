@@ -1,0 +1,52 @@
+id: OH-043
+title: Verification Strategy Before Tests
+status: archived
+summary: Clarify that OpenHarness should design verification strategy before deciding
+  whether to write automated tests, avoiding formalistic tests for documents, protocols,
+  and non-executable behavior.
+owner: codex
+created_at: '2026-05-06'
+updated_at: '2026-05-06'
+depends_on: []
+scope:
+  areas:
+  - verification-strategy
+  - testing-guidance
+  - skills
+  - task-package-guidance
+collaboration:
+  task_type: protocol/architecture
+  design_review_mode: stepwise
+entrypoints:
+- docs/archived/task-packages/verification-strategy-before-tests/README.md
+- docs/archived/task-packages/verification-strategy-before-tests/01-requirements.md
+- docs/archived/task-packages/verification-strategy-before-tests/02-overview-design.md
+- docs/archived/task-packages/verification-strategy-before-tests/03-detailed-design.md
+done_criteria:
+- 明确 OpenHarness 的默认工作流应先在 detailed design 中设计验证策略，再决定是否写自动测试。
+- 明确 TDD 只适用于可执行行为、代码逻辑、CLI 行为、解析器、校验器等适合自动测试的对象。
+- 明确文档语义、协作协议、skill 行为规则、人工 runtime 观察等场景可以采用协议审查、子智能体 dry run、runtime workflow 或人工场景验证。
+- 明确不再把“先写 pytest”作为所有任务的默认形式化要求。
+- 更新相关 skills 与 writing guidance，使 agent 能根据验证对象选择合适证据路径。
+verification:
+  required_commands:
+  - uv run pytest tests/openharness_cases/test_protocol_docs.py -q
+  - uv run openharness check-tasks
+  required_scenarios:
+  - protocol review sub-agent confirms TDD is not promoted before design
+  - dry run sub-agent chooses protocol review/dry run/manual review/check-tasks instead
+    of pytest-first for a non-executable protocol or skill behavior task
+  last_run_at: '2026-05-06T15:34:11Z'
+  last_run_result: passed
+  last_run_artifact: docs/archived/task-packages/verification-strategy-before-tests/05-evidence.md
+evidence:
+  docs:
+  - docs/archived/task-packages/verification-strategy-before-tests/04-verification.md
+  - docs/archived/task-packages/verification-strategy-before-tests/05-evidence.md
+  code:
+  - README.md
+  - skills/test-driven-development/SKILL.md
+  - skills/using-openharness/SKILL.md
+  - skills/using-openharness/references/detailed-design-writing-guidance.md
+  tests:
+  - tests/openharness_cases/test_protocol_docs.py
