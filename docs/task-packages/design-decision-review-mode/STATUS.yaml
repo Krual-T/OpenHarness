@@ -1,6 +1,6 @@
 id: OH-042
 title: Design Decision Review Mode
-status: requirements_ready
+status: overview_ready
 summary: Productize decision-by-decision design confirmation as the default design-stage
   collaboration mode for non-mechanical OpenHarness development tasks.
 owner: codex
