@@ -57,10 +57,41 @@
 - `04-verification.md` 只有 pytest 或 `check-tasks`，但没有证明协议、skill 行为、agent 工作流或 runtime 观察真的成立，说明证据路径与验证对象错配。
 
 ## Stage Gates
-用中文写清楚 overview 要进入下一阶段前必须具备哪些硬性产出，例如关键约束、边界决定、关键数据/状态模型、失败模式与降级或回滚方向。
+`02-overview-design.md` 进入 `03-detailed-design.md` 前，必须满足以下条件：
+
+- 外层阶段流保持为 `01 -> 02 -> 03 -> Implementation -> 04 -> 05`，不新增“验证对象分类”这类并列 task package 阶段。
+- TDD 被定义为适用于特定验证对象的实现内循环，不能提前到 detailed design 之前替代设计。
+- `03-detailed-design.md` 必须先写清实现设计，再写验证对象、证据路径和 expected evidence。
+- 证据路径必须匹配验证对象；不能用 pytest 字符串断言替代协议、skill 行为、agent 工作流或 runtime 观察的真实验证。
+- 非自动测试路径仍必须产生 fresh evidence，包括审查结论、dry run 记录、runtime workflow 输出、人工场景观察、结构检查结果或这些证据的组合。
+- Python-first 的 `uv run pytest` 可以继续作为代码类改动的自动化基线，但不能被解释成所有任务都必须新增 pytest。
+
+如果后续 detailed design 仍无法回答“实现设计是什么”和“这些设计结论分别由什么证据证明”，就不能进入 `in_progress`。
 
 ## Trade-offs
-用中文写清楚方案收益、代价、回退面与为什么不选其他方向；至少比较一个可行备选方案。
+推荐方案是“设计与证据驱动开发”：先按 task package 阶段完成需求、overview 和 detailed design，再按验证对象选择 TDD、自动测试、协议审查、子 Agent dry run、runtime workflow、人工场景验证或结构检查。
+
+收益：
+
+- 保留 TDD 对可执行行为的工程价值，同时避免把 TDD 误用到不适合自动测试的对象上。
+- 让 agent 在写测试前先理解实现设计，减少形式主义 pytest 和错误抽象。
+- 让非自动测试路径也有严肃证据，继续满足 `verification-before-completion` 的 fresh evidence 要求。
+
+代价：
+
+- detailed design 需要更明确地写出验证对象和 expected evidence，不能只列文件或命令。
+- 某些协议或 agent 行为类任务需要子 Agent 审查、dry run 或场景复盘，验证成本比简单字符串断言更高。
+- 自动化覆盖率数字不会覆盖全部工作，需要在 `04-verification.md` 和 `05-evidence.md` 里解释不同证据的 traceability。
+
+拒绝的备选方案一：所有任务默认 pytest-first。
+
+这个方案看似统一，但会把文档语义、协作协议、skill 行为和 agent 工作流降级成“文本片段存在性”测试，无法证明 agent 会按规则行动。它会制造假安全感，正是 OH-042 暴露的问题。
+
+拒绝的备选方案二：非代码任务默认人工判断即可。
+
+这个方案能避免无意义 pytest，但会削弱 OpenHarness 的证据纪律。没有 fresh evidence、traceability 和残余风险记录时，维护者无法复盘 agent 到底验证了什么，也和 `verification-before-completion` 冲突。
+
+接受的中间方案：自动测试是强证据路径之一，不是唯一入口。设计先行，证据路径按对象选择；当对象不适合 pytest 时，必须用更贴合对象的审查、dry run、runtime 或人工场景证据补足。
 
 ## Recommended Diagrams
 如果某些结构关系仅靠文字容易歧义，用中文说明推荐补哪些 `PlantUML` 图，例如系统上下文图、模块图或主流程图；图不能替代文字里的边界、约束和例外。
