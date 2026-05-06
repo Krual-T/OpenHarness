@@ -1,6 +1,6 @@
 ---
 name: test-driven-development
-description: Use when implementing any feature or bugfix, before writing implementation code
+description: Use after detailed design, when implementing executable behavior that should be proven by automated tests before production code is written
 ---
 
 # Test-Driven Development (TDD)
@@ -9,38 +9,48 @@ description: Use when implementing any feature or bugfix, before writing impleme
 
 - Protocol status: optional helper skill
 - Primary stage: implementation execution
-- Trigger: use for feature work, bugfixes, and behavior changes before writing implementation code
+- Trigger: use after requirements, overview design, and detailed design have made the executable behavior or observable code contract clear
 
 ## Overview
 
-Write the test first. Watch it fail. Write minimal code to pass.
+TDD is an implementation inner loop for executable behavior: write the test first, watch it fail, write minimal code to pass, then refactor.
 
 **Core principle:** If you didn't watch the test fail, you don't know if it tests the right thing.
 
 **Violating the letter of the rules is violating the spirit of the rules.**
 
+TDD does not replace requirements, overview design, or detailed design. It starts only after the task has a clear behavior contract and the verification object is suitable for automated tests.
+
 ## When to Use
 
-**Always:**
-- New features
-- Bug fixes
-- Refactoring
-- Behavior changes
+**Use TDD for:**
+- Executable code behavior
+- Bug fixes with reproducible symptoms
+- CLI behavior
+- Parsers, validators, state machines, and other deterministic logic
+- Refactoring where an observable code contract must remain stable
 
-**Exceptions (ask your human partner):**
+**Do not use TDD as the primary path for:**
+- Requirements, overview design, or detailed design work
+- Documentation semantics
+- Collaboration protocols
+- Skill behavior rules that must be judged by agent behavior rather than code output
+- Agent workflow changes where protocol review, dry runs, runtime workflows, or manual scenario evidence are stronger than a text assertion
+
+**Exceptions for executable behavior (ask your human partner):**
 - Throwaway prototypes
 - Generated code
 - Configuration files
 
-Thinking "skip TDD just this once"? Stop. That's rationalization.
+Thinking "skip TDD just this once" for executable behavior? Stop and justify the evidence path in the task package.
 
 ## The Iron Law
 
 ```
-NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST
+NO PRODUCTION CODE FOR TESTABLE EXECUTABLE BEHAVIOR WITHOUT A FAILING TEST FIRST
 ```
 
-Write code before the test? Delete it. Start over.
+Write executable production code before the test? Delete it. Start over.
 
 **No exceptions:**
 - Don't keep it as "reference"
@@ -49,6 +59,8 @@ Write code before the test? Delete it. Start over.
 - Delete means delete
 
 Implement fresh from tests. Period.
+
+For non-executable protocol, documentation, skill, or agent-workflow changes, do not invent a pytest just to satisfy this skill. Follow the task package's detailed design and use the evidence path that actually proves the verification object.
 
 ## Red-Green-Refactor
 
@@ -269,7 +281,7 @@ Tests-first force edge case discovery before implementing. Tests-after verify yo
 | "Already manually tested" | Ad-hoc ≠ systematic. No record, can't re-run. |
 | "Deleting X hours is wasteful" | Sunk cost fallacy. Keeping unverified code is technical debt. |
 | "Keep as reference, write tests first" | You'll adapt it. That's testing after. Delete means delete. |
-| "Need to explore first" | Fine. Throw away exploration, start with TDD. |
+| "Need to design first" | Correct. Complete requirements, overview design, and detailed design first; then use TDD if the object is executable behavior. |
 | "Test hard = design unclear" | Listen to test. Hard to test = hard to use. |
 | "TDD will slow me down" | TDD faster than debugging. Pragmatic = test-first. |
 | "Manual test faster" | Manual doesn't prove edge cases. You'll re-test every change. |
@@ -277,7 +289,7 @@ Tests-first force edge case discovery before implementing. Tests-after verify yo
 
 ## Red Flags - STOP and Start Over
 
-- Code before test
+- Executable production code before test
 - Test after implementation
 - Test passes immediately
 - Can't explain why test failed
@@ -291,7 +303,7 @@ Tests-first force edge case discovery before implementing. Tests-after verify yo
 - "TDD is dogmatic, I'm being pragmatic"
 - "This is different because..."
 
-**All of these mean: Delete code. Start over with TDD.**
+**For executable behavior, all of these mean: Delete code. Start over with TDD.**
 
 ## Example: Bug Fix
 
@@ -356,9 +368,9 @@ Can't check all boxes? You skipped TDD. Start over.
 
 ## Debugging Integration
 
-Bug found? Write failing test reproducing it. Follow TDD cycle. Test proves fix and prevents regression.
+Bug found in executable behavior? Write failing test reproducing it. Follow TDD cycle. Test proves fix and prevents regression.
 
-Never fix bugs without a test.
+Never fix executable behavior bugs without a test unless the task package records a stronger evidence path and the reason automated testing is not suitable.
 
 ## Testing Anti-Patterns
 
@@ -370,8 +382,8 @@ When adding mocks or test utilities, read @testing-anti-patterns.md to avoid com
 ## Final Rule
 
 ```
-Production code → test exists and failed first
-Otherwise → not TDD
+Production code for executable behavior -> test exists and failed first
+Otherwise -> not TDD
 ```
 
-No exceptions without your human partner's permission.
+No exceptions for executable behavior without your human partner's permission and task package evidence.

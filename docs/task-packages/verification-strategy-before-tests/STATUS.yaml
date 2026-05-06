@@ -1,6 +1,6 @@
 id: OH-043
 title: Verification Strategy Before Tests
-status: detailed_ready
+status: in_progress
 summary: Clarify that OpenHarness should design verification strategy before deciding
   whether to write automated tests, avoiding formalistic tests for documents, protocols,
   and non-executable behavior.

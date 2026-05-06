@@ -6,7 +6,7 @@ It is built around a simple belief: the bottleneck is no longer typing code. The
 
 OpenHarness packages the workflow patterns, skills, and repository structure we found most useful when adapting agent-driven development inside [`openrelay`](https://github.com/Krual-T/OpenRelay). It directly reuses and adapts code and skill content from [`obra/superpowers`](https://github.com/obra/superpowers), and it is also conceptually aligned with OpenAI's article on [harness engineering](https://openai.com/index/harness-engineering/).
 
-OpenHarness is intentionally Python-first. For Python-first repositories, `uv run pytest` is the default minimum automated verification floor, while stronger project-specific runtime verification still needs to be defined in task packages.
+OpenHarness is intentionally Python-first. For Python-first repositories, `uv run pytest` is the default automated verification floor for code behavior when no stronger project-specific test command is documented. It is not the only valid evidence path for documentation semantics, collaboration protocols, skill behavior, agent workflows, or runtime behavior; those need object-appropriate evidence defined in task packages.
 
 If you want Codex to stop improvising and start operating inside a legible, verifiable system, this repo is for you.
 
@@ -92,7 +92,7 @@ That gives both humans and agents a shared source of truth that can be reviewed,
 OpenHarness includes a copied and adapted skills library under `skills/`, including workflows for:
 - brainstorming before implementation
 - systematic debugging
-- TDD-oriented execution
+- TDD-oriented execution for testable code behavior
 - verification before claiming success
 - code review loops
 - project memory capture
@@ -134,7 +134,7 @@ A typical task looks like this:
 4. If no task package exists yet, the agent scaffolds one after brainstorming has converged and before exploration starts.
 5. `exploring-solution-space` explores the local repo and the web before architecture is locked in.
 6. At each stage handoff, the agent should make the current stage and next planned step explicit instead of silently pushing forward.
-7. The agent drafts overview design and detailed testing-first design before implementation.
+7. The agent drafts overview design and detailed design before implementation, including the testing or verification path appropriate to the object being changed.
 8. Readiness is decided in the task package through clear stage checks, not by stretching the entry surface into a long process manual.
 9. The agent implements against the package contract.
 10. Runtime verification, verification, and evidence are written back into the package.
@@ -151,9 +151,9 @@ The live workflow is now also explicitly stage-organized and role-injected:
 
 OpenHarness does not pretend every repository already has the same runtime harness.
 
-For Python-first repositories, `uv run pytest` is the default minimum automated verification floor.
-That floor is intentionally weaker than full runtime or integration evidence.
-When a task depends on project-specific runtime behavior, project-specific runtime verification must be designed and recorded in the task package rather than guessed globally.
+For Python-first repositories, `uv run pytest` is the default automated verification floor for testable code behavior when no stronger project-specific test command is documented.
+That floor is intentionally weaker than full runtime or integration evidence, and it is not proof of documentation semantics, collaboration protocols, skill behavior, or agent workflow behavior.
+When a task depends on project-specific runtime behavior, protocol semantics, or agent behavior, object-appropriate verification must be designed and recorded in the task package rather than guessed globally.
 When repositories mature beyond that minimum, Runtime Workflow Package support is what tells the agent how to discover, inspect, execute, and record project-specific runtime validation.
 
 ## Why this works

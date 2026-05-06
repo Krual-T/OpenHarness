@@ -297,8 +297,9 @@ def test_readme_describes_plug_and_play_harness_and_python_pytest_floor() -> Non
     readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
     assert "plug-and-play" in readme
     assert "Python-first" in readme
-    assert "`uv run pytest` is the default minimum automated verification floor" in readme
-    assert "project-specific runtime verification" in readme
+    assert "`uv run pytest` is the default automated verification floor for testable code behavior" in readme
+    assert "not the only valid evidence path" in readme
+    assert "object-appropriate verification" in readme
 
 
 def test_runtime_reference_docs_use_existing_sibling_paths() -> None:

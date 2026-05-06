@@ -214,7 +214,7 @@ For non-package work that still touches repository workflow, start from `openhar
 - Keep `STATUS.yaml` machine-readable; it is the harness state source.
 - Put problem framing in `01-requirements.md`.
 - Put boundary and architecture choices in `02-overview-design.md`.
-- Put testing-first implementation details, runtime verification path, fallback path, and implementation order in `03-detailed-design.md`.
+- Put implementation details, object-appropriate testing or verification order, runtime verification path, fallback path, and implementation order in `03-detailed-design.md`.
 - Record the overview reflection pass in `02-overview-design.md`.
 - Record the detailed-design reflection pass in `03-detailed-design.md`.
 - Put planned versus executed verification path and results in `04-verification.md`.
@@ -237,7 +237,7 @@ For non-package work that still touches repository workflow, start from `openhar
 - runtime capability routing belongs in `openharness`, while project-specific Runtime Workflow Packages remain project-level extensions under `.harness/rwp/workflows/`.
 - `brainstorming` must not invent a parallel spec system or a second task root.
 - `exploring-solution-space` must not become a parallel task system; it exists to produce `02` first and only then inform `03` where justified.
-- `03-detailed-design.md` owns testing-first implementation detail inside the fixed package protocol.
+- `03-detailed-design.md` owns implementation design plus object-appropriate testing or verification order inside the fixed package protocol; this does not mean writing tests before detailed design.
 - Design is not ready after a first draft alone; `02` and `03` each require a reflection pass before they are treated as ready.
 - Stage-specific rules belong in the matching stage skill, not here.
 
