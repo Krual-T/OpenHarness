@@ -70,6 +70,7 @@ def _current_date() -> str:
 
 def discover_task_packages(repo_root: Path, manifest: HarnessManifest | None = None) -> list[TaskPackage]:
     current_manifest = manifest or load_manifest(repo_root)
+    _auto_archive_active_packages(current_manifest)
     packages: list[TaskPackage] = []
     roots = [current_manifest.task_packages_root]
     if current_manifest.archived_task_packages_root != current_manifest.task_packages_root:
@@ -90,6 +91,32 @@ def discover_task_packages(repo_root: Path, manifest: HarnessManifest | None = N
             documents = {name: child / name for name in current_manifest.required_design_files}
             packages.append(TaskPackage(root=child, status=status, manifest=current_manifest, documents=documents))
     return packages
+
+
+def _auto_archive_active_packages(manifest: HarnessManifest) -> None:
+    if manifest.task_packages_root == manifest.archived_task_packages_root:
+        return
+    if not manifest.task_packages_root.exists():
+        return
+
+    for child in sorted(path for path in manifest.task_packages_root.iterdir() if path.is_dir()):
+        status_path = child / "STATUS.yaml"
+        if not status_path.exists():
+            continue
+        status = _load_yaml(status_path)
+        if str(status.get("status") or "").strip() != "archived":
+            continue
+        package = TaskPackage(
+            root=child,
+            status=status,
+            manifest=manifest,
+            documents={name: child / name for name in manifest.required_design_files},
+        )
+        from .lifecycle import _archive_task_package
+
+        archived_ok, detail = _archive_task_package(package)
+        if not archived_ok:
+            raise ValueError(f"failed to auto-archive task package `{package.task_id}`: {detail}")
 
 
 def find_duplicate_task_ids(packages: list[TaskPackage]) -> dict[str, list[TaskPackage]]:

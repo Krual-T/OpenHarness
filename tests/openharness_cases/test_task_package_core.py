@@ -442,7 +442,7 @@ def test_validate_task_package_rejects_unknown_status_and_missing_paths(tmp_path
     assert any("missing referenced path" in error for error in errors)
 
 
-def test_validate_task_package_rejects_archived_status_in_active_root(tmp_path: Path) -> None:
+def test_validate_task_package_directly_rejects_archived_status_in_active_root(tmp_path: Path) -> None:
     repo_root = tmp_path / "repo"
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
     (repo_root / "docs" / "task-packages" / "wrong-place").mkdir(parents=True)
@@ -482,7 +482,12 @@ def test_validate_task_package_rejects_archived_status_in_active_root(tmp_path: 
         encoding="utf-8",
     )
     manifest = load_manifest(repo_root)
-    package = discover_task_packages(repo_root, manifest)[0]
+    package = openharness.TaskPackage(
+        root=root,
+        status=openharness._load_yaml(root / "STATUS.yaml"),
+        manifest=manifest,
+        documents={name: root / name for name in manifest.required_design_files},
+    )
     errors = validate_task_package(package)
     assert any("archived package must live under" in error for error in errors)
 

@@ -146,6 +146,129 @@ def test_transition_rejects_skipped_forward_moves(tmp_path: Path, capsys) -> Non
     assert "status: proposed" in (root / "STATUS.yaml").read_text(encoding="utf-8")
 
 
+def test_check_tasks_auto_moves_archived_status_from_active_root(tmp_path: Path, capsys) -> None:
+    repo_root = tmp_path / "repo"
+    (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
+    (repo_root / "docs" / "task-packages" / "auto-archive").mkdir(parents=True)
+    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
+        "version: 1\n"
+        "task_packages_root: docs/task-packages\n"
+        "archived_task_packages_root: docs/archived/task-packages\n"
+        "required_design_files:\n"
+        "  - README.md\n"
+        "  - STATUS.yaml\n"
+        "  - 01-requirements.md\n"
+        "  - 02-overview-design.md\n"
+        "  - 03-detailed-design.md\n"
+        "  - 04-verification.md\n"
+        "  - 05-evidence.md\n"
+        "workflow:\n"
+        "  default_status_flow:\n"
+        "    - proposed\n"
+        "    - requirements_ready\n"
+        "    - overview_ready\n"
+        "    - detailed_ready\n"
+        "    - in_progress\n"
+        "    - verifying\n"
+        "    - archived\n",
+        encoding="utf-8",
+    )
+    root = repo_root / "docs" / "task-packages" / "auto-archive"
+    (root / "README.md").write_text("# Auto Archive\n", encoding="utf-8")
+    (root / "01-requirements.md").write_text(
+        "# Requirements\n\n"
+        "## Goal\nA\n\n"
+        "## Problem Statement\nB\n\n"
+        "## Required Outcomes\n1. C\n\n"
+        "## Non-Goals\n- D\n\n"
+        "## Constraints\n- E\n",
+        encoding="utf-8",
+    )
+    (root / "02-overview-design.md").write_text(
+        "# Overview Design\n\n"
+        "## System Boundary\nA\n\n"
+        "## Proposed Structure\nB\n\n"
+        "## Key Flows\nC\n\n"
+        "## Trade-offs\nD\n\n"
+        "## Overview Reflection\nE\n",
+        encoding="utf-8",
+    )
+    (root / "03-detailed-design.md").write_text(
+        "# Detailed Design\n\n"
+        "## Runtime Verification Plan\n"
+        "- Verification Path:\n  - x\n"
+        "- Fallback Path:\n  - y\n"
+        "- Planned Evidence:\n  - z\n\n"
+        "## Files Added Or Changed\n- a\n\n"
+        "## Interfaces\nb\n\n"
+        "## Error Handling\nc\n\n"
+        "## Migration Notes\nd\n\n"
+        "## Detailed Reflection\ne\n",
+        encoding="utf-8",
+    )
+    (root / "04-verification.md").write_text(
+        "# Verification\n\n"
+        "## Verification Path\n"
+        "- Planned Path: docs/task-packages/auto-archive/03-detailed-design.md\n"
+        "- Executed Path: docs/task-packages/auto-archive/04-verification.md\n"
+        "- Path Notes: ok\n\n"
+        "## Required Commands\n- echo ok\n\n"
+        "## Expected Outcomes\n- ok\n\n"
+        "## Latest Result\n- pass\n",
+        encoding="utf-8",
+    )
+    (root / "05-evidence.md").write_text(
+        "# Evidence\n\n"
+        "## Residual Risks\n- none\n\n"
+        "## Manual Steps\n- none\n\n"
+        "## Files\n- docs/task-packages/auto-archive/README.md\n\n"
+        "## Commands\n- echo ok\n\n"
+        "## Follow-ups\n- none\n",
+        encoding="utf-8",
+    )
+    (root / "STATUS.yaml").write_text(
+        "id: OH-953\n"
+        "title: Auto Archive\n"
+        "status: archived\n"
+        "summary: automatic archived status move coverage\n"
+        "owner: codex\n"
+        "created_at: 2026-03-22\n"
+        "updated_at: 2026-03-22\n"
+        "entrypoints:\n"
+        "  - docs/task-packages/auto-archive/README.md\n"
+        "done_criteria:\n"
+        "  - x\n"
+        "verification:\n"
+        "  required_commands:\n"
+        "    - echo ok\n"
+        "  required_scenarios: []\n"
+        "evidence:\n"
+        "  docs:\n"
+        "    - docs/task-packages/auto-archive/04-verification.md\n"
+        "    - docs/task-packages/auto-archive/05-evidence.md\n"
+        "  code: []\n"
+        "  tests: []\n",
+        encoding="utf-8",
+    )
+
+    result = openharness.cmd_check_tasks(argparse.Namespace(repo=str(repo_root)))
+
+    captured = capsys.readouterr()
+    archived_root = repo_root / "docs" / "archived" / "task-packages" / "auto-archive"
+    archived_status = (archived_root / "STATUS.yaml").read_text(encoding="utf-8")
+    archived_verification = (archived_root / "04-verification.md").read_text(encoding="utf-8")
+    archived_evidence = (archived_root / "05-evidence.md").read_text(encoding="utf-8")
+
+    assert result == 0
+    assert "Validated 1 task package" in captured.out
+    assert not root.exists()
+    assert archived_root.exists()
+    assert "status: archived" in archived_status
+    assert "docs/archived/task-packages/auto-archive/README.md" in archived_status
+    assert "docs/archived/task-packages/auto-archive/03-detailed-design.md" in archived_verification
+    assert "docs/archived/task-packages/auto-archive/README.md" in archived_evidence
+
+
 def test_bootstrap_reports_yaml_quote_hint_for_invalid_status_yaml(tmp_path: Path, capsys) -> None:
     repo_root = tmp_path / "repo"
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
