@@ -440,10 +440,18 @@ def cmd_verify(args: argparse.Namespace) -> int:
 
 def cmd_update(args: argparse.Namespace) -> int:
     repo_root = _openharness_repo_root()
-    git_pull_result = lifecycle._run_command(repo_root, "git pull")
-    if git_pull_result != 0:
-        print("ERROR: git pull failed; refusing to continue with tool upgrade.")
-        return 1
+    if getattr(args, "force_sync", False):
+        for command in ("git fetch --prune", "git reset --hard '@{u}'"):
+            sync_result = lifecycle._run_command(repo_root, command)
+            if sync_result != 0:
+                print(f"ERROR: force sync failed at `{command}`; refusing to continue with tool upgrade.")
+                return 1
+        print(f"Force-synchronized OpenHarness source clone from {repo_root}")
+    else:
+        git_pull_result = lifecycle._run_command(repo_root, "git pull")
+        if git_pull_result != 0:
+            print("ERROR: git pull failed; refusing to continue with tool upgrade.")
+            return 1
 
     upgrade_result = lifecycle._run_command(repo_root, "uv tool upgrade openharness")
     if upgrade_result != 0:

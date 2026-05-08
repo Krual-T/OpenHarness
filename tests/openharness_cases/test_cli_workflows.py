@@ -451,6 +451,75 @@ def test_update_runs_git_pull_then_uv_tool_upgrade_in_repo_root(
     assert "Updated OpenHarness" in captured.out
 
 
+def test_update_force_sync_fetches_and_resets_before_uv_tool_upgrade(
+    capsys, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    calls: list[tuple[Path, str]] = []
+
+    def fake_run(repo: Path, command: str) -> int:
+        calls.append((repo, command))
+        return 0
+
+    monkeypatch.setattr(openharness, "_run_command", fake_run)
+
+    result = openharness.cmd_update(argparse.Namespace(force_sync=True))
+
+    captured = capsys.readouterr()
+    assert result == 0
+    assert calls == [
+        (REPO_ROOT, "git fetch --prune"),
+        (REPO_ROOT, "git reset --hard '@{u}'"),
+        (REPO_ROOT, "uv tool upgrade openharness"),
+    ]
+    assert "Force-synchronized OpenHarness" in captured.out
+    assert "Updated OpenHarness" in captured.out
+
+
+def test_update_force_sync_stops_when_fetch_fails(
+    capsys, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    calls: list[tuple[Path, str]] = []
+
+    def fake_run(repo: Path, command: str) -> int:
+        calls.append((repo, command))
+        if command == "git fetch --prune":
+            return 1
+        return 0
+
+    monkeypatch.setattr(openharness, "_run_command", fake_run)
+
+    result = openharness.cmd_update(argparse.Namespace(force_sync=True))
+
+    captured = capsys.readouterr()
+    assert result == 1
+    assert calls == [(REPO_ROOT, "git fetch --prune")]
+    assert "force sync failed" in captured.out
+
+
+def test_update_force_sync_stops_when_reset_fails(
+    capsys, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    calls: list[tuple[Path, str]] = []
+
+    def fake_run(repo: Path, command: str) -> int:
+        calls.append((repo, command))
+        if command == "git reset --hard '@{u}'":
+            return 1
+        return 0
+
+    monkeypatch.setattr(openharness, "_run_command", fake_run)
+
+    result = openharness.cmd_update(argparse.Namespace(force_sync=True))
+
+    captured = capsys.readouterr()
+    assert result == 1
+    assert calls == [
+        (REPO_ROOT, "git fetch --prune"),
+        (REPO_ROOT, "git reset --hard '@{u}'"),
+    ]
+    assert "force sync failed" in captured.out
+
+
 def test_update_stops_when_git_pull_fails(capsys, monkeypatch: pytest.MonkeyPatch) -> None:
     calls: list[tuple[Path, str]] = []
 

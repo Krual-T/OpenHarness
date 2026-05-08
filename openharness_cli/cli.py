@@ -218,11 +218,19 @@ def build_parser(
         description="Update the OpenHarness clone and refresh the installed CLI tool.",
         epilog=(
             "This command runs `git pull` in the OpenHarness source clone first, then\n"
-            "refreshes the installed CLI tool with `uv tool upgrade openharness`.\n\n"
+            "refreshes the installed CLI tool with `uv tool upgrade openharness`.\n"
+            "Use `--force-sync` only when you explicitly want to discard local changes\n"
+            "in the OpenHarness source clone and reset it to its upstream branch.\n\n"
             "Example:\n"
-            "  openharness update"
+            "  openharness update\n"
+            "  openharness update --force-sync"
         ),
         formatter_class=_HelpFormatter,
+    )
+    update_parser.add_argument(
+        "--force-sync",
+        action="store_true",
+        help="Discard local changes in the OpenHarness source clone and reset it to its upstream branch.",
     )
     update_parser.set_defaults(handler=cmd_update)
 

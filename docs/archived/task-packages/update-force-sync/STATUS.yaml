@@ -1,0 +1,53 @@
+id: OH-045
+title: Update Force Sync Option
+status: archived
+summary: Add an explicit update option that force-synchronizes the OpenHarness source
+  clone before refreshing the installed CLI.
+owner: codex
+created_at: '2026-05-08'
+updated_at: '2026-05-08'
+depends_on: []
+scope:
+  areas:
+  - openharness_cli
+  - tests
+  - install docs
+collaboration: {}
+entrypoints:
+- docs/archived/task-packages/update-force-sync/README.md
+- docs/archived/task-packages/update-force-sync/01-requirements.md
+- docs/archived/task-packages/update-force-sync/02-overview-design.md
+- docs/archived/task-packages/update-force-sync/03-detailed-design.md
+done_criteria:
+- '`openharness update` keeps the existing default `git pull` then `uv tool upgrade
+  openharness` behavior.'
+- '`openharness update --force-sync` force-synchronizes the OpenHarness source clone
+  before refreshing the installed CLI.'
+- Force-sync behavior is covered by automated tests for parser output, command ordering,
+  and failure interruption.
+- Help and install-facing docs make the destructive nature of force sync visible.
+verification:
+  required_commands:
+  - uv run pytest tests/openharness_cases/test_cli_workflows.py -k update -q
+  - uv run pytest tests/openharness_cases/test_entrypoint.py -q
+  - uv run pytest tests/openharness_cases/test_cli_workflows.py tests/openharness_cases/test_entrypoint.py
+    tests/openharness_cases/test_protocol_docs.py -q
+  - uv run openharness check-tasks
+  required_scenarios:
+  - 默认 update 流程保持 `git pull` 后再 `uv tool upgrade openharness`。
+  - '`--force-sync` 先执行强制同步相关命令，任一步失败都不继续执行工具升级。'
+  - '`update --help` 说明普通同步与强制同步的差异。'
+  last_run_at: '2026-05-08T08:44:12Z'
+  last_run_result: passed
+  last_run_artifact: .harness/artifacts/OH-045/verification-runs/20260508T084412167782Z.json
+evidence:
+  docs:
+  - docs/archived/task-packages/update-force-sync/04-verification.md
+  - docs/archived/task-packages/update-force-sync/05-evidence.md
+  code:
+  - openharness_cli/cli.py
+  - openharness_cli/commands.py
+  - INSTALL.codex.md
+  tests:
+  - tests/openharness_cases/test_cli_workflows.py
+  - tests/openharness_cases/test_entrypoint.py

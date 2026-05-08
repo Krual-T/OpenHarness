@@ -86,6 +86,16 @@ openharness update
 This command updates the OpenHarness clone and then refreshes the installed CLI tool.
 Skills still update through the symlink because the source clone is the same repository.
 
+If the OpenHarness source clone needs to be reset to its upstream branch before
+the CLI is refreshed, use the explicit force-sync path:
+
+```bash
+openharness update --force-sync
+```
+
+This discards local changes in the OpenHarness source clone. It does not force
+sync the business project where you happen to run the command.
+
 ## Existing Installations
 
 If you already installed the OpenHarness skill symlink before the global CLI existed, this existing installation only needs one extra command:
