@@ -19,6 +19,8 @@ from .lifecycle import (
 from .models import TaskScaffoldRequest
 from .repository import (
     _utc_timestamp,
+    _load_yaml,
+    _write_yaml,
     create_task_package,
     create_task_package_with_auto_id,
     discover_runtime_workflow_packages,
@@ -45,9 +47,68 @@ PROJECT_MEMORY_SCRIPT_BY_COMMAND = {
     "save-decision": "save_decision.py",
 }
 
+UPDATE_MODES = {"pull", "force-sync"}
+OPENHARNESS_CONFIG_PATH_ENV = "OPENHARNESS_CONFIG_PATH"
+
 
 def _openharness_repo_root() -> Path:
     return Path(__file__).resolve().parents[1]
+
+
+def _openharness_config_path() -> Path:
+    configured_path = os.environ.get(OPENHARNESS_CONFIG_PATH_ENV)
+    if configured_path:
+        return Path(configured_path).expanduser()
+    config_home = os.environ.get("XDG_CONFIG_HOME")
+    base = Path(config_home).expanduser() if config_home else Path.home() / ".config"
+    return base / "openharness" / "config.yaml"
+
+
+def _load_openharness_config(config_path: Path) -> dict[str, object]:
+    if not config_path.exists():
+        return {}
+    return _load_yaml(config_path)
+
+
+def _save_openharness_config(config_path: Path, config: dict[str, object]) -> None:
+    config_path.parent.mkdir(parents=True, exist_ok=True)
+    _write_yaml(config_path, config)
+
+
+def _set_default_update_mode(mode: str) -> Path:
+    config_path = _openharness_config_path()
+    config = _load_openharness_config(config_path)
+    update_config = config.setdefault("update", {})
+    if not isinstance(update_config, dict):
+        raise ValueError(f"`update` config must be a mapping in {config_path}")
+    update_config["default_mode"] = mode
+    _save_openharness_config(config_path, config)
+    return config_path
+
+
+def _configured_update_mode() -> str:
+    config_path = _openharness_config_path()
+    config = _load_openharness_config(config_path)
+    update_config = config.get("update") or {}
+    if not isinstance(update_config, dict):
+        raise ValueError(f"`update` config must be a mapping in {config_path}")
+    mode = str(update_config.get("default_mode") or "").strip()
+    if not mode:
+        return "pull"
+    if mode not in UPDATE_MODES:
+        raise ValueError(
+            f"invalid default update mode `{mode}` in {config_path}; expected `pull` or `force-sync`"
+        )
+    return mode
+
+
+def _resolve_update_mode(args: argparse.Namespace) -> str:
+    if getattr(args, "force_sync", False):
+        return "force-sync"
+    mode = getattr(args, "mode", None)
+    if mode:
+        return str(mode)
+    return _configured_update_mode()
 
 
 def _resolve_project_memory_script(repo_root: Path, script_name: str) -> Path | None:
@@ -440,18 +501,37 @@ def cmd_verify(args: argparse.Namespace) -> int:
 
 def cmd_update(args: argparse.Namespace) -> int:
     repo_root = _openharness_repo_root()
-    if getattr(args, "force_sync", False):
+    default_mode = getattr(args, "set_default_mode", None)
+    if default_mode:
+        try:
+            config_path = _set_default_update_mode(str(default_mode))
+        except ValueError as exc:
+            print(f"ERROR: {exc}")
+            return 1
+        print(f"Default update mode set to {default_mode} in {config_path}")
+        return 0
+
+    try:
+        update_mode = _resolve_update_mode(args)
+    except ValueError as exc:
+        print(f"ERROR: {exc}")
+        return 1
+
+    if update_mode == "force-sync":
         for command in ("git fetch --prune", "git reset --hard '@{u}'"):
             sync_result = lifecycle._run_command(repo_root, command)
             if sync_result != 0:
                 print(f"ERROR: force sync failed at `{command}`; refusing to continue with tool upgrade.")
                 return 1
         print(f"Force-synchronized OpenHarness source clone from {repo_root}")
-    else:
+    elif update_mode == "pull":
         git_pull_result = lifecycle._run_command(repo_root, "git pull")
         if git_pull_result != 0:
             print("ERROR: git pull failed; refusing to continue with tool upgrade.")
             return 1
+    else:
+        print(f"ERROR: invalid update mode `{update_mode}`; expected `pull` or `force-sync`.")
+        return 1
 
     upgrade_result = lifecycle._run_command(repo_root, "uv tool upgrade openharness")
     if upgrade_result != 0:

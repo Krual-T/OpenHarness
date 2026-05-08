@@ -451,6 +451,115 @@ def test_update_runs_git_pull_then_uv_tool_upgrade_in_repo_root(
     assert "Updated OpenHarness" in captured.out
 
 
+def test_update_set_default_mode_writes_config_without_running_update(
+    tmp_path: Path, capsys, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    calls: list[tuple[Path, str]] = []
+    config_path = tmp_path / "openharness-config.yaml"
+
+    monkeypatch.setenv("OPENHARNESS_CONFIG_PATH", str(config_path))
+    monkeypatch.setattr(openharness, "_run_command", lambda repo, command: calls.append((repo, command)) or 0)
+
+    result = openharness.cmd_update(
+        argparse.Namespace(set_default_mode="force-sync", mode=None, force_sync=False)
+    )
+
+    captured = capsys.readouterr()
+    assert result == 0
+    assert calls == []
+    assert openharness._load_yaml(config_path) == {"update": {"default_mode": "force-sync"}}
+    assert "Default update mode set to force-sync" in captured.out
+
+
+def test_update_uses_configured_force_sync_default(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    calls: list[tuple[Path, str]] = []
+    config_path = tmp_path / "openharness-config.yaml"
+    config_path.write_text("update:\n  default_mode: force-sync\n", encoding="utf-8")
+
+    def fake_run(repo: Path, command: str) -> int:
+        calls.append((repo, command))
+        return 0
+
+    monkeypatch.setenv("OPENHARNESS_CONFIG_PATH", str(config_path))
+    monkeypatch.setattr(openharness, "_run_command", fake_run)
+
+    result = openharness.cmd_update(argparse.Namespace())
+
+    assert result == 0
+    assert calls == [
+        (REPO_ROOT, "git fetch --prune"),
+        (REPO_ROOT, "git reset --hard '@{u}'"),
+        (REPO_ROOT, "uv tool upgrade openharness"),
+    ]
+
+
+def test_update_mode_overrides_configured_force_sync_default(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    calls: list[tuple[Path, str]] = []
+    config_path = tmp_path / "openharness-config.yaml"
+    config_path.write_text("update:\n  default_mode: force-sync\n", encoding="utf-8")
+
+    def fake_run(repo: Path, command: str) -> int:
+        calls.append((repo, command))
+        return 0
+
+    monkeypatch.setenv("OPENHARNESS_CONFIG_PATH", str(config_path))
+    monkeypatch.setattr(openharness, "_run_command", fake_run)
+
+    result = openharness.cmd_update(argparse.Namespace(mode="pull", force_sync=False))
+
+    assert result == 0
+    assert calls == [
+        (REPO_ROOT, "git pull"),
+        (REPO_ROOT, "uv tool upgrade openharness"),
+    ]
+
+
+def test_update_force_sync_overrides_configured_pull_default(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    calls: list[tuple[Path, str]] = []
+    config_path = tmp_path / "openharness-config.yaml"
+    config_path.write_text("update:\n  default_mode: pull\n", encoding="utf-8")
+
+    def fake_run(repo: Path, command: str) -> int:
+        calls.append((repo, command))
+        return 0
+
+    monkeypatch.setenv("OPENHARNESS_CONFIG_PATH", str(config_path))
+    monkeypatch.setattr(openharness, "_run_command", fake_run)
+
+    result = openharness.cmd_update(argparse.Namespace(mode=None, force_sync=True))
+
+    assert result == 0
+    assert calls == [
+        (REPO_ROOT, "git fetch --prune"),
+        (REPO_ROOT, "git reset --hard '@{u}'"),
+        (REPO_ROOT, "uv tool upgrade openharness"),
+    ]
+
+
+def test_update_invalid_configured_default_mode_stops_before_commands(
+    tmp_path: Path, capsys, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    calls: list[tuple[Path, str]] = []
+    config_path = tmp_path / "openharness-config.yaml"
+    config_path.write_text("update:\n  default_mode: surprise\n", encoding="utf-8")
+
+    monkeypatch.setenv("OPENHARNESS_CONFIG_PATH", str(config_path))
+    monkeypatch.setattr(openharness, "_run_command", lambda repo, command: calls.append((repo, command)) or 0)
+
+    result = openharness.cmd_update(argparse.Namespace(mode=None, force_sync=False))
+
+    captured = capsys.readouterr()
+    assert result == 1
+    assert calls == []
+    assert "invalid default update mode" in captured.out
+
+
 def test_update_force_sync_fetches_and_resets_before_uv_tool_upgrade(
     capsys, monkeypatch: pytest.MonkeyPatch
 ) -> None:

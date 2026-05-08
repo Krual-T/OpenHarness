@@ -96,6 +96,16 @@ openharness update --force-sync
 This discards local changes in the OpenHarness source clone. It does not force
 sync the business project where you happen to run the command.
 
+To make that the default for future `openharness update` runs:
+
+```bash
+openharness update --set-default-mode force-sync
+```
+
+You can switch the default back with `openharness update --set-default-mode pull`.
+For a single run, use `openharness update --mode pull` or
+`openharness update --mode force-sync` to override the saved default.
+
 ## Existing Installations
 
 If you already installed the OpenHarness skill symlink before the global CLI existed, this existing installation only needs one extra command:
