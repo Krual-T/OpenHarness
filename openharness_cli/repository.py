@@ -10,8 +10,8 @@ from typing import Any
 
 import yaml
 
-from .constants import REQUIRED_TASK_PACKAGE_FILES, TASK_ID_RE
-from .models import HarnessManifest, RuntimeWorkflowPackage, TaskPackage, TaskScaffoldRequest
+from .constants import TASK_ID_RE
+from .models import HarnessConfig, RuntimeWorkflowPackage, TaskPackage, TaskScaffoldRequest
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
@@ -35,25 +35,8 @@ def _write_yaml(path: Path, data: dict[str, Any]) -> None:
     path.write_text(yaml.safe_dump(data, sort_keys=False, allow_unicode=True), encoding="utf-8")
 
 
-def load_manifest(repo_root: Path) -> HarnessManifest:
-    skill_root = Path(__file__).resolve().parents[1]
-    candidates = (
-        repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml",
-        repo_root / "skills" / "using-openharness" / "manifest.yaml",
-        repo_root / ".agents" / "skills" / "openharness" / "using-openharness" / "references" / "manifest.yaml",
-        repo_root / ".agents" / "skills" / "openharness" / "using-openharness" / "manifest.yaml",
-        repo_root / ".harness" / "manifest.yaml",
-        skill_root / "references" / "manifest.yaml",
-        skill_root / "manifest.yaml",
-    )
-    for candidate in candidates:
-        manifest_path = candidate.resolve()
-        if manifest_path.exists():
-            return HarnessManifest(repo_root=repo_root, path=manifest_path, raw=_load_yaml(manifest_path))
-    raise FileNotFoundError(
-        "Harness manifest not found. Checked: "
-        + ", ".join(str(candidate) for candidate in candidates)
-    )
+def load_config(repo_root: Path) -> HarnessConfig:
+    return HarnessConfig(repo_root=Path(repo_root).resolve())
 
 
 def _utc_now() -> datetime:
@@ -68,13 +51,20 @@ def _current_date() -> str:
     return _utc_now().date().isoformat()
 
 
-def discover_task_packages(repo_root: Path, manifest: HarnessManifest | None = None) -> list[TaskPackage]:
-    current_manifest = manifest or load_manifest(repo_root)
-    _auto_archive_active_packages(current_manifest)
+_ALL_DESIGN_FILES = (
+    "README.md", "STATUS.yaml", "01-requirements.md",
+    "02-overview-design.md", "03-detailed-design.md",
+    "04-verification.md", "05-evidence.md",
+)
+
+
+def discover_task_packages(repo_root: Path, config: HarnessConfig | None = None) -> list[TaskPackage]:
+    current_config = config or load_config(repo_root)
+    _auto_archive_active_packages(current_config)
     packages: list[TaskPackage] = []
-    roots = [current_manifest.task_packages_root]
-    if current_manifest.archived_task_packages_root != current_manifest.task_packages_root:
-        roots.append(current_manifest.archived_task_packages_root)
+    roots = [current_config.task_packages_root]
+    if current_config.archived_task_packages_root != current_config.task_packages_root:
+        roots.append(current_config.archived_task_packages_root)
     seen: set[Path] = set()
     for task_packages_root in roots:
         if not task_packages_root.exists():
@@ -88,18 +78,18 @@ def discover_task_packages(repo_root: Path, manifest: HarnessManifest | None = N
             if not status_path.exists():
                 continue
             status = _load_yaml(status_path)
-            documents = {name: child / name for name in current_manifest.required_design_files}
-            packages.append(TaskPackage(root=child, status=status, manifest=current_manifest, documents=documents))
+            documents = {name: child / name for name in _ALL_DESIGN_FILES}
+            packages.append(TaskPackage(root=child, status=status, config=current_config, documents=documents))
     return packages
 
 
-def _auto_archive_active_packages(manifest: HarnessManifest) -> None:
-    if manifest.task_packages_root == manifest.archived_task_packages_root:
+def _auto_archive_active_packages(config: HarnessConfig) -> None:
+    if config.task_packages_root == config.archived_task_packages_root:
         return
-    if not manifest.task_packages_root.exists():
+    if not config.task_packages_root.exists():
         return
 
-    for child in sorted(path for path in manifest.task_packages_root.iterdir() if path.is_dir()):
+    for child in sorted(path for path in config.task_packages_root.iterdir() if path.is_dir()):
         status_path = child / "STATUS.yaml"
         if not status_path.exists():
             continue
@@ -107,13 +97,10 @@ def _auto_archive_active_packages(manifest: HarnessManifest) -> None:
         if str(status.get("status") or "").strip() != "archived":
             continue
         package = TaskPackage(
-            root=child,
-            status=status,
-            manifest=manifest,
-            documents={name: child / name for name in manifest.required_design_files},
+            root=child, status=status, config=config,
+            documents={name: child / name for name in _ALL_DESIGN_FILES},
         )
         from .lifecycle import _archive_task_package
-
         archived_ok, detail = _archive_task_package(package)
         if not archived_ok:
             raise ValueError(f"failed to auto-archive task package `{package.task_id}`: {detail}")
@@ -130,9 +117,9 @@ def find_duplicate_task_ids(packages: list[TaskPackage]) -> dict[str, list[TaskP
     }
 
 
-def resolve_task_package(repo_root: Path, task: str, manifest: HarnessManifest | None = None) -> TaskPackage:
-    current_manifest = manifest or load_manifest(repo_root)
-    for package in discover_task_packages(repo_root, current_manifest):
+def resolve_task_package(repo_root: Path, task: str, config: HarnessConfig | None = None) -> TaskPackage:
+    current_config = config or load_config(repo_root)
+    for package in discover_task_packages(repo_root, current_config):
         if package.name == task or package.task_id == task:
             return package
     raise ValueError(f"task package not found: {task}")
@@ -184,10 +171,8 @@ def discover_runtime_workflow_packages(repo_root: Path) -> list[RuntimeWorkflowP
         metadata = _load_workflow_metadata(workflow_path)
         packages.append(
             RuntimeWorkflowPackage(
-                root=child,
-                workflow_path=workflow_path,
-                name=metadata["name"],
-                description=metadata["description"],
+                root=child, workflow_path=workflow_path,
+                name=metadata["name"], description=metadata["description"],
             )
         )
     return packages
@@ -195,14 +180,13 @@ def discover_runtime_workflow_packages(repo_root: Path) -> list[RuntimeWorkflowP
 
 def resolve_runtime_workflow_package(repo_root: Path, workflow: str) -> RuntimeWorkflowPackage:
     matches = [
-        package
-        for package in discover_runtime_workflow_packages(repo_root)
-        if package.name == workflow or package.root.name == workflow
+        p for p in discover_runtime_workflow_packages(repo_root)
+        if p.name == workflow or p.root.name == workflow
     ]
     if not matches:
         raise ValueError(f"runtime workflow package not found: {workflow}")
     if len(matches) > 1:
-        roots = ", ".join(str(package.root) for package in matches)
+        roots = ", ".join(str(p.root) for p in matches)
         raise ValueError(f"runtime workflow package `{workflow}` is ambiguous: {roots}")
     return matches[0]
 
@@ -234,11 +218,11 @@ def humanize_task_name(task_name: str) -> str:
     return " ".join(part.capitalize() for part in slug.split("-"))
 
 
-def allocate_next_task_id(repo_root: Path, manifest: HarnessManifest | None = None) -> str:
-    current_manifest = manifest or load_manifest(repo_root)
+def allocate_next_task_id(repo_root: Path, config: HarnessConfig | None = None) -> str:
+    current_config = config or load_config(repo_root)
     prefix_counts: dict[str, int] = {}
     max_by_prefix: dict[str, tuple[int, int]] = {}
-    for package in discover_task_packages(repo_root, current_manifest):
+    for package in discover_task_packages(repo_root, current_config):
         match = TASK_ID_RE.match(package.task_id)
         if not match:
             continue
@@ -254,20 +238,15 @@ def allocate_next_task_id(repo_root: Path, manifest: HarnessManifest | None = No
 
     if not max_by_prefix:
         return "TASK-001"
-
     prefix = max(prefix_counts.items(), key=lambda item: (item[1], item[0]))[0]
     max_number, width = max_by_prefix[prefix]
     next_number = max_number + 1
     return f"{prefix}-{next_number:0{max(width, 3)}d}"
 
 
-def _duplicate_task_id_exists(
-    repo_root: Path,
-    task_id: str,
-    manifest: HarnessManifest | None = None,
-) -> bool:
-    current_manifest = manifest or load_manifest(repo_root)
-    return any(package.task_id == task_id for package in discover_task_packages(repo_root, current_manifest))
+def _duplicate_task_id_exists(repo_root: Path, task_id: str, config: HarnessConfig | None = None) -> bool:
+    current_config = config or load_config(repo_root)
+    return any(p.task_id == task_id for p in discover_task_packages(repo_root, current_config))
 
 
 def _task_package_lock_path(repo_root: Path) -> Path:
@@ -286,29 +265,32 @@ def _task_package_creation_lock(repo_root: Path):
             fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
 
 
-def _create_task_package_unlocked(
-    request: TaskScaffoldRequest,
-    manifest: HarnessManifest | None = None,
-) -> Path:
-    current_manifest = manifest or load_manifest(request.repo_root)
+def _resolve_template_root(repo_root: Path) -> Path:
+    skill_root = Path(__file__).resolve().parents[1]
+    candidates = (
+        repo_root / "skills" / "using-openharness" / "references" / "templates",
+        repo_root / "skills" / "using-openharness" / "templates",
+        repo_root / ".agents" / "skills" / "openharness" / "using-openharness" / "references" / "templates",
+        repo_root / ".agents" / "skills" / "openharness" / "using-openharness" / "templates",
+        skill_root / "references" / "templates",
+        skill_root / "templates",
+    )
+    for candidate in candidates:
+        if candidate.resolve().exists():
+            return candidate.resolve()
+    raise FileNotFoundError("template root not found")
+
+
+def _create_task_package_unlocked(request: TaskScaffoldRequest, config: HarnessConfig | None = None) -> Path:
+    current_config = config or load_config(request.repo_root)
     task_name = slugify_task_name(request.task_name)
-    task_root = current_manifest.task_packages_root / task_name
+    task_root = current_config.task_packages_root / task_name
     if task_root.exists():
         raise FileExistsError(f"task package already exists: {task_root}")
-    if _duplicate_task_id_exists(request.repo_root, request.task_id, current_manifest):
+    if _duplicate_task_id_exists(request.repo_root, request.task_id, current_config):
         raise ValueError(f"duplicate task id `{request.task_id}` already exists")
-    skill_root = Path(__file__).resolve().parents[1]
-    template_root = request.repo_root / "skills" / "using-openharness" / "references" / "templates"
-    if not template_root.exists():
-        template_root = request.repo_root / "skills" / "using-openharness" / "templates"
-    if not template_root.exists():
-        template_root = request.repo_root / ".agents" / "skills" / "openharness" / "using-openharness" / "references" / "templates"
-    if not template_root.exists():
-        template_root = request.repo_root / ".agents" / "skills" / "openharness" / "using-openharness" / "templates"
-    if not template_root.exists():
-        template_root = skill_root / "references" / "templates"
-    if not template_root.exists():
-        template_root = skill_root / "templates"
+
+    template_root = _resolve_template_root(request.repo_root)
     replacements = {
         "<DESIGN_ID>": request.task_id,
         "<TITLE>": request.title,
@@ -324,19 +306,14 @@ def _create_task_package_unlocked(
         content = template.read_text(encoding="utf-8")
         template_replacements = dict(replacements)
         if target_name == "STATUS.yaml":
-            template_replacements.update(
-                {
-                    "<DESIGN_ID>": json.dumps(request.task_id, ensure_ascii=False),
-                    "<TITLE>": json.dumps(request.title, ensure_ascii=False),
-                    "<OWNER>": json.dumps(request.owner, ensure_ascii=False),
-                    "<STATUS>": json.dumps(request.status, ensure_ascii=False),
-                    "<SUMMARY>": json.dumps(
-                        request.summary or f"Describe the goal of {request.title}.",
-                        ensure_ascii=False,
-                    ),
-                    "<DATE>": json.dumps("YYYY-MM-DD", ensure_ascii=False),
-                }
-            )
+            template_replacements.update({
+                "<DESIGN_ID>": json.dumps(request.task_id, ensure_ascii=False),
+                "<TITLE>": json.dumps(request.title, ensure_ascii=False),
+                "<OWNER>": json.dumps(request.owner, ensure_ascii=False),
+                "<STATUS>": json.dumps(request.status, ensure_ascii=False),
+                "<SUMMARY>": json.dumps(request.summary or f"Describe the goal of {request.title}.", ensure_ascii=False),
+                "<DATE>": json.dumps("YYYY-MM-DD", ensure_ascii=False),
+            })
         for source, target in template_replacements.items():
             content = content.replace(source, target)
         (task_root / target_name).write_text(content, encoding="utf-8")
@@ -344,33 +321,23 @@ def _create_task_package_unlocked(
 
 
 def create_task_package(request: TaskScaffoldRequest) -> Path:
-    manifest = load_manifest(request.repo_root)
+    config = load_config(request.repo_root)
     with _task_package_creation_lock(request.repo_root):
-        return _create_task_package_unlocked(request, manifest)
+        return _create_task_package_unlocked(request, config)
 
 
 def create_task_package_with_auto_id(
-    *,
-    repo_root: Path,
-    task_name: str,
-    title: str,
-    owner: str = "unassigned",
-    summary: str = "",
-    status: str = "proposed",
+    *, repo_root: Path, task_name: str, title: str,
+    owner: str = "unassigned", summary: str = "", status: str = "proposing",
 ) -> tuple[Path, str]:
-    manifest = load_manifest(repo_root)
+    config = load_config(repo_root)
     with _task_package_creation_lock(repo_root):
-        task_id = allocate_next_task_id(repo_root, manifest)
+        task_id = allocate_next_task_id(repo_root, config)
         task_root = _create_task_package_unlocked(
             TaskScaffoldRequest(
-                repo_root=repo_root,
-                task_name=task_name,
-                task_id=task_id,
-                title=title,
-                owner=owner,
-                summary=summary,
-                status=status,
+                repo_root=repo_root, task_name=task_name, task_id=task_id,
+                title=title, owner=owner, summary=summary, status=status,
             ),
-            manifest,
+            config,
         )
     return task_root, task_id

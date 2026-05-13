@@ -2,9 +2,31 @@ from __future__ import annotations
 
 import re
 
+DEFAULT_STATUS_FLOW = (
+    "proposing",
+    "requirements_designed",
+    "overview_designing",
+    "overview_designed",
+    "detailed_designing",
+    "detailed_designed",
+    "implementing",
+    "implemented",
+    "verifying",
+    "archived",
+)
 
-ACTIVE_STATUSES = {"proposed", "requirements_ready", "overview_ready", "detailed_ready", "in_progress", "verifying"}
-VERIFYABLE_STATUSES = {"in_progress", "verifying"}
+ACTIVE_STATUSES = {
+    "proposing",
+    "requirements_designed",
+    "overview_designing",
+    "overview_designed",
+    "detailed_designing",
+    "detailed_designed",
+    "implementing",
+    "implemented",
+    "verifying",
+}
+VERIFYABLE_STATUSES = {"implementing", "implemented", "verifying"}
 REQUIRED_TASK_PACKAGE_FILES = (
     "README.md",
     "STATUS.yaml",
@@ -14,6 +36,29 @@ REQUIRED_TASK_PACKAGE_FILES = (
     "04-verification.md",
     "05-evidence.md",
 )
+
+_FILE_ADDITIONS: dict[str, tuple[str, ...]] = {
+    "requirements_designed": ("01-requirements.md",),
+    "overview_designed": ("02-overview-design.md",),
+    "detailed_designed": ("03-detailed-design.md",),
+    "verifying": ("04-verification.md",),
+    "archived": ("05-evidence.md",),
+}
+
+
+def _build_status_required_files() -> dict[str, tuple[str, ...]]:
+    base = ("README.md", "STATUS.yaml")
+    result: dict[str, tuple[str, ...]] = {}
+    accumulated = list(base)
+    for status in DEFAULT_STATUS_FLOW:
+        accumulated.extend(_FILE_ADDITIONS.get(status, ()))
+        result[status] = tuple(accumulated)
+    return result
+
+
+STATUS_REQUIRED_FILES = _build_status_required_files()
+del _build_status_required_files, _FILE_ADDITIONS
+
 REQUIRED_STATUS_KEYS = (
     "id",
     "title",
@@ -32,86 +77,62 @@ PLACEHOLDER_NUMBERED_RE = re.compile(r"^\d+\.\s*$")
 LABEL_ONLY_RE = re.compile(r"^[-*]\s+[^:]+:\s*$")
 TASK_ID_RE = re.compile(r"^([A-Za-z]+)-(\d+)$")
 
+_SECTION_REQS_BASE = (
+    ("01-requirements.md", "## Goal"),
+    ("01-requirements.md", "## Problem Statement"),
+    ("01-requirements.md", "## Required Outcomes"),
+    ("01-requirements.md", "## Constraints"),
+)
+
+_SECTION_REQS_OVERVIEW = _SECTION_REQS_BASE + (
+    ("02-overview-design.md", "## System Boundary"),
+    ("02-overview-design.md", "## Proposed Structure"),
+    ("02-overview-design.md", "## Key Flows"),
+    ("02-overview-design.md", "## Stage Gates"),
+    ("02-overview-design.md", "## Trade-offs"),
+    ("02-overview-design.md", "## Overview Reflection"),
+)
+
+_SECTION_REQS_DETAILED = _SECTION_REQS_OVERVIEW + (
+    ("03-detailed-design.md", "## Runtime Verification Plan"),
+    ("03-detailed-design.md", "## Files Added Or Changed"),
+    ("03-detailed-design.md", "## Interfaces"),
+    ("03-detailed-design.md", "## Module Internals"),
+    ("03-detailed-design.md", "## Data Semantics"),
+    ("03-detailed-design.md", "## Decision Closure"),
+    ("03-detailed-design.md", "## Error Handling"),
+    ("03-detailed-design.md", "## Migration Notes"),
+    ("03-detailed-design.md", "## Detailed Reflection"),
+)
+
+_SECTION_REQS_ARCHIVED = _SECTION_REQS_DETAILED + (
+    ("05-evidence.md", "## Files"),
+    ("05-evidence.md", "## Commands"),
+    ("05-evidence.md", "## Residual Risks"),
+)
+
 STATUS_SECTION_REQUIREMENTS: dict[str, tuple[tuple[str, str], ...]] = {
-    "requirements_ready": (
-        ("01-requirements.md", "## Goal"),
-        ("01-requirements.md", "## Problem Statement"),
-        ("01-requirements.md", "## Required Outcomes"),
-        ("01-requirements.md", "## Constraints"),
+    "proposing": (
+        ("README.md", "## Overview"),
     ),
-    "overview_ready": (
-        ("01-requirements.md", "## Goal"),
-        ("01-requirements.md", "## Problem Statement"),
-        ("01-requirements.md", "## Required Outcomes"),
-        ("01-requirements.md", "## Constraints"),
-        ("02-overview-design.md", "## System Boundary"),
-        ("02-overview-design.md", "## Proposed Structure"),
-        ("02-overview-design.md", "## Key Flows"),
-        ("02-overview-design.md", "## Trade-offs"),
-        ("02-overview-design.md", "## Overview Reflection"),
-    ),
-    "detailed_ready": (
-        ("01-requirements.md", "## Goal"),
-        ("01-requirements.md", "## Problem Statement"),
-        ("01-requirements.md", "## Required Outcomes"),
-        ("01-requirements.md", "## Constraints"),
-        ("02-overview-design.md", "## System Boundary"),
-        ("02-overview-design.md", "## Proposed Structure"),
-        ("02-overview-design.md", "## Key Flows"),
-        ("02-overview-design.md", "## Trade-offs"),
-        ("02-overview-design.md", "## Overview Reflection"),
-        ("03-detailed-design.md", "## Runtime Verification Plan"),
-        ("03-detailed-design.md", "## Files Added Or Changed"),
-        ("03-detailed-design.md", "## Interfaces"),
-        ("03-detailed-design.md", "## Error Handling"),
-        ("03-detailed-design.md", "## Detailed Reflection"),
-    ),
-    "verifying": (
-        ("01-requirements.md", "## Goal"),
-        ("01-requirements.md", "## Problem Statement"),
-        ("01-requirements.md", "## Required Outcomes"),
-        ("01-requirements.md", "## Constraints"),
-        ("02-overview-design.md", "## System Boundary"),
-        ("02-overview-design.md", "## Proposed Structure"),
-        ("02-overview-design.md", "## Key Flows"),
-        ("02-overview-design.md", "## Trade-offs"),
-        ("02-overview-design.md", "## Overview Reflection"),
-        ("03-detailed-design.md", "## Runtime Verification Plan"),
-        ("03-detailed-design.md", "## Files Added Or Changed"),
-        ("03-detailed-design.md", "## Interfaces"),
-        ("03-detailed-design.md", "## Error Handling"),
-        ("03-detailed-design.md", "## Detailed Reflection"),
-    ),
-    "archived": (
-        ("01-requirements.md", "## Goal"),
-        ("01-requirements.md", "## Problem Statement"),
-        ("01-requirements.md", "## Required Outcomes"),
-        ("01-requirements.md", "## Constraints"),
-        ("02-overview-design.md", "## System Boundary"),
-        ("02-overview-design.md", "## Proposed Structure"),
-        ("02-overview-design.md", "## Key Flows"),
-        ("02-overview-design.md", "## Trade-offs"),
-        ("02-overview-design.md", "## Overview Reflection"),
-        ("03-detailed-design.md", "## Runtime Verification Plan"),
-        ("03-detailed-design.md", "## Files Added Or Changed"),
-        ("03-detailed-design.md", "## Interfaces"),
-        ("03-detailed-design.md", "## Error Handling"),
-        ("03-detailed-design.md", "## Detailed Reflection"),
-        ("05-evidence.md", "## Files"),
-        ("05-evidence.md", "## Commands"),
-        ("05-evidence.md", "## Residual Risks"),
-    ),
+    "requirements_designed": _SECTION_REQS_BASE,
+    "overview_designing": _SECTION_REQS_BASE,
+    "overview_designed": _SECTION_REQS_OVERVIEW,
+    "detailed_designing": _SECTION_REQS_OVERVIEW,
+    "detailed_designed": _SECTION_REQS_DETAILED,
+    "implementing": _SECTION_REQS_DETAILED,
+    "implemented": _SECTION_REQS_DETAILED,
+    "verifying": _SECTION_REQS_DETAILED,
+    "archived": _SECTION_REQS_ARCHIVED,
 }
 
+_STATUS_LABEL_BASE = (
+    ("04-verification.md", "## Verification Path", "Planned Path"),
+    ("04-verification.md", "## Verification Path", "Executed Path"),
+    ("04-verification.md", "## Latest Result", ""),
+)
+
 STATUS_LABEL_REQUIREMENTS: dict[str, tuple[tuple[str, str, str], ...]] = {
-    "verifying": (
-        ("04-verification.md", "## Verification Path", "Planned Path"),
-        ("04-verification.md", "## Verification Path", "Executed Path"),
-        ("04-verification.md", "## Latest Result", ""),
-    ),
-    "archived": (
-        ("04-verification.md", "## Verification Path", "Planned Path"),
-        ("04-verification.md", "## Verification Path", "Executed Path"),
-        ("04-verification.md", "## Latest Result", ""),
-    ),
+    "verifying": _STATUS_LABEL_BASE,
+    "archived": _STATUS_LABEL_BASE,
 }
