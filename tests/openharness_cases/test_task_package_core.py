@@ -13,7 +13,7 @@ from .common import (
     create_task_package,
     discover_task_packages,
     find_duplicate_task_ids,
-    load_manifest,
+    load_config,
     openharness,
     slugify_task_name,
     summarize_task_package,
@@ -70,13 +70,13 @@ def _write_minimal_openharness_repo(repo_root: Path) -> None:
 
 
 def test_manifest_points_to_task_package_roots() -> None:
-    manifest = load_manifest(REPO_ROOT)
+    manifest = load_config(REPO_ROOT)
     assert manifest.task_packages_root == REPO_ROOT / "docs" / "task-packages"
     assert manifest.archived_task_packages_root == REPO_ROOT / "docs" / "archived" / "task-packages"
 
 
 def test_self_hosting_design_package_is_discoverable() -> None:
-    manifest = load_manifest(REPO_ROOT)
+    manifest = load_config(REPO_ROOT)
     packages = discover_task_packages(REPO_ROOT, manifest)
     package = next(package for package in packages if package.name == "self-hosting-bootstrap")
     assert package.task_id == "OH-001"
@@ -85,7 +85,7 @@ def test_self_hosting_design_package_is_discoverable() -> None:
 
 
 def test_workflow_redesign_package_is_discoverable() -> None:
-    manifest = load_manifest(REPO_ROOT)
+    manifest = load_config(REPO_ROOT)
     packages = discover_task_packages(REPO_ROOT, manifest)
     package = next(package for package in packages if package.name == "workflow-redesign")
     assert package.task_id == "OH-002"
@@ -94,7 +94,7 @@ def test_workflow_redesign_package_is_discoverable() -> None:
 
 
 def test_reflective_design_review_package_is_discoverable() -> None:
-    manifest = load_manifest(REPO_ROOT)
+    manifest = load_config(REPO_ROOT)
     packages = discover_task_packages(REPO_ROOT, manifest)
     package = next(package for package in packages if package.name == "reflective-design-review")
     assert package.task_id == "OH-003"
@@ -103,7 +103,7 @@ def test_reflective_design_review_package_is_discoverable() -> None:
 
 
 def test_active_statuses_do_not_include_archived() -> None:
-    assert "in_progress" in ACTIVE_STATUSES
+    assert "implementing" in ACTIVE_STATUSES
     assert "archived" not in ACTIVE_STATUSES
 
 
@@ -129,10 +129,10 @@ def test_allocate_next_task_id_uses_existing_prefix_and_width(tmp_path: Path) ->
         encoding="utf-8",
     )
     for root_name, task_id, status in (
-        ("one", "OH-018", "proposed"),
+        ("one", "OH-018", "proposing"),
         ("two", "OH-099", "archived"),
     ):
-        root = repo_root / "docs" / ("task-packages" if status == "proposed" else "archived/task-packages") / root_name
+        root = repo_root / "docs" / ("task-packages" if status == "proposing" else "archived/task-packages") / root_name
         root.mkdir(parents=True)
         for name in REQUIRED_TASK_PACKAGE_FILES:
             (root / name).write_text("# x\n", encoding="utf-8")
@@ -188,7 +188,7 @@ def test_cmd_new_task_supports_auto_id(tmp_path: Path, capsys) -> None:
             auto_id=True,
             owner="codex",
             summary="auto id",
-            status="proposed",
+            status="proposing",
         )
     )
 
@@ -274,7 +274,7 @@ def test_cmd_new_task_auto_id_rejects_duplicate_allocated_id(tmp_path: Path, cap
             auto_id=True,
             owner="codex",
             summary="auto id",
-            status="proposed",
+            status="proposing",
         )
     )
 
@@ -297,7 +297,7 @@ def test_cmd_new_task_requires_flag_based_task_id_when_not_auto_id(tmp_path: Pat
             auto_id=False,
             owner="codex",
             summary="manual id required",
-            status="proposed",
+            status="proposing",
         )
     )
 
@@ -307,7 +307,7 @@ def test_cmd_new_task_requires_flag_based_task_id_when_not_auto_id(tmp_path: Pat
 
 
 def test_design_packages_validate_cleanly() -> None:
-    manifest = load_manifest(REPO_ROOT)
+    manifest = load_config(REPO_ROOT)
     packages = discover_task_packages(REPO_ROOT, manifest)
     assert find_duplicate_task_ids(packages) == {}
     errors = [error for package in packages for error in validate_task_package(package)]
@@ -338,7 +338,7 @@ def test_find_duplicate_task_ids_reports_conflicts(tmp_path: Path) -> None:
 
     first = repo_root / "docs" / "task-packages" / "one"
     second = repo_root / "docs" / "archived" / "task-packages" / "two"
-    for root, status in ((first, "proposed"), (second, "archived")):
+    for root, status in ((first, "proposing"), (second, "archived")):
         root.mkdir(parents=True)
         for name in REQUIRED_TASK_PACKAGE_FILES:
             (root / name).write_text("# x\n", encoding="utf-8")
@@ -359,7 +359,7 @@ def test_find_duplicate_task_ids_reports_conflicts(tmp_path: Path) -> None:
             encoding="utf-8",
         )
 
-    manifest = load_manifest(repo_root)
+    manifest = load_config(repo_root)
     packages = discover_task_packages(repo_root, manifest)
     duplicates = find_duplicate_task_ids(packages)
 
@@ -367,7 +367,7 @@ def test_find_duplicate_task_ids_reports_conflicts(tmp_path: Path) -> None:
     assert {package.name for package in duplicates["OH-999"]} == {"one", "two"}
 
 
-def test_load_manifest_prefers_repo_local_skills_layout(tmp_path: Path) -> None:
+def test_load_config_prefers_repo_local_skills_layout(tmp_path: Path) -> None:
     repo_root = tmp_path / "repo"
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
     (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
@@ -377,7 +377,7 @@ def test_load_manifest_prefers_repo_local_skills_layout(tmp_path: Path) -> None:
         encoding="utf-8",
     )
 
-    manifest = load_manifest(repo_root)
+    manifest = load_config(repo_root)
     assert manifest.path == (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml")
 
 
@@ -434,7 +434,7 @@ def test_validate_task_package_rejects_unknown_status_and_missing_paths(tmp_path
         encoding="utf-8",
     )
 
-    manifest = load_manifest(repo_root)
+    manifest = load_config(repo_root)
     package = discover_task_packages(repo_root, manifest)[0]
     errors = validate_task_package(package)
 
@@ -481,7 +481,7 @@ def test_validate_task_package_directly_rejects_archived_status_in_active_root(t
         "  required_commands: []\n",
         encoding="utf-8",
     )
-    manifest = load_manifest(repo_root)
+    manifest = load_config(repo_root)
     package = openharness.TaskPackage(
         root=root,
         status=openharness._load_yaml(root / "STATUS.yaml"),
@@ -542,7 +542,7 @@ def test_validate_task_package_allows_archived_legacy_reference_fallback(tmp_pat
         encoding="utf-8",
     )
 
-    manifest = load_manifest(repo_root)
+    manifest = load_config(repo_root)
     package = discover_task_packages(repo_root, manifest)[0]
     errors = validate_task_package(package)
 
@@ -595,7 +595,7 @@ def test_validate_task_package_rejects_verifying_without_verification_path(tmp_p
         encoding="utf-8",
     )
 
-    manifest = load_manifest(repo_root)
+    manifest = load_config(repo_root)
     package = discover_task_packages(repo_root, manifest)[0]
     errors = validate_task_package(package)
 
@@ -648,7 +648,7 @@ def test_validate_task_package_rejects_archived_without_verification_path(tmp_pa
         encoding="utf-8",
     )
 
-    manifest = load_manifest(repo_root)
+    manifest = load_config(repo_root)
     package = discover_task_packages(repo_root, manifest)[0]
     errors = validate_task_package(package)
 

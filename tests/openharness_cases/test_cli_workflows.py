@@ -6,7 +6,7 @@ from .common import (
     REPO_ROOT,
     argparse,
     json,
-    load_manifest,
+    load_config,
     openharness,
     pytest,
     validate_task_package,
@@ -771,7 +771,7 @@ def test_bootstrap_json_includes_stage_guidance(tmp_path: Path, capsys) -> None:
     task = payload["task_packages"][0]
     assert result == 0
     assert task["current_stage"] == "detailed_ready"
-    assert task["next_stage"] == "in_progress"
+    assert task["next_stage"] == "implementing"
     assert "implementation" in task["next_step"]
 
 
@@ -1210,7 +1210,7 @@ def test_verify_defaults_to_later_stage_statuses_only(
             "## Constraints\n- E\n",
             encoding="utf-8",
         )
-        if status in {"overview_ready", "detailed_ready", "in_progress", "verifying", "archived"}:
+        if status in {"overview_ready", "detailed_ready", "implementing", "verifying", "archived"}:
             (root / "02-overview-design.md").write_text(
                 "# Overview Design\n\n"
                 "## System Boundary\nA\n\n"
@@ -1222,7 +1222,7 @@ def test_verify_defaults_to_later_stage_statuses_only(
             )
         else:
             (root / "02-overview-design.md").write_text("x\n", encoding="utf-8")
-        if status in {"detailed_ready", "in_progress", "verifying", "archived"}:
+        if status in {"detailed_ready", "implementing", "verifying", "archived"}:
             (root / "03-detailed-design.md").write_text(
                 "# Detailed Design\n\n"
                 "## Runtime Verification Plan\n"
@@ -1270,9 +1270,9 @@ def test_verify_defaults_to_later_stage_statuses_only(
             encoding="utf-8",
         )
 
-    write_package("requirements", "requirements_ready", "echo requirements")
+    write_package("requirements", "requirements_designed", "echo requirements")
     write_package("detailed", "detailed_ready", "echo detailed")
-    write_package("progress", "in_progress", "echo progress")
+    write_package("progress", "implementing", "echo progress")
     write_package("verifying", "verifying", "echo verifying")
 
     calls: list[str] = []
@@ -1451,7 +1451,7 @@ def test_validate_design_package_rejects_requirements_ready_with_placeholder_req
         encoding="utf-8",
     )
 
-    manifest = load_manifest(repo_root)
+    manifest = load_config(repo_root)
     package = discover_task_packages(repo_root, manifest)[0]
     errors = validate_task_package(package)
 
@@ -1523,7 +1523,7 @@ def test_validate_design_package_rejects_overview_ready_without_reflection(tmp_p
         encoding="utf-8",
     )
 
-    manifest = load_manifest(repo_root)
+    manifest = load_config(repo_root)
     package = discover_task_packages(repo_root, manifest)[0]
     errors = validate_task_package(package)
 
@@ -1627,7 +1627,7 @@ def test_validate_design_package_rejects_archived_without_evidence_anchors(tmp_p
         encoding="utf-8",
     )
 
-    manifest = load_manifest(repo_root)
+    manifest = load_config(repo_root)
     package = discover_task_packages(repo_root, manifest)[0]
     errors = validate_task_package(package)
 
@@ -1726,7 +1726,7 @@ def test_validate_design_package_accepts_detailed_ready_with_filled_semantic_anc
         encoding="utf-8",
     )
 
-    manifest = load_manifest(repo_root)
+    manifest = load_config(repo_root)
     package = discover_task_packages(repo_root, manifest)[0]
 
     assert validate_task_package(package) == []

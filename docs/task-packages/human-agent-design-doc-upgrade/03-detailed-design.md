@@ -51,6 +51,13 @@
 - `new-task` 生成模板的文本快照
 - `OH-038` 自身的 task package 文档，用于检查设计约束是否前后一致
 
+## Module Internals
+改动不涉及运行时代码模块，操作面是文档和模板。
+guidance 文件声明各阶段的必答问题、节映射和出口检查；模板文件为 new-task 提供起笔提示；协议测试锁住 contract。
+
+## Data Semantics
+本轮不引入新数据结构或状态模型变更。章节标题保持英文，正文使用中文；命令、状态值、YAML 键名、文件名与路径保持英文。
+
 ## Stage Gates
 - 必须先有失败的测试来证明新的 contract 还没落地。
 - 必须明确 overview 与 detailed 分别新增哪些必答问题和模板提示。

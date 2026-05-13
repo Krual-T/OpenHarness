@@ -16,7 +16,7 @@ from openharness_cli import (
     create_task_package,
     discover_task_packages,
     find_duplicate_task_ids,
-    load_manifest,
+    load_config,
     slugify_task_name,
     summarize_task_package,
     validate_task_package,
