@@ -96,7 +96,7 @@ def test_rwp_run_executes_explicit_python_script_and_loads_env_files(
         seen_env["PYTHONPATH"] = os.environ.get("PYTHONPATH")
         return 0
 
-    monkeypatch.setattr(openharness, "_run_command", fake_run)
+    monkeypatch.setattr(openharness_cli_lifecycle, "_run_command", fake_run)
 
     result = openharness.cmd_rwp(
         argparse.Namespace(

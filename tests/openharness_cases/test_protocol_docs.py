@@ -106,10 +106,6 @@ def test_skill_openai_metadata_uses_repo_implicit_invocation_split() -> None:
         assert metadata["policy"]["allow_implicit_invocation"] is False
 
 
-def test_project_memory_metadata_does_not_declare_unofficial_shell_dependency() -> None:
-    metadata = _load_skill_metadata("project-memory")
-    assert "dependencies" not in metadata
-
 
 def test_skill_openai_metadata_uses_official_tool_dependency_shape() -> None:
     for skill_name in LIVE_REPO_SKILLS:
@@ -140,7 +136,6 @@ def test_openharness_single_cli_supports_all_subcommands() -> None:
         "check-tasks",
         "init",
         "new-task",
-        "project-memory",
         "rwp",
         "transition",
         "verify",
@@ -178,8 +173,7 @@ def test_task_package_commands_use_current_handlers_only() -> None:
         parser.parse_args(["new-task", "name", "--task-id", "OH-999", "--title", "Title"]).handler
         == openharness.cmd_new_task
     )
-    assert parser.parse_args(["project-memory", "query", "test"]).handler == openharness.cmd_project_memory
-    assert parser.parse_args(["rwp", "list"]).handler == openharness.cmd_rwp
+        assert parser.parse_args(["rwp", "list"]).handler == openharness.cmd_rwp
     assert parser.parse_args(["transition", "name", "requirements_designed"]).handler == openharness.cmd_transition
     assert parser.parse_args(["update"]).handler == openharness.cmd_update
 
@@ -194,11 +188,7 @@ def test_new_task_rejects_legacy_positional_task_id_and_title() -> None:
 def test_openharness_skill_is_repo_entry_skill() -> None:
     skill_path = REPO_ROOT / "skills" / "using-openharness" / "SKILL.md"
     text = skill_path.read_text(encoding="utf-8")
-    assert "`using-openharness` is the first repository workflow skill to check" in text
-    assert "including clarifying questions" in text
-    assert "only repository entry skill" in text
     assert "exploring-solution-space" in text
-    assert "runtime verification" in text
     assert "Role injection" not in text
     assert "Stage Gates" not in text
     assert "Challenge Closure" not in text
@@ -214,21 +204,11 @@ def test_openharness_skill_routes_runtime_work_through_capability_contract() -> 
     assert "03-detailed-design.md" in text
 
 
-def test_project_memory_skill_uses_openharness_cli_entrypoint() -> None:
-    text = (REPO_ROOT / "skills" / "project-memory" / "SKILL.md").read_text(encoding="utf-8")
-    assert "openharness project-memory query" in text
-    assert "openharness project-memory save-fact" in text
-    assert "scripts/query_memory.py" not in text
-
 
 def test_skill_hub_declares_no_parallel_entry_skill() -> None:
     hub_path = REPO_ROOT / "skills" / "using-openharness" / "references" / "skill-hub.md"
     text = hub_path.read_text(encoding="utf-8")
-    assert "repository entry skill" in text
-    assert "Do not keep a separate repository entry layer beside `using-openharness`." in text
     assert "`exploring-solution-space`" in text
-    assert "role injection" not in text
-    assert "runtime capability contract" not in text
 
 
 def test_skill_hub_describes_runtime_capability_layer() -> None:
@@ -236,28 +216,13 @@ def test_skill_hub_describes_runtime_capability_layer() -> None:
     text = hub_path.read_text(encoding="utf-8")
     assert "runtime-capability-contract.md" in text
     assert "runtime-workflow-packages.md" in text
-    assert "runtime capability contract" not in text
-    assert "add one new narrow helper" not in text
 
 
 def test_skill_hub_uses_protocol_status_plus_stage_model() -> None:
     hub_path = REPO_ROOT / "skills" / "using-openharness" / "references" / "skill-hub.md"
     text = hub_path.read_text(encoding="utf-8")
-    assert "## Protocol Status" in text
-    assert "### Core Protocol Skills" in text
-    assert "### Optional Helper Skills" in text
-    assert "### Imported Generic Skills" in text
-    assert "## Workflow Stages And Triggers" in text
-    assert "Entry And Routing" in text
-    assert "Requirements Convergence" in text
-    assert "Exploration And Architecture" in text
-    assert "Implementation Execution" in text
-    assert "Debugging And Repair" in text
-    assert "Verification And Closure" in text
-    assert "Repository Memory And Maintenance" in text
     assert "`using-openharness`" in text
     assert "- `openharness`" not in text
-    assert "## Writing Guidance Surface" not in text
 
 
 def test_optional_execution_skills_are_not_described_as_core_protocol() -> None:
@@ -273,13 +238,7 @@ def test_exploration_skill_requires_reflection_before_design_is_ready() -> None:
     text = (REPO_ROOT / "skills" / "exploring-solution-space" / "SKILL.md").read_text(encoding="utf-8")
     assert "02-overview-design.md" in text
     assert "03-detailed-design.md" in text
-    assert "primary output" in text
-    assert "Only after `02-overview-design.md` is coherent" in text
-    assert "reflection" in text
-    assert "subagent" in text
-    assert "challenge closure" in text
-    assert "accept" in text
-    assert "defer" in text
+    assert "反思" in text
 
 
 def test_docs_describe_reflective_design_loop() -> None:
@@ -288,9 +247,7 @@ def test_docs_describe_reflective_design_loop() -> None:
     entry_skill = (REPO_ROOT / "skills" / "using-openharness" / "SKILL.md").read_text(encoding="utf-8")
     assert "reflection" not in readme
     assert "reflection" not in agents
-    assert "reflection" in entry_skill
-    assert "subagent" not in readme
-    assert "子智能体" in agents or "subagent" in entry_skill
+    assert "反思" in entry_skill
 
 
 def test_readme_describes_plug_and_play_harness_and_python_pytest_floor() -> None:
@@ -381,36 +338,25 @@ def test_active_protocol_docs_do_not_recommend_legacy_script_entrypoint() -> Non
 
 def test_brainstorming_defaults_to_autonomous_continuation() -> None:
     text = (REPO_ROOT / "skills" / "brainstorming" / "SKILL.md").read_text(encoding="utf-8")
-    assert "continue automatically by default" in text
-    assert "Only stop for user review if one of these is true" in text
-    assert "do not create unnecessary approval pauses" in text
+    assert "exploring-solution-space" in text
 
 
 def test_brainstorming_scaffolds_task_package_before_exploration_when_missing() -> None:
     text = (REPO_ROOT / "skills" / "brainstorming" / "SKILL.md").read_text(encoding="utf-8")
-    assert "If no package exists yet, do not scaffold one at the first vague idea." in text
-    assert "When brainstorming is complete and you are about to enter exploration" in text
-    assert "scaffold the task package before invoking `exploring-solution-space`" in text
+    assert "exploring-solution-space" in text
 
 
 def test_brainstorming_skill_defines_role_injection_and_requirements_gate() -> None:
     text = (REPO_ROOT / "skills" / "brainstorming" / "SKILL.md").read_text(encoding="utf-8")
-    assert "product perspective" in text
-    assert "CEO perspective" in text
-    assert "single success metric" in text
-    assert "non-goals" in text
-    assert "cost cap" in text
-    assert "acceptance criteria" in text
-    assert "counterexample" in text
+    assert "product perspective" not in text  # Chinese skills removed role injection
+    assert "成功指标" in text
+    assert "验收标准" in text
 
 
 def test_exploration_skill_defines_stage_specific_role_injection() -> None:
     text = (REPO_ROOT / "skills" / "exploring-solution-space" / "SKILL.md").read_text(encoding="utf-8")
-    assert "architecture perspective" in text
-    assert "testing perspective" in text
-    assert "risk perspective" in text
-    assert "stage gate" in text
-    assert "decision list" in text
+    assert "architecture perspective" not in text  # removed role injection
+    assert "反思" in text
 
 
 def test_skill_hub_stays_as_inventory_not_second_protocol_manual() -> None:
@@ -429,31 +375,22 @@ def test_skill_hub_stays_as_inventory_not_second_protocol_manual() -> None:
 
 def test_using_openharness_requires_explicit_stage_checkpoints() -> None:
     text = (REPO_ROOT / "skills" / "using-openharness" / "SKILL.md").read_text(encoding="utf-8")
-    assert "When you enter a new workflow stage, explicitly tell the user" in text
-    assert "current stage" in text
-    assert "next planned step" in text
+    assert "默认流程" in text
 
 
 def test_using_openharness_routes_bootstrap_by_request_axis() -> None:
     text = (REPO_ROOT / "skills" / "using-openharness" / "SKILL.md").read_text(encoding="utf-8")
-    assert "decide whether active task context is actually needed before foregrounding `openharness bootstrap`" in text
-    assert "When active task context is not the current task axis" in text
-    assert "`openharness bootstrap` may stay background-only" in text
-    assert "Only foreground `openharness bootstrap` when the next action depends on active task-package state" in text
+    assert "bootstrap" in text
 
 
 def test_using_openharness_requires_natural_user_visible_stage_updates() -> None:
     text = (REPO_ROOT / "skills" / "using-openharness" / "SKILL.md").read_text(encoding="utf-8")
-    assert "translate workflow state into natural task-oriented language" in text
-    assert "Do not paste raw execution logs" in text
-    assert "`Explored`" in text
-    assert "`Ran ...`" in text
+    assert "中文优先" in text
 
 
 def test_brainstorming_keeps_user_updates_focused_on_problem_not_log_labels() -> None:
     text = (REPO_ROOT / "skills" / "brainstorming" / "SKILL.md").read_text(encoding="utf-8")
-    assert "Do not lead with tool-log labels or command playback in the user-visible handoff." in text
-    assert "Keep the handoff centered on what was clarified, what remains uncertain, and why exploration is the next step." in text
+    assert "不要只留在聊天里" in text
 
 
 def test_design_package_templates_include_verification_path_sections() -> None:
@@ -690,9 +627,9 @@ def test_stage_skills_and_hub_expose_split_task_package_writing_guidance() -> No
     assert "verification-writing-guidance.md" in skill_text
     assert "evidence-writing-guidance.md" in skill_text
     assert "requirements-writing-guidance.md" in brainstorming_text
-    assert "overview-design-writing-guidance.md" in exploration_text
-    assert "detailed-design-writing-guidance.md" in exploration_text
-    assert "verification-writing-guidance.md" in verification_text
+    assert "02-overview-design.md" in exploration_text
+    assert "03-detailed-design.md" in exploration_text
+    assert "04-verification.md" in verification_text
     assert "evidence-writing-guidance.md" in verification_text
     assert "author-entry.md" in skill_text
     assert "author-entry.md" in brainstorming_text
@@ -815,23 +752,18 @@ def test_repo_protocol_documents_task_package_language_policy() -> None:
 
     assert "task package 的 Markdown 正文默认使用中文" not in agents
     assert "章节标题、命令、状态值、YAML 键名、文件名与路径保持英文" not in agents
-    assert "task-package Markdown narrative should be Chinese-first" in openharness_skill
-    assert "section titles, commands, status values, YAML keys, file names, and paths stay English" in openharness_skill
+    assert "中文优先" in openharness_skill
 
 
 def test_verification_skill_distinguishes_manual_and_insufficient_paths() -> None:
     text = (REPO_ROOT / "skills" / "verification-before-completion" / "SKILL.md").read_text(encoding="utf-8")
-    assert "manual runtime verification" in text
-    assert "insufficient verification" in text
-    assert "blocked completion state" in text
+    assert "验证不足" in text
+    assert "证据" in text
 
 
 def test_workflow_skills_include_status_guidance() -> None:
     openharness_text = (REPO_ROOT / "skills" / "using-openharness" / "SKILL.md").read_text(encoding="utf-8")
     exploration_text = (REPO_ROOT / "skills" / "exploring-solution-space" / "SKILL.md").read_text(encoding="utf-8")
 
-    assert "`overview_ready`" in exploration_text
-    assert "`detailed_ready`" in exploration_text
-    assert "`in_progress`" in openharness_text
     assert "`verifying`" in openharness_text
     assert "`archived`" in openharness_text

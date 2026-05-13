@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import openharness_cli.lifecycle as openharness_cli_lifecycle
+
 from .common import (
     Path,
     REQUIRED_TASK_PACKAGE_FILES,
@@ -35,7 +37,7 @@ def test_verify_reports_declared_manual_scenarios_without_claiming_execution(
         "workflow:\n"
         "  default_status_flow:\n"
         "    - proposed\n"
-        "    - requirements_ready\n"
+        "    - requirements_designed\n"
         "    - archived\n",
         encoding="utf-8",
     )
@@ -57,7 +59,7 @@ def test_verify_reports_declared_manual_scenarios_without_claiming_execution(
     (root / "STATUS.yaml").write_text(
         "id: OH-999\n"
         "title: Manual Only\n"
-        "status: requirements_ready\n"
+        "status: requirements_designed\n"
         "summary: manual verification only\n"
         "owner: codex\n"
         "created_at: 2026-03-20\n"
@@ -77,7 +79,7 @@ def test_verify_reports_declared_manual_scenarios_without_claiming_execution(
         calls.append(command)
         return 0
 
-    monkeypatch.setattr(openharness, "_run_command", fake_run)
+    monkeypatch.setattr(openharness_cli_lifecycle, "_run_command", fake_run)
 
     result = openharness.cmd_verify(
         argparse.Namespace(repo=str(repo_root), design="manual-only", check_tasks_only=False)
@@ -109,9 +111,9 @@ def test_transition_rejects_skipped_forward_moves(tmp_path: Path, capsys) -> Non
         "workflow:\n"
         "  default_status_flow:\n"
         "    - proposed\n"
-        "    - requirements_ready\n"
-        "    - overview_ready\n"
-        "    - detailed_ready\n"
+        "    - requirements_designed\n"
+        "    - overview_designed\n"
+        "    - detailed_designed\n"
         "    - in_progress\n"
         "    - verifying\n"
         "    - archived\n",
@@ -137,12 +139,12 @@ def test_transition_rejects_skipped_forward_moves(tmp_path: Path, capsys) -> Non
     )
 
     result = openharness.cmd_transition(
-        argparse.Namespace(repo=str(repo_root), task="skip-me", target_status="overview_ready")
+        argparse.Namespace(repo=str(repo_root), task="skip-me", target_status="overview_designed")
     )
 
     captured = capsys.readouterr()
     assert result == 1
-    assert "next legal forward status is `requirements_ready`" in captured.out
+    assert "next legal forward status is `requirements_designed`" in captured.out
     assert "status: proposed" in (root / "STATUS.yaml").read_text(encoding="utf-8")
 
 
@@ -165,9 +167,9 @@ def test_check_tasks_auto_moves_archived_status_from_active_root(tmp_path: Path,
         "workflow:\n"
         "  default_status_flow:\n"
         "    - proposed\n"
-        "    - requirements_ready\n"
-        "    - overview_ready\n"
-        "    - detailed_ready\n"
+        "    - requirements_designed\n"
+        "    - overview_designed\n"
+        "    - detailed_designed\n"
         "    - in_progress\n"
         "    - verifying\n"
         "    - archived\n",
@@ -334,9 +336,9 @@ def test_bootstrap_reports_stage_guidance_in_text_output(tmp_path: Path, capsys)
         "workflow:\n"
         "  default_status_flow:\n"
         "    - proposed\n"
-        "    - requirements_ready\n"
-        "    - overview_ready\n"
-        "    - detailed_ready\n"
+        "    - requirements_designed\n"
+        "    - overview_designed\n"
+        "    - detailed_designed\n"
         "    - in_progress\n"
         "    - verifying\n"
         "    - archived\n",
@@ -348,7 +350,7 @@ def test_bootstrap_reports_stage_guidance_in_text_output(tmp_path: Path, capsys)
     (root / "STATUS.yaml").write_text(
         "id: OH-960\n"
         "title: Visible Stage\n"
-        "status: requirements_ready\n"
+        "status: requirements_designed\n"
         "summary: stage guidance\n"
         "owner: codex\n"
         "created_at: 2026-03-24\n"
@@ -370,7 +372,7 @@ def test_bootstrap_reports_stage_guidance_in_text_output(tmp_path: Path, capsys)
     assert "current stage:" in captured.out
     assert "next stage:" in captured.out
     assert "next step:" in captured.out
-    assert "`overview_ready`" in captured.out
+    assert "`overview_designed`" in captured.out
 
 
 def test_bootstrap_reports_author_entry_when_present(tmp_path: Path, capsys) -> None:
@@ -393,9 +395,9 @@ def test_bootstrap_reports_author_entry_when_present(tmp_path: Path, capsys) -> 
         "workflow:\n"
         "  default_status_flow:\n"
         "    - proposed\n"
-        "    - requirements_ready\n"
-        "    - overview_ready\n"
-        "    - detailed_ready\n"
+        "    - requirements_designed\n"
+        "    - overview_designed\n"
+        "    - detailed_designed\n"
         "    - in_progress\n"
         "    - verifying\n"
         "    - archived\n",
@@ -408,7 +410,7 @@ def test_bootstrap_reports_author_entry_when_present(tmp_path: Path, capsys) -> 
     (root / "STATUS.yaml").write_text(
         "id: OH-962\n"
         "title: Visible Stage Author Entry\n"
-        "status: requirements_ready\n"
+        "status: requirements_designed\n"
         "summary: author entry surface\n"
         "owner: codex\n"
         "created_at: 2026-03-27\n"
@@ -438,7 +440,7 @@ def test_update_runs_git_pull_then_uv_tool_upgrade_in_repo_root(
         calls.append((repo, command))
         return 0
 
-    monkeypatch.setattr(openharness, "_run_command", fake_run)
+    monkeypatch.setattr(openharness_cli_lifecycle, "_run_command", fake_run)
 
     result = openharness.cmd_update(argparse.Namespace())
 
@@ -451,14 +453,8 @@ def test_update_runs_git_pull_then_uv_tool_upgrade_in_repo_root(
     assert "Updated OpenHarness" in captured.out
 
 
-def test_update_set_default_mode_writes_config_without_running_update(
-    tmp_path: Path, capsys, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    calls: list[tuple[Path, str]] = []
-    config_path = tmp_path / "openharness-config.yaml"
-
     monkeypatch.setenv("OPENHARNESS_CONFIG_PATH", str(config_path))
-    monkeypatch.setattr(openharness, "_run_command", lambda repo, command: calls.append((repo, command)) or 0)
+    monkeypatch.setattr(openharness_cli_lifecycle, "_run_command", lambda repo, command: calls.append((repo, command)) or 0)
 
     result = openharness.cmd_update(
         argparse.Namespace(set_default_mode="force-sync", mode=None, force_sync=False)
@@ -471,19 +467,12 @@ def test_update_set_default_mode_writes_config_without_running_update(
     assert "Default update mode set to force-sync" in captured.out
 
 
-def test_update_uses_configured_force_sync_default(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    calls: list[tuple[Path, str]] = []
-    config_path = tmp_path / "openharness-config.yaml"
-    config_path.write_text("update:\n  default_mode: force-sync\n", encoding="utf-8")
-
     def fake_run(repo: Path, command: str) -> int:
         calls.append((repo, command))
         return 0
 
     monkeypatch.setenv("OPENHARNESS_CONFIG_PATH", str(config_path))
-    monkeypatch.setattr(openharness, "_run_command", fake_run)
+    monkeypatch.setattr(openharness_cli_lifecycle, "_run_command", fake_run)
 
     result = openharness.cmd_update(argparse.Namespace())
 
@@ -495,19 +484,12 @@ def test_update_uses_configured_force_sync_default(
     ]
 
 
-def test_update_mode_overrides_configured_force_sync_default(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    calls: list[tuple[Path, str]] = []
-    config_path = tmp_path / "openharness-config.yaml"
-    config_path.write_text("update:\n  default_mode: force-sync\n", encoding="utf-8")
-
     def fake_run(repo: Path, command: str) -> int:
         calls.append((repo, command))
         return 0
 
     monkeypatch.setenv("OPENHARNESS_CONFIG_PATH", str(config_path))
-    monkeypatch.setattr(openharness, "_run_command", fake_run)
+    monkeypatch.setattr(openharness_cli_lifecycle, "_run_command", fake_run)
 
     result = openharness.cmd_update(argparse.Namespace(mode="pull", force_sync=False))
 
@@ -518,19 +500,12 @@ def test_update_mode_overrides_configured_force_sync_default(
     ]
 
 
-def test_update_force_sync_overrides_configured_pull_default(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    calls: list[tuple[Path, str]] = []
-    config_path = tmp_path / "openharness-config.yaml"
-    config_path.write_text("update:\n  default_mode: pull\n", encoding="utf-8")
-
     def fake_run(repo: Path, command: str) -> int:
         calls.append((repo, command))
         return 0
 
     monkeypatch.setenv("OPENHARNESS_CONFIG_PATH", str(config_path))
-    monkeypatch.setattr(openharness, "_run_command", fake_run)
+    monkeypatch.setattr(openharness_cli_lifecycle, "_run_command", fake_run)
 
     result = openharness.cmd_update(argparse.Namespace(mode=None, force_sync=True))
 
@@ -542,15 +517,8 @@ def test_update_force_sync_overrides_configured_pull_default(
     ]
 
 
-def test_update_invalid_configured_default_mode_stops_before_commands(
-    tmp_path: Path, capsys, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    calls: list[tuple[Path, str]] = []
-    config_path = tmp_path / "openharness-config.yaml"
-    config_path.write_text("update:\n  default_mode: surprise\n", encoding="utf-8")
-
     monkeypatch.setenv("OPENHARNESS_CONFIG_PATH", str(config_path))
-    monkeypatch.setattr(openharness, "_run_command", lambda repo, command: calls.append((repo, command)) or 0)
+    monkeypatch.setattr(openharness_cli_lifecycle, "_run_command", lambda repo, command: calls.append((repo, command)) or 0)
 
     result = openharness.cmd_update(argparse.Namespace(mode=None, force_sync=False))
 
@@ -569,7 +537,7 @@ def test_update_force_sync_fetches_and_resets_before_uv_tool_upgrade(
         calls.append((repo, command))
         return 0
 
-    monkeypatch.setattr(openharness, "_run_command", fake_run)
+    monkeypatch.setattr(openharness_cli_lifecycle, "_run_command", fake_run)
 
     result = openharness.cmd_update(argparse.Namespace(force_sync=True))
 
@@ -595,7 +563,7 @@ def test_update_force_sync_stops_when_fetch_fails(
             return 1
         return 0
 
-    monkeypatch.setattr(openharness, "_run_command", fake_run)
+    monkeypatch.setattr(openharness_cli_lifecycle, "_run_command", fake_run)
 
     result = openharness.cmd_update(argparse.Namespace(force_sync=True))
 
@@ -616,7 +584,7 @@ def test_update_force_sync_stops_when_reset_fails(
             return 1
         return 0
 
-    monkeypatch.setattr(openharness, "_run_command", fake_run)
+    monkeypatch.setattr(openharness_cli_lifecycle, "_run_command", fake_run)
 
     result = openharness.cmd_update(argparse.Namespace(force_sync=True))
 
@@ -638,7 +606,7 @@ def test_update_stops_when_git_pull_fails(capsys, monkeypatch: pytest.MonkeyPatc
             return 1
         return 0
 
-    monkeypatch.setattr(openharness, "_run_command", fake_run)
+    monkeypatch.setattr(openharness_cli_lifecycle, "_run_command", fake_run)
 
     result = openharness.cmd_update(argparse.Namespace())
 
@@ -671,18 +639,11 @@ def test_init_creates_harness_gitignore_that_ignores_everything(
     assert str(repo_root / ".harness") in captured.out
 
 
-def test_project_memory_query_runs_wrapped_script_in_target_repo(
-    tmp_path: Path, capsys, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    repo_root = tmp_path / "repo"
-    repo_root.mkdir()
-    calls: list[tuple[Path, str]] = []
-
     def fake_run(repo: Path, command: str) -> int:
         calls.append((repo, command))
         return 0
 
-    monkeypatch.setattr(openharness, "_run_command", fake_run)
+    monkeypatch.setattr(openharness_cli_lifecycle, "_run_command", fake_run)
 
     result = openharness.cmd_project_memory(
         argparse.Namespace(
@@ -703,9 +664,6 @@ def test_project_memory_query_runs_wrapped_script_in_target_repo(
     ]
     assert captured.out == ""
 
-
-def test_project_memory_parser_accepts_nested_subcommands() -> None:
-    parser = openharness.build_parser()
 
     args = parser.parse_args(
         ["project-memory", "--repo", "/tmp/repo", "save-fact", "memory_id", "--title", "Title"]
@@ -736,9 +694,9 @@ def test_bootstrap_json_includes_stage_guidance(tmp_path: Path, capsys) -> None:
         "workflow:\n"
         "  default_status_flow:\n"
         "    - proposed\n"
-        "    - requirements_ready\n"
-        "    - overview_ready\n"
-        "    - detailed_ready\n"
+        "    - requirements_designed\n"
+        "    - overview_designed\n"
+        "    - detailed_designed\n"
         "    - in_progress\n"
         "    - verifying\n"
         "    - archived\n",
@@ -750,7 +708,7 @@ def test_bootstrap_json_includes_stage_guidance(tmp_path: Path, capsys) -> None:
     (root / "STATUS.yaml").write_text(
         "id: OH-961\n"
         "title: Visible Stage Json\n"
-        "status: detailed_ready\n"
+        "status: detailed_designed\n"
         "summary: stage guidance json\n"
         "owner: codex\n"
         "created_at: 2026-03-24\n"
@@ -770,7 +728,7 @@ def test_bootstrap_json_includes_stage_guidance(tmp_path: Path, capsys) -> None:
     payload = json.loads(captured.out)
     task = payload["task_packages"][0]
     assert result == 0
-    assert task["current_stage"] == "detailed_ready"
+    assert task["current_stage"] == "detailed_designed"
     assert task["next_stage"] == "implementing"
     assert "implementation" in task["next_step"]
 
@@ -795,9 +753,9 @@ def test_bootstrap_json_includes_author_entry_when_present(tmp_path: Path, capsy
         "workflow:\n"
         "  default_status_flow:\n"
         "    - proposed\n"
-        "    - requirements_ready\n"
-        "    - overview_ready\n"
-        "    - detailed_ready\n"
+        "    - requirements_designed\n"
+        "    - overview_designed\n"
+        "    - detailed_designed\n"
         "    - in_progress\n"
         "    - verifying\n"
         "    - archived\n",
@@ -810,7 +768,7 @@ def test_bootstrap_json_includes_author_entry_when_present(tmp_path: Path, capsy
     (root / "STATUS.yaml").write_text(
         "id: OH-963\n"
         "title: Visible Stage Json Author Entry\n"
-        "status: detailed_ready\n"
+        "status: detailed_designed\n"
         "summary: author entry json\n"
         "owner: codex\n"
         "created_at: 2026-03-27\n"
@@ -852,9 +810,9 @@ def test_verify_records_artifact_and_status_metadata(
         "workflow:\n"
         "  default_status_flow:\n"
         "    - proposed\n"
-        "    - requirements_ready\n"
-        "    - overview_ready\n"
-        "    - detailed_ready\n"
+        "    - requirements_designed\n"
+        "    - overview_designed\n"
+        "    - detailed_designed\n"
         "    - in_progress\n"
         "    - verifying\n"
         "    - archived\n",
@@ -939,7 +897,7 @@ def test_verify_records_artifact_and_status_metadata(
         calls.append(command)
         return 0
 
-    monkeypatch.setattr(openharness, "_run_command", fake_run)
+    monkeypatch.setattr(openharness_cli_lifecycle, "_run_command", fake_run)
 
     result = openharness.cmd_verify(
         argparse.Namespace(repo=str(repo_root), design="artifact-run", check_tasks_only=False)
@@ -987,9 +945,9 @@ def test_transition_to_archived_moves_package_and_rewrites_paths(
         "workflow:\n"
         "  default_status_flow:\n"
         "    - proposed\n"
-        "    - requirements_ready\n"
-        "    - overview_ready\n"
-        "    - detailed_ready\n"
+        "    - requirements_designed\n"
+        "    - overview_designed\n"
+        "    - detailed_designed\n"
         "    - in_progress\n"
         "    - verifying\n"
         "    - archived\n",
@@ -1123,7 +1081,7 @@ def test_verify_rejects_packages_with_no_declared_verification_path(tmp_path: Pa
         "workflow:\n"
         "  default_status_flow:\n"
         "    - proposed\n"
-        "    - requirements_ready\n"
+        "    - requirements_designed\n"
         "    - archived\n",
         encoding="utf-8",
     )
@@ -1145,7 +1103,7 @@ def test_verify_rejects_packages_with_no_declared_verification_path(tmp_path: Pa
     (root / "STATUS.yaml").write_text(
         "id: OH-998\n"
         "title: No Verification\n"
-        "status: requirements_ready\n"
+        "status: requirements_designed\n"
         "summary: missing verification path\n"
         "owner: codex\n"
         "created_at: 2026-03-20\n"
@@ -1188,9 +1146,9 @@ def test_verify_defaults_to_later_stage_statuses_only(
         "workflow:\n"
         "  default_status_flow:\n"
         "    - proposed\n"
-        "    - requirements_ready\n"
-        "    - overview_ready\n"
-        "    - detailed_ready\n"
+        "    - requirements_designed\n"
+        "    - overview_designed\n"
+        "    - detailed_designed\n"
         "    - in_progress\n"
         "    - verifying\n"
         "    - archived\n",
@@ -1210,7 +1168,7 @@ def test_verify_defaults_to_later_stage_statuses_only(
             "## Constraints\n- E\n",
             encoding="utf-8",
         )
-        if status in {"overview_ready", "detailed_ready", "implementing", "verifying", "archived"}:
+        if status in {"overview_designed", "detailed_designed", "implementing", "verifying", "archived"}:
             (root / "02-overview-design.md").write_text(
                 "# Overview Design\n\n"
                 "## System Boundary\nA\n\n"
@@ -1222,7 +1180,7 @@ def test_verify_defaults_to_later_stage_statuses_only(
             )
         else:
             (root / "02-overview-design.md").write_text("x\n", encoding="utf-8")
-        if status in {"detailed_ready", "implementing", "verifying", "archived"}:
+        if status in {"detailed_designed", "implementing", "verifying", "archived"}:
             (root / "03-detailed-design.md").write_text(
                 "# Detailed Design\n\n"
                 "## Runtime Verification Plan\n"
@@ -1271,7 +1229,7 @@ def test_verify_defaults_to_later_stage_statuses_only(
         )
 
     write_package("requirements", "requirements_designed", "echo requirements")
-    write_package("detailed", "detailed_ready", "echo detailed")
+    write_package("detailed", "detailed_designed", "echo detailed")
     write_package("progress", "implementing", "echo progress")
     write_package("verifying", "verifying", "echo verifying")
 
@@ -1281,7 +1239,7 @@ def test_verify_defaults_to_later_stage_statuses_only(
         calls.append(command)
         return 0
 
-    monkeypatch.setattr(openharness, "_run_command", fake_run)
+    monkeypatch.setattr(openharness_cli_lifecycle, "_run_command", fake_run)
 
     result = openharness.cmd_verify(
         argparse.Namespace(repo=str(repo_root), design="", check_tasks_only=False)
@@ -1292,7 +1250,7 @@ def test_verify_defaults_to_later_stage_statuses_only(
     assert calls == ["echo progress", "echo verifying"]
 
 
-def test_verify_allows_explicit_package_target_before_in_progress(
+def test_verify_allows_explicit_package_target_before_implementing(
     tmp_path: Path, capsys, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     repo_root = tmp_path / "repo"
@@ -1312,9 +1270,9 @@ def test_verify_allows_explicit_package_target_before_in_progress(
         "workflow:\n"
         "  default_status_flow:\n"
         "    - proposed\n"
-        "    - requirements_ready\n"
-        "    - overview_ready\n"
-        "    - detailed_ready\n"
+        "    - requirements_designed\n"
+        "    - overview_designed\n"
+        "    - detailed_designed\n"
         "    - in_progress\n"
         "    - verifying\n"
         "    - archived\n",
@@ -1359,7 +1317,7 @@ def test_verify_allows_explicit_package_target_before_in_progress(
     (root / "STATUS.yaml").write_text(
         "id: OH-777\n"
         "title: Early Target\n"
-        "status: detailed_ready\n"
+        "status: detailed_designed\n"
         "summary: explicit verify target\n"
         "owner: codex\n"
         "created_at: 2026-03-21\n"
@@ -1379,7 +1337,7 @@ def test_verify_allows_explicit_package_target_before_in_progress(
         calls.append(command)
         return 0
 
-    monkeypatch.setattr(openharness, "_run_command", fake_run)
+    monkeypatch.setattr(openharness_cli_lifecycle, "_run_command", fake_run)
 
     result = openharness.cmd_verify(
         argparse.Namespace(repo=str(repo_root), design="early-target", check_tasks_only=False)
@@ -1390,7 +1348,7 @@ def test_verify_allows_explicit_package_target_before_in_progress(
     assert calls == ["echo targeted"]
 
 
-def test_validate_design_package_rejects_requirements_ready_with_placeholder_requirements(tmp_path: Path) -> None:
+def test_validate_design_package_rejects_requirements_designed_with_placeholder_requirements(tmp_path: Path) -> None:
     repo_root = tmp_path / "repo"
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
     (repo_root / "docs" / "task-packages" / "placeholder-reqs").mkdir(parents=True)
@@ -1409,9 +1367,9 @@ def test_validate_design_package_rejects_requirements_ready_with_placeholder_req
         "workflow:\n"
         "  default_status_flow:\n"
         "    - proposed\n"
-        "    - requirements_ready\n"
-        "    - overview_ready\n"
-        "    - detailed_ready\n"
+        "    - requirements_designed\n"
+        "    - overview_designed\n"
+        "    - detailed_designed\n"
         "    - in_progress\n"
         "    - verifying\n"
         "    - archived\n",
@@ -1438,7 +1396,7 @@ def test_validate_design_package_rejects_requirements_ready_with_placeholder_req
     (root / "STATUS.yaml").write_text(
         "id: OH-903\n"
         "title: Placeholder Reqs\n"
-        "status: requirements_ready\n"
+        "status: requirements_designed\n"
         "summary: requirements shell only\n"
         "owner: codex\n"
         "created_at: 2026-03-22\n"
@@ -1455,10 +1413,10 @@ def test_validate_design_package_rejects_requirements_ready_with_placeholder_req
     package = discover_task_packages(repo_root, manifest)[0]
     errors = validate_task_package(package)
 
-    assert any("requirements_ready requires non-placeholder content" in error for error in errors)
+    assert any("requirements_designed requires non-placeholder content" in error for error in errors)
 
 
-def test_validate_design_package_rejects_overview_ready_without_reflection(tmp_path: Path) -> None:
+def test_validate_design_package_rejects_overview_designed_without_reflection(tmp_path: Path) -> None:
     repo_root = tmp_path / "repo"
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
     (repo_root / "docs" / "task-packages" / "overview-no-reflection").mkdir(parents=True)
@@ -1477,9 +1435,9 @@ def test_validate_design_package_rejects_overview_ready_without_reflection(tmp_p
         "workflow:\n"
         "  default_status_flow:\n"
         "    - proposed\n"
-        "    - requirements_ready\n"
-        "    - overview_ready\n"
-        "    - detailed_ready\n"
+        "    - requirements_designed\n"
+        "    - overview_designed\n"
+        "    - detailed_designed\n"
         "    - in_progress\n"
         "    - verifying\n"
         "    - archived\n",
@@ -1510,7 +1468,7 @@ def test_validate_design_package_rejects_overview_ready_without_reflection(tmp_p
     (root / "STATUS.yaml").write_text(
         "id: OH-904\n"
         "title: Overview No Reflection\n"
-        "status: overview_ready\n"
+        "status: overview_designed\n"
         "summary: overview missing reflection\n"
         "owner: codex\n"
         "created_at: 2026-03-22\n"
@@ -1527,7 +1485,7 @@ def test_validate_design_package_rejects_overview_ready_without_reflection(tmp_p
     package = discover_task_packages(repo_root, manifest)[0]
     errors = validate_task_package(package)
 
-    assert any("overview_ready requires non-placeholder content" in error for error in errors)
+    assert any("overview_designed requires non-placeholder content" in error for error in errors)
     assert any("## Overview Reflection" in error for error in errors)
 
 
@@ -1550,9 +1508,9 @@ def test_validate_design_package_rejects_archived_without_evidence_anchors(tmp_p
         "workflow:\n"
         "  default_status_flow:\n"
         "    - proposed\n"
-        "    - requirements_ready\n"
-        "    - overview_ready\n"
-        "    - detailed_ready\n"
+        "    - requirements_designed\n"
+        "    - overview_designed\n"
+        "    - detailed_designed\n"
         "    - in_progress\n"
         "    - verifying\n"
         "    - archived\n",
@@ -1634,7 +1592,7 @@ def test_validate_design_package_rejects_archived_without_evidence_anchors(tmp_p
     assert any("archived requires non-placeholder content" in error for error in errors)
 
 
-def test_validate_design_package_accepts_detailed_ready_with_filled_semantic_anchors(tmp_path: Path) -> None:
+def test_validate_design_package_accepts_detailed_designed_with_filled_semantic_anchors(tmp_path: Path) -> None:
     repo_root = tmp_path / "repo"
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
     (repo_root / "docs" / "task-packages" / "detailed-solid").mkdir(parents=True)
@@ -1653,9 +1611,9 @@ def test_validate_design_package_accepts_detailed_ready_with_filled_semantic_anc
         "workflow:\n"
         "  default_status_flow:\n"
         "    - proposed\n"
-        "    - requirements_ready\n"
-        "    - overview_ready\n"
-        "    - detailed_ready\n"
+        "    - requirements_designed\n"
+        "    - overview_designed\n"
+        "    - detailed_designed\n"
         "    - in_progress\n"
         "    - verifying\n"
         "    - archived\n",
@@ -1713,7 +1671,7 @@ def test_validate_design_package_accepts_detailed_ready_with_filled_semantic_anc
     (root / "STATUS.yaml").write_text(
         "id: OH-906\n"
         "title: Detailed Solid\n"
-        "status: detailed_ready\n"
+        "status: detailed_designed\n"
         "summary: detailed anchors filled\n"
         "owner: codex\n"
         "created_at: 2026-03-22\n"

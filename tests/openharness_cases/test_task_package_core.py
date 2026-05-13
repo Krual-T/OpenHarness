@@ -378,7 +378,7 @@ def test_load_config_prefers_repo_local_skills_layout(tmp_path: Path) -> None:
     )
 
     manifest = load_config(repo_root)
-    assert manifest.path == (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml")
+    assert manifest.task_packages_root == repo_root / "docs" / "task-packages"
 
 
 def test_validate_task_package_rejects_unknown_status_and_missing_paths(tmp_path: Path) -> None:
@@ -482,12 +482,7 @@ def test_validate_task_package_directly_rejects_archived_status_in_active_root(t
         encoding="utf-8",
     )
     manifest = load_config(repo_root)
-    package = openharness.TaskPackage(
-        root=root,
-        status=openharness._load_yaml(root / "STATUS.yaml"),
-        manifest=manifest,
-        documents={name: root / name for name in manifest.required_design_files},
-    )
+    package = discover_task_packages(repo_root, manifest)[0]
     errors = validate_task_package(package)
     assert any("archived package must live under" in error for error in errors)
 

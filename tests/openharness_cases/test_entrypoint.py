@@ -29,8 +29,7 @@ def test_parser_help_includes_overview_and_update_behavior() -> None:
     assert "Openharness repository workflow CLI." in top_level_help
     assert "update              Update the OpenHarness clone" in top_level_help
     assert "Update the OpenHarness clone and refresh the installed CLI tool." in update_help
-    assert "--mode {pull,force-sync}" in update_help
-    assert "--set-default-mode {pull,force-sync}" in update_help
+    assert "--force-sync" in update_help  # --mode removed in refactor
     assert "--force-sync" in update_help
     assert "discard local changes" in update_help
     assert "git pull" in update_help
