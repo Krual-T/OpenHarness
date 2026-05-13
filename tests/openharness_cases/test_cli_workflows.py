@@ -376,7 +376,7 @@ def test_bootstrap_reports_stage_guidance_in_text_output(tmp_path: Path, capsys)
     assert "current stage:" in captured.out
     assert "next stage:" in captured.out
     assert "next step:" in captured.out
-    assert "`overview_designed`" in captured.out
+    assert "`overview_designing`" in captured.out  # 10-stage flow: next stage is -ing form
 
 
 
