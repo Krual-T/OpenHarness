@@ -1,65 +1,29 @@
 ---
 name: requesting-code-review
-description: Use when completing tasks, implementing major features, or before merging to verify work meets requirements
+description: 完成任务、实现主要功能或在合并前使用，验证工作是否满足要求
 ---
 
-# Requesting Code Review
+# 请求代码审查
 
-## Skill Role
+## 何时请求
 
-- Protocol status: optional helper skill
-- Primary stage: verification and closure
-- Trigger: use before merge or after major implementation waves when bounded review adds value
+- 主要功能或重构之后
+- 合并到 main 之前
+- 声称一个广泛变更"安全"之前
+- 卡住时、风险重构前、修复微妙 bug 后（可选）
 
-Prepare a bounded review context before merge or closure. If the current session permits delegated review and the user explicitly wants it, use that context for a reviewer subagent. Otherwise perform the same review checklist yourself in the current session.
+## 步骤
 
-## When to Request Review
+1. 获取 diff 范围：`BASE_SHA=$(git rev-parse HEAD~1)` `HEAD_SHA=$(git rev-parse HEAD)`
+2. 使用 `references/code-reviewer.md` 模板构建审查上下文：改了什么、要达成什么、diff 范围、已知风险
+3. 执行审查并根据反馈行动：
+   - Critical 问题立即修复
+   - Important 问题推进前修复
+   - Minor 问题适时记录
+   - 审查结论有误时用技术理由回应
 
-**Mandatory:**
-- After a major feature or refactor
-- Before merge to main
-- Before claiming a broad change is safe
+## 要点
 
-**Optional but valuable:**
-- When stuck
-- Before risky refactoring
-- After fixing a subtle bug
-
-## How to Request
-
-**1. Get the diff range:**
-
-```bash
-BASE_SHA=$(git rev-parse HEAD~1)
-HEAD_SHA=$(git rev-parse HEAD)
-```
-
-**2. Build review context:**
-
-Use the template at `references/code-reviewer.md` to capture:
-
-- what changed
-- what it was supposed to do
-- the diff range to inspect
-- any known risks or constraints
-
-**3. Run the review and act on feedback:**
-
-- Fix Critical issues immediately
-- Fix Important issues before proceeding
-- Note Minor issues for later when appropriate
-- Push back with technical reasoning if a review conclusion is wrong
-
-## Integration
-
-- In delegated workflows, review each substantial result before moving on.
-- In manual workflows, use the same checklist before merge or closure.
-
-## Red Flags
-
-- Skipping review because the change feels small.
-- Treating delegated review as mandatory when delegation is unavailable or not requested.
-- Proceeding with unfixed Important issues.
-- Arguing with valid technical feedback instead of checking it.
-
-See template at: `references/code-reviewer.md`
+- 不要因为变更"看起来小"就跳过审查
+- 不要带着未修复的 Important 问题继续推进
+- 不要反驳有效的技术反馈

@@ -1,91 +1,39 @@
 ---
 name: using-git-worktrees
-description: Use when starting implementation work that needs isolation from the current workspace or before executing a task package in a separate worktree
+description: 当实现工作需要隔离工作空间或需要在单独 worktree 中执行任务包时使用
 ---
 
-# Using Git Worktrees
+# 使用 Git Worktrees
 
-## Skill Role
+## 概述
 
-- Protocol status: optional helper skill
-- Primary stage: implementation execution
-- Trigger: use when execution needs an isolated workspace or branch context
+Git worktree 创建共享同一仓库历史的隔离工作空间。在隔离确实有帮助时使用，不要作为默认仪式。
 
-Git worktrees create isolated workspaces that share one repository history. Use them when isolation is genuinely helpful, not as a default ritual.
+## 目录选择
 
-**Core principle:** choose the location deliberately, verify ignore safety first, then run the repository's documented bootstrap and verification path.
+按以下优先级：
 
-## Directory Selection Process
+1. 检查已有目录：`ls -d .worktrees worktrees 2>/dev/null`，两个都有则 `.worktrees` 优先
+2. 检查仓库指引：读 `AGENTS.md` 和当前任务包中关于隔离或分支策略的说明
+3. 都没有则问用户
 
-Follow this priority order:
+## 安全检查
 
-### 1. Check Existing Directories
-
-```bash
-ls -d .worktrees 2>/dev/null
-ls -d worktrees 2>/dev/null
-```
-
-If both exist, `.worktrees` wins.
-
-### 2. Check Repository Guidance
-
-- Read `AGENTS.md`.
-- Read the active task package if it mentions isolation or branch strategy.
-- If the repository already defines a preferred location, follow it.
-
-### 3. Ask User
-
-If no directory exists and repository guidance does not define a preference, ask where the worktree should live.
-
-## Safety Verification
-
-For project-local directories (`.worktrees` or `worktrees`), verify the directory is ignored before creating a worktree:
-
+项目本地目录（`.worktrees` 或 `worktrees`）创建前验证已被 gitignore：
 ```bash
 git check-ignore -q .worktrees 2>/dev/null || git check-ignore -q worktrees 2>/dev/null
 ```
+未忽略则先添加忽略规则，再验证，然后才创建 worktree。
 
-If the directory is not ignored:
+## 创建步骤
 
-1. Add the ignore rule.
-2. Re-check ignore status.
-3. Only then create the worktree.
+1. 检测项目名：`project=$(basename "$(git rev-parse --show-toplevel)")`
+2. 创建 worktree：`git worktree add "$path" -b "$BRANCH_NAME"`；`cd "$path"`
+3. 运行仓库文档化的启动流程（Python 仓库优先 `uv run ...` 命令）
+4. 实现前运行验证命令确认基线干净。基线失败则先报告，避免新旧损坏混淆
 
-## Creation Steps
+## 集成
 
-### 1. Detect Project Name
-
-```bash
-project=$(basename "$(git rev-parse --show-toplevel)")
-```
-
-### 2. Create Worktree
-
-```bash
-git worktree add "$path" -b "$BRANCH_NAME"
-cd "$path"
-```
-
-### 3. Run Project Setup
-
-Run the repository's documented bootstrap path. For Python repositories in this workspace, prefer the `uv run ...` commands documented in `AGENTS.md` or the task package instead of assuming `pip` or `poetry`.
-
-### 4. Verify Clean Baseline
-
-Run the repository's verification command before starting implementation.
-
-If the baseline fails, report that failure before continuing so new breakage is not mixed with old breakage.
-
-## Common Mistakes
-
-- Creating a project-local worktree before verifying the directory is ignored.
-- Assuming a directory location without checking repository guidance.
-- Assuming an installer or setup tool when the repository already documents its own workflow.
-- Starting implementation on top of a failing baseline without recording it.
-
-## Integration
-
-- `using-openharness` decides whether isolated execution is warranted.
-- `subagent-driven-development` may use this skill when the user explicitly wants delegated work in an isolated workspace.
-- `finishing-a-development-branch` handles cleanup once the work is complete.
+- `using-openharness` 决定是否需要隔离执行
+- `subagent-driven-development` 在用户要求隔离工作空间时使用此技能
+- `finishing-a-development-branch` 完成工作后处理清理

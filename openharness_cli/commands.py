@@ -19,7 +19,7 @@ from .lifecycle import (
 )
 from .models import TaskScaffoldRequest
 from .repository import (
-    _utc_timestamp, _load_yaml, _write_yaml,
+    _utc_timestamp,
     create_task_package, create_task_package_with_auto_id,
     discover_runtime_workflow_packages, discover_task_packages,
     find_duplicate_task_ids, humanize_task_name, load_config,
@@ -28,66 +28,8 @@ from .repository import (
 )
 from .validation import validate_task_package
 
-UPDATE_MODES = {"pull", "force-sync"}
-OPENHARNESS_CONFIG_PATH_ENV = "OPENHARNESS_CONFIG_PATH"
-
-
 def _openharness_repo_root() -> Path:
     return Path(__file__).resolve().parents[1]
-
-
-def _openharness_config_path() -> Path:
-    configured_path = os.environ.get(OPENHARNESS_CONFIG_PATH_ENV)
-    if configured_path:
-        return Path(configured_path).expanduser()
-    config_home = os.environ.get("XDG_CONFIG_HOME")
-    base = Path(config_home).expanduser() if config_home else Path.home() / ".config"
-    return base / "openharness" / "config.yaml"
-
-
-def _load_openharness_config(config_path: Path) -> dict[str, object]:
-    if not config_path.exists():
-        return {}
-    return _load_yaml(config_path)
-
-
-def _save_openharness_config(config_path: Path, config: dict[str, object]) -> None:
-    config_path.parent.mkdir(parents=True, exist_ok=True)
-    _write_yaml(config_path, config)
-
-
-def _set_default_update_mode(mode: str) -> Path:
-    config_path = _openharness_config_path()
-    config = _load_openharness_config(config_path)
-    update_config = config.setdefault("update", {})
-    if not isinstance(update_config, dict):
-        raise ValueError(f"`update` config must be a mapping in {config_path}")
-    update_config["default_mode"] = mode
-    _save_openharness_config(config_path, config)
-    return config_path
-
-
-def _configured_update_mode() -> str:
-    config_path = _openharness_config_path()
-    config = _load_openharness_config(config_path)
-    update_config = config.get("update") or {}
-    if not isinstance(update_config, dict):
-        raise ValueError(f"`update` config must be a mapping in {config_path}")
-    mode = str(update_config.get("default_mode") or "").strip()
-    if not mode:
-        return "pull"
-    if mode not in UPDATE_MODES:
-        raise ValueError(f"invalid default update mode `{mode}` in {config_path}; expected `pull` or `force-sync`")
-    return mode
-
-
-def _resolve_update_mode(args: argparse.Namespace) -> str:
-    if getattr(args, "force_sync", False):
-        return "force-sync"
-    mode = getattr(args, "mode", None)
-    if mode:
-        return str(mode)
-    return _configured_update_mode()
 
 
 def _author_entry_info(repo_root: Path) -> dict[str, str] | None:
@@ -217,40 +159,6 @@ def cmd_new_task(args: argparse.Namespace) -> int:
     return 0
 
 
-def _load_env_file(path: Path) -> dict[str, str]:
-    if not path.exists():
-        return {}
-    values: dict[str, str] = {}
-    for line_number, raw_line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
-        line = raw_line.strip()
-        if not line or line.startswith("#"):
-            continue
-        if "=" not in line:
-            raise ValueError(f"invalid env line {line_number} in {path}: expected KEY=VALUE")
-        key, value = line.split("=", 1)
-        key = key.strip()
-        if not key:
-            raise ValueError(f"invalid env line {line_number} in {path}: empty key")
-        value = value.strip()
-        if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
-            value = value[1:-1]
-        values[key] = value
-    return values
-
-
-def _load_rwp_env(repo_root: Path) -> dict[str, str]:
-    values: dict[str, str] = {}
-    for path in (repo_root / ".harness" / ".env", repo_root / ".harness" / "rwp" / ".env"):
-        values.update(_load_env_file(path))
-    runtime_api_root = Path(__file__).resolve().parents[1]
-    existing_pythonpath = values.get("PYTHONPATH") or os.environ.get("PYTHONPATH") or ""
-    pythonpath_entries = [str(runtime_api_root)]
-    if existing_pythonpath:
-        pythonpath_entries.append(existing_pythonpath)
-    values["PYTHONPATH"] = os.pathsep.join(pythonpath_entries)
-    return values
-
-
 def cmd_rwp(args: argparse.Namespace) -> int:
     repo_root = Path(args.repo).resolve()
     command = args.rwp_command
@@ -271,18 +179,14 @@ def cmd_rwp(args: argparse.Namespace) -> int:
             return 0
         if command == "run":
             script_path = resolve_runtime_workflow_script(repo_root, args.workflow, args.script)
-            env_values = _load_rwp_env(repo_root)
-            old_values = {key: os.environ.get(key) for key in env_values}
-            try:
-                os.environ.update(env_values)
-                command_line = shlex.join(["uv", "run", "python", str(script_path), *list(args.script_args)])
-                return _run_command(repo_root, command_line)
-            finally:
-                for key, old_value in old_values.items():
-                    if old_value is None:
-                        os.environ.pop(key, None)
-                    else:
-                        os.environ[key] = old_value
+            runtime_api_root = Path(__file__).resolve().parents[1]
+            pythonpath = os.pathsep.join([
+                str(runtime_api_root),
+                *([os.environ["PYTHONPATH"]] if os.environ.get("PYTHONPATH") else []),
+            ])
+            os.environ["PYTHONPATH"] = pythonpath
+            command_line = shlex.join(["uv", "run", "python", str(script_path), *list(args.script_args)])
+            return _run_command(repo_root, command_line)
     except ValueError as exc:
         print(f"ERROR: {exc}")
         return 1
@@ -392,35 +296,18 @@ def cmd_verify(args: argparse.Namespace) -> int:
 
 def cmd_update(args: argparse.Namespace) -> int:
     repo_root = _openharness_repo_root()
-    default_mode = getattr(args, "set_default_mode", None)
-    if default_mode:
-        try:
-            config_path = _set_default_update_mode(str(default_mode))
-        except ValueError as exc:
-            print(f"ERROR: {exc}")
-            return 1
-        print(f"Default update mode set to {default_mode} in {config_path}")
-        return 0
-    try:
-        update_mode = _resolve_update_mode(args)
-    except ValueError as exc:
-        print(f"ERROR: {exc}")
-        return 1
-    if update_mode == "force-sync":
+    if getattr(args, "force_sync", False):
         for command in ("git fetch --prune", "git reset --hard '@{u}'"):
             sync_result = _run_command(repo_root, command)
             if sync_result != 0:
                 print(f"ERROR: force sync failed at `{command}`; refusing to continue with tool upgrade.")
                 return 1
         print(f"Force-synchronized OpenHarness source clone from {repo_root}")
-    elif update_mode == "pull":
+    else:
         git_pull_result = _run_command(repo_root, "git pull")
         if git_pull_result != 0:
             print("ERROR: git pull failed; refusing to continue with tool upgrade.")
             return 1
-    else:
-        print(f"ERROR: invalid update mode `{update_mode}`; expected `pull` or `force-sync`.")
-        return 1
     upgrade_result = _run_command(repo_root, "uv tool upgrade openharness")
     if upgrade_result != 0:
         print("ERROR: `uv tool upgrade openharness` failed.")

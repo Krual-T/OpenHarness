@@ -1,67 +1,32 @@
 ---
 name: dispatching-parallel-agents
-description: Use when facing 2+ independent tasks that can be worked on without shared state or sequential dependencies
+description: 当存在 2 个以上互不依赖的独立任务时使用
 ---
 
-# Dispatching Parallel Agents
+# 并行调度子代理
 
-## Skill Role
+## 何时使用
 
-- Protocol status: imported generic skill
-- Primary stage: implementation execution
-- Trigger: use only when the user explicitly wants parallel agent work and the task decomposition is genuinely independent
+同时满足以下条件：
+- 存在多个独立的子任务
+- 每个子代理用有限上下文就能完成
+- 子代理不会编辑同一文件
+- 用户明确要求并行处理
 
-Parallel delegation is useful when multiple bounded problems can be investigated or implemented without shared state, shared write scopes, or sequencing dependencies.
+不要用于探索性调试、紧耦合重构或阻塞下一步的任务。
 
-**Core principle:** one independent problem domain per agent.
+## 步骤
 
-## When to Use
+1. 按独立问题域分组
+2. 为每个域准备一个边界清晰的 prompt
+3. 并行调度所有子代理
+4. 逐一审查结果
+5. 合并后运行完整验证
 
-Use this skill when all of the following are true:
+## Prompt 结构
 
-- there are multiple independent failures or subtasks
-- each agent can succeed with bounded context
-- agents will not edit the same files
-- the user explicitly wants parallel agent work
+每个子代理的 prompt 需包含：具体范围、明确目标、约束条件、期望输出。不要给子代理"修复一切"这种模糊指令。
 
-Do not use it for exploratory debugging, tightly coupled refactors, or tasks that block the very next local step.
+## 验证
 
-## The Pattern
-
-1. Group work by independent problem domain.
-2. Prepare one bounded prompt per domain.
-3. Dispatch in parallel.
-4. Review each result.
-5. Run integrated verification after combining the changes.
-
-## Agent Prompt Structure
-
-Each agent prompt should include:
-
-1. specific scope
-2. concrete goal
-3. constraints
-4. expected output
-
-Do not ask an agent to "fix everything."
-
-## Example
-
-Scenario: six failures across three unrelated test files after a refactor.
-
-Dispatch:
-
-- Agent 1 → fix `agent-tool-abort.test.ts`
-- Agent 2 → fix `batch-completion-behavior.test.ts`
-- Agent 3 → fix `tool-approval-race-conditions.test.ts`
-
-Each agent gets the failing tests, relevant error output, and constraints for that file only.
-
-## Verification
-
-After agents return:
-
-1. review each summary
-2. check for file conflicts
-3. run the full verification path
-4. spot-check high-risk areas
+子代理返回后：检查是否有文件冲突 → 运行完整验证 → 抽查高风险区域

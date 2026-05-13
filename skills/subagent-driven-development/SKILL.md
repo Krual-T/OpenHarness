@@ -1,81 +1,50 @@
 ---
 name: subagent-driven-development
-description: Use when a task package is detailed enough to execute and its tasks are independent enough to dispatch subagents in the current session
+description: 当任务包足够详细且子任务足够独立，可以在当前会话中调度子代理执行时使用
 ---
 
-# Subagent-Driven Development
+# 子代理驱动开发
 
-## Skill Role
+## 何时使用
 
-- Protocol status: optional helper skill
-- Primary stage: implementation execution
-- Trigger: use only when the task package is already detailed enough, the subtasks are mostly independent, and the user explicitly wants delegated execution
+同时满足以下条件：
+- 任务包已准备好执行
+- 工作可拆分为基本独立的子任务
+- 用户明确要求子代理或并行工作
+- 调度不会产生比本地执行更麻烦的共享写入冲突
 
-Use this skill to execute a detailed task package through bounded subagents. The task package remains authoritative; the controller owns coordination, verification, and task-package writeback.
+不满足则不使用，在主会话中手动执行。
 
-**Core principle:** bounded delegation, bounded context, controller-owned verification.
+## 步骤
 
-## When to Use
+1. 读一遍任务包，提取可执行任务到本地清单
+2. 为每个任务准备上下文：确切的任务文本、相关文件路径、约束和验收标准
+3. 每次调度一个子代理完成一个边界清晰的任务
+4. 子代理有疑问时先回答，不要让它在歧义中猜测
+5. 对照任务包和验证路径审查结果
+6. 有缺口则给出具体修正意见后重新调度
+7. 子代理结果验证通过后才标记本地清单中的任务完成
+8. 全部完成后运行包级验证，更新 `04-verification.md`、`05-evidence.md` 和 `STATUS.yaml`
 
-Use this skill only when all of the following are true:
+## 模型选择
 
-- `using-openharness` has already routed the task and the package is ready to execute.
-- The work can be split into mostly independent subtasks.
-- The user explicitly wants subagents or parallel agent work.
-- Delegation will not create shared-write conflicts that are harder than doing the work locally.
+- 机械性、范围紧的编辑：快速模型
+- 多文件集成工作：标准模型
+- 架构判断或审查密集型工作：最强可用模型
 
-If any of these are false, stay in the main session and execute manually.
+不要用更强的模型来弥补模糊的任务描述。
 
-## Process
+## 处理子代理状态
 
-1. Read the task package once and extract the executable tasks into a local checklist.
-2. For each task, prepare bounded context:
-   - the exact task text
-   - the relevant file paths
-   - constraints and acceptance criteria
-   - any architectural context the worker needs
-3. Dispatch one implementer subagent for one bounded task.
-4. Answer questions before the subagent proceeds; do not let it guess through ambiguity.
-5. Review the result against the task package and declared verification path.
-6. If there are gaps, send the task back with concrete corrections.
-7. Mark the task complete in your local checklist only after the delegated result is verified.
-8. After all tasks are complete, run package-level verification, then update `04-verification.md`, `05-evidence.md`, and `STATUS.yaml`.
+- **DONE**：对照任务包审查结果并运行验证
+- **DONE_WITH_CONCERNS**：先阅读疑虑再继续，解决正确性或范围问题后再视为完成
+- **NEEDS_CONTEXT**：补充缺失上下文后重新调度
+- **BLOCKED**：改变上下文、任务大小或模型后再试，不要盲目重试相同的 prompt
 
-## Model Selection
+## 要点
 
-- Mechanical, tightly scoped edits: fast model.
-- Multi-file integration work: standard model.
-- Architectural judgment or review-heavy work: strongest model available.
-
-Do not use a more capable model as a substitute for a vague task description.
-
-## Handling Implementer Status
-
-**DONE:** Review the result against the task package and run the relevant verification.
-
-**DONE_WITH_CONCERNS:** Read the concerns before proceeding. Resolve correctness or scope doubts before treating the task as complete.
-
-**NEEDS_CONTEXT:** Provide the missing context and re-dispatch.
-
-**BLOCKED:** Change something real before retrying: context, task size, or model. Do not blindly retry the same prompt.
-
-## Prompt Templates
-
-- `./references/implementer-prompt.md` - bounded implementer prompt
-- `./references/spec-reviewer-prompt.md` - optional bounded compliance review prompt when delegated review is explicitly requested
-- `./references/code-quality-reviewer-prompt.md` - optional bounded quality review prompt when delegated review is explicitly requested
-
-## Red Flags
-
-- Using this skill when the user did not ask for delegation.
-- Making subagents discover the task package on their own when you could hand them the exact task text.
-- Dispatching multiple workers that edit the same files.
-- Treating subagent self-report as proof of completion.
-- Marking the package done before package verification and evidence writeback are complete.
-
-## Integration
-
-- `using-openharness` is required before this skill.
-- `using-git-worktrees` is optional when isolated workspace helps.
-- `test-driven-development` remains the preferred execution discipline for behavior changes.
-- `finishing-a-development-branch` closes the package after verification.
+- 用户未要求调度时不要使用
+- 让子代理自己去发现任务包不如直接把任务内容交给它
+- 不要调度多个会编辑同一文件的子代理
+- 子代理自报完成不等于已完成
+- 包验证和证据写回完成前不算结束

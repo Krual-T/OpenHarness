@@ -1,49 +1,30 @@
 ---
 name: exploring-solution-space
-description: Use after requirements are clear to explore the local repository and the web before locking in architecture or implementation details.
+description: 需求明确后，在锁定架构或实现细节之前，探索本地仓库和网络资源
 ---
 
-# Exploring Solution Space
+# 方案探索
 
-## Skill Role
+## 何时使用
 
-- Protocol status: core protocol skill
-- Primary stage: exploration and architecture
-- Trigger: use after requirements are clear and before architecture or implementation details are locked
+`brainstorming` 完成并写出 `01-requirements.md` 之后，架构和实现细节锁定之前。
 
-Use this skill after `brainstorming` has clarified the task and written `01-requirements.md`.
+## 步骤
 
-Its job is to make exploration explicit:
+1. 重述要探索的具体问题
+2. 探索本地仓库：相关代码、文档、测试、最近变更
+3. 涉及第三方 API、当前平台行为、已有公共方案或最新最佳实践时，搜索网络
+4. 总结本地约束、可行选项和推荐方向
+5. 撰写 `02-overview-design.md`：覆盖范围、排除范围、主体结构、关键边界、主流、备选方案，以及至少一个被拒绝的替代方案及其被拒原因
+6. 进行概览反思：挑战主路径，比较替代方案，检查是否有遗漏的验证影响因素
+7. 仅在 `02-overview-design.md` 自洽后，撰写 `03-detailed-design.md`：验证路径、回退路径、实现落脚点、接口、迁移顺序、预期证据、失败模式
+8. 进行详细反思：聚焦测试策略、接口、迁移顺序和预期证据
 
-- inspect the local repository
-- inspect relevant task packages and recent code
-- search the web when external references or current best practices matter
-- record the findings that actually change architecture, boundaries, or verification strategy
+## 逐项设计确认
 
-It does not define a second repository protocol. Repository-level stage flow, stage gates, and archive rules stay in `using-openharness`.
-Use bounded subagent discussion only when the architecture remains high-impact, uncertain, or hard to compare after the main exploration pass.
+对于非 `mechanical` 任务，建议逐项确认设计：
 
-## Output
-
-The primary output of this skill is:
-
-- `02-overview-design.md`
-
-This skill may also feed justified implementation constraints into `03-detailed-design.md`, but only after the overview is coherent enough to constrain implementation.
-`overview_ready` is the normal checkpoint once `02-overview-design.md` and its reflection pass are both coherent.
-`detailed_ready` is the normal checkpoint once `03-detailed-design.md` and its detailed reflection are concrete enough to execute.
-
-## Stepwise Design Confirmation
-
-For non-mechanical tasks, use `STATUS.yaml.collaboration` to understand the confirmed collaboration state.
-Before entering overview or detailed design, if `collaboration.task_type` is absent, propose one task classification and wait for human confirmation.
-Write the confirmed value to `collaboration.task_type` before deciding whether stepwise design confirmation applies.
-If the confirmed task type is `mechanical`, do not default to stepwise confirmation.
-If `collaboration.design_review_mode` is absent when entering overview or detailed design, propose stepwise design confirmation before drafting the stage.
-
-Use one design point at a time:
-
-```text
+```
 设计点 N/M：<短标题>
 
 推荐方案：
@@ -53,72 +34,21 @@ Use one design point at a time:
 <主要取舍>
 
 影响范围：
-<写入 02 还是 03，会影响哪些 skill/guidance/code>
+<写入 02 还是 03，会影响哪些部分>
 
 请确认：
 <明确的确认问题>
 ```
 
-Rules:
+- `确认`/`ok`/`可以` → 仅确认当前设计点
+- `自主推进`/`你决定` → 写入 `collaboration.design_review_mode: auto`
+- 每确认一个设计点就及时写回任务包，不要攒到最后
+- 完成 N/M 不等于阶段完成，`02` 和 `03` 的阶段门槛仍决定是否就绪
 
-- `N/M` is collaboration progress, not the stage gate.
-- If new design points appear during exploration, update `M` and explain why.
-- `确认`, `ok`, `可以`, `继续`, and `下一个` confirm only the current design point.
-- `自主推进`, `你决定`, and `不用每点确认` mean the human authorizes `auto`; write `collaboration.design_review_mode: auto`, then keep recording key decision points.
-- When the human confirms stepwise mode, write `collaboration.design_review_mode: stepwise`.
-- If the human asks for coarser design points but still wants to confirm points, keep `collaboration.design_review_mode: stepwise`.
-- If the human changes the current point, restate the final version, write it back, then continue.
-- If the human reverses an earlier point, update the existing `02` or `03` entry first. If the reversal changes overview boundaries, update `02` before continuing `03`.
-- Write each confirmed design point back into the task package promptly; do not save all writeback until the end.
+## 要点
 
-Completing `N/M` does not make the stage ready by itself.
-The `02` and `03` stage gates still decide readiness.
-
-## Process
-
-1. Read `01-requirements.md` and restate the concrete question being explored.
-2. Explore the local repository for relevant code, docs, tests, and recent changes.
-3. Search the web when the task touches third-party APIs, current platform behavior, existing public solutions, or recent best practices.
-4. Summarize local constraints, viable options, and the recommended direction.
-5. Gather the overview-stage facts needed to write `02-overview-design.md`: coverage surface, excluded surface, main structure, key boundaries, main flow, fallback direction, and at least one rejected alternative.
-6. Write the architectural conclusion into `02-overview-design.md` using `references/overview-design-writing-guidance.md`, including the overview-gate items required by `using-openharness`.
-7. If the user needs a Chinese-first entrypoint, route through `references/author-entry.md` before or alongside the overview/detailed guidance references.
-8. Run an overview reflection pass: challenge the main path, compare at least one viable alternative, and check for missing verification implications.
-9. Only after `02-overview-design.md` is coherent, gather the detailed-stage facts needed for `03-detailed-design.md`: verification path, fallback path, implementation landing points, interfaces, migration order, expected evidence, and failure modes.
-10. Write implementation-facing conclusions into `03-detailed-design.md` using `references/detailed-design-writing-guidance.md`.
-11. Run a detailed reflection pass focused on testing strategy, interfaces, migration order, and expected evidence.
-12. If important challenges are still open, keep exploring and write the challenge closure back into the package instead of force-advancing the stage.
-
-Use stage-organized role injection during exploration:
-- architecture perspective to challenge boundaries, interfaces, and main-path complexity
-- testing perspective to challenge observability, rollback clarity, and evidence shape
-- risk perspective to challenge high-impact residual risks without expanding scope indefinitely
-
-Keep a visible decision list in the task package when the exploration rejects or defers viable alternatives.
-Important challenges must be closed explicitly: accept the constraint, reject it with a reason, or defer it with a trigger and latest landing point.
-
-What this stage must make answerable:
-
-- For overview:
-  - this round covers what and explicitly does not cover what
-  - the recommended structure is what
-  - the main boundaries and main flow are what
-  - the rejected alternative failed for what reason
-- For detailed:
-  - how the work will be verified
-  - where the implementation will land
-  - what can fail silently or expensively
-  - what order the work and migration should follow
-
-## Rules
-
-- Do not skip local exploration.
-- Do not skip web research when the information is time-sensitive or external.
-- Prefer primary sources for technical choices.
-- Keep exploration focused on the active task.
-- Make the reasoning legible in repository artifacts, not only in chat.
-- Treat `02-overview-design.md` as the main artifact of exploration.
-- Do not treat `02-overview-design.md` or `03-detailed-design.md` as ready until the reflection pass is written down.
-- Keep challenge closure visible in the task package.
-- Do not treat a stage gate as satisfied just because the prose is longer.
-- If `02-overview-design.md` or `03-detailed-design.md` still cannot answer the questions defined in their matching guidance files, keep exploring instead of advancing.
+- 不要跳过本地探索
+- 不要跳过网络搜索（当信息有时效性或来自外部时）
+- 反思过程必须写下来，不能只在脑中过一遍
+- 被拒绝或推迟的替代方案要在任务包中记录并说明原因
+- `02` 和 `03` 各需完成反思才能视为就绪

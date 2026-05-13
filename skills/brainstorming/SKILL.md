@@ -1,109 +1,30 @@
 ---
 name: brainstorming
-description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation."
+description: 在开始任何创造性工作之前使用——创建功能、构建组件、添加功能或修改行为。探索用户意图、需求和设计。
 ---
 
-# Brainstorming Ideas Into Designs
+# 需求分析
 
-## Skill Role
+## 何时使用
 
-- Protocol status: core protocol skill
-- Primary stage: requirements convergence
-- Trigger: use when the task needs requirement clarity, scope convergence, or explicit design before execution
+任务需求不明确、范围未收敛、需要先写清楚设计再动手时。
 
-In this repository, `brainstorming` is a child skill of `using-openharness`.
-It does not define task roots, stage flow, or archive rules. Its job is narrower: turn an under-specified task into requirements that are explicit enough to write into the active task package and hand off to exploration.
+## 步骤
 
-<HARD-GATE>
-Do NOT invoke implementation work until the requirements are explicit enough to be written into the package and survive challenge. User approval is required only when the user explicitly asks for a review gate or when unresolved ambiguity makes autonomous continuation risky.
-</HARD-GATE>
+1. 阅读当前任务包、相关文件、文档和最近提交，了解项目上下文
+2. 仅在需求仍有关键歧义时向用户提问，一次只问一个问题
+3. 提出 2-3 个可行方案，包含取舍和明确推荐
+4. 收集并写入 `01-requirements.md`：目标用户、核心场景、成功指标、边界、约束、验收标准、至少一个反例
+5. 用产品视角挑战需求：用户是谁、场景是什么、为什么现在做、不做会怎样
+6. 自检：`01-requirements.md` 能否回答 `references/requirements-writing-guidance.md` 中定义的问题
+7. 需求足够具体后，交给 `exploring-solution-space` 继续
 
-continue automatically by default once the requirements are concrete enough to keep moving safely.
-Only stop for user review if one of these is true:
-- the user explicitly asked for a review checkpoint
-- a high-impact ambiguity remains and autonomous continuation would be risky
-- repository evidence is missing badly enough that the requirements would be guesswork
+## 要点
 
-do not create unnecessary approval pauses.
-
-## Checklist
-
-1. Explore project context: check the active task package, related files, docs, and recent commits.
-2. Offer the visual companion only if upcoming questions are genuinely visual.
-3. Ask clarifying questions only when the repository and user request still leave a high-impact ambiguity.
-4. Propose 2-3 viable approaches with trade-offs and a clear recommendation.
-5. Collect the requirement-stage facts needed to write `01-requirements.md`: user, scenario, pain, timing, constraints, success metric, non-goals, and at least one counterexample.
-6. Write the converged requirements into `01-requirements.md` using `references/requirements-writing-guidance.md`.
-7. Check that the draft can answer the guidance questions, not just fill the headings.
-8. If the user needs a Chinese-first entrypoint, route through `references/author-entry.md` before or alongside `references/requirements-writing-guidance.md`.
-9. Self-check the result against the requirements gate defined in `using-openharness`.
-10. Hand off to `exploring-solution-space` once the requirements are concrete enough to challenge.
-
-Brainstorming ends when `01-requirements.md` is strong enough for exploration, not when the prose becomes longer.
-
-## The Process
-
-**Understanding the idea:**
-
-- Read the current project state first.
-- If the request actually contains multiple independent efforts, decompose it before refining details.
-- Ask one question at a time only when it removes real risk.
-
-**Exploring approaches:**
-
-- Compare at least one viable alternative to the recommended direction.
-- Explain why the recommended path fits the current repository and task boundary better than the alternatives.
-
-**Challenging the requirements:**
-
-- Use the product perspective to challenge target user, core scenario, success definition, and non-goals.
-- Use the CEO perspective to challenge timing, cost cap, strategic fit, and worst acceptable downside.
-- Record substantive challenge closure in the task package instead of leaving it only in chat.
-
-**What information must be gathered in this stage:**
-
-- Who is affected and in what concrete scenario?
-- What current pain or confusion makes this worth doing now?
-- What result must be true when this round is done?
-- What must stay out of scope even if it sounds related?
-- What constraints or costs bound this round?
-- What example would look similar on the surface but should still be excluded?
-
-**Requirements gate before leaving brainstorming:**
-
-- The repository-level requirements gate lives in `using-openharness`.
-- The requirements gate must include target user, core scenario, single success metric, non-goals, cost cap, acceptance criteria, and at least one counterexample.
-- If target user, core scenario, success metric, non-goals, effort boundary, acceptance criteria, or counterexample are still missing, keep converging requirements instead of pretending exploration will fix it later.
-- If `01-requirements.md` still cannot answer the questions defined in `references/requirements-writing-guidance.md`, keep converging requirements instead of moving on.
-
-## After Brainstorming
-
-- Write the validated requirements into the active task package under `docs/task-packages/<task>/`.
-- After requirements converge, propose one task classification and ask the human to confirm it before it drives design-stage behavior:
-  - `mechanical`: formatting, naming, path references, local text, simple configuration, or other low-judgment changes.
-  - `standard development`: ordinary feature work, fixes, documentation protocol adjustments, or verification strategy adjustments that need design but do not reshape long-term architecture.
-  - `protocol/architecture`: changes that affect long-term protocol, skill behavior, directory structure, public interfaces, agent routing, verification paths, or cross-task reuse.
-- Write `collaboration.task_type` in `STATUS.yaml` only after the human confirms the classification. If the field is absent, the classification is not yet a confirmed task fact.
-- Update `02-overview-design.md` or `03-detailed-design.md` only when the requirement discussion already proved a design constraint that belongs there.
-- Continue into `exploring-solution-space` by default unless the user explicitly asked for a review checkpoint or the remaining ambiguity is too risky to carry forward.
-- If no package exists yet, do not scaffold one at the first vague idea.
-- When brainstorming is complete and you are about to enter exploration, scaffold the task package before invoking `exploring-solution-space`.
-- Do not lead with tool-log labels or command playback in the user-visible handoff.
-- Keep the handoff centered on what was clarified, what remains uncertain, and why exploration is the next step.
-
-## Key Principles
-
-- One question at a time.
-- Requirements should be executable, not decorative.
-- Keep YAGNI pressure on the scope.
-- Do not skip alternatives just because one path feels obvious.
-- Do not bypass the repository stage gate defined by `using-openharness`.
-
-## Visual Companion
-
-A browser-based companion for mockups, diagrams, and side-by-side visual comparisons. Offer it only when upcoming questions are genuinely easier to answer visually than in text.
-
-**Offering the companion:** When visual treatment would materially help, send this message by itself:
-> "Some of what we're working on might be easier to explain if I can show it to you in a web browser. I can put together mockups, diagrams, comparisons, and other visuals as we go. This feature is still new and can be token-intensive. Want to try it? (Requires opening a local URL)"
-
-If the user accepts, read `references/visual-companion.md` before using it.
+- 一次一个问题，不要连珠炮式提问
+- 需求要可执行，不要装饰性描述
+- 不要因为某个方案看起来明显就跳过替代方案
+- 在任务包里记录讨论结论，不要只留在聊天里
+- 需求阶段的结束标志是 `01-requirements.md` 足够坚实，不是文字变得更长
+- 用户要求中文优先时，先参考 `references/author-entry.md`，再参考 `references/requirements-writing-guidance.md`
+- 需求收敛后，提议一种任务分类（`mechanical` / `standard development` / `protocol/architecture`），等用户确认后写入 `STATUS.yaml.collaboration.task_type`

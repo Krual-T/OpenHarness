@@ -1,88 +1,43 @@
 ---
 name: receiving-code-review
-description: Use when receiving code review feedback, before implementing suggestions, especially if feedback seems unclear or technically questionable - requires technical rigor and verification, not performative agreement or blind implementation
+description: 收到代码审查反馈时使用，在实施建议之前——需要技术严谨性和验证，而非表态性认同或盲从
 ---
 
-# Code Review Reception
+# 接收代码审查
 
-## Skill Role
+## 处理方式
 
-- Protocol status: optional helper skill
-- Primary stage: debugging and repair
-- Trigger: use when review feedback arrives and needs technical validation before implementation
+1. 通读全部反馈，不要逐条反应
+2. 用自己的话重述技术要求
+3. 对照代码库和当前约束验证
+4. 判断在本仓库中是否正确
+5. 正确则实施，错误则用技术理由回应
+6. 测试每个采纳的修改
 
-Code review requires technical evaluation, not social performance.
+## 不合适的回应
 
-**Core principle:** verify before implementing, ask before assuming, push back when the feedback is wrong.
+不要以表态性认同开头，也不要在验证前承诺修改。避免：
+- "你说得对！" / "好主意！" / "我马上改"
 
-## The Response Pattern
+合适的替代：重述技术问题、提出精准的澄清问题、验证后陈述结果。
 
-1. Read the full feedback without reacting line by line.
-2. Restate the technical requirement in your own words.
-3. Verify it against the codebase and current constraints.
-4. Decide whether it is correct for this repository.
-5. Implement or push back with technical reasoning.
-6. Test each accepted fix.
+## 处理外部审查者反馈
 
-## Forbidden Responses
+实施前检查：
+1. 建议在此处技术上是否正确？
+2. 是否会破坏现有行为？
+3. 当前代码是否有这样写的理由？
+4. 审查者是否有足够的上下文？
 
-Never lead with performative agreement or commit to changes before verification.
+无法验证时，明确说明缺少什么证据。
 
-Bad examples:
+## 何时拒绝
 
-- "You're absolutely right!"
-- "Great point!"
-- "Let me implement that now."
+以下情况应拒绝反馈：
+- 会破坏正常工作的行为
+- 与仓库约束冲突
+- 添加不需要的功能
+- 技术上不正确
+- 缺乏足够上下文来支撑变更
 
-Good alternatives:
-
-- Restate the technical issue.
-- Ask a precise clarifying question.
-- Verify locally and then state the result.
-
-## Handling Unclear Feedback
-
-If any item is unclear, stop and clarify before implementing anything that depends on it. Partial understanding leads to wrong implementation.
-
-## Source-Specific Handling
-
-### From your human partner
-
-- Trusted, but still clarify scope when needed.
-- Prefer action or technical acknowledgment over performative phrasing.
-
-### From external reviewers
-
-Check all of the following before implementing:
-
-1. Is the suggestion technically correct here?
-2. Does it break existing behavior?
-3. Is there a reason the current code looks this way?
-4. Does the reviewer have enough context?
-
-If you cannot verify the claim, say so explicitly and state what evidence is missing.
-
-## YAGNI Check
-
-When feedback asks for a more "proper" implementation, first check whether the feature is actually needed. If the code path is unused, challenge the requirement instead of automatically building more.
-
-## Acknowledging Correct Feedback
-
-State the result factually:
-
-- `Fixed. [brief description]`
-- `Verified. [issue] was real; corrected in [location]`
-
-The code and verification should do the talking.
-
-## When To Push Back
-
-Push back when the feedback:
-
-- breaks working behavior
-- conflicts with repository constraints
-- adds unused scope
-- is technically incorrect
-- lacks enough context to justify the change
-
-Push back with technical reasoning, not defensiveness.
+拒绝时用技术推理，不要带防御性。

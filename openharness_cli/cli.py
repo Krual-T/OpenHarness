@@ -157,14 +157,6 @@ def build_parser() -> argparse.ArgumentParser:
         "--force-sync", action="store_true",
         help="Discard local changes in the OpenHarness source clone and reset it to its upstream branch.",
     )
-    update_parser.add_argument(
-        "--mode", choices=("pull", "force-sync"),
-        help="Use one update mode for this run, overriding the saved default mode.",
-    )
-    update_parser.add_argument(
-        "--set-default-mode", choices=("pull", "force-sync"),
-        help="Save the default update mode and exit without running update.",
-    )
     update_parser.set_defaults(handler=commands.cmd_update)
 
     return parser
