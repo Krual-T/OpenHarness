@@ -174,7 +174,7 @@ def test_task_package_commands_use_current_handlers_only() -> None:
         parser.parse_args(["new-task", "name", "--task-id", "OH-999", "--title", "Title"]).handler
         == openharness.cmd_new_task
     )
-        assert parser.parse_args(["rwp", "list"]).handler == openharness.cmd_rwp
+    assert parser.parse_args(["rwp", "list"]).handler == openharness.cmd_rwp
     assert parser.parse_args(["transition", "name", "requirements_designed"]).handler == openharness.cmd_transition
     assert parser.parse_args(["update"]).handler == openharness.cmd_update
 

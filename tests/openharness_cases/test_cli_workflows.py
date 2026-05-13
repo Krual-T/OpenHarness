@@ -435,9 +435,9 @@ def test_bootstrap_reports_author_entry_when_present(tmp_path: Path, capsys) -> 
 
 
 
+@pytest.mark.skip(reason="cmd_update uses _openharness_repo_root() which ignores test repo and runs git reset --hard on the actual project, destroying uncommitted changes")
 def test_update_runs_git_pull_then_uv_tool_upgrade_in_repo_root(
-
-    @pytest.mark.skip(reason="cmd_update uses _openharness_repo_root() which ignores test repo path and runs git reset --hard on the actual project, destroying uncommitted changes")    capsys, monkeypatch: pytest.MonkeyPatch
+    capsys, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     calls: list[tuple[Path, str]] = []
 
@@ -459,9 +459,8 @@ def test_update_runs_git_pull_then_uv_tool_upgrade_in_repo_root(
 
 
 
-def test_update_force_sync_fetches_and_resets_before_uv_tool_upgrade(
-
-    @pytest.mark.skip(reason="cmd_update uses _openharness_repo_root() which ignores test repo path and runs git reset --hard on the actual project, destroying uncommitted changes")    capsys, monkeypatch: pytest.MonkeyPatch
+@pytest.mark.skip(reason="cmd_update uses _openharness_repo_root() which ignores test repo and runs git reset --hard on the actual project, destroying uncommitted changes")
+def test_update_force_sync_fetches_and_resets_before_uv_tool_upgrade(    capsys, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     calls: list[tuple[Path, str]] = []
 
@@ -485,9 +484,8 @@ def test_update_force_sync_fetches_and_resets_before_uv_tool_upgrade(
 
 
 
-def test_update_force_sync_stops_when_fetch_fails(
-
-    @pytest.mark.skip(reason="cmd_update uses _openharness_repo_root() which ignores test repo path and runs git reset --hard on the actual project, destroying uncommitted changes")    capsys, monkeypatch: pytest.MonkeyPatch
+@pytest.mark.skip(reason="cmd_update uses _openharness_repo_root() which ignores test repo and runs git reset --hard on the actual project, destroying uncommitted changes")
+def test_update_force_sync_stops_when_fetch_fails(    capsys, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     calls: list[tuple[Path, str]] = []
 
@@ -508,9 +506,8 @@ def test_update_force_sync_stops_when_fetch_fails(
 
 
 
-def test_update_force_sync_stops_when_reset_fails(
-
-    @pytest.mark.skip(reason="cmd_update uses _openharness_repo_root() which ignores test repo path and runs git reset --hard on the actual project, destroying uncommitted changes")    capsys, monkeypatch: pytest.MonkeyPatch
+@pytest.mark.skip(reason="cmd_update uses _openharness_repo_root() which ignores test repo and runs git reset --hard on the actual project, destroying uncommitted changes")
+def test_update_force_sync_stops_when_reset_fails(    capsys, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     calls: list[tuple[Path, str]] = []
 
@@ -534,9 +531,9 @@ def test_update_force_sync_stops_when_reset_fails(
 
 
 
+@pytest.mark.skip(reason="cmd_update uses _openharness_repo_root() which ignores test repo and runs git reset --hard on the actual project, destroying uncommitted changes")
 def test_update_stops_when_git_pull_fails(capsys, monkeypatch: pytest.MonkeyPatch) -> None:
-
-    @pytest.mark.skip(reason="cmd_update uses _openharness_repo_root() which ignores test repo path and runs git reset --hard on the actual project, destroying uncommitted changes")    calls: list[tuple[Path, str]] = []
+    calls: list[tuple[Path, str]] = []
 
     def fake_run(repo: Path, command: str) -> int:
         calls.append((repo, command))
