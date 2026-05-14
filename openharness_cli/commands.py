@@ -22,7 +22,7 @@ from .repository import (
     _load_yaml, _utc_timestamp, _write_yaml,
     create_task_package, create_task_package_with_auto_id,
     discover_runtime_workflow_packages, discover_task_packages,
-    find_duplicate_task_ids, humanize_task_name, load_config,
+    find_duplicate_task_ids, get_git_author, humanize_task_name, load_config,
     resolve_runtime_workflow_package, resolve_runtime_workflow_script,
     resolve_task_package, summarize_task_package,
 )
@@ -189,18 +189,21 @@ def cmd_new_task(args: argparse.Namespace) -> int:
     if not task_id and not auto_id:
         print("ERROR: new-task requires either an explicit task id or `--auto-id`")
         return 1
+    owner = args.owner
+    if owner == "unassigned":
+        owner = get_git_author(repo_root)
     title = explicit_title or humanize_task_name(args.task_name)
     try:
         if auto_id:
             task_root, task_id = create_task_package_with_auto_id(
                 repo_root=repo_root, task_name=args.task_name, title=title,
-                owner=args.owner, summary=args.summary, status=args.status,
+                owner=owner, summary=args.summary, status=args.status,
             )
         else:
             task_root = create_task_package(
                 TaskScaffoldRequest(
                     repo_root=repo_root, task_name=args.task_name, task_id=task_id,
-                    title=title, owner=args.owner, summary=args.summary, status=args.status,
+                    title=title, owner=owner, summary=args.summary, status=args.status,
                 )
             )
     except (FileExistsError, FileNotFoundError, ValueError) as exc:

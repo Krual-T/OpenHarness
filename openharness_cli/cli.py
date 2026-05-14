@@ -66,7 +66,7 @@ def build_parser() -> argparse.ArgumentParser:
     new_design_parser.add_argument("--task-id", default="", help="Stable task id; omit with `--auto-id` to allocate one")
     new_design_parser.add_argument("--title", default="", help="Human-readable task title")
     new_design_parser.add_argument("--auto-id", action="store_true", help="Allocate the next stable task id automatically")
-    new_design_parser.add_argument("--owner", default="unassigned", help="Initial owner")
+    new_design_parser.add_argument("--owner", default="unassigned", help="Initial owner (defaults to git config user.name if not specified)")
     new_design_parser.add_argument("--summary", default="", help="Short summary")
     new_design_parser.add_argument("--status", default="proposing", help="Initial status")
     new_design_parser.add_argument("--repo", default=".", help="Repository root")

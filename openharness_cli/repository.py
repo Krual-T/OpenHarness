@@ -10,8 +10,24 @@ from typing import Any
 
 import yaml
 
+import subprocess
+
 from .constants import TASK_ID_RE
 from .models import HarnessConfig, RuntimeWorkflowPackage, TaskPackage, TaskScaffoldRequest
+
+
+def get_git_author(repo_root: Path) -> str:
+    try:
+        result = subprocess.run(
+            ["git", "config", "user.name"], capture_output=True, text=True,
+            cwd=repo_root, timeout=5,
+        )
+        name = result.stdout.strip()
+        if name:
+            return name
+    except (FileNotFoundError, subprocess.TimeoutExpired, OSError):
+        pass
+    return "unassigned"
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
@@ -330,6 +346,8 @@ def create_task_package_with_auto_id(
     *, repo_root: Path, task_name: str, title: str,
     owner: str = "unassigned", summary: str = "", status: str = "proposing",
 ) -> tuple[Path, str]:
+    if owner == "unassigned":
+        owner = get_git_author(repo_root)
     config = load_config(repo_root)
     with _task_package_creation_lock(repo_root):
         task_id = allocate_next_task_id(repo_root, config)

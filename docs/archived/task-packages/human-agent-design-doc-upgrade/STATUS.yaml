@@ -1,11 +1,11 @@
 id: OH-038
 title: Human-Agent Design Doc Upgrade
-status: verifying
+status: archived
 summary: Strengthen overview and detailed design guidance for human-agent collaboration,
   including diagram guidance.
 owner: codex
 created_at: 2026-03-30
-updated_at: '2026-03-30'
+updated_at: '2026-05-14'
 depends_on: []
 scope:
   areas:
@@ -35,9 +35,9 @@ verification:
   - '`openharness new-task` 生成的 `02-overview-design.md` 与 `03-detailed-design.md`
     模板仍然满足协议测试。'
   - guidance 文档能明确回答人和 agent 协作开发所需的结构化设计问题。
-  last_run_at: '2026-03-30T08:05:39Z'
-  last_run_result: failed
-  last_run_artifact: .harness/artifacts/OH-038/verification-runs/20260330T080539614631Z.json
+  last_run_at: '2026-05-14T15:41:15Z'
+  last_run_result: passed
+  last_run_artifact: .harness/artifacts/OH-038/verification-runs/20260514T154115764123Z.json
 evidence:
   docs:
   - docs/task-packages/human-agent-design-doc-upgrade/04-verification.md

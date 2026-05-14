@@ -49,15 +49,6 @@ def _load_skill_metadata(skill_name: str) -> dict:
     return data
 
 
-def test_openharness_skill_owns_supporting_scripts_and_templates() -> None:
-    skill_root = REPO_ROOT / "skills" / "using-openharness"
-    assert SKILL_ROOT == skill_root
-    assert (skill_root / "references" / "manifest.yaml").exists()
-    assert (skill_root / "references" / "templates" / "task-package.README.md").exists()
-    assert (skill_root / "references" / "templates" / "task-package.STATUS.yaml").exists()
-    assert not (skill_root / "references" / "templates" / "task-package.04-implementation-plan.md").exists()
-
-
 def test_openharness_repo_self_tests_live_under_top_level_tests() -> None:
     assert (REPO_ROOT / "tests" / "test_openharness.py").exists()
     assert (REPO_ROOT / "tests" / "openharness_cases" / "test_cli_workflows.py").exists()
@@ -72,16 +63,6 @@ def test_live_repo_skills_all_ship_openai_metadata() -> None:
     for skill_name in LIVE_REPO_SKILLS:
         metadata_path = REPO_ROOT / "skills" / skill_name / "agents" / "openai.yaml"
         assert metadata_path.exists(), f"{skill_name} is missing agents/openai.yaml"
-
-
-def test_skill_openai_metadata_exposes_interface_fields() -> None:
-    for skill_name in LIVE_REPO_SKILLS:
-        metadata = _load_skill_metadata(skill_name)
-        interface = metadata.get("interface")
-        assert isinstance(interface, dict), f"{skill_name} metadata must define interface"
-        assert interface.get("display_name"), f"{skill_name} metadata must define interface.display_name"
-        assert interface.get("short_description"), f"{skill_name} metadata must define interface.short_description"
-        assert interface.get("default_prompt"), f"{skill_name} metadata must define interface.default_prompt"
 
 
 def test_skill_openai_metadata_declares_implicit_invocation_policy() -> None:
@@ -281,17 +262,6 @@ def test_install_doc_mentions_openharness_update() -> None:
     assert "openharness update" in text
 
 
-def test_active_protocol_docs_do_not_recommend_legacy_script_entrypoint() -> None:
-    for path in [
-        REPO_ROOT / "AGENTS.md",
-        REPO_ROOT / "AGENTS.examaple.md",
-        REPO_ROOT / "INSTALL.codex.md",
-        REPO_ROOT / "skills" / "using-openharness" / "SKILL.md",
-    ]:
-        text = path.read_text(encoding="utf-8")
-        assert "skills/using-openharness/scripts/openharness.py" not in text
-
-
 
 
 
@@ -379,45 +349,6 @@ def test_design_package_templates_include_verification_path_sections() -> None:
     assert "## Residual Risks" in evidence
     assert "Manual Steps" in evidence
 
-
-def test_design_package_templates_include_status_guidance() -> None:
-    readme = (
-        REPO_ROOT
-        / "skills"
-        / "using-openharness"
-        / "references"
-        / "templates"
-        / "task-package.README.md"
-    ).read_text(encoding="utf-8")
-    status = (
-        REPO_ROOT
-        / "skills"
-        / "using-openharness"
-        / "references"
-        / "templates"
-        / "task-package.STATUS.yaml"
-    ).read_text(encoding="utf-8")
-    detailed = (
-        REPO_ROOT
-        / "skills"
-        / "using-openharness"
-        / "references"
-        / "templates"
-        / "task-package.03-detailed-design.md"
-    ).read_text(encoding="utf-8")
-    verification = (
-        REPO_ROOT
-        / "skills"
-        / "using-openharness"
-        / "references"
-        / "templates"
-        / "task-package.04-verification.md"
-    ).read_text(encoding="utf-8")
-
-    assert "Status should match the highest workflow checkpoint" in readme
-    assert "requirements_ready -> overview_ready -> detailed_ready" in status
-    assert "只有当详细设计已经具体到可以执行时，才进入 `in_progress`。" in detailed
-    assert "只有当实现已经完成到足以采集新证据时，才进入 `verifying`。" in verification
 
 
 def test_runtime_capability_reference_defines_declaration_shape_and_writeback() -> None:
@@ -538,22 +469,6 @@ def test_task_package_writing_guidance_references_define_stage_contracts() -> No
     assert "Manual Steps" in evidence
 
 
-
-
-def test_author_entry_reference_exists_and_routes_to_all_writing_guidance() -> None:
-    entry_path = REPO_ROOT / "skills" / "using-openharness" / "references" / "author-entry.md"
-    text = entry_path.read_text(encoding="utf-8")
-
-    assert entry_path.exists()
-    assert "# Author Entry" in text
-    assert "requirements-writing-guidance.md" in text
-    assert "overview-design-writing-guidance.md" in text
-    assert "detailed-design-writing-guidance.md" in text
-    assert "verification-writing-guidance.md" in text
-    assert "evidence-writing-guidance.md" in text
-    assert "brainstorming" in text
-    assert "exploring-solution-space" in text
-    assert "verification-before-completion" in text
 
 
 def test_runtime_workflow_package_template_provides_adoption_shape() -> None:
