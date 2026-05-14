@@ -102,6 +102,7 @@ To make that the default for future `openharness update` runs:
 openharness update --set-default-mode force-sync
 ```
 
+This saves the default mode to `.harness/settings.yaml` in the OpenHarness source clone.
 You can switch the default back with `openharness update --set-default-mode pull`.
 For a single run, use `openharness update --mode pull` or
 `openharness update --mode force-sync` to override the saved default.

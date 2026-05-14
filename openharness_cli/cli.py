@@ -157,6 +157,43 @@ def build_parser() -> argparse.ArgumentParser:
         "--force-sync", action="store_true",
         help="Discard local changes in the OpenHarness source clone and reset it to its upstream branch.",
     )
+    update_parser.add_argument(
+        "--mode", choices=("pull", "force-sync"),
+        help="Use one update mode for this run, overriding the saved default mode.",
+    )
+    update_parser.add_argument(
+        "--set-default-mode", choices=("pull", "force-sync"),
+        help="Save the default update mode and exit without running update.",
+    )
     update_parser.set_defaults(handler=commands.cmd_update)
+
+    writing_guide_parser = subparsers.add_parser(
+        "writing-guide", help="Discover and read task-package writing guides.",
+        description="List or read the writing guide documents for task packages.",
+        epilog="Example:\n  openharness writing-guide\n  openharness writing-guide read requirements",
+        formatter_class=_HelpFormatter,
+    )
+    writing_guide_parser.add_argument("--repo", default=".", help="Repository root")
+    writing_guide_subparsers = writing_guide_parser.add_subparsers(dest="writing_guide_command")
+
+    writing_guide_list_parser = writing_guide_subparsers.add_parser(
+        "list", help="List available writing guides.",
+        description="List available writing guides.", formatter_class=_HelpFormatter,
+    )
+    writing_guide_list_parser.set_defaults(handler=commands.cmd_writing_guide)
+
+    writing_guide_read_parser = writing_guide_subparsers.add_parser(
+        "read", help="Read a writing guide.",
+        description="Read a writing guide by name.", formatter_class=_HelpFormatter,
+    )
+    writing_guide_read_parser.add_argument(
+        "name",
+        choices=("requirements", "overview", "detailed", "verification", "evidence", "author-entry"),
+        help="Writing guide name",
+    )
+    writing_guide_read_parser.set_defaults(handler=commands.cmd_writing_guide)
+
+    # Default to list when no subcommand given
+    writing_guide_parser.set_defaults(handler=commands.cmd_writing_guide, writing_guide_command="list")
 
     return parser

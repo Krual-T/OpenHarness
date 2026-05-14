@@ -26,5 +26,5 @@ description: 在开始任何创造性工作之前使用——创建功能、构�
 - 不要因为某个方案看起来明显就跳过替代方案
 - 在任务包里记录讨论结论，不要只留在聊天里
 - 需求阶段的结束标志是 `01-requirements.md` 足够坚实，不是文字变得更长
-- 用户要求中文优先时，先参考 `references/author-entry.md`，再参考 `references/requirements-writing-guidance.md`
+- 参考 `references/requirements-writing-guidance.md`
 - 需求收敛后，提议一种任务分类（`mechanical` / `standard development` / `protocol/architecture`），等用户确认后写入 `STATUS.yaml.collaboration.task_type`

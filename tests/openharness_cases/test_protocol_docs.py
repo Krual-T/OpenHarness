@@ -133,6 +133,7 @@ def test_openharness_single_cli_supports_all_subcommands() -> None:
     assert set(choices) == {
         "bootstrap",
         "check-tasks",
+        "writing-guide",
         "init",
         "new-task",
         "rwp",

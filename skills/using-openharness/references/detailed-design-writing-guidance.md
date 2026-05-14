@@ -109,7 +109,7 @@
 - 是否已经知道失败会通过什么信号暴露，也就是 `observability` 从哪里来？
 - 是否已经知道后续 `04-verification.md` 需要收什么证据？
 
-如果这些问题还答不清，就不要进入 `in_progress`。
+如果这些问题还答不清，就不要进入 `implementing`。
 
 ## How To Use The Template
 

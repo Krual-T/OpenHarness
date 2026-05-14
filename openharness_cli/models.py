@@ -77,6 +77,20 @@ class TaskPackage:
         return tuple(str(item).strip() for item in scenarios if str(item).strip())
 
     @property
+    def task_type(self) -> str:
+        collaboration = self.status.get("collaboration")
+        if not isinstance(collaboration, dict):
+            return ""
+        return str(collaboration.get("task_type") or "").strip()
+
+    @property
+    def design_review_mode(self) -> str:
+        collaboration = self.status.get("collaboration")
+        if not isinstance(collaboration, dict):
+            return ""
+        return str(collaboration.get("design_review_mode") or "").strip()
+
+    @property
     def status_path(self) -> Path:
         return self.root / "STATUS.yaml"
 

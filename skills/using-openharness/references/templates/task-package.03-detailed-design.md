@@ -10,8 +10,8 @@
 - Planned Evidence:
 - 用中文写明预计要产出的证据、产物或观察结果，并说明后续 `04-verification.md` 需要收什么。
 
-只有当详细设计已经具体到可以执行时，才进入 `in_progress`。
-如果设计已经完成但实现尚未开始，应保持在 `detailed_ready`。
+只有当详细设计已经具体到可以执行时，才进入 `implementing`。
+如果设计已经完成但实现尚未开始，应保持在 `detailed_designed`。
 
 ## Files Added Or Changed
 - 用中文列出将新增或修改的文件，并说明它们为什么在这轮需要变化；不要只写文件清单。

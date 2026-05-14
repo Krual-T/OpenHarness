@@ -7,9 +7,15 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
-from .constants import DEFAULT_STATUS_FLOW
+from .constants import DEFAULT_STATUS_FLOW, MECHANICAL_STATUS_FLOW
 from .models import TaskPackage
 from .repository import _current_date, _load_yaml, _utc_now, _write_yaml
+
+
+def _package_status_flow(package: TaskPackage) -> tuple[str, ...]:
+    if package.task_type == "mechanical":
+        return MECHANICAL_STATUS_FLOW
+    return DEFAULT_STATUS_FLOW
 
 
 def _save_package_status(package: TaskPackage, status: dict[str, Any]) -> TaskPackage:
@@ -33,62 +39,84 @@ def _status_description(status: str) -> str:
     return descriptions.get(status, "Unknown workflow stage.")
 
 
-def _next_status(status: str) -> str:
-    if status not in DEFAULT_STATUS_FLOW:
+def _next_status(status: str, status_flow: tuple[str, ...]) -> str:
+    if status not in status_flow:
         return ""
-    index = DEFAULT_STATUS_FLOW.index(status)
-    if index >= len(DEFAULT_STATUS_FLOW) - 1:
+    index = status_flow.index(status)
+    if index >= len(status_flow) - 1:
         return ""
-    return DEFAULT_STATUS_FLOW[index + 1]
+    return status_flow[index + 1]
 
 
 def _next_step(package: TaskPackage) -> str:
-    steps = {
-        "proposing": (
-            "Converge requirements, write `01-requirements.md`, "
-            "then transition to `requirements_designed`."
-        ),
-        "requirements_designed": (
-            "Run exploration, draft `02-overview-design.md`, "
-            "and transition to `overview_designing`."
-        ),
-        "overview_designing": (
-            "Complete overview design and reflection, "
-            "then transition to `overview_designed`."
-        ),
-        "overview_designed": (
-            "Draft `03-detailed-design.md`, "
-            "and transition to `detailed_designing`."
-        ),
-        "detailed_designing": (
-            "Complete detailed design, close design challenges, "
-            "then transition to `detailed_designed`."
-        ),
-        "detailed_designed": (
-            "Start implementation, then transition to `implementing`."
-        ),
-        "implementing": (
-            "Finish implementation, then transition to `implemented` "
-            "when ready for verification."
-        ),
-        "implemented": (
-            "Run declared verification, refresh `04-verification.md` and `05-evidence.md`, "
-            "then transition to `verifying`."
-        ),
-        "verifying": (
-            "Complete verification and record passing evidence, "
-            "then transition to `archived`."
-        ),
-        "archived": "No next step. The package is complete and archived.",
-    }
+    status_flow = _package_status_flow(package)
+    if package.task_type == "mechanical":
+        steps = {
+            "proposing": (
+                "Converge requirements, write `01-requirements.md`, "
+                "then transition to `requirements_designed`."
+            ),
+            "requirements_designed": (
+                "Start implementation, then transition to `implementing`."
+            ),
+            "implementing": (
+                "Finish implementation, then transition to `verifying` "
+                "when ready for verification."
+            ),
+            "verifying": (
+                "Complete verification and record passing evidence, "
+                "then transition to `archived`."
+            ),
+            "archived": "No next step. The package is complete and archived.",
+        }
+    else:
+        steps = {
+            "proposing": (
+                "Converge requirements, write `01-requirements.md`, "
+                "then transition to `requirements_designed`."
+            ),
+            "requirements_designed": (
+                "Run exploration, draft `02-overview-design.md`, "
+                "and transition to `overview_designing`."
+            ),
+            "overview_designing": (
+                "Complete overview design and reflection, "
+                "then transition to `overview_designed`."
+            ),
+            "overview_designed": (
+                "Draft `03-detailed-design.md`, "
+                "and transition to `detailed_designing`."
+            ),
+            "detailed_designing": (
+                "Complete detailed design, close design challenges, "
+                "then transition to `detailed_designed`."
+            ),
+            "detailed_designed": (
+                "Start implementation, then transition to `implementing`."
+            ),
+            "implementing": (
+                "Finish implementation, then transition to `implemented` "
+                "when ready for verification."
+            ),
+            "implemented": (
+                "Run declared verification, refresh `04-verification.md` and `05-evidence.md`, "
+                "then transition to `verifying`."
+            ),
+            "verifying": (
+                "Complete verification and record passing evidence, "
+                "then transition to `archived`."
+            ),
+            "archived": "No next step. The package is complete and archived.",
+        }
     return steps.get(package.status_name, "No next step available.")
 
 
 def describe_stage(package: TaskPackage) -> dict[str, str]:
+    status_flow = _package_status_flow(package)
     return {
         "current_stage": package.status_name,
         "current_stage_description": _status_description(package.status_name),
-        "next_stage": _next_status(package.status_name),
+        "next_stage": _next_status(package.status_name, status_flow),
         "next_step": _next_step(package),
     }
 
@@ -101,18 +129,19 @@ def _build_transition_candidate(package: TaskPackage, target_status: str) -> Tas
 
 
 def _ensure_transition_allowed(package: TaskPackage, target_status: str) -> list[str]:
-    if target_status not in DEFAULT_STATUS_FLOW:
-        return [f"unknown target status `{target_status}`; expected one of: {', '.join(DEFAULT_STATUS_FLOW)}"]
+    status_flow = _package_status_flow(package)
+    if target_status not in status_flow:
+        return [f"unknown target status `{target_status}`; expected one of: {', '.join(status_flow)}"]
     if package.status_name == "archived":
         return [f"cannot transition archived package `{package.task_id}` out of `archived`"]
     if target_status == package.status_name:
         return []
-    current_index = DEFAULT_STATUS_FLOW.index(package.status_name)
-    target_index = DEFAULT_STATUS_FLOW.index(target_status)
+    current_index = status_flow.index(package.status_name)
+    target_index = status_flow.index(target_status)
     if target_index > current_index + 1:
         return [
             f"cannot skip forward from `{package.status_name}` to `{target_status}`; "
-            f"next legal forward status is `{DEFAULT_STATUS_FLOW[current_index + 1]}`"
+            f"next legal forward status is `{status_flow[current_index + 1]}`"
         ]
     if target_status == "archived" and package.status_name != "verifying":
         return ["can only transition to `archived` from `verifying`"]

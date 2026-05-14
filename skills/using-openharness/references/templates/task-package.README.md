@@ -8,7 +8,7 @@
 ## Current Status
 - 用中文说明当前状态、是否已经实现、是否还只是设计。
 - Status should match the highest workflow checkpoint that is actually complete.
-- If design is complete but implementation has not happened yet, the package should usually stay at `detailed_ready`, not `archived`.
+- If design is complete but implementation has not happened yet, the package should usually stay at `detailed_designed`, not `archived`.
 - Keep this short and consistent with `STATUS.yaml`, then put the detailed reasoning in the package docs.
 
 ## Read This First

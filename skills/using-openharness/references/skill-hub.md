@@ -87,7 +87,6 @@ OpenHarness uses a two-layer model:
 
 ## Reference Surfaces
 - Writing guidance lives in:
-  - `author-entry.md`
   - `requirements-writing-guidance.md`
   - `overview-design-writing-guidance.md`
   - `detailed-design-writing-guidance.md`

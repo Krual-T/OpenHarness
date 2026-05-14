@@ -1,8 +1,8 @@
 id: <DESIGN_ID>
 title: <TITLE>
-# Default flow: proposed -> requirements_ready -> overview_ready -> detailed_ready -> in_progress -> verifying -> archived
-# requirements_ready -> overview_ready -> detailed_ready are design-readiness checkpoints; later statuses imply earlier checkpoints are already materially complete.
-# `detailed_ready` is the normal resting point for design-complete work before implementation.
+# Default flow: proposing -> requirements_designed -> overview_designing -> overview_designed -> detailed_designing -> detailed_designed -> implementing -> implemented -> verifying -> archived
+# Each designing/designed pair marks a design checkpoint; later statuses imply earlier checkpoints are already materially complete.
+# `detailed_designed` is the normal resting point for design-complete work before implementation.
 # `archived` means the task package is implemented, verified, and no longer active.
 # If a sentence here contains backticks or other YAML-sensitive punctuation, wrap the whole sentence in double quotes.
 # Example: summary: "`02-overview-design.md` guidance: explain the boundary."

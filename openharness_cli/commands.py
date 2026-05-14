@@ -19,7 +19,7 @@ from .lifecycle import (
 )
 from .models import TaskScaffoldRequest
 from .repository import (
-    _utc_timestamp,
+    _load_yaml, _utc_timestamp, _write_yaml,
     create_task_package, create_task_package_with_auto_id,
     discover_runtime_workflow_packages, discover_task_packages,
     find_duplicate_task_ids, humanize_task_name, load_config,
@@ -28,8 +28,61 @@ from .repository import (
 )
 from .validation import validate_task_package
 
+UPDATE_MODES = {"pull", "force-sync"}
+
 def _openharness_repo_root() -> Path:
     return Path(__file__).resolve().parents[1]
+
+
+def _project_settings_path(repo_root: Path) -> Path:
+    return (repo_root / ".harness" / "settings.yaml").resolve()
+
+
+def _load_project_settings(repo_root: Path) -> dict[str, object]:
+    path = _project_settings_path(repo_root)
+    if not path.exists():
+        return {}
+    return _load_yaml(path)
+
+
+def _save_project_settings(repo_root: Path, settings: dict[str, object]) -> None:
+    path = _project_settings_path(repo_root)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    _write_yaml(path, settings)
+
+
+def _set_default_update_mode(repo_root: Path, mode: str) -> None:
+    settings = _load_project_settings(repo_root)
+    update_settings = settings.setdefault("update", {})
+    if not isinstance(update_settings, dict):
+        raise ValueError(f"`update` settings must be a mapping in {_project_settings_path(repo_root)}")
+    update_settings["default_mode"] = mode
+    _save_project_settings(repo_root, settings)
+
+
+def _configured_update_mode(repo_root: Path) -> str:
+    settings = _load_project_settings(repo_root)
+    update_settings = settings.get("update") or {}
+    if not isinstance(update_settings, dict):
+        raise ValueError(f"`update` settings must be a mapping in {_project_settings_path(repo_root)}")
+    mode = str(update_settings.get("default_mode") or "").strip()
+    if not mode:
+        return "pull"
+    if mode not in UPDATE_MODES:
+        raise ValueError(
+            f"invalid default update mode `{mode}` in {_project_settings_path(repo_root)}; "
+            f"expected `pull` or `force-sync`"
+        )
+    return mode
+
+
+def _resolve_update_mode(args: argparse.Namespace, repo_root: Path) -> str:
+    if getattr(args, "force_sync", False):
+        return "force-sync"
+    mode = getattr(args, "mode", None)
+    if mode:
+        return str(mode)
+    return _configured_update_mode(repo_root)
 
 
 def _author_entry_info(repo_root: Path) -> dict[str, str] | None:
@@ -294,20 +347,99 @@ def cmd_verify(args: argparse.Namespace) -> int:
     return 0
 
 
+_GUIDANCE_MAP: dict[str, str] = {
+    "requirements": "requirements-writing-guidance.md",
+    "overview": "overview-design-writing-guidance.md",
+    "detailed": "detailed-design-writing-guidance.md",
+    "verification": "verification-writing-guidance.md",
+    "evidence": "evidence-writing-guidance.md",
+    "author-entry": "author-entry.md",
+}
+
+
+def _resolve_writing_guide_root(repo_root: Path) -> Path:
+    skill_root = Path(__file__).resolve().parents[1]
+    candidates = (
+        repo_root / "skills" / "using-openharness" / "references",
+        repo_root / ".agents" / "skills" / "openharness" / "using-openharness" / "references",
+        skill_root / "references",
+    )
+    for candidate in candidates:
+        if candidate.resolve().exists():
+            return candidate.resolve()
+    raise FileNotFoundError("writing guide root not found")
+
+
+def cmd_writing_guide(args: argparse.Namespace) -> int:
+    repo_root = Path(args.repo).resolve()
+    try:
+        writing_guide_root = _resolve_writing_guide_root(repo_root)
+    except FileNotFoundError as exc:
+        print(f"ERROR: {exc}")
+        return 1
+
+    command = getattr(args, "writing_guide_command", "list")
+
+    if command == "read":
+        file_name = _GUIDANCE_MAP.get(args.name)
+        if not file_name:
+            print(f"ERROR: unknown writing guide name `{args.name}`")
+            return 1
+        path = writing_guide_root / file_name
+        if not path.exists():
+            print(f"ERROR: writing guide not found: {path}")
+            return 1
+        print(path.read_text(encoding="utf-8"), end="")
+        return 0
+
+    # list (default)
+    print("Available writing guides:")
+    for name, file_name in _GUIDANCE_MAP.items():
+        path = writing_guide_root / file_name
+        exists_icon = "✓" if path.exists() else "✗"
+        print(f"  {exists_icon} {name:<15} -> {file_name}")
+    print(f"\nRead one with: openharness writing-guide read <name>")
+    return 0
+
+
 def cmd_update(args: argparse.Namespace) -> int:
     repo_root = _openharness_repo_root()
-    if getattr(args, "force_sync", False):
+    default_mode = getattr(args, "set_default_mode", None)
+    if default_mode:
+        mode = str(default_mode)
+        if mode not in UPDATE_MODES:
+            print(f"ERROR: invalid mode `{mode}`; expected `pull` or `force-sync`.")
+            return 1
+        try:
+            _set_default_update_mode(repo_root, mode)
+        except ValueError as exc:
+            print(f"ERROR: {exc}")
+            return 1
+        print(f"Default update mode set to `{mode}` in {_project_settings_path(repo_root)}")
+        return 0
+
+    try:
+        update_mode = _resolve_update_mode(args, repo_root)
+    except ValueError as exc:
+        print(f"ERROR: {exc}")
+        return 1
+
+    if update_mode == "force-sync":
         for command in ("git fetch --prune", "git reset --hard '@{u}'"):
             sync_result = _run_command(repo_root, command)
             if sync_result != 0:
                 print(f"ERROR: force sync failed at `{command}`; refusing to continue with tool upgrade.")
                 return 1
         print(f"Force-synchronized OpenHarness source clone from {repo_root}")
-    else:
+    elif update_mode == "pull":
         git_pull_result = _run_command(repo_root, "git pull")
         if git_pull_result != 0:
             print("ERROR: git pull failed; refusing to continue with tool upgrade.")
             return 1
+    else:
+        print(f"ERROR: invalid update mode `{update_mode}`; expected `pull` or `force-sync`.")
+        return 1
+
     upgrade_result = _run_command(repo_root, "uv tool upgrade openharness")
     if upgrade_result != 0:
         print("ERROR: `uv tool upgrade openharness` failed.")

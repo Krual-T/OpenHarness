@@ -37,10 +37,26 @@ REQUIRED_TASK_PACKAGE_FILES = (
     "05-evidence.md",
 )
 
+# Mechanical tasks use a shorter status flow, skipping overview/detailed design stages.
+MECHANICAL_STATUS_FLOW = (
+    "proposing",
+    "requirements_designed",
+    "implementing",
+    "verifying",
+    "archived",
+)
+
 _FILE_ADDITIONS: dict[str, tuple[str, ...]] = {
     "requirements_designed": ("01-requirements.md",),
     "overview_designed": ("02-overview-design.md",),
     "detailed_designed": ("03-detailed-design.md",),
+    "verifying": ("04-verification.md",),
+    "archived": ("05-evidence.md",),
+}
+
+_MECHANICAL_FILE_ADDITIONS: dict[str, tuple[str, ...]] = {
+    "requirements_designed": ("01-requirements.md",),
+    "implementing": (),
     "verifying": ("04-verification.md",),
     "archived": ("05-evidence.md",),
 }
@@ -56,8 +72,19 @@ def _build_status_required_files() -> dict[str, tuple[str, ...]]:
     return result
 
 
+def _build_mechanical_status_required_files() -> dict[str, tuple[str, ...]]:
+    base = ("README.md", "STATUS.yaml")
+    result: dict[str, tuple[str, ...]] = {}
+    accumulated = list(base)
+    for status in MECHANICAL_STATUS_FLOW:
+        accumulated.extend(_MECHANICAL_FILE_ADDITIONS.get(status, ()))
+        result[status] = tuple(accumulated)
+    return result
+
+
 STATUS_REQUIRED_FILES = _build_status_required_files()
-del _build_status_required_files, _FILE_ADDITIONS
+MECHANICAL_STATUS_REQUIRED_FILES = _build_mechanical_status_required_files()
+del _build_status_required_files, _build_mechanical_status_required_files, _FILE_ADDITIONS, _MECHANICAL_FILE_ADDITIONS
 
 REQUIRED_STATUS_KEYS = (
     "id",
@@ -70,6 +97,8 @@ REQUIRED_STATUS_KEYS = (
     "done_criteria",
     "verification",
 )
+
+TASK_TYPE_VALUES = {"mechanical", "standard development", "protocol/architecture"}
 VERIFICATION_RESULT_VALUES = {"passed", "failed", "insufficient_verification"}
 
 PLACEHOLDER_BULLET_RE = re.compile(r"^[-*]\s*$")
@@ -111,6 +140,13 @@ _SECTION_REQS_ARCHIVED = _SECTION_REQS_DETAILED + (
     ("05-evidence.md", "## Residual Risks"),
 )
 
+# Mechanical tasks skip overview/detailed design; evidence sections still required.
+_SECTION_REQS_ARCHIVED_MECHANICAL = _SECTION_REQS_BASE + (
+    ("05-evidence.md", "## Files"),
+    ("05-evidence.md", "## Commands"),
+    ("05-evidence.md", "## Residual Risks"),
+)
+
 STATUS_SECTION_REQUIREMENTS: dict[str, tuple[tuple[str, str], ...]] = {
     "proposing": (
         ("README.md", "## Overview"),
@@ -126,6 +162,16 @@ STATUS_SECTION_REQUIREMENTS: dict[str, tuple[tuple[str, str], ...]] = {
     "archived": _SECTION_REQS_ARCHIVED,
 }
 
+MECHANICAL_STATUS_SECTION_REQUIREMENTS: dict[str, tuple[tuple[str, str], ...]] = {
+    "proposing": (
+        ("README.md", "## Overview"),
+    ),
+    "requirements_designed": _SECTION_REQS_BASE,
+    "implementing": _SECTION_REQS_BASE,
+    "verifying": _SECTION_REQS_BASE,
+    "archived": _SECTION_REQS_ARCHIVED_MECHANICAL,
+}
+
 _STATUS_LABEL_BASE = (
     ("04-verification.md", "## Verification Path", "Planned Path"),
     ("04-verification.md", "## Verification Path", "Executed Path"),
@@ -133,6 +179,11 @@ _STATUS_LABEL_BASE = (
 )
 
 STATUS_LABEL_REQUIREMENTS: dict[str, tuple[tuple[str, str, str], ...]] = {
+    "verifying": _STATUS_LABEL_BASE,
+    "archived": _STATUS_LABEL_BASE,
+}
+
+MECHANICAL_STATUS_LABEL_REQUIREMENTS: dict[str, tuple[tuple[str, str, str], ...]] = {
     "verifying": _STATUS_LABEL_BASE,
     "archived": _STATUS_LABEL_BASE,
 }

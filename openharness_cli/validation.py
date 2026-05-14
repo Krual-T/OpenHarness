@@ -5,12 +5,17 @@ from pathlib import Path
 from .constants import (
     DEFAULT_STATUS_FLOW,
     LABEL_ONLY_RE,
+    MECHANICAL_STATUS_FLOW,
+    MECHANICAL_STATUS_LABEL_REQUIREMENTS,
+    MECHANICAL_STATUS_REQUIRED_FILES,
+    MECHANICAL_STATUS_SECTION_REQUIREMENTS,
     PLACEHOLDER_BULLET_RE,
     PLACEHOLDER_NUMBERED_RE,
     REQUIRED_STATUS_KEYS,
     STATUS_LABEL_REQUIREMENTS,
     STATUS_REQUIRED_FILES,
     STATUS_SECTION_REQUIREMENTS,
+    TASK_TYPE_VALUES,
     VERIFICATION_RESULT_VALUES,
 )
 from .models import TaskPackage
@@ -105,10 +110,27 @@ def _referenced_path_exists(package: TaskPackage, raw_path: object) -> bool:
     return legacy_path.exists()
 
 
+def _task_type_status_flow(package: TaskPackage) -> tuple[str, ...]:
+    if package.task_type == "mechanical":
+        return MECHANICAL_STATUS_FLOW
+    return DEFAULT_STATUS_FLOW
+
+
 def validate_task_package(package: TaskPackage) -> list[str]:
     errors: list[str] = []
     repo_root = package.config.repo_root
-    required_files = STATUS_REQUIRED_FILES.get(package.status_name, ())
+    status_flow = _task_type_status_flow(package)
+
+    # Select validation rules based on task type
+    if package.task_type == "mechanical":
+        required_files = MECHANICAL_STATUS_REQUIRED_FILES.get(package.status_name, ())
+        section_reqs = MECHANICAL_STATUS_SECTION_REQUIREMENTS
+        label_reqs = MECHANICAL_STATUS_LABEL_REQUIREMENTS
+    else:
+        required_files = STATUS_REQUIRED_FILES.get(package.status_name, ())
+        section_reqs = STATUS_SECTION_REQUIREMENTS
+        label_reqs = STATUS_LABEL_REQUIREMENTS
+
     for file_name in required_files:
         if not (package.root / file_name).exists():
             errors.append(f"missing required file for `{package.status_name}`: {package.root / file_name}")
@@ -116,16 +138,32 @@ def validate_task_package(package: TaskPackage) -> list[str]:
         value = package.status.get(key)
         if value in (None, "", []):
             errors.append(f"missing status key `{key}` in {package.root / 'STATUS.yaml'}")
+
+    # Validate task_type if present
+    if package.task_type and package.task_type not in TASK_TYPE_VALUES:
+        errors.append(
+            f"unknown collaboration.task_type `{package.task_type}` in {package.root / 'STATUS.yaml'}; "
+            f"expected one of: {', '.join(sorted(TASK_TYPE_VALUES))}"
+        )
+
+    # Validate design_review_mode if present
+    design_review_mode = package.design_review_mode
+    if design_review_mode and design_review_mode not in {"stepwise", "auto"}:
+        errors.append(
+            f"unknown collaboration.design_review_mode `{design_review_mode}` in {package.root / 'STATUS.yaml'}; "
+            f"expected `stepwise` or `auto`"
+        )
+
     verification = package.status.get("verification")
     if verification is not None and not isinstance(verification, dict):
         errors.append(f"`verification` must be a mapping in {package.root / 'STATUS.yaml'}")
     evidence = package.status.get("evidence")
     if evidence is not None and not isinstance(evidence, dict):
         errors.append(f"`evidence` must be a mapping in {package.root / 'STATUS.yaml'}")
-    if package.status_name not in DEFAULT_STATUS_FLOW:
+    if package.status_name not in status_flow:
         errors.append(
             f"unknown status `{package.status_name}` in {package.root / 'STATUS.yaml'}; "
-            f"expected one of: {', '.join(DEFAULT_STATUS_FLOW)}"
+            f"expected one of: {', '.join(status_flow)}"
         )
     if package.status_name == "archived":
         if package.root.resolve().parent != package.config.archived_task_packages_root:
@@ -173,13 +211,13 @@ def validate_task_package(package: TaskPackage) -> list[str]:
                         if not _referenced_path_exists(package, raw_path):
                             errors.append(f"missing referenced path `{raw_path}` in {package.root / 'STATUS.yaml'}")
 
-        for file_name, heading in STATUS_SECTION_REQUIREMENTS.get(package.status_name, ()):
+        for file_name, heading in section_reqs.get(package.status_name, ()):
             path = package.root / file_name
             if not _section_has_meaningful_content(path, heading):
                 errors.append(
                     f"{package.status_name} requires non-placeholder content for `{heading}` in {path}"
                 )
-        for file_name, section_heading, label in STATUS_LABEL_REQUIREMENTS.get(package.status_name, ()):
+        for file_name, section_heading, label in label_reqs.get(package.status_name, ()):
             path = package.root / file_name
             if not _label_has_meaningful_content(path, section_heading, label):
                 anchor = f"`{section_heading}`" if not label else f"`{label}` inside `{section_heading}`"
