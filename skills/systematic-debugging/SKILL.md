@@ -1,6 +1,9 @@
 ---
 name: systematic-debugging
 description: 遇到任何 bug、测试失败或意外行为时，在提出修复方案之前使用
+triggers_on: [implementing, verifying]
+requires: []
+next_skills: [test-driven-development]
 ---
 
 # 系统化调试
@@ -42,6 +45,7 @@ description: 遇到任何 bug、测试失败或意外行为时，在提出修复
 4. 如果修复无效：已尝试几次？
    - < 3 次：带着新信息回到阶段 1
    - ≥ 3 次：停下来质疑架构——每次修复都在不同地方暴露新问题，说明可能是架构问题，与用户讨论后再继续
+5. 修复验证通过后，添加防御层：在出错的每一层增加验证/断言/日志，使同类问题在源头可发现。参考 `references/defense-in-depth.md`
 
 ## 警示信号
 

@@ -1,6 +1,9 @@
 ---
 name: brainstorming
 description: 在开始任何创造性工作之前使用——创建功能、构建组件、添加功能或修改行为。探索用户意图、需求和设计。
+triggers_on: [proposing]
+requires: [using-openharness]
+next_skills: [exploring-solution-space]
 ---
 
 # 需求分析
@@ -26,5 +29,14 @@ description: 在开始任何创造性工作之前使用——创建功能、构�
 - 不要因为某个方案看起来明显就跳过替代方案
 - 在任务包里记录讨论结论，不要只留在聊天里
 - 需求阶段的结束标志是 `01-requirements.md` 足够坚实，不是文字变得更长
+- 模板文件位于 `using-openharness/references/templates/01-requirements.md`
 - 参考 `references/requirements-writing-guidance.md`
 - 需求收敛后，提议一种任务分类（`mechanical` / `standard development` / `protocol/architecture`），等用户确认后写入 `STATUS.yaml.collaboration.task_type`
+
+## 反合理化
+
+| 借口 | 为什么不成立 |
+|------|-------------|
+| "需求已经很清楚了，直接开始设计吧" | 清楚到能写下来 ≠ 实际上写下来了。没写进 `01-requirements.md` 的需求，在实现阶段会被遗忘或曲解。 |
+| "用户只问了一个小功能" | 小功能也可能有隐式假设。不写下目标用户、场景和 counterexample，范围就会在实现时自然膨胀。 |
+| "先写代码，需求后面补" | 后面不会补的。需求文档不是负担——它是你和未来维护者之间的契约。 |

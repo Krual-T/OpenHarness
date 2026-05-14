@@ -48,7 +48,7 @@ When you add new helper coverage, update the repository surfaces that advertise 
 
 - the runtime surface map entry for that surface
 - the helper skill path and its contract text
-- repository onboarding references such as `skill-hub` or equivalent adoption docs
+- repository onboarding references such as `AGENTS.md` or equivalent adoption docs
 - task-package writeback targets that will record planned and executed runtime verification
 - `.project-memory/` when the helper-addition rule becomes a reusable project fact
 

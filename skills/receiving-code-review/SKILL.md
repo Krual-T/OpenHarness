@@ -1,6 +1,9 @@
 ---
 name: receiving-code-review
 description: 收到代码审查反馈时使用，在实施建议之前——需要技术严谨性和验证，而非表态性认同或盲从
+triggers_on: [implementing, verifying]
+requires: [requesting-code-review]
+next_skills: []
 ---
 
 # 接收代码审查

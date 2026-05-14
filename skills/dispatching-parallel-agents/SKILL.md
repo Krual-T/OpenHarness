@@ -1,6 +1,9 @@
 ---
 name: dispatching-parallel-agents
 description: 当存在 2 个以上互不依赖的独立任务时使用，通常由 subagent-driven-development 的并发判断触发
+triggers_on: [implementing]
+requires: [subagent-driven-development]
+next_skills: []
 ---
 
 # 并行调度子代理

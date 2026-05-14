@@ -1,6 +1,9 @@
 ---
 name: finishing-a-development-branch
 description: 任务包实现和验证完成后，决定如何整合工作成果
+triggers_on: [archived]
+requires: [verification-before-completion]
+next_skills: []
 ---
 
 # 完成开发分支
@@ -49,5 +52,6 @@ git merge-base HEAD main 2>/dev/null || git merge-base HEAD master 2>/dev/null
 ## 要点
 
 - 必须在验证和测试通过后才能提供选项
+- 选项 1（本地合并）和选项 2（创建 PR）执行前，确认代码审查已完成（Critical/Important 问题已修复）
 - 丢弃工作必须先确认再执行
 - 不要画蛇添足给选项加解释文字

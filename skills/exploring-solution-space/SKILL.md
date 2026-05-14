@@ -1,6 +1,9 @@
 ---
 name: exploring-solution-space
 description: 需求明确后，在锁定架构或实现细节之前，探索本地仓库和网络资源
+triggers_on: [overview_designing, detailed_designing]
+requires: [brainstorming]
+next_skills: [test-driven-development, subagent-driven-development]
 ---
 
 # 方案探索
@@ -15,6 +18,10 @@ description: 需求明确后，在锁定架构或实现细节之前，探索本�
 2. 探索本地仓库：相关代码、文档、测试、最近变更
 3. 涉及第三方 API、当前平台行为、已有公共方案或最新最佳实践时，搜索网络
 4. 总结本地约束、可行选项和推荐方向
+4.5. 判断是否需要运行时验证：
+   - 如果任务可能依赖运行时行为（API、服务、工作流），运行 `openharness rwp list` 检查候选 RWP
+   - 如有匹配的 RWP，记录到 `02-overview-design.md` 的 Runtime Verification Plan 中
+   - 如无匹配则记录 RWP gap，作为后续验证的已知盲区
 5. 撰写 `02-overview-design.md`：覆盖范围、排除范围、主体结构、关键边界、主流、备选方案，以及至少一个被拒绝的替代方案及其被拒原因
 6. 进行概览反思：挑战主路径，比较替代方案，检查是否有遗漏的验证影响因素
 7. 仅在 `02-overview-design.md` 自洽后，撰写 `03-detailed-design.md`：验证路径、回退路径、实现落脚点、接口、迁移顺序、预期证据、失败模式
@@ -52,3 +59,13 @@ description: 需求明确后，在锁定架构或实现细节之前，探索本�
 - 反思过程必须写下来，不能只在脑中过一遍
 - 被拒绝或推迟的替代方案要在任务包中记录并说明原因
 - `02` 和 `03` 各需完成反思才能视为就绪
+- 模板文件位于 `using-openharness/references/templates/02-overview-design.md` 和 `03-detailed-design.md`
+- 如果任务需要运行时验证，在设计阶段就用 `openharness rwp list` 检查可用 RWP，不要留到实现阶段才发现缺失
+
+## 反合理化
+
+| 借口 | 为什么不成立 |
+|------|-------------|
+| "这个仓库我很熟，不需要探索了" | 仓库在变。上次的认知可能已过时。不探索就设计 = 基于错误前提做决策。 |
+| "不需要搜网络，本地就够了" | 第三方 API 行为、最新最佳实践、已有公共方案——这些都只能在网络上找到。拒绝搜索 = 拒绝外部信息。 |
+| "替代方案没必要写，反正不会选" | 没写下来的替代方案 = 没有真正对比过。写替代方案的目的不是"选它"，而是证明你真的挑战过主方案。 |

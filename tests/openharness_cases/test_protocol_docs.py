@@ -192,45 +192,6 @@ def test_new_task_rejects_legacy_positional_task_id_and_title() -> None:
 
 
 
-def test_skill_hub_declares_no_parallel_entry_skill() -> None:
-    hub_path = REPO_ROOT / "skills" / "using-openharness" / "references" / "skill-hub.md"
-    text = hub_path.read_text(encoding="utf-8")
-    assert "repository entry skill" in text
-    assert "Do not keep a separate repository entry layer beside `using-openharness`." in text
-    assert "`exploring-solution-space`" in text
-    assert "role injection" not in text
-    assert "runtime capability contract" not in text
-
-
-def test_skill_hub_describes_runtime_capability_layer() -> None:
-    hub_path = REPO_ROOT / "skills" / "using-openharness" / "references" / "skill-hub.md"
-    text = hub_path.read_text(encoding="utf-8")
-    assert "runtime-capability-contract.md" in text
-    assert "runtime-workflow-packages.md" in text
-    assert "runtime capability contract" not in text
-    assert "add one new narrow helper" not in text
-
-
-def test_skill_hub_uses_protocol_status_plus_stage_model() -> None:
-    hub_path = REPO_ROOT / "skills" / "using-openharness" / "references" / "skill-hub.md"
-    text = hub_path.read_text(encoding="utf-8")
-    assert "## Protocol Status" in text
-    assert "### Core Protocol Skills" in text
-    assert "### Optional Helper Skills" in text
-    assert "### Imported Generic Skills" in text
-    assert "## Workflow Stages And Triggers" in text
-    assert "Entry And Routing" in text
-    assert "Requirements Convergence" in text
-    assert "Exploration And Architecture" in text
-    assert "Implementation Execution" in text
-    assert "Debugging And Repair" in text
-    assert "Verification And Closure" in text
-    assert "Repository Memory And Maintenance" in text
-    assert "`using-openharness`" in text
-    assert "- `openharness`" not in text
-    assert "## Writing Guidance Surface" not in text
-
-
 def test_optional_execution_skills_are_not_described_as_core_protocol() -> None:
     for path in [
         REPO_ROOT / "skills" / "subagent-driven-development" / "SKILL.md",
@@ -258,9 +219,10 @@ def test_runtime_reference_docs_use_existing_sibling_paths() -> None:
         REPO_ROOT / "skills" / "using-openharness" / "references" / "runtime-capability-contract.md": [
             "runtime-workflow-packages.md",
         ],
-        REPO_ROOT / "skills" / "using-openharness" / "references" / "skill-hub.md": [
-            "runtime-capability-contract.md",
-            "runtime-workflow-packages.md",
+        REPO_ROOT / "skills" / "using-openharness" / "references" / "state-routing-table.md": [
+            "session-routing.md",
+            "task-classification.md",
+            "cli-reference.md",
         ],
     }
 
@@ -338,18 +300,18 @@ def test_active_protocol_docs_do_not_recommend_legacy_script_entrypoint() -> Non
 
 
 
-def test_skill_hub_stays_as_inventory_not_second_protocol_manual() -> None:
-    text = (REPO_ROOT / "skills" / "using-openharness" / "references" / "skill-hub.md").read_text(
+def test_state_routing_table_includes_all_workflow_stages() -> None:
+    text = (REPO_ROOT / "skills" / "using-openharness" / "references" / "state-routing-table.md").read_text(
         encoding="utf-8"
     )
-    assert "role injection" not in text
-    assert "stage gates" not in text
-    assert "challenge closure" not in text
-    assert "product perspective" not in text
-    assert "CEO perspective" not in text
-    assert "architecture perspective" not in text
-    assert "testing perspective" not in text
-    assert "risk perspective" not in text
+    assert "## 标准流程" in text
+    assert "## 机械流程" in text
+    assert "## 实现阶段 skill 选择" in text
+    assert "## 回退与异常" in text
+    assert "`proposing`" in text
+    assert "`archived`" in text
+    assert "`brainstorming`" in text
+    assert "`exploring-solution-space`" in text
 
 
 

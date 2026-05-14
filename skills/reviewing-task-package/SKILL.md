@@ -1,6 +1,9 @@
 ---
 name: reviewing-task-package
 description: 当任务包文档需要质量审核时使用——用子代理进行语义级审查，替代纯程序化验证的盲区
+triggers_on: [verifying]
+requires: []
+next_skills: []
 ---
 
 # 任务包文档审核

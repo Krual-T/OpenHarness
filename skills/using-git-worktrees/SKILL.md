@@ -1,6 +1,9 @@
 ---
 name: using-git-worktrees
 description: 当实现工作需要隔离工作空间或需要在单独 worktree 中执行任务包时使用
+triggers_on: [implementing]
+requires: []
+next_skills: []
 ---
 
 # 使用 Git Worktrees

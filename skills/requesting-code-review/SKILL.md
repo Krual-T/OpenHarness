@@ -1,6 +1,9 @@
 ---
 name: requesting-code-review
 description: 完成任务、实现主要功能或在合并前使用，验证工作是否满足要求
+triggers_on: [implemented, verifying]
+requires: []
+next_skills: [receiving-code-review]
 ---
 
 # 请求代码审查
