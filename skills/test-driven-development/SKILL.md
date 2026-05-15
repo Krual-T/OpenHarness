@@ -1,9 +1,6 @@
 ---
 name: test-driven-development
-description: 在详细设计之后，当实现的行为应该由自动化测试证明时使用——先写测试，再看它失败，写最小代码让其通过，然后重构
-triggers_on: [implementing]
-requires: [exploring-solution-space]
-next_skills: [verification-before-completion]
+description: 当任务状态是 implementing 且实现对象有明确可自动测试的行为契约时使用——先写测试、看它失败、写最小代码通过、然后重构
 ---
 
 # 测试驱动开发

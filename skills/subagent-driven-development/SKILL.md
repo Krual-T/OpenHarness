@@ -1,9 +1,6 @@
 ---
 name: subagent-driven-development
-description: 当任务包足够详细且子任务足够独立，可以在当前会话中调度子代理执行时使用
-triggers_on: [implementing]
-requires: [exploring-solution-space]
-next_skills: [verification-before-completion]
+description: 当任务状态是 implementing 且工作可拆分为独立子任务时使用——调度子代理在当前会话中执行，完成后运行包级验证
 ---
 
 # 子代理驱动开发

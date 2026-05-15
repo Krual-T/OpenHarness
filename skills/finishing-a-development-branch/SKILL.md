@@ -1,9 +1,6 @@
 ---
 name: finishing-a-development-branch
-description: 任务包实现和验证完成后，决定如何整合工作成果
-triggers_on: [archived]
-requires: [verification-before-completion]
-next_skills: []
+description: 当任务状态是 archived（验证通过、任务包已完成）时使用——决定合并、PR、保留还是丢弃当前分支
 ---
 
 # 完成开发分支

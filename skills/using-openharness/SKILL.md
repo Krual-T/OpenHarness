@@ -1,17 +1,7 @@
 ---
 name: using-openharness
-description: 在任何对话开始时使用——建立如何发现和使用仓库工作流技能，在做出任何回应之前
-triggers_on: [session-start]
-requires: []
-next_skills: [brainstorming]
+description: 当会话开始时使用——建立仓库工作流技能的使用方式，在任何回应之前读取
 ---
-
-<SUBAGENT-STOP>
-如果作为子代理被调度，仅在以下情况继续读取本技能：
-- 任务涉及 RWP 选择或运行时验证工作流
-- 任务涉及 harness 协议（状态推进、任务包创建、验证路由）
-其他情况跳过本技能，直接执行分配的具体任务。
-</SUBAGENT-STOP>
 
 # using-openharness
 

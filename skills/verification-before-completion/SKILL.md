@@ -1,9 +1,6 @@
 ---
 name: verification-before-completion
-description: 在声称工作完成、修复或通过之前使用，在提交或创建 PR 之前——需要运行验证命令并在做出任何成功声明之前确认输出
-triggers_on: [verifying]
-requires: []
-next_skills: [finishing-a-development-branch, systematic-debugging]
+description: 当任务状态是 verifying（实现已完成、需要验证证据）时使用——运行验证命令、确认输出、在做出任何成功声明之前收集证据
 ---
 
 # 完成前验证

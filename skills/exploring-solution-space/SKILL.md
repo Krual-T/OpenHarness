@@ -1,9 +1,6 @@
 ---
 name: exploring-solution-space
-description: 需求明确后，在锁定架构或实现细节之前，探索本地仓库和网络资源
-triggers_on: [overview_designing, detailed_designing]
-requires: [brainstorming]
-next_skills: [test-driven-development, subagent-driven-development]
+description: 当任务状态是 overview_designing 或 detailed_designing（需求已明确、需要方案设计）时使用——探索本地仓库和网络资源，写出 02-overview-design.md 和 03-detailed-design.md
 ---
 
 # 方案探索

@@ -1,9 +1,6 @@
 ---
 name: brainstorming
-description: 在开始任何创造性工作之前使用——创建功能、构建组件、添加功能或修改行为。探索用户意图、需求和设计。
-triggers_on: [proposing]
-requires: [using-openharness]
-next_skills: [exploring-solution-space]
+description: 当任务状态是 proposing（需求未收敛、范围未明确）时使用——探索用户意图、需求和设计，写出 01-requirements.md
 ---
 
 # 需求分析
