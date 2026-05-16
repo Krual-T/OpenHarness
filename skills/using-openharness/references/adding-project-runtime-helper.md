@@ -1,71 +1,71 @@
-# Adding Project Runtime Helper
+# 新增项目运行时辅助技能
 
-Use this guide when a repository already follows the OpenHarness runtime capability model and now needs one more reusable helper for a specific runtime surface.
+当仓库已遵循 OpenHarness 运行时能力模型、现在需要为特定运行时表面新增一个可复用辅助技能时，使用本指南。
 
-This workflow sits downstream of `runtime-capability-contract.md` and `project-runtime-surface-map.md`. It does not create a second repository entry skill.
+本流程位于 `runtime-capability-contract.md` 和 `project-runtime-surface-map.md` 下游。它不会创建第二个仓库入口技能。
 
-## Decision Rule
+## 决策规则
 
-Choose exactly one path:
+三选一：
 
-1. `reuse existing helper`
-   - The runtime surface is already mapped.
-   - A linked helper already matches the task's prerequisites, driving method, and evidence shape.
-2. `add new helper`
-   - The runtime surface is already mapped clearly enough to act on.
-   - No existing helper fits the task's dominant validation loop.
-   - Add one new narrow helper and link it from the runtime surface map.
-3. `bootstrap first`
-   - The repository still cannot state the runtime surface, prerequisites, driving method, or evidence flow clearly enough.
-   - Open or refine a focused bootstrap package before advertising reusable helper support.
+1. `复用现有辅助`
+   - 运行时表面已映射。
+   - 已有关联辅助的前置条件、驱动方式和证据形态与任务匹配。
+2. `新增辅助`
+   - 运行时表面已映射，且信息足够清晰可操作。
+   - 没有现有辅助能匹配任务的主要验证循环。
+   - 新增一个窄辅助，并从运行时表面地图链接它。
+3. `先建引导包`
+   - 仓库仍无法清楚说明运行时表面、前置条件、驱动方式或证据流程。
+   - 在宣称有可复用辅助之前，先开或完善一个聚焦的引导包。
 
-Do not treat `no matching helper yet` as the same problem as `missing runtime surface definition`.
+不要把"尚无匹配辅助"和"缺少运行时表面定义"当成同一个问题。
 
-## Minimum Helper Contract
+## 辅助技能最低契约
 
-Do not treat a helper as reusable until it can declare at least:
+不要将辅助标为可复用，除非它至少能声明：
 
-- owning runtime surface
-- purpose and dominant validation loop
-- prerequisites
-- driver commands or scripts
-- observation points and evidence sources
-- success criteria
-- failure evidence expectations
-- writeback expectations for `03-detailed-design.md`, `04-verification.md`, and `05-evidence.md`
+- 所属运行时表面
+- 用途和主要验证循环
+- 前置条件
+- 驱动命令或脚本
+- 观察点和证据来源
+- 成功标准
+- 失败证据要求
+- 对 `03-detailed-design.md`、`04-verification.md`、`05-evidence.md` 的写回要求
 
-Keep each helper narrow:
+保持每个辅助窄而聚焦：
 
-- one dominant runtime surface
-- one dominant driver style
-- one dominant evidence shape
+- 一个主要运行时表面
+- 一种主要驱动方式
+- 一种主要证据形态
 
-If a proposed helper spans unrelated surfaces or evidence loops, split it before linking it from the runtime surface map.
+如果拟议的辅助跨越不相关的表面或证据循环，在从运行时表面地图链接之前先拆分。
 
-## Repository Surfaces To Update
+## 需要更新的仓库表面
 
-When you add new helper coverage, update the repository surfaces that advertise or depend on it:
+新增辅助覆盖后，更新宣传或依赖它的仓库表面：
 
-- the runtime surface map entry for that surface
-- the helper skill path and its contract text
-- repository onboarding references such as `AGENTS.md` or equivalent adoption docs
-- task-package writeback targets that will record planned and executed runtime verification
-- `.project-memory/` when the helper-addition rule becomes a reusable project fact
+- 该表面在运行时表面地图中的条目
+- 辅助技能路径及其契约文本
+- 仓库引导引用，如 `AGENTS.md` 或等效采用文档
+- 任务包中会记录计划与已执行运行时验证的写回目标
+- `.project-memory/`——当辅助新增规则成为可复用项目事实时
 
-These repository updates should keep the runtime story discoverable without creating a parallel workflow root.
+这些仓库更新应保持运行时故事可发现，不创建并行的流程根。
 
-## Task-Package Writeback
+## 任务包写回
 
 - `03-detailed-design.md`
-  - record whether the task will reuse an existing helper, add new helper coverage, or bootstrap first
-  - record the chosen runtime surface, prerequisites, driving method, expected observations, and the helper path when one exists
+  - 记录任务是复用现有辅助、新增辅助覆盖、还是先建引导包
+  - 记录选定的运行时表面、前置条件、驱动方式、预期观察，以及辅助路径（如有）
 - `04-verification.md`
-  - record the executed runtime path, the evidence actually gathered, and whether the helper behaved as expected
+  - 记录实际执行的运行时路径、收集到的证据，以及辅助是否按预期工作
 - `05-evidence.md`
-  - record artifact paths, commands, helper references, residual risks, and follow-up cleanup such as missing helper refinements
+  - 记录产物路径、命令、辅助引用、残余风险，以及缺少辅助优化等后续清理
 
-## Boundary Notes
+## 边界说明
 
-- Keep `using-openharness` as the only entry skill.
-- Do not promote task-local debugging notes into a reusable helper until the minimum helper contract is explicit.
-- Do not leave helper knowledge only in chat, shell history, or one package's ad hoc notes.
+- 保持 `using-openharness` 作为唯一入口技能。
+- 在最低辅助契约明确之前，不要把任务本地的排障笔记提升为可复用辅助。
+- 不要把辅助知识只留在聊天、shell 历史或某个包的临时笔记里。

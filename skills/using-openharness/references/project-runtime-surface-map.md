@@ -1,64 +1,64 @@
-# Project Runtime Surface Map
+# 项目运行时表面地图
 
-OpenHarness expects repositories that need runtime-aware verification to keep a discoverable project runtime surface map.
+OpenHarness 要求需要运行时感知验证的仓库维护一份可发现的项目运行时表面地图。
 
-This map is the project-facing inventory that turns the shared runtime capability contract into concrete repository guidance.
+这份地图是项目层面的清单，将共享的运行时能力合约转化为具体的仓库指导。
 
-## Minimum Contents
+## 最低内容要求
 
-Each runtime surface entry should declare at least:
+每个运行时表面条目至少应声明：
 
-- runtime surface
-- purpose
-- prerequisites
-- driver method
-- observation points
-- success criteria
-- failure evidence
-- helper skill or bootstrap package
-- writeback expectations
+- 运行时表面
+- 用途
+- 前置条件
+- 驱动方式
+- 观察点
+- 成功标准
+- 失败证据
+- 辅助技能或引导包
+- 写回要求
 
-The writeback expectations should point back into the normal task-package flow:
+写回要求应指向正常的任务包流程：
 
 - `03-detailed-design.md`
-  - record whether runtime verification is required
-  - record the chosen surface, prerequisites, driver method, and expected observations
+  - 记录是否需要运行时验证
+  - 记录选定的表面、前置条件、驱动方式和预期观察
 - `04-verification.md`
-  - record the executed runtime path and the evidence that was actually gathered
+  - 记录实际执行的运行时路径和收集到的证据
 - `05-evidence.md`
-  - record artifact paths, commands, helper references, residual risks, and follow-up actions
+  - 记录产物路径、命令、辅助引用、残余风险和后续操作
 
-## Recommended Shape
+## 推荐形态
 
-The map can live anywhere stable and versioned, as long as `AGENTS.md`, `using-openharness`, or a repository onboarding document points to it.
+地图可以放在任何稳定且受版本控制的位置，只要 `AGENTS.md`、`using-openharness` 或仓库引导文档指向它。
 
-A simple table is usually enough:
+一个简单的表格通常就够用：
 
 | Surface | Purpose | Prerequisites | Driver | Evidence | Helper Or Bootstrap |
 | --- | --- | --- | --- | --- | --- |
-| API | Validate service behavior through HTTP or RPC flows | Local env, seed data, auth fixture | project API command or script | responses, traces, logs | linked helper skill or bootstrap package |
+| API | 通过 HTTP 或 RPC 流程验证服务行为 | 本地环境、种子数据、鉴权夹具 | 项目 API 命令或脚本 | 响应、trace、日志 | 关联的辅助技能或引导包 |
 
-## Helper Boundary Rules
+## 辅助技能边界规则
 
-- One helper should cover one dominant runtime surface.
-- One helper should keep one dominant driver method.
-- One helper should keep one dominant evidence shape.
-- Split a helper when unrelated surfaces would force different prerequisites, commands, or observations into one body.
-- Do not advertise a helper as reusable until it can name its prerequisites, observations, and failure evidence clearly.
+- 一个辅助技能只覆盖一个主要运行时表面。
+- 一个辅助技能只保持一种主要驱动方式。
+- 一个辅助技能只保持一种主要证据形态。
+- 当不相关的表面会迫使不同的前置条件、命令或观察方式混入同一个文件时，拆分辅助技能。
+- 在辅助技能能清楚说出前置条件、观察点和失败证据之前，不要将其标为可复用。
 
-## Bootstrap Path
+## 引导路径
 
-1. Decide whether the active task actually needs runtime-aware evidence.
-2. Inspect the project runtime surface map.
-3. If a matching surface entry exists and the linked helper contract fits the task, reuse the linked helper.
-4. If the surface is mapped but there is no reusable helper yet, add one narrow helper and link it from the map.
-5. If the repository cannot explain the surface, prerequisites, driver method, or evidence flow clearly, open a bootstrap package first.
-6. Record the chosen path back into the active task package before claiming runtime verification coverage.
+1. 判断当前任务是否真的需要运行时感知证据。
+2. 查看项目运行时表面地图。
+3. 如果匹配的表面条目存在且关联的辅助契约适合当前任务，复用关联的辅助技能。
+4. 如果表面已映射但尚无可用辅助，新增一个窄辅助并在地图中链接它。
+5. 如果仓库无法清楚说明表面、前置条件、驱动方式或证据流程，先开一个引导包。
+6. 在声明运行时验证覆盖之前，将选定的路径写回当前任务包。
 
-Use `adding-project-runtime-helper.md` when step 4 or step 5 applies.
+步骤 4 或 5 适用时，使用 `adding-project-runtime-helper.md`。
 
-## Adoption Notes
+## 采用说明
 
-- The map is an inventory, not a dumping ground for every runtime troubleshooting step.
-- The entry skill stays `using-openharness`; helper skills remain optional project-level extensions.
-- If one surface needs several unrelated evidence loops, split that surface into multiple clearer entries instead of hiding variety in one helper.
+- 地图是清单，不是所有运行时排障步骤的倾倒场。
+- 入口技能保持为 `using-openharness`；辅助技能是可选的项目级扩展。
+- 如果一个表面需要多个不相关的证据循环，将该表面拆分为多个更清晰的条目，而不是把多样性藏在一个辅助技能里。
