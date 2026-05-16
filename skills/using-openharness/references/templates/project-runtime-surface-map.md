@@ -1,20 +1,22 @@
-# Project Runtime Surface Map
+# 项目运行时表面地图
 
-## How To Use This Map
+> 表格标题保留英文；正文默认使用中文；命令、状态值、YAML 键名、文件名与路径保持英文。
 
-- Add one row for each supported runtime surface.
-- Link `Helper Or Bootstrap` to a reusable helper skill when the runtime loop is already supported.
-- If the surface is already mapped but no reusable helper exists yet, add one narrow helper before replacing a temporary bootstrap link with the helper path.
-- Link `Helper Or Bootstrap` to a bootstrap package when the repository still needs to define that surface.
-- Copy the chosen runtime surface into `03-detailed-design.md`, record the executed path in `04-verification.md`, and list artifacts plus residual risks in `05-evidence.md`.
+## 使用说明
+
+- 每行对应一个已支持的运行时表面。
+- 如果运行时循环已有支撑，将 `Helper Or Bootstrap` 链接到对应的可复用辅助技能。
+- 如果表面已记录但尚无辅助工具，先加一个窄辅助，再将临时引导链接替换为辅助路径。
+- 如果仓库尚未定义该表面，将 `Helper Or Bootstrap` 链接到一个引导包。
+- 将选定的运行时表面抄入 `03-detailed-design.md`，在 `04-verification.md` 中记录执行路径，在 `05-evidence.md` 中列出产物和残余风险。
 
 | Surface | Purpose | Prerequisites | Driver | Evidence | Helper Or Bootstrap |
 | --- | --- | --- | --- | --- | --- |
-| API | Validate request and response behavior against a running service | Local env, seed data, auth fixture | `uv run ...` or project API driver | responses, traces, logs | `skills/<project-api-runtime>/SKILL.md` |
-| Browser | Validate end-user flows in a real browser | Running app, test account | browser helper command or script | screenshots, console logs, network traces | `docs/task-packages/<bootstrap-browser-runtime>/README.md` |
-| Worker | Validate queue or background job behavior | Worker env, fixture input | worker runner or trigger script | logs, output records, metrics | `skills/<project-worker-runtime>/SKILL.md` |
+| API | 验证请求/响应行为（需运行中服务） | 本地环境、种子数据、鉴权夹具 | `uv run ...` 或项目 API 驱动 | 响应、trace、日志 | `skills/<项目-api-运行时>/SKILL.md` |
+| Browser | 验证真实浏览器中的端到端流程 | 运行中的应用、测试账号 | 浏览器辅助命令或脚本 | 截图、控制台日志、网络 trace | `docs/task-packages/<引导-浏览器-运行时>/README.md` |
+| Worker | 验证队列或后台任务行为 | Worker 环境、fixture 输入 | worker 启动器或触发脚本 | 日志、输出记录、指标 | `skills/<项目-worker-运行时>/SKILL.md` |
 
-## Notes
+## 注意事项
 
-- Keep each helper skill bounded to one dominant runtime surface.
-- If a surface cannot state prerequisites, evidence, or driver steps clearly, open a bootstrap package before treating it as reusable.
+- 每个辅助技能只对应一个主要运行时表面。
+- 如果某个表面的前提条件、证据或驱动步骤写不清楚，先开一个引导包再考虑复用。
