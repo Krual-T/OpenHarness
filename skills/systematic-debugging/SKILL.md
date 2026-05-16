@@ -1,6 +1,6 @@
 ---
 name: systematic-debugging
-description: 当任务状态是 implementing 或 verifying 且遇到 bug、测试失败或意外行为时使用——在提出任何修复方案之前先找到根因
+description: 当任务状态是 implementing 或 verifying 且遇到 bug、测试失败或意外行为时使用
 ---
 
 # 系统化调试

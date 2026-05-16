@@ -1,6 +1,6 @@
 ---
 name: verification-before-completion
-description: 当任务状态是 verifying（实现已完成、需要验证证据）时使用——运行验证命令、确认输出、在做出任何成功声明之前收集证据
+description: 当任务状态是 verifying（实现已完成、需要验证证据）时使用
 ---
 
 # 完成前验证

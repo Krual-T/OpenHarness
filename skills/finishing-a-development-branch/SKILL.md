@@ -1,6 +1,6 @@
 ---
 name: finishing-a-development-branch
-description: 当任务状态是 archived（验证通过、任务包已完成）时使用——决定合并、PR、保留还是丢弃当前分支
+description: 当任务状态是 archived（验证通过、任务包已完成）时使用
 ---
 
 # 完成开发分支

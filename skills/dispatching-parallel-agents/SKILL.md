@@ -1,6 +1,6 @@
 ---
 name: dispatching-parallel-agents
-description: 当任务状态是 implementing 且存在 2 个以上互不依赖的独立子任务时使用——并发调度多个子代理执行
+description: 当任务状态是 implementing 且存在 2 个以上互不依赖的独立子任务时使用
 ---
 
 # 并行调度子代理

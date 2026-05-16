@@ -1,6 +1,6 @@
 ---
 name: reviewing-task-package
-description: 当任务状态是 verifying 且任务包文档需要质量审核时使用——用子代理进行语义级审查，替代纯程序化验证的盲区
+description: 当任务状态是 verifying 且任务包文档需要质量审核时使用
 ---
 
 # 任务包文档审核

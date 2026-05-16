@@ -229,6 +229,42 @@ def _record_verification_artifact(
     return artifact_path
 
 
+def _check_verifying_rollback_preconditions(package: TaskPackage, target_status: str) -> list[str]:
+    """When rolling back from verifying due to failed verification, require debugging first."""
+    if package.status_name != "verifying":
+        return []
+    if target_status != "implementing":
+        return []
+    verification = package.status.get("verification")
+    if not isinstance(verification, dict):
+        return []
+    last_result = str(verification.get("last_run_result") or "").strip()
+    if last_result == "failed":
+        return [
+            "verification failed — investigate root cause with systematic-debugging "
+            "before transitioning back to implementing. Re-run verification after fixing."
+        ]
+    return []
+
+
+def _warn_code_review_gap(package: TaskPackage, target_status: str) -> None:
+    """Warn (not block) when moving to verifying without code review for non-mechanical tasks."""
+    if target_status != "verifying" or package.status_name != "implemented":
+        return
+    if package.task_type == "mechanical":
+        return
+    evidence = package.status.get("evidence")
+    has_code_review = False
+    if isinstance(evidence, dict):
+        has_code_review = bool(evidence.get("code_review"))
+    if not has_code_review:
+        print(
+            "WARNING: No code review evidence in STATUS.yaml.evidence.code_review. "
+            "Consider running requesting-code-review before verifying.",
+            flush=True,
+        )
+
+
 def _run_command(repo_root: Path, command: str) -> int:
     print(f"$ {command}")
     completed = subprocess.run(command, shell=True, cwd=repo_root)

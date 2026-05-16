@@ -1,6 +1,6 @@
 ---
 name: receiving-code-review
-description: 当任务状态是 implementing 或 verifying 且收到代码审查反馈时使用——用技术严谨性而非表态性认同回应审查意见
+description: 当任务状态是 implementing 或 verifying 且收到代码审查反馈时使用
 ---
 
 # 接收代码审查

@@ -1,6 +1,6 @@
 ---
 name: using-openharness
-description: 当会话开始时使用——建立仓库工作流技能的使用方式，在任何回应之前读取
+description: 当会话开始时使用——在任何回应之前读取，判断当前状态并路由到对应技能
 ---
 
 # using-openharness

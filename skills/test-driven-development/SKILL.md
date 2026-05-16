@@ -1,6 +1,6 @@
 ---
 name: test-driven-development
-description: 当任务状态是 implementing 且实现对象有明确可自动测试的行为契约时使用——先写测试、看它失败、写最小代码通过、然后重构
+description: 当任务状态是 implementing 且实现对象有明确可自动测试的行为契约时使用
 ---
 
 # 测试驱动开发

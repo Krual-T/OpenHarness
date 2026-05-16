@@ -2,6 +2,25 @@
 
 本文件负责 OpenHarness 的状态路由：标准/机械流程的完整路由表、implementing 阶段技能选择决策树、回退与异常处理。
 
+## 快速索引：按当前状态
+
+Agent 收到任务后，按当前 `STATUS.yaml` 的 `status` 字段直接跳转，不需要通读全文。
+
+| 当前状态 | 调用 skill | 关键参考文件 |
+|---------|-----------|-------------|
+| `proposing` | `brainstorming` | `skills/brainstorming/references/requirements-writing-guidance.md` |
+| `requirements_designed` | — | 执行 `openharness transition <task> overview_designing`（标准流）或 `implementing`（机械流） |
+| `overview_designing` | `exploring-solution-space` | `skills/exploring-solution-space/references/overview-design-writing-guidance.md` |
+| `overview_designed` | — | 执行 `openharness transition <task> detailed_designing` |
+| `detailed_designing` | `exploring-solution-space` | `skills/exploring-solution-space/references/detailed-design-writing-guidance.md` |
+| `detailed_designed` | — | 执行 `openharness transition <task> implementing` |
+| `implementing` | 决策树（本表下方） | `skills/using-openharness/references/cli-reference.md` |
+| `implemented` | — | 执行 `openharness transition <task> verifying` |
+| `verifying` | `verification-before-completion` | `skills/verification-before-completion/references/verification-writing-guidance.md`、`evidence-writing-guidance.md` |
+| `archived` | `finishing-a-development-branch` | 分支合并/PR/保留，完成即终态 |
+
+下面为完整路由表（含退出条件、推进命令、回退规则）。
+
 ## 标准流程
 
 `standard development` 和 `protocol/architecture` 走此流程：
@@ -15,15 +34,15 @@ proposing → requirements_designed → overview_designing → overview_designed
 
 | 当前状态 | 含义 | 调用 skill | 读写作指南 | 产出 | 退出条件 | 推进命令 |
 |---------|------|-----------|-----------|------|---------|---------|
-| `proposing` | 收敛需求 | `brainstorming` | `requirements-writing-guidance.md` | `01-requirements.md` | 指南 6 项退出检查通过，task_type 已确认 | `openharness transition <task> requirements_designed` |
+| `proposing` | 收敛需求 | `brainstorming` | `skills/brainstorming/references/requirements-writing-guidance.md` | `01-requirements.md` | 指南 6 项退出检查通过，task_type 已确认 | `openharness transition <task> requirements_designed` |
 | `requirements_designed` | 需求就绪 | — | — | — | — | `openharness transition <task> overview_designing` |
-| `overview_designing` | 探索方案 | `exploring-solution-space` | `overview-design-writing-guidance.md` | `02-overview-design.md` | 指南 5 项退出检查通过 | `openharness transition <task> overview_designed` |
+| `overview_designing` | 探索方案 | `exploring-solution-space` | `skills/exploring-solution-space/references/overview-design-writing-guidance.md` | `02-overview-design.md` | 指南 5 项退出检查通过 | `openharness transition <task> overview_designed` |
 | `overview_designed` | 总设就绪 | — | — | — | — | `openharness transition <task> detailed_designing` |
-| `detailed_designing` | 详细设计 | `exploring-solution-space` | `detailed-design-writing-guidance.md` | `03-detailed-design.md` | 指南 7 项退出检查通过 | `openharness transition <task> detailed_designed` |
+| `detailed_designing` | 详细设计 | `exploring-solution-space` | `skills/exploring-solution-space/references/detailed-design-writing-guidance.md` | `03-detailed-design.md` | 指南 7 项退出检查通过 | `openharness transition <task> detailed_designed` |
 | `detailed_designed` | 详设就绪 | — | — | — | — | `openharness transition <task> implementing` |
 | `implementing` | 执行实现 | 见下方"实现阶段 skill 选择" | — | 代码、测试 | 实现完成、测试通过 | `openharness transition <task> implemented` |
 | `implemented` | 实现完成 | — | — | — | — | `openharness transition <task> verifying` |
-| `verifying` | 验证记录 | `verification-before-completion` | `verification-writing-guidance.md`、`evidence-writing-guidance.md` | `04-verification.md`、`05-evidence.md` | `openharness check-tasks` 通过，`openharness verify <task>` 通过 | `openharness transition <task> archived` |
+| `verifying` | 验证记录 | `verification-before-completion` | `skills/verification-before-completion/references/verification-writing-guidance.md`、`skills/verification-before-completion/references/evidence-writing-guidance.md` | `04-verification.md`、`05-evidence.md` | `openharness check-tasks` 通过，`openharness verify <task>` 通过 | `openharness transition <task> archived` |
 | `archived` | 终态 | `finishing-a-development-branch` | — | — | 分支合并/PR/保留 | 归档到 `docs/archived/task-packages/` |
 
 ## 机械流程
@@ -36,10 +55,10 @@ proposing → requirements_designed → implementing → verifying → archived
 
 | 当前状态 | 含义 | 调用 skill | 读写作指南 | 产出 | 退出条件 | 推进命令 |
 |---------|------|-----------|-----------|------|---------|---------|
-| `proposing` | 收敛需求 | `brainstorming` | `requirements-writing-guidance.md` | `01-requirements.md` | 指南 6 项退出检查通过 | `openharness transition <task> requirements_designed` |
+| `proposing` | 收敛需求 | `brainstorming` | `skills/brainstorming/references/requirements-writing-guidance.md` | `01-requirements.md` | 指南 6 项退出检查通过 | `openharness transition <task> requirements_designed` |
 | `requirements_designed` | 需求就绪 | — | — | — | — | `openharness transition <task> implementing` |
 | `implementing` | 执行实现 | 见下方"实现阶段 skill 选择" | — | 代码、测试 | 实现完成、测试通过 | `openharness transition <task> verifying` |
-| `verifying` | 验证记录 | `verification-before-completion` | `verification-writing-guidance.md`、`evidence-writing-guidance.md` | `04-verification.md`、`05-evidence.md` | `openharness check-tasks` 通过，`openharness verify <task>` 通过 | `openharness transition <task> archived` |
+| `verifying` | 验证记录 | `verification-before-completion` | `skills/verification-before-completion/references/verification-writing-guidance.md`、`skills/verification-before-completion/references/evidence-writing-guidance.md` | `04-verification.md`、`05-evidence.md` | `openharness check-tasks` 通过，`openharness verify <task>` 通过 | `openharness transition <task> archived` |
 | `archived` | 终态 | `finishing-a-development-branch` | — | — | 分支合并/PR/保留 | 归档到 `docs/archived/task-packages/` |
 
 ## 实现阶段 skill 选择

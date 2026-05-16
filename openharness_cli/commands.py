@@ -11,10 +11,12 @@ from .lifecycle import (
     _archive_task_package,
     _build_transition_candidate,
     _check_archive_preconditions,
+    _check_verifying_rollback_preconditions,
     _ensure_transition_allowed,
     _record_verification_artifact,
     _run_command,
     _save_package_status,
+    _warn_code_review_gap,
     describe_stage,
 )
 from .models import TaskScaffoldRequest
@@ -263,6 +265,12 @@ def cmd_transition(args: argparse.Namespace) -> int:
         for error in transition_errors:
             print(f"ERROR: {error}")
         return 1
+    rollback_errors = _check_verifying_rollback_preconditions(package, args.target_status)
+    if rollback_errors:
+        for error in rollback_errors:
+            print(f"ERROR: {error}")
+        return 1
+    _warn_code_review_gap(package, args.target_status)
     if args.target_status == package.status_name:
         print(f"{package.task_id} already in `{package.status_name}`")
         return 0
@@ -351,56 +359,41 @@ def cmd_verify(args: argparse.Namespace) -> int:
 
 
 _GUIDANCE_MAP: dict[str, str] = {
-    "requirements": "requirements-writing-guidance.md",
-    "overview": "overview-design-writing-guidance.md",
-    "detailed": "detailed-design-writing-guidance.md",
-    "verification": "verification-writing-guidance.md",
-    "evidence": "evidence-writing-guidance.md",
-    "author-entry": "author-entry.md",
+    "requirements": "skills/brainstorming/references/requirements-writing-guidance.md",
+    "overview": "skills/exploring-solution-space/references/overview-design-writing-guidance.md",
+    "detailed": "skills/exploring-solution-space/references/detailed-design-writing-guidance.md",
+    "verification": "skills/verification-before-completion/references/verification-writing-guidance.md",
+    "evidence": "skills/verification-before-completion/references/evidence-writing-guidance.md",
+    "author-entry": "skills/using-openharness/references/author-entry.md",
 }
 
 
-def _resolve_writing_guide_root(repo_root: Path) -> Path:
-    skill_root = Path(__file__).resolve().parents[1]
-    candidates = (
-        repo_root / "skills" / "using-openharness" / "references",
-        repo_root / ".agents" / "skills" / "openharness" / "using-openharness" / "references",
-        skill_root / "references",
-    )
-    for candidate in candidates:
-        if candidate.resolve().exists():
-            return candidate.resolve()
-    raise FileNotFoundError("writing guide root not found")
+def _resolve_writing_guide_path(repo_root: Path, name: str) -> Path | None:
+    relative = _GUIDANCE_MAP.get(name)
+    if not relative:
+        return None
+    path = (repo_root / relative).resolve()
+    return path if path.exists() else None
 
 
 def cmd_writing_guide(args: argparse.Namespace) -> int:
     repo_root = Path(args.repo).resolve()
-    try:
-        writing_guide_root = _resolve_writing_guide_root(repo_root)
-    except FileNotFoundError as exc:
-        print(f"ERROR: {exc}")
-        return 1
-
     command = getattr(args, "writing_guide_command", "list")
 
     if command == "read":
-        file_name = _GUIDANCE_MAP.get(args.name)
-        if not file_name:
-            print(f"ERROR: unknown writing guide name `{args.name}`")
-            return 1
-        path = writing_guide_root / file_name
-        if not path.exists():
-            print(f"ERROR: writing guide not found: {path}")
+        path = _resolve_writing_guide_path(repo_root, args.name)
+        if path is None:
+            print(f"ERROR: unknown or missing writing guide `{args.name}`")
             return 1
         print(path.read_text(encoding="utf-8"), end="")
         return 0
 
     # list (default)
     print("Available writing guides:")
-    for name, file_name in _GUIDANCE_MAP.items():
-        path = writing_guide_root / file_name
+    for name, relative in _GUIDANCE_MAP.items():
+        path = repo_root / relative
         exists_icon = "✓" if path.exists() else "✗"
-        print(f"  {exists_icon} {name:<15} -> {file_name}")
+        print(f"  {exists_icon} {name:<15} -> {relative}")
     print(f"\nRead one with: openharness writing-guide read <name>")
     return 0
 

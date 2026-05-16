@@ -1,6 +1,6 @@
 ---
 name: exploring-solution-space
-description: 当任务状态是 overview_designing 或 detailed_designing（需求已明确、需要方案设计）时使用——探索本地仓库和网络资源，写出 02-overview-design.md 和 03-detailed-design.md
+description: 当任务状态是 overview_designing 或 detailed_designing（需求已明确、需要方案设计）时使用
 ---
 
 # 方案探索

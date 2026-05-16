@@ -1,6 +1,6 @@
 ---
 name: requesting-code-review
-description: 当任务状态是 implemented 或 verifying（实现已完成、合并前需要审查）时使用——构建审查上下文并执行代码审查
+description: 当任务状态是 implemented 或 verifying（实现已完成、合并前需要审查）时使用
 ---
 
 # 请求代码审查

@@ -411,19 +411,33 @@ def test_runtime_workflow_package_reference_defines_minimum_contents_and_selecti
 
 
 def test_task_package_writing_guidance_references_define_stage_contracts() -> None:
-    references_root = REPO_ROOT / "skills" / "using-openharness" / "references"
-    expected = {
-        "requirements-writing-guidance.md": "01-requirements.md",
-        "overview-design-writing-guidance.md": "02-overview-design.md",
-        "detailed-design-writing-guidance.md": "03-detailed-design.md",
-        "verification-writing-guidance.md": "04-verification.md",
-        "evidence-writing-guidance.md": "05-evidence.md",
+    expected: dict[str, tuple[str, str]] = {
+        "requirements-writing-guidance.md": (
+            "skills/brainstorming/references", "01-requirements.md"
+        ),
+        "overview-design-writing-guidance.md": (
+            "skills/exploring-solution-space/references", "02-overview-design.md"
+        ),
+        "detailed-design-writing-guidance.md": (
+            "skills/exploring-solution-space/references", "03-detailed-design.md"
+        ),
+        "verification-writing-guidance.md": (
+            "skills/verification-before-completion/references", "04-verification.md"
+        ),
+        "evidence-writing-guidance.md": (
+            "skills/verification-before-completion/references", "05-evidence.md"
+        ),
     }
 
-    assert not (references_root / "task-package-writing-guide.md").exists()
+    old_root = REPO_ROOT / "skills" / "using-openharness" / "references"
+    assert not (old_root / "task-package-writing-guide.md").exists()
+    # Old locations should be cleaned up
+    for filename in expected:
+        assert not (old_root / filename).exists(), f"{filename} should have moved from using-openharness"
 
-    for filename, target_doc in expected.items():
-        text = (references_root / filename).read_text(encoding="utf-8")
+    for filename, (rel_dir, target_doc) in expected.items():
+        path = REPO_ROOT / rel_dir / filename
+        text = path.read_text(encoding="utf-8")
         assert target_doc in text
         assert "Questions This Document Must Answer" in text
         assert "Section Mapping" in text
@@ -432,12 +446,12 @@ def test_task_package_writing_guidance_references_define_stage_contracts() -> No
         assert "Minimum Acceptable Shape" in text
         assert "Exit Check" in text
 
-    requirements = (references_root / "requirements-writing-guidance.md").read_text(encoding="utf-8")
+    requirements = (REPO_ROOT / "skills/brainstorming/references/requirements-writing-guidance.md").read_text(encoding="utf-8")
     assert "acceptance criteria" in requirements
     assert "cost cap" in requirements
     assert "counterexample" in requirements
 
-    overview = (references_root / "overview-design-writing-guidance.md").read_text(encoding="utf-8")
+    overview = (REPO_ROOT / "skills/exploring-solution-space/references/overview-design-writing-guidance.md").read_text(encoding="utf-8")
     assert "key failure modes" in overview
     assert "challenge closure" in overview
     assert "Stage Gates" in overview
@@ -446,7 +460,7 @@ def test_task_package_writing_guidance_references_define_stage_contracts() -> No
     assert "数据" in overview
     assert "PlantUML" in overview
 
-    detailed = (references_root / "detailed-design-writing-guidance.md").read_text(encoding="utf-8")
+    detailed = (REPO_ROOT / "skills/exploring-solution-space/references/detailed-design-writing-guidance.md").read_text(encoding="utf-8")
     assert "observability" in detailed
     assert "testing-first" in detailed
     assert "Runtime Verification Plan" in detailed
@@ -455,15 +469,13 @@ def test_task_package_writing_guidance_references_define_stage_contracts() -> No
     assert "异常" in detailed
     assert "PlantUML" in detailed
 
-    verification = (references_root / "verification-writing-guidance.md").read_text(
-        encoding="utf-8"
-    )
+    verification = (REPO_ROOT / "skills/verification-before-completion/references/verification-writing-guidance.md").read_text(encoding="utf-8")
     assert "fresh" in verification
     assert "Required Commands" in verification
     assert "Expected Outcomes" in verification
     assert "Latest Result" in verification
 
-    evidence = (references_root / "evidence-writing-guidance.md").read_text(encoding="utf-8")
+    evidence = (REPO_ROOT / "skills/verification-before-completion/references/evidence-writing-guidance.md").read_text(encoding="utf-8")
     assert "final verification command" in evidence
     assert "Artifact Paths" in evidence
     assert "Manual Steps" in evidence
