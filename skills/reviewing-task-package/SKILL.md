@@ -16,7 +16,7 @@ description: 当任务状态是 verifying 且任务包文档需要质量审核�
 ## 审核流程
 
 1. **读取写作指南**：用 CLI 发现指南，再读取内容作为审核标准
-   - `openharness writing-guide` 列出所有可用指南
+   - `openharness writing-guide list` 列出所有可用指南
    - `openharness writing-guide read requirements` 读取需求文档写作指南
    - `openharness writing-guide read overview` 读取概览设计写作指南
    - `openharness writing-guide read detailed` 读取详细设计写作指南
