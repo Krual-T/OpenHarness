@@ -1,0 +1,9 @@
+from __future__ import annotations
+
+from enum import StrEnum
+
+
+class TaskType(StrEnum):
+    MECHANICAL = "mechanical"
+    STANDARD = "standard development"
+    PROTOCOL = "protocol/architecture"
