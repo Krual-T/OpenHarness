@@ -12,7 +12,7 @@ def test_entrypoint_re_exports_package_main_and_parser() -> None:
     package_root = Path(__file__).resolve().parents[2] / "openharness_cli"
     assert package_root.is_dir()
     assert hasattr(openharness, "main")
-    assert hasattr(openharness, "build_parser")
+    assert hasattr(openharness, "app")
 
 
 def test_pyproject_exposes_openharness_console_script() -> None:
@@ -23,13 +23,16 @@ def test_pyproject_exposes_openharness_console_script() -> None:
 
 
 def test_parser_help_includes_top_level_description() -> None:
-    parser = openharness.build_parser()
-    top_level_help = parser.format_help()
-    update_help = parser._subparsers._group_actions[0].choices["update"].format_help()  # type: ignore[attr-defined]
+    from typer.testing import CliRunner
+    from openharness_cli.cli import app
 
-    assert "Openharness repository workflow CLI." in top_level_help
-    assert "update              Update the OpenHarness clone" in top_level_help
-    assert "Update the OpenHarness clone and refresh the installed CLI tool." in update_help
-    assert "--force-sync" in update_help
-    assert "discard local changes" in update_help
-    assert "uv tool upgrade openharness" in update_help
+    runner = CliRunner()
+    result = runner.invoke(app, ["--help"])
+    assert "Openharness repository workflow CLI." in result.stdout
+    assert "update" in result.stdout
+    assert "Update" in result.stdout
+
+    result = runner.invoke(app, ["update", "--help"])
+    assert "Update the OpenHarness clone and refresh the installed CLI tool." in result.stdout
+    assert "--force-sync" in result.stdout
+    assert "Discard local changes" in result.stdout

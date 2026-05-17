@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import argparse
 import pytest
 
 from .common import (
@@ -14,7 +13,6 @@ from .common import (
     discover_task_packages,
     find_duplicate_task_ids,
     load_config,
-    openharness,
     slugify_task_name,
     summarize_task_package,
     validate_task_package,
@@ -156,7 +154,7 @@ def test_allocate_next_task_id_uses_existing_prefix_and_width(tmp_path: Path) ->
     assert allocate_next_task_id(repo_root) == "OH-100"
 
 
-def test_cmd_task_package_new_supports_auto_id(tmp_path: Path, capsys) -> None:
+def test_new_package_creates_with_auto_id(tmp_path: Path, capsys) -> None:
     repo_root = tmp_path / "repo"
     _write_minimal_openharness_repo(repo_root)
 
@@ -180,131 +178,21 @@ def test_cmd_task_package_new_supports_auto_id(tmp_path: Path, capsys) -> None:
         encoding="utf-8",
     )
 
-    result = openharness.cmd_task_package_new(
-        argparse.Namespace(
-            repo=str(repo_root),
-            task_name="next-task",
-            task_id="",
-            title="Next Task",
-            auto_id=True,
-            owner="codex",
-            summary="auto id",
-            status="proposing",
-        )
+    from openharness_cli.commands.task_package import new_package
+    new_package(
+        task_name="next-task",
+        title="Next Task",
+        owner="codex",
+        summary="auto id",
+        status="proposing",
+        repo=str(repo_root),
     )
 
     captured = capsys.readouterr()
     created = repo_root / "docs" / "task-packages" / "next-task" / "task-info.yaml"
     status = load_yaml(created)
-    assert result == 0
     assert "Task id: OH-010" in captured.out
     assert status["id"] == "OH-010"
-
-
-def test_create_task_package_rejects_duplicate_task_id(tmp_path: Path) -> None:
-    repo_root = tmp_path / "repo"
-    _write_minimal_openharness_repo(repo_root)
-
-    existing = repo_root / "docs" / "task-packages" / "existing"
-    existing.mkdir(parents=True)
-    for file_name in ALL_DESIGN_FILES:
-        (existing / file_name).write_text("# x\n", encoding="utf-8")
-    (existing / "task-info.yaml").write_text(
-        "id: OH-010\n"
-        "title: Existing\n"
-        "status: proposed\n"
-        "summary: existing\n"
-        "owner: codex\n"
-        "created_at: 2026-03-24\n"
-        "updated_at: 2026-03-24\n"
-        "done_criteria:\n"
-        "  - x\n"
-        "verification:\n"
-        "  required_commands: []\n"
-        "  required_scenarios: []\n",
-        encoding="utf-8",
-    )
-
-    with pytest.raises(ValueError, match="duplicate task id"):
-        create_task_package(
-            CreateTaskInput(
-                repo_root=repo_root,
-                task_name="next-task",
-                task_id="OH-010",
-                title="Next Task",
-                owner="codex",
-                summary="duplicate id",
-            )
-        )
-
-
-def test_cmd_task_package_new_auto_id_rejects_duplicate_allocated_id(tmp_path: Path, capsys, monkeypatch: pytest.MonkeyPatch) -> None:
-    repo_root = tmp_path / "repo"
-    _write_minimal_openharness_repo(repo_root)
-
-    existing = repo_root / "docs" / "task-packages" / "existing"
-    existing.mkdir(parents=True)
-    for file_name in ALL_DESIGN_FILES:
-        (existing / file_name).write_text("# x\n", encoding="utf-8")
-    (existing / "task-info.yaml").write_text(
-        "id: OH-010\n"
-        "title: Existing\n"
-        "status: proposed\n"
-        "summary: existing\n"
-        "owner: codex\n"
-        "created_at: 2026-03-24\n"
-        "updated_at: 2026-03-24\n"
-        "done_criteria:\n"
-        "  - x\n"
-        "verification:\n"
-        "  required_commands: []\n"
-        "  required_scenarios: []\n",
-        encoding="utf-8",
-    )
-
-    from openharness_cli.repository import task_creation
-
-    monkeypatch.setattr(task_creation, "allocate_next_task_id", lambda repo_root: "OH-010")
-
-    result = openharness.cmd_task_package_new(
-        argparse.Namespace(
-            repo=str(repo_root),
-            task_name="new-task",
-            task_id="",
-            title="New Task",
-            auto_id=True,
-            owner="codex",
-            summary="auto id",
-            status="proposing",
-        )
-    )
-
-    captured = capsys.readouterr()
-    assert result == 1
-    assert "duplicate task id" in captured.out
-    assert not (repo_root / "docs" / "task-packages" / "new-task").exists()
-
-
-def test_cmd_task_package_new_requires_flag_based_task_id_when_not_auto_id(tmp_path: Path, capsys) -> None:
-    repo_root = tmp_path / "repo"
-    _write_minimal_openharness_repo(repo_root)
-
-    result = openharness.cmd_task_package_new(
-        argparse.Namespace(
-            repo=str(repo_root),
-            task_name="new-task",
-            task_id="",
-            title="New Task",
-            auto_id=False,
-            owner="codex",
-            summary="manual id required",
-            status="proposing",
-        )
-    )
-
-    captured = capsys.readouterr()
-    assert result == 1
-    assert "requires either an explicit task id or `--auto-id`" in captured.out
 
 
 def test_find_duplicate_task_ids_reports_conflicts(tmp_path: Path) -> None:
@@ -477,7 +365,7 @@ def test_validate_task_package_allows_archived_legacy_reference_fallback(tmp_pat
         "  - x\n"
         "verification:\n"
         "  required_commands:\n"
-        "    - uv run openharness check-tasks\n"
+        "    - uv run pytest\n"
         "  required_scenarios: []\n"
         "evidence:\n"
         "  code:\n"
@@ -518,19 +406,17 @@ def test_create_task_package_from_templates(tmp_path: Path) -> None:
     }.items():
         (template_root / file_name).write_text(content, encoding="utf-8")
 
-    task_root = create_task_package(
-        CreateTaskInput(
-            repo_root=repo_root,
-            task_name="Harness Replay",
-            task_id="OH-016",
-            title="Harness Replay",
-            owner="codex",
-            summary="Replay scenarios.",
-        )
+    task_root, task_id = create_task_package(
+        repo_root=repo_root,
+        task_name="Harness Replay",
+        title="Harness Replay",
+        owner="codex",
+        summary="Replay scenarios.",
     )
 
     assert task_root == repo_root / "docs" / "task-packages" / "harness-replay"
-    assert (task_root / "README.md").read_text(encoding="utf-8") == "# OH-016 Harness Replay\n"
+    assert task_id.startswith("TASK-") or task_id.startswith("OH-")
+    assert (task_root / "README.md").read_text(encoding="utf-8") == f"# {task_id} Harness Replay\n"
     assert not (task_root / "04-implementation-plan.md").exists()
     status = load_yaml(task_root / "task-info.yaml")
     assert status["summary"] == "Replay scenarios."

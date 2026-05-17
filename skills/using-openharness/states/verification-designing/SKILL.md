@@ -31,7 +31,7 @@ description: 当任务状态是 verification_designing（设计验证策略，TD
 3. 是否有至少一个边界或错误场景的验证？
 4. 是否明确了本轮不覆盖的风险和接受理由？
 
-全部能回答 → `openharness transition <task> implementing`
+全部能回答 → `openharness task-package transition <task> implementing`
 
 ## 要点
 

@@ -1,33 +1,49 @@
 from __future__ import annotations
 
-import argparse
 import json
 from pathlib import Path
-from typing import Optional
 
-from ..models import CreateTaskInput, TaskStatus
-from ..workflows import ACTIVE_STATUSES
+import typer
+
 from ..display import describe_stage, output_state_hook
+from ..models import TaskStatus
 from ..repository import (
-    create_task_package, create_task_package_with_auto_id,
-    discover_task_packages, humanize_task_name,
+    create_task_package,
+    discover_task_packages,
+    humanize_task_name,
+    resolve_task_package,
     summarize_task_package,
 )
+from ..transition_engine import execute_transition
+from ..validate import validate_task_package
+from ..workflows import ACTIVE_STATUSES
 
-def cmd_task_package_list(args: argparse.Namespace) -> int:
-    repo_root = Path(args.repo).resolve()
+task_app = typer.Typer(help="Manage task packages.")
+
+
+@task_app.command(name="list")
+def list_packages(
+    repo: str = typer.Option(".", "--repo", help="Repository root"),
+    as_json: bool = typer.Option(False, "--json", help="Print JSON output"),
+    show_all: bool = typer.Option(False, "--all", help="Include archived task packages"),
+) -> None:
+    """List task packages with current status and next steps."""
+    repo_root = Path(repo).resolve()
     try:
         packages = discover_task_packages(repo_root)
     except (FileNotFoundError, ValueError) as exc:
         print(f"ERROR: {exc}")
-        return 1
+        raise typer.Exit(code=1)
+
     author_entry_path = repo_root / "skills" / "using-openharness" / "references" / "author-entry.md"
-    author_entry: Optional[dict[str, str]] = None
+    author_entry: dict | None = None
     if author_entry_path.exists():
         author_entry = {"path": str(author_entry_path), "summary": "Chinese-first author entry for task-package writing guidance."}
-    if not args.all:
+
+    if not show_all:
         packages = [p for p in packages if p.current_status in ACTIVE_STATUSES]
-    if args.json:
+
+    if as_json:
         cfg = packages[0].config if packages else None
         task_packages_root = str(cfg.task_packages_root) if cfg else str(repo_root / "docs" / "task-packages")
         archived_root = str(cfg.archived_task_packages_root) if cfg else str(repo_root / "docs" / "archived" / "task-packages")
@@ -48,13 +64,15 @@ def cmd_task_package_list(args: argparse.Namespace) -> int:
         if author_entry is not None:
             payload["author_entry"] = author_entry
         print(json.dumps(payload, ensure_ascii=False, indent=2))
-        return 0
+        return
+
     if author_entry is not None:
         print(f"author entry: {author_entry['path']}")
     if not packages:
         print("No matching task packages found.")
-        return 0
-    print("Active task packages:" if not args.all else "Task packages:")
+        return
+
+    print("Active task packages:" if not show_all else "Task packages:")
     for p in packages:
         stage = describe_stage(p)
         print(f"- {summarize_task_package(p)}")
@@ -74,44 +92,71 @@ def cmd_task_package_list(args: argparse.Namespace) -> int:
                 print(req_path.read_text(encoding="utf-8"), flush=True)
                 print(f"--- END: 01-requirements.md ({p.task_id}) ---", flush=True)
 
-    return 0
 
-
-def cmd_task_package_new(args: argparse.Namespace) -> int:
-    repo_root = Path(args.repo).resolve()
-    explicit_task_id = str(getattr(args, "task_id", "") or "").strip()
-    explicit_title = str(getattr(args, "title", "") or "").strip()
-    auto_id = bool(getattr(args, "auto_id", False))
-    if auto_id and explicit_task_id:
-        print("ERROR: `--auto-id` cannot be combined with an explicit task id")
-        return 1
-    task_id = explicit_task_id
-    if not task_id and not auto_id:
-        print("ERROR: new-task requires either an explicit task id or `--auto-id`")
-        return 1
-    owner = args.owner
-    title = explicit_title or humanize_task_name(args.task_name)
+@task_app.command(name="new")
+def new_package(
+    task_name: str = typer.Argument(..., help="Directory slug or human-readable task name"),
+    title: str = typer.Option("", "--title", help="Human-readable task title"),
+    owner: str = typer.Option("unassigned", "--owner", help="Initial owner"),
+    summary: str = typer.Option("", "--summary", help="Short summary"),
+    status: str = typer.Option("proposing", "--status", help="Initial status"),
+    repo: str = typer.Option(".", "--repo", help="Repository root"),
+) -> None:
+    """Create a new task package with an auto-allocated task ID."""
+    repo_root = Path(repo).resolve()
+    human_title = title or humanize_task_name(task_name)
     try:
-        if auto_id:
-            task_root, task_id = create_task_package_with_auto_id(
-                repo_root=repo_root, task_name=args.task_name, title=title,
-                owner=owner, summary=args.summary, status=args.status,
-            )
-        else:
-            task_root = create_task_package(
-                CreateTaskInput(
-                    repo_root=repo_root, task_name=args.task_name, task_id=task_id,
-                    title=title, owner=owner, summary=args.summary,
-                    status=TaskStatus(args.status) if args.status else TaskStatus.PROPOSING,
-                )
-            )
+        task_root, task_id = create_task_package(
+            repo_root=repo_root,
+            task_name=task_name,
+            title=human_title,
+            owner=owner,
+            summary=summary,
+            status=status,
+        )
     except (FileExistsError, FileNotFoundError, ValueError) as exc:
         print(f"ERROR: {exc}")
-        return 1
+        raise typer.Exit(code=1)
+
     print(f"Created task package: {task_root}")
     print(f"Task id: {task_id}")
-    print(f"Title: {title}")
-    print(f"Current status: {args.status}")
-    output_state_hook(repo_root, args.status if args.status in ACTIVE_STATUSES else "proposing")
-    print(f"\n完成后执行：openharness transition {task_id} requirements_designed")
-    return 0
+    print(f"Title: {human_title}")
+    print(f"Current status: {status}")
+    output_state_hook(repo_root, status if status in ACTIVE_STATUSES else "proposing")
+    print(f"\n完成后执行：openharness task-package transition {task_id} requirements_designed")
+
+
+@task_app.command(name="transition")
+def transition(
+    task: str = typer.Argument(..., help="Task package name or task id"),
+    target_status: str = typer.Argument(..., help="Target workflow status"),
+    repo: str = typer.Option(".", "--repo", help="Repository root"),
+) -> None:
+    """Move a task package to a legal workflow status."""
+    repo_root = Path(repo).resolve()
+    try:
+        package = resolve_task_package(repo_root, task)
+    except (FileNotFoundError, ValueError) as exc:
+        print(f"ERROR: {exc}")
+        raise typer.Exit(code=1)
+
+    updated, errors = execute_transition(package, target_status)
+    if errors:
+        for error in errors:
+            print(f"ERROR: {error}")
+        raise typer.Exit(code=1)
+
+    if updated is not None:
+        validation_errors = validate_task_package(updated)
+        if validation_errors:
+            for error in validation_errors:
+                print(f"ERROR: {error}")
+            raise typer.Exit(code=1)
+        target = updated.current_status
+        print(f"Transitioned {package.task_id} from `{package.current_status}` to `{target}`")
+        output_state_hook(repo_root, target)
+    elif target_status == "archived":
+        print(f"Archived task package: {package.task_id} -> {package.config.archived_task_packages_root / package.name}")
+        output_state_hook(repo_root, "archived")
+    else:
+        print(f"{package.task_id} already in `{package.current_status}`")

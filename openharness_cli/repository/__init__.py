@@ -14,7 +14,6 @@ from .task_packages import (
 from .task_creation import (
     allocate_next_task_id,
     create_task_package,
-    create_task_package_with_auto_id,
 )
 from .rwp import (
     discover_runtime_workflow_packages,
@@ -35,7 +34,7 @@ __all__ = [
     "discover_task_packages", "find_duplicate_task_ids",
     "resolve_task_package", "summarize_task_package",
     # task_creation
-    "allocate_next_task_id", "create_task_package", "create_task_package_with_auto_id",
+    "allocate_next_task_id", "create_task_package",
     # rwp
     "discover_runtime_workflow_packages", "resolve_runtime_workflow_package",
     "resolve_runtime_workflow_script",

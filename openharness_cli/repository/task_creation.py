@@ -6,14 +6,10 @@ import json
 from pathlib import Path
 
 from ..constants import TASK_ID_RE
-from ..models import CreateTaskInput, TaskInfo, TaskPackage, TaskStatus
+from ..models import CreateTaskInput, TaskStatus
 from .config import load_config
 from .task_packages import discover_task_packages
 from .utils import get_git_author, slugify_task_name
-
-
-def _duplicate_task_id_exists(repo_root: Path, task_id: str) -> bool:
-    return any(p.task_id == task_id for p in discover_task_packages(repo_root))
 
 
 def _task_package_lock_path(repo_root: Path) -> Path:
@@ -44,18 +40,16 @@ def _resolve_template_root(repo_root: Path) -> Path:
     raise FileNotFoundError("template root not found")
 
 
-def _create_task_package_unlocked(request: CreateTaskInput) -> Path:
+def _create_task_package_unlocked(request: CreateTaskInput, task_id: str) -> Path:
     current_config = load_config(request.repo_root)
     task_name = slugify_task_name(request.task_name)
     task_root = current_config.task_packages_root / task_name
     if task_root.exists():
         raise FileExistsError(f"task package already exists: {task_root}")
-    if _duplicate_task_id_exists(request.repo_root, request.task_id):
-        raise ValueError(f"duplicate task id `{request.task_id}` already exists")
 
     template_root = _resolve_template_root(request.repo_root)
     replacements = {
-        "<DESIGN_ID>": request.task_id,
+        "<DESIGN_ID>": task_id,
         "<TITLE>": request.title,
         "<DESIGN_NAME>": task_name,
         "<OWNER>": request.owner,
@@ -70,7 +64,7 @@ def _create_task_package_unlocked(request: CreateTaskInput) -> Path:
         template_replacements = dict(replacements)
         if target_name == "task-info.yaml":
             template_replacements.update({
-                "<DESIGN_ID>": json.dumps(request.task_id, ensure_ascii=False),
+                "<DESIGN_ID>": json.dumps(task_id, ensure_ascii=False),
                 "<TITLE>": json.dumps(request.title, ensure_ascii=False),
                 "<OWNER>": json.dumps(request.owner, ensure_ascii=False),
                 "<STATUS>": json.dumps(request.status.value, ensure_ascii=False),
@@ -114,30 +108,20 @@ def _resolve_owner(repo_root: Path, owner: str) -> str:
     return owner
 
 
-def create_task_package(request: CreateTaskInput) -> Path:
-    if request.owner == "unassigned":
-        request = CreateTaskInput(
-            repo_root=request.repo_root, task_name=request.task_name,
-            task_id=request.task_id, title=request.title,
-            owner=get_git_author(request.repo_root),
-            summary=request.summary, status=request.status,
-        )
-    with _task_package_creation_lock(request.repo_root):
-        return _create_task_package_unlocked(request)
-
-
-def create_task_package_with_auto_id(
+def create_task_package(
     *, repo_root: Path, task_name: str, title: str,
     owner: str = "unassigned", summary: str = "", status: str = "proposing",
 ) -> tuple[Path, str]:
+    """Create a new task package with an auto-allocated task ID."""
     owner = _resolve_owner(repo_root, owner)
     with _task_package_creation_lock(repo_root):
         task_id = allocate_next_task_id(repo_root)
         task_root = _create_task_package_unlocked(
             CreateTaskInput(
-                repo_root=repo_root, task_name=task_name, task_id=task_id,
+                repo_root=repo_root, task_name=task_name,
                 title=title, owner=owner, summary=summary,
                 status=TaskStatus(status) if status else TaskStatus.PROPOSING,
             ),
+            task_id=task_id,
         )
     return task_root, task_id

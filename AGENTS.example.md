@@ -104,7 +104,7 @@
 - 影响使用方式、配置方式、架构分层的改动，应同步更新对应 task package。
 - 需求变化先写 `01-requirements.md`；探索结论与总体设计变化写 `02-overview-design.md`；测试设计、实现落点、runtime 验证方式变化写 `03-detailed-design.md`。
 - 完成前至少运行：
-  - `openharness check-tasks`
+  - `openharness task-package list`
   - 当前 task package 在 `STATUS.yaml.verification.required_commands` 中声明的命令
 - 若本轮只是补设计，仍应保证 task package 协议完整。
 

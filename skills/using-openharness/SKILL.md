@@ -29,9 +29,8 @@ openharness task-package list
 | 场景 | 命令 |
 |------|------|
 | 列出活跃任务包 | `openharness task-package list` |
-| 新建任务包 | `openharness task-package new <name> --auto-id` |
-| 推进状态 | `openharness transition <task> <目标状态>` |
-| 协议验证 | `openharness check-tasks` |
+| 新建任务包 | `openharness task-package new <name>` |
+| 推进状态 | `openharness task-package transition <task> <目标状态>` |
 
 `<name>` 用简短英文 slug，如 `fix-auth-timeout`、`add-export-csv`。
 
@@ -39,11 +38,11 @@ openharness task-package list
 
 ## 状态流转
 
-每次 `openharness transition` 成功后，CLI 自动输出新状态的指令内容（hook 模式）。Agent 直接执行即可，不需要主动查状态路由表。
+每次 `openharness task-package transition` 成功后，CLI 自动输出新状态的指令内容（hook 模式）。Agent 直接执行即可，不需要主动查状态路由表。
 
 中间 gate 状态（`requirements_designed`、`overview_designed`、`detailed_designed`、`verification_designed`、`implemented`、`verified`）CLI 自动检查前置条件并推进。
 
-回退：`openharness transition <task> <目标状态>`。
+回退：`openharness task-package transition <task> <目标状态>`。
 
 ## 受保护文件
 

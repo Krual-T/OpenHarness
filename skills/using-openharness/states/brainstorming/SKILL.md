@@ -55,7 +55,7 @@ description: 当任务状态是 proposing（需求未收敛、范围未明确）
 
 ## Exit Check
 
-离开需求阶段前，**必须**能明确回答下面 7 个问题（任何一条答不上来 → 阻塞，使用 `openharness transition <task> requirements_designed` 前必须全部通过）：
+离开需求阶段前，**必须**能明确回答下面 7 个问题（任何一条答不上来 → 阻塞，使用 `openharness task-package transition <task> requirements_designed` 前必须全部通过）：
 
 1. 目标用户是谁？
 2. 核心场景是什么？

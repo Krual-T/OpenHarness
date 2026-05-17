@@ -40,7 +40,6 @@ Before executing any installation commands, prompt the user to specify the targe
    After this, the following commands should work:
    ```bash
    openharness task-package list
-   openharness check-tasks
    ```
 
 4. **Create the skills symlink inside the chosen target directory:**
@@ -119,9 +118,7 @@ After that, you can use:
 
 ```bash
 openharness task-package list
-openharness check-tasks
 openharness update
-openharness verify <task-name-or-id>
 ```
 
 All active workflow docs use `openharness <cmd>` as the only documented entrypoint.

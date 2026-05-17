@@ -1,17 +1,13 @@
 from __future__ import annotations
 
-from .task_package import cmd_task_package_list, cmd_task_package_new
-from .check_tasks import cmd_check_tasks
-from .init_cmd import cmd_init
-from .rwp import cmd_rwp_list, cmd_rwp_show, cmd_rwp_run
-from .transition import cmd_transition
-from .update import cmd_update
+from .task_package import task_app, list_packages, new_package, transition
+from .init_cmd import init
+from .rwp import rwp_app, rwp_list, rwp_show, rwp_run
+from .update import update, UpdateMode
 
 __all__ = [
-    "cmd_task_package_list", "cmd_task_package_new",
-    "cmd_check_tasks",
-    "cmd_init",
-    "cmd_rwp_list", "cmd_rwp_show", "cmd_rwp_run",
-    "cmd_transition",
-    "cmd_update",
+    "task_app", "list_packages", "new_package", "transition",
+    "init",
+    "rwp_app", "rwp_list", "rwp_show", "rwp_run",
+    "update", "UpdateMode",
 ]

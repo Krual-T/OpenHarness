@@ -7,9 +7,9 @@
 | 场景 | 命令 |
 |------|------|
 | 列出活跃任务包 | `openharness task-package list` |
-| 创建任务包 | `openharness task-package new <name> --auto-id` |
-| 推进状态 | `openharness transition <task> <target>` |
-| 结构验证 | `openharness check-tasks` |
+| 创建任务包 | `openharness task-package new <name>` |
+| 推进状态 | `openharness task-package transition <task> <target>` |
+| 列出信息 | `openharness task-package list` |
 | 查看写作指南 | `openharness writing-guide list` / `read <name>` |
 | 自更新 | `openharness update` |
 | 运行时工作流 | `openharness rwp list` / `show` / `run` |

@@ -61,7 +61,7 @@ description: 当任务状态是 detailed_designing（总体方案已收敛、需
 
 ## Exit Check
 
-离开 detailed 阶段前，**必须**能明确回答下面 7 个问题（任何一条答不上来 → 阻塞，使用 `openharness transition <task> detailed_designed` 前必须全部通过）：
+离开 detailed 阶段前，**必须**能明确回答下面 7 个问题（任何一条答不上来 → 阻塞，使用 `openharness task-package transition <task> detailed_designed` 前必须全部通过）：
 
 1. 是否已经知道实现会落到哪些文件或模块，以及为什么是这些地方？
 2. 是否已经知道主要接口边界、接口精度和误用风险？

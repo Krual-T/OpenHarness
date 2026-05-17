@@ -45,15 +45,12 @@ def test_create_task_package_quotes_yaml_sensitive_status_fields(tmp_path: Path)
     ):
         (template_root / name).write_text("x\n", encoding="utf-8")
 
-    task_root = create_task_package(
-        CreateTaskInput(
-            repo_root=repo_root,
-            task_name="Quote Probe",
-            task_id="OH-017",
-            title="`02-overview-design.md` guidance: quote YAML",
-            owner="codex",
-            summary="`02-overview-design.md` guidance: explain quoting.",
-        )
+    task_root, task_id = create_task_package(
+        repo_root=repo_root,
+        task_name="Quote Probe",
+        title="`02-overview-design.md` guidance: quote YAML",
+        owner="codex",
+        summary="`02-overview-design.md` guidance: explain quoting.",
     )
 
     status_text = (task_root / "task-info.yaml").read_text(encoding="utf-8")

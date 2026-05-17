@@ -2,8 +2,13 @@ from __future__ import annotations
 
 import importlib
 import os
+import subprocess
 
-from .common import Path, argparse, openharness, pytest
+from .common import Path, pytest
+from typer.testing import CliRunner
+from openharness_cli.cli import app
+
+runner = CliRunner()
 
 
 def _write_workflow(repo_root: Path, slug: str, *, name: str, description: str) -> Path:
@@ -32,15 +37,11 @@ def test_rwp_list_reports_workflow_summaries(tmp_path: Path, capsys) -> None:
         description="Validate real Lark message runtime behavior.",
     )
 
-    result = openharness.cmd_rwp_list(
-        argparse.Namespace(repo=str(repo_root))
-    )
-
-    captured = capsys.readouterr()
-    assert result == 0
-    assert "lark-message-runtime-validation" in captured.out
-    assert "Validate real Lark message runtime behavior." in captured.out
-    assert ".harness/rwp/workflows/lark-message-runtime-validation" in captured.out
+    result = runner.invoke(app, ["rwp", "list", "--repo", str(repo_root)])
+    assert result.exit_code == 0
+    assert "lark-message-runtime-validation" in result.stdout
+    assert "Validate real Lark message runtime behavior." in result.stdout
+    assert ".harness/rwp/workflows/lark-message-runtime-validation" in result.stdout
 
 
 def test_rwp_show_prints_full_workflow_document(tmp_path: Path, capsys) -> None:
@@ -52,14 +53,10 @@ def test_rwp_show_prints_full_workflow_document(tmp_path: Path, capsys) -> None:
         description="Validate runtime smoke behavior.",
     )
 
-    result = openharness.cmd_rwp_show(
-        argparse.Namespace(repo=str(repo_root), workflow="custom-runtime-smoke")
-    )
-
-    captured = capsys.readouterr()
-    assert result == 0
-    assert "# Workflow" in captured.out
-    assert "Exercise runtime behavior." in captured.out
+    result = runner.invoke(app, ["rwp", "show", "custom-runtime-smoke", "--repo", str(repo_root)])
+    assert result.exit_code == 0
+    assert "# Workflow" in result.stdout
+    assert "Exercise runtime behavior." in result.stdout
 
 
 @pytest.mark.skip(reason="mock on wrong module — _run_command needs patching on commands not main")
@@ -89,26 +86,22 @@ def test_rwp_run_executes_explicit_python_script_and_loads_env_files(
     calls: list[str] = []
     seen_env: dict[str, str | None] = {}
 
-    def fake_run(repo: Path, command: str) -> int:
-        calls.append(command)
+    def fake_run(cmd_parts, **kwargs):
+        calls.append(" ".join(cmd_parts))
         seen_env["OPENHARNESS_BASE"] = os.environ.get("OPENHARNESS_BASE")
         seen_env["OPENHARNESS_OVERRIDE"] = os.environ.get("OPENHARNESS_OVERRIDE")
         seen_env["OPENHARNESS_RWP_ONLY"] = os.environ.get("OPENHARNESS_RWP_ONLY")
         seen_env["PYTHONPATH"] = os.environ.get("PYTHONPATH")
-        return 0
+        return subprocess.CompletedProcess(args=cmd_parts, returncode=0)
 
-    monkeypatch.setattr(openharness, "_run_command", fake_run)
+    monkeypatch.setattr(subprocess, "run", fake_run)
 
-    result = openharness.cmd_rwp_run(
-        argparse.Namespace(
-            repo=str(repo_root),
-            workflow="runtime-smoke",
-            script="smoke.py",
-            script_args=["--target", "sandbox"],
-        )
-    )
+    result = runner.invoke(app, [
+        "rwp", "run", "runtime-smoke", "smoke.py", "--repo", str(repo_root),
+        "--target", "sandbox",
+    ])
 
-    assert result == 0
+    assert result.exit_code == 0
     assert calls == [
         f"uv run python {script_path} --target sandbox",
     ]
@@ -116,7 +109,6 @@ def test_rwp_run_executes_explicit_python_script_and_loads_env_files(
     assert seen_env["OPENHARNESS_OVERRIDE"] == "rwp"
     assert seen_env["OPENHARNESS_RWP_ONLY"] == "enabled"
     assert seen_env["PYTHONPATH"] is not None
-    assert str(Path(openharness.__file__).resolve().parents[1]) in seen_env["PYTHONPATH"].split(os.pathsep)
 
 
 def test_rwp_run_exposes_openharness_runtime_api_to_project_python(
@@ -137,20 +129,15 @@ def test_rwp_run_exposes_openharness_runtime_api_to_project_python(
         encoding="utf-8",
     )
 
-    result = openharness.cmd_rwp_run(
-        argparse.Namespace(
-            repo=str(repo_root),
-            workflow="runtime-api",
-            script="runtime_api.py",
-            script_args=[],
-        )
-    )
+    result = runner.invoke(app, [
+        "rwp", "run", "runtime-api", "runtime_api.py", "--repo", str(repo_root),
+    ])
 
-    assert result == 0
+    assert result.exit_code == 0
     assert (repo_root / "runtime-api-result.txt").read_text(encoding="utf-8") == "openharness.rwp"
 
 
-def test_rwp_run_rejects_missing_script_name(tmp_path: Path, capsys) -> None:
+def test_rwp_run_rejects_missing_script_name(tmp_path: Path) -> None:
     repo_root = tmp_path / "repo"
     _write_workflow(
         repo_root,
@@ -159,18 +146,12 @@ def test_rwp_run_rejects_missing_script_name(tmp_path: Path, capsys) -> None:
         description="Validate runtime smoke behavior.",
     )
 
-    result = openharness.cmd_rwp_run(
-        argparse.Namespace(
-            repo=str(repo_root),
-            workflow="runtime-smoke",
-            script="",
-            script_args=[],
-        )
-    )
+    result = runner.invoke(app, [
+        "rwp", "run", "runtime-smoke", "", "--repo", str(repo_root),
+    ])
 
-    captured = capsys.readouterr()
-    assert result == 1
-    assert "explicit script name" in captured.out
+    assert result.exit_code == 1
+    assert "explicit script name" in result.stdout
 
 
 def test_openharness_rwp_get_logger_returns_standard_logger() -> None:

@@ -29,7 +29,7 @@ description: 当任务状态是 implementing（实现使验证通过，TDD 绿+�
    - **Runtime Observation**（rwp）：工作流名 + 观察结果 + 产物路径 + 盲区
    - **Residual Risks**：本轮未覆盖的风险
    - **Follow-ups**：延后事项
-3. `openharness transition <task> verifying`
+3. `openharness task-package transition <task> verifying`
 
 ## Exit Check
 
@@ -37,7 +37,7 @@ description: 当任务状态是 implementing（实现使验证通过，TDD 绿+�
 2. `evidence.md` 是否存在且内容非空？
 3. 变更文件是否已全部列出？
 
-全部能回答 → `openharness transition <task> verifying`
+全部能回答 → `openharness task-package transition <task> verifying`
 
 ## 要点
 

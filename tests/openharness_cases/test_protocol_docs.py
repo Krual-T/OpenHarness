@@ -128,16 +128,18 @@ def test_skill_openai_metadata_uses_official_tool_dependency_shape() -> None:
 
 
 def test_openharness_single_cli_supports_all_subcommands() -> None:
-    parser = openharness.build_parser()
-    choices = parser._subparsers._group_actions[0].choices  # type: ignore[attr-defined]
-    assert set(choices) == {
-        "check-tasks",
-        "init",
-        "rwp",
-        "task-package",
-        "transition",
-        "update",
-    }
+    from typer.testing import CliRunner
+    from openharness_cli.cli import app
+
+    runner = CliRunner()
+    result = runner.invoke(app, ["--help"])
+    assert "init" in result.stdout
+    assert "update" in result.stdout
+    assert "task-package" in result.stdout
+    assert "rwp" in result.stdout
+    # Ensure removed commands are not present
+    assert "check-tasks" not in result.stdout
+    assert "transition" not in result.stdout
 
 
 @pytest.mark.skip(reason="openharness in tests = openharness_cli.main; public symbols like discover_task_packages live in openharness_cli, not main")
@@ -149,8 +151,6 @@ def test_openharness_script_uses_task_package_naming_in_public_symbols() -> None
     assert hasattr(openharness, "create_task_package")
     assert hasattr(openharness, "summarize_task_package")
     assert hasattr(openharness, "slugify_task_name")
-    assert hasattr(openharness, "cmd_check_tasks")
-    assert hasattr(openharness, "cmd_init")
     assert not hasattr(openharness, "DesignPackage")
     assert not hasattr(openharness, "DesignScaffoldRequest")
     assert not hasattr(openharness, "discover_design_packages")
@@ -162,25 +162,29 @@ def test_openharness_script_uses_task_package_naming_in_public_symbols() -> None
     assert not hasattr(openharness, "cmd_new_design")
 
 
-def test_task_package_commands_use_current_handlers_only() -> None:
-    from openharness_cli import commands as cmd
-    parser = openharness.build_parser()
-    assert parser.parse_args(["check-tasks"]).handler == cmd.cmd_check_tasks
-    assert parser.parse_args(["init"]).handler == cmd.cmd_init
-    assert (
-        parser.parse_args(["task-package", "new", "name", "--task-id", "OH-999", "--title", "Title"]).handler
-        == cmd.cmd_task_package_new
-    )
-    assert parser.parse_args(["rwp", "list"]).handler == cmd.cmd_rwp_list
-    assert parser.parse_args(["transition", "name", "requirements_designed"]).handler == cmd.cmd_transition
-    assert parser.parse_args(["update"]).handler == cmd.cmd_update
+def test_cli_commands_resolve() -> None:
+    from typer.testing import CliRunner
+    from openharness_cli.cli import app
 
-
-def test_task_package_new_rejects_unknown_positional_args() -> None:
-    parser = openharness.build_parser()
-
-    with pytest.raises(SystemExit):
-        parser.parse_args(["task-package", "new", "name", "OH-999", "Title"])
+    runner = CliRunner()
+    # init
+    result = runner.invoke(app, ["init", "--help"])
+    assert result.exit_code == 0
+    # update
+    result = runner.invoke(app, ["update", "--help"])
+    assert result.exit_code == 0
+    # task-package
+    result = runner.invoke(app, ["task-package", "--help"])
+    assert result.exit_code == 0
+    # task-package new
+    result = runner.invoke(app, ["task-package", "new", "--help"])
+    assert result.exit_code == 0
+    # task-package transition
+    result = runner.invoke(app, ["task-package", "transition", "--help"])
+    assert result.exit_code == 0
+    # rwp
+    result = runner.invoke(app, ["rwp", "--help"])
+    assert result.exit_code == 0
 
 
 

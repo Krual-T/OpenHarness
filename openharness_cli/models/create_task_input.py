@@ -10,7 +10,6 @@ from .task_status import TaskStatus
 class CreateTaskInput:
     repo_root: Path
     task_name: str
-    task_id: str
     title: str
     owner: str = "unassigned"
     summary: str = ""

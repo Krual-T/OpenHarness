@@ -19,7 +19,7 @@ description: 当任务状态是 verifying（执行验证、收集证据）时由
    - 标记残余风险和延后事项
 4. **自检**：evidence.md 是否包含所有必要信息
 
-完成后：`openharness transition <task> verified`
+完成后：`openharness task-package transition <task> verified`
 
 （`verified` 是 gate 状态，CLI 检查 evidence.md 存在且非空后自动归档）
 
@@ -29,4 +29,4 @@ description: 当任务状态是 verifying（执行验证、收集证据）时由
 2. evidence.md 是否包含了实际运行的命令和结果？
 3. 验收标准是否全部有对应的证据覆盖？
 
-全部能回答 → `openharness transition <task> verified`
+全部能回答 → `openharness task-package transition <task> verified`
