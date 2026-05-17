@@ -19,7 +19,7 @@ from .common import (
     summarize_task_package,
     validate_task_package,
 )
-from openharness_cli.repository.yaml import _load_yaml
+from openharness_cli.repository.yaml import load_yaml
 
 
 def _write_minimal_openharness_repo(repo_root: Path) -> None:
@@ -78,7 +78,7 @@ def test_manifest_points_to_task_package_roots() -> None:
 
 def test_self_hosting_design_package_is_discoverable() -> None:
     manifest = load_config(REPO_ROOT)
-    packages = discover_task_packages(REPO_ROOT, manifest)
+    packages = discover_task_packages(REPO_ROOT)
     package = next(package for package in packages if package.name == "self-hosting-bootstrap")
     assert package.task_id == "OH-001"
     assert package.current_status == "archived"
@@ -87,7 +87,7 @@ def test_self_hosting_design_package_is_discoverable() -> None:
 
 def test_workflow_redesign_package_is_discoverable() -> None:
     manifest = load_config(REPO_ROOT)
-    packages = discover_task_packages(REPO_ROOT, manifest)
+    packages = discover_task_packages(REPO_ROOT)
     package = next(package for package in packages if package.name == "workflow-redesign")
     assert package.task_id == "OH-002"
     assert package.current_status == "archived"
@@ -96,7 +96,7 @@ def test_workflow_redesign_package_is_discoverable() -> None:
 
 def test_reflective_design_review_package_is_discoverable() -> None:
     manifest = load_config(REPO_ROOT)
-    packages = discover_task_packages(REPO_ROOT, manifest)
+    packages = discover_task_packages(REPO_ROOT)
     package = next(package for package in packages if package.name == "reflective-design-review")
     assert package.task_id == "OH-003"
     assert package.current_status == "archived"
@@ -195,7 +195,7 @@ def test_cmd_task_package_new_supports_auto_id(tmp_path: Path, capsys) -> None:
 
     captured = capsys.readouterr()
     created = repo_root / "docs" / "task-packages" / "next-task" / "task-info.yaml"
-    status = _load_yaml(created)
+    status = load_yaml(created)
     assert result == 0
     assert "Task id: OH-010" in captured.out
     assert status["id"] == "OH-010"
@@ -264,7 +264,7 @@ def test_cmd_task_package_new_auto_id_rejects_duplicate_allocated_id(tmp_path: P
 
     from openharness_cli.repository import task_creation
 
-    monkeypatch.setattr(task_creation, "allocate_next_task_id", lambda repo_root, config=None: "OH-010")
+    monkeypatch.setattr(task_creation, "allocate_next_task_id", lambda repo_root: "OH-010")
 
     result = openharness.cmd_task_package_new(
         argparse.Namespace(
@@ -353,7 +353,7 @@ def test_find_duplicate_task_ids_reports_conflicts(tmp_path: Path) -> None:
         )
 
     manifest = load_config(repo_root)
-    packages = discover_task_packages(repo_root, manifest)
+    packages = discover_task_packages(repo_root)
     duplicates = find_duplicate_task_ids(packages)
 
     assert set(duplicates) == {"OH-999"}
@@ -428,7 +428,7 @@ def test_validate_task_package_rejects_unknown_status_and_missing_paths(tmp_path
     )
 
     manifest = load_config(repo_root)
-    package = discover_task_packages(repo_root, manifest)[0]
+    package = discover_task_packages(repo_root)[0]
     errors = validate_task_package(package)
 
     assert any("unknown status" in error for error in errors)
@@ -486,7 +486,7 @@ def test_validate_task_package_allows_archived_legacy_reference_fallback(tmp_pat
     )
 
     manifest = load_config(repo_root)
-    package = discover_task_packages(repo_root, manifest)[0]
+    package = discover_task_packages(repo_root)[0]
     errors = validate_task_package(package)
 
     assert all("missing referenced path" not in error for error in errors)
@@ -532,7 +532,7 @@ def test_create_task_package_from_templates(tmp_path: Path) -> None:
     assert task_root == repo_root / "docs" / "task-packages" / "harness-replay"
     assert (task_root / "README.md").read_text(encoding="utf-8") == "# OH-016 Harness Replay\n"
     assert not (task_root / "04-implementation-plan.md").exists()
-    status = _load_yaml(task_root / "task-info.yaml")
+    status = load_yaml(task_root / "task-info.yaml")
     assert status["summary"] == "Replay scenarios."
 
 

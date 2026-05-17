@@ -171,7 +171,7 @@ def test_task_package_commands_use_current_handlers_only() -> None:
         parser.parse_args(["task-package", "new", "name", "--task-id", "OH-999", "--title", "Title"]).handler
         == cmd.cmd_task_package_new
     )
-    assert parser.parse_args(["rwp", "list"]).handler == cmd.cmd_rwp
+    assert parser.parse_args(["rwp", "list"]).handler == cmd.cmd_rwp_list
     assert parser.parse_args(["transition", "name", "requirements_designed"]).handler == cmd.cmd_transition
     assert parser.parse_args(["update"]).handler == cmd.cmd_update
 

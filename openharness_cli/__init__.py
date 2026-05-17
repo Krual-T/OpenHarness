@@ -4,24 +4,27 @@ from .constants import (
     REQUIRED_STATUS_KEYS,
     TASK_ID_RE,
 )
-from .domain import (
+from .models import (
+    CollaborationInfo,
+    CreateTaskInput,
     DesignReviewMode,
+    HarnessConfig,
+    RuntimeWorkflowPackage,
     TaskInfo,
+    TaskPackage,
     TaskStatus,
     TaskType,
     VerifyBy,
+    VerificationInfo,
     Workflow,
+    parse_status,
 )
 from .workflows import (
+    ACTIVE_STATUSES,
+    GATE_STATUSES,
     STANDARD_WORKFLOW,
     MECHANICAL_WORKFLOW,
     workflow_for,
-)
-from .models import (
-    HarnessConfig,
-    RuntimeWorkflowPackage,
-    TaskPackage,
-    CreateTaskInput,
 )
 from .repository import (
     ALL_DESIGN_FILES,
@@ -37,23 +40,21 @@ from .repository import (
     summarize_task_package,
 )
 from .display import describe_stage, output_state_hook
-from .workflow import execute_transition
+from .transition_engine import execute_transition
 from .validate import validate_task_package
 from .cli import build_parser
 from .main import main
 
-# Backward-compatible computed constants
-_ACTIVE = STANDARD_WORKFLOW.active_statuses | MECHANICAL_WORKFLOW.active_statuses
-ACTIVE_STATUSES = frozenset(s.value for s in _ACTIVE)
-GATE_STATUSES = frozenset(s.value for s in STANDARD_WORKFLOW.gate_statuses | MECHANICAL_WORKFLOW.gate_statuses)
+ALL_STATUS_VALUES = frozenset(s.value for s in TaskStatus)
 
 __all__ = [
     # Domain types
     "TaskStatus", "TaskType", "VerifyBy", "DesignReviewMode",
-    "Workflow", "TaskInfo",
+    "CollaborationInfo", "VerificationInfo",
+    "Workflow", "TaskInfo", "parse_status",
     "STANDARD_WORKFLOW", "MECHANICAL_WORKFLOW", "workflow_for",
     # Backward-compat
-    "ACTIVE_STATUSES", "GATE_STATUSES",
+    "ACTIVE_STATUSES", "GATE_STATUSES", "ALL_STATUS_VALUES",
     # Models
     "HarnessConfig", "TaskPackage", "CreateTaskInput", "RuntimeWorkflowPackage",
     # Constants

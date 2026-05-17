@@ -3,43 +3,38 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+from typing import Optional
 
-from ..domain import TaskStatus
-from ..workflows import STANDARD_WORKFLOW, MECHANICAL_WORKFLOW
+from ..models import CreateTaskInput, TaskStatus
+from ..workflows import ACTIVE_STATUSES
 from ..display import describe_stage, output_state_hook
-from ..models import CreateTaskInput
 from ..repository import (
     create_task_package, create_task_package_with_auto_id,
-    discover_task_packages, get_git_author, humanize_task_name, load_config,
+    discover_task_packages, humanize_task_name,
     summarize_task_package,
 )
-
-_ALL_ACTIVE_STATUSES = STANDARD_WORKFLOW.active_statuses | MECHANICAL_WORKFLOW.active_statuses
-
-
-def _author_entry_info(repo_root: Path) -> dict[str, str] | None:
-    author_entry = repo_root / "skills" / "using-openharness" / "references" / "author-entry.md"
-    if not author_entry.exists():
-        return None
-    return {"path": str(author_entry), "summary": "Chinese-first author entry for task-package writing guidance."}
-
 
 def cmd_task_package_list(args: argparse.Namespace) -> int:
     repo_root = Path(args.repo).resolve()
     try:
-        config = load_config(repo_root)
-        packages = discover_task_packages(repo_root, config)
+        packages = discover_task_packages(repo_root)
     except (FileNotFoundError, ValueError) as exc:
         print(f"ERROR: {exc}")
         return 1
-    author_entry = _author_entry_info(repo_root)
+    author_entry_path = repo_root / "skills" / "using-openharness" / "references" / "author-entry.md"
+    author_entry: Optional[dict[str, str]] = None
+    if author_entry_path.exists():
+        author_entry = {"path": str(author_entry_path), "summary": "Chinese-first author entry for task-package writing guidance."}
     if not args.all:
-        packages = [p for p in packages if p.info.status in _ALL_ACTIVE_STATUSES]
+        packages = [p for p in packages if p.current_status in ACTIVE_STATUSES]
     if args.json:
+        cfg = packages[0].config if packages else None
+        task_packages_root = str(cfg.task_packages_root) if cfg else str(repo_root / "docs" / "task-packages")
+        archived_root = str(cfg.archived_task_packages_root) if cfg else str(repo_root / "docs" / "archived" / "task-packages")
         payload = {
             "repo": str(repo_root),
-            "task_packages_root": str(config.task_packages_root),
-            "archived_task_packages_root": str(config.archived_task_packages_root),
+            "task_packages_root": task_packages_root,
+            "archived_task_packages_root": archived_root,
             "task_packages": [
                 {
                     "id": p.task_id, "name": p.name, "title": p.title,
@@ -95,8 +90,6 @@ def cmd_task_package_new(args: argparse.Namespace) -> int:
         print("ERROR: new-task requires either an explicit task id or `--auto-id`")
         return 1
     owner = args.owner
-    if owner == "unassigned":
-        owner = get_git_author(repo_root)
     title = explicit_title or humanize_task_name(args.task_name)
     try:
         if auto_id:
@@ -119,6 +112,6 @@ def cmd_task_package_new(args: argparse.Namespace) -> int:
     print(f"Task id: {task_id}")
     print(f"Title: {title}")
     print(f"Current status: {args.status}")
-    output_state_hook(repo_root, args.status if args.status in {s.value for s in _ALL_ACTIVE_STATUSES} else "proposing")
+    output_state_hook(repo_root, args.status if args.status in ACTIVE_STATUSES else "proposing")
     print(f"\n完成后执行：openharness transition {task_id} requirements_designed")
     return 0

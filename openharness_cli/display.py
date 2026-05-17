@@ -1,11 +1,15 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-from .domain import TaskStatus
+from .models import parse_status
+
+if TYPE_CHECKING:
+    from .models import TaskPackage
 
 
-def describe_stage(package) -> dict[str, str]:
+def describe_stage(package: TaskPackage) -> dict[str, str]:
     wf = package.workflow
     status = package.info.status
     next_s = wf.next_status(status)
@@ -18,9 +22,8 @@ def describe_stage(package) -> dict[str, str]:
 
 
 def output_state_hook(repo_root: Path, state: str) -> None:
-    try:
-        status = TaskStatus(state)
-    except ValueError:
+    status = parse_status(state)
+    if status is None:
         return
     relative = status.hook
     if not relative:

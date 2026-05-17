@@ -1,6 +1,56 @@
 from __future__ import annotations
 
-from .domain import TaskStatus, TaskType, Workflow, _FILE_SECTION_REQUIREMENTS  # noqa: F401 — used by Workflow.section_requirements
+from typing import TYPE_CHECKING, Optional, Union
+
+from .models import TaskStatus, TaskType, Workflow
+
+if TYPE_CHECKING:
+    from .models import TaskPackage
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Per-file section requirements — used by Workflow.section_requirements()
+# ═══════════════════════════════════════════════════════════════════════════════
+
+_FILE_SECTION_REQUIREMENTS: dict[str, tuple[tuple[str, str], ...]] = {
+    "01-requirements.md": (
+        ("01-requirements.md", "## Goal"),
+        ("01-requirements.md", "## Problem Statement"),
+        ("01-requirements.md", "## Required Outcomes"),
+        ("01-requirements.md", "## Constraints"),
+    ),
+    "02-overview-design.md": (
+        ("02-overview-design.md", "## System Boundary"),
+        ("02-overview-design.md", "## Proposed Structure"),
+        ("02-overview-design.md", "## Key Flows"),
+        ("02-overview-design.md", "## Stage Gates"),
+        ("02-overview-design.md", "## Trade-offs"),
+        ("02-overview-design.md", "## Overview Reflection"),
+    ),
+    "03-detailed-design.md": (
+        ("03-detailed-design.md", "## Runtime Verification Plan"),
+        ("03-detailed-design.md", "## Files Added Or Changed"),
+        ("03-detailed-design.md", "## Interfaces"),
+        ("03-detailed-design.md", "## Module Internals"),
+        ("03-detailed-design.md", "## Data Semantics"),
+        ("03-detailed-design.md", "## Decision Closure"),
+        ("03-detailed-design.md", "## Error Handling"),
+        ("03-detailed-design.md", "## Migration Notes"),
+        ("03-detailed-design.md", "## Detailed Reflection"),
+    ),
+    "verification_design.md": (
+        ("verification_design.md", "## Verification Path"),
+        ("verification_design.md", "## Required Commands"),
+        ("verification_design.md", "## Expected Outcomes"),
+        ("verification_design.md", "## Traceability"),
+        ("verification_design.md", "## Risk Acceptance"),
+    ),
+    "evidence.md": (
+        ("evidence.md", "## Verification Result"),
+        ("evidence.md", "## Files"),
+        ("evidence.md", "## Residual Risks"),
+    ),
+}
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -88,17 +138,15 @@ MECHANICAL_NEXT_STEPS: dict[TaskStatus, str] = {
 # Gate precondition functions
 # ═══════════════════════════════════════════════════════════════════════════════
 
-def _check_requirements_gate(package: object) -> list[str]:
+def _check_requirements_gate(package: TaskPackage) -> list[str]:
     errors: list[str] = []
-    task_type = getattr(package, "task_type", "")
-    verify_by = getattr(package, "verify_by", "")
-    if not task_type:
+    if not package.task_type:
         errors.append(
             "task_type is not confirmed. "
             "Propose a classification (mechanical / standard development / protocol/architecture) "
             "and write it to task-info.yaml collaboration.task_type"
         )
-    if not verify_by:
+    if not package.verify_by:
         errors.append(
             "verify_by is not determined. "
             "Determine the verification strategy (unit_test / qualitative / rwp) "
@@ -107,12 +155,8 @@ def _check_requirements_gate(package: object) -> list[str]:
     return errors
 
 
-def _check_verified_gate(package: object) -> list[str]:
-    root = getattr(package, "root", None)
-    if root is None:
-        return ["cannot verify: package has no root"]
-    from pathlib import Path
-    evidence_path = Path(root) / "evidence.md"
+def _check_verified_gate(package: TaskPackage) -> list[str]:
+    evidence_path = package.root / "evidence.md"
     if not evidence_path.exists():
         return ["evidence.md does not exist; write verification evidence first."]
     if not evidence_path.read_text(encoding="utf-8").strip():
@@ -160,6 +204,7 @@ STANDARD_WORKFLOW = Workflow(
         TaskStatus.VERIFICATION_DESIGNED: ("verification_design.md",),
         TaskStatus.VERIFIED: ("evidence.md",),
     },
+    section_specs=_FILE_SECTION_REQUIREMENTS,
     descriptions=DESCRIPTIONS,
     next_steps=STANDARD_NEXT_STEPS,
 )
@@ -192,12 +237,22 @@ MECHANICAL_WORKFLOW = Workflow(
         TaskStatus.VERIFICATION_DESIGNED: ("verification_design.md",),
         TaskStatus.VERIFIED: ("evidence.md",),
     },
+    section_specs=_FILE_SECTION_REQUIREMENTS,
     descriptions=DESCRIPTIONS,
     next_steps=MECHANICAL_NEXT_STEPS,
 )
 
 
-def workflow_for(task_type: TaskType | str | None) -> Workflow:
+ACTIVE_STATUSES = frozenset(
+    s.value for s in STANDARD_WORKFLOW.active_statuses | MECHANICAL_WORKFLOW.active_statuses
+)
+
+GATE_STATUSES = frozenset(
+    s.value for s in STANDARD_WORKFLOW.gate_statuses | MECHANICAL_WORKFLOW.gate_statuses
+)
+
+
+def workflow_for(task_type: Optional[Union[TaskType, str]]) -> Workflow:
     if task_type is None:
         return STANDARD_WORKFLOW
     if isinstance(task_type, str):

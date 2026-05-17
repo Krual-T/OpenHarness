@@ -319,7 +319,7 @@ def test_validate_design_package_rejects_overview_designed_without_reflection(tm
     )
 
     manifest = load_config(repo_root)
-    package = discover_task_packages(repo_root, manifest)[0]
+    package = discover_task_packages(repo_root)[0]
     errors = validate_task_package(package)
 
     assert any("overview_designed requires non-placeholder content" in error for error in errors)

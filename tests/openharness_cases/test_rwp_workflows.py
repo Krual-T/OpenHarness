@@ -32,8 +32,8 @@ def test_rwp_list_reports_workflow_summaries(tmp_path: Path, capsys) -> None:
         description="Validate real Lark message runtime behavior.",
     )
 
-    result = openharness.cmd_rwp(
-        argparse.Namespace(repo=str(repo_root), rwp_command="list")
+    result = openharness.cmd_rwp_list(
+        argparse.Namespace(repo=str(repo_root))
     )
 
     captured = capsys.readouterr()
@@ -52,8 +52,8 @@ def test_rwp_show_prints_full_workflow_document(tmp_path: Path, capsys) -> None:
         description="Validate runtime smoke behavior.",
     )
 
-    result = openharness.cmd_rwp(
-        argparse.Namespace(repo=str(repo_root), rwp_command="show", workflow="custom-runtime-smoke")
+    result = openharness.cmd_rwp_show(
+        argparse.Namespace(repo=str(repo_root), workflow="custom-runtime-smoke")
     )
 
     captured = capsys.readouterr()
@@ -99,10 +99,9 @@ def test_rwp_run_executes_explicit_python_script_and_loads_env_files(
 
     monkeypatch.setattr(openharness, "_run_command", fake_run)
 
-    result = openharness.cmd_rwp(
+    result = openharness.cmd_rwp_run(
         argparse.Namespace(
             repo=str(repo_root),
-            rwp_command="run",
             workflow="runtime-smoke",
             script="smoke.py",
             script_args=["--target", "sandbox"],
@@ -138,10 +137,9 @@ def test_rwp_run_exposes_openharness_runtime_api_to_project_python(
         encoding="utf-8",
     )
 
-    result = openharness.cmd_rwp(
+    result = openharness.cmd_rwp_run(
         argparse.Namespace(
             repo=str(repo_root),
-            rwp_command="run",
             workflow="runtime-api",
             script="runtime_api.py",
             script_args=[],
@@ -161,10 +159,9 @@ def test_rwp_run_rejects_missing_script_name(tmp_path: Path, capsys) -> None:
         description="Validate runtime smoke behavior.",
     )
 
-    result = openharness.cmd_rwp(
+    result = openharness.cmd_rwp_run(
         argparse.Namespace(
             repo=str(repo_root),
-            rwp_command="run",
             workflow="runtime-smoke",
             script="",
             script_args=[],

@@ -20,12 +20,8 @@ def get_git_author(repo_root: Path) -> str:
     return "unassigned"
 
 
-def _utc_now() -> datetime:
-    return datetime.now(timezone.utc)
-
-
-def _current_date() -> str:
-    return _utc_now().date().isoformat()
+def current_date() -> str:
+    return datetime.now(timezone.utc).date().isoformat()
 
 
 def slugify_task_name(raw_name: str) -> str:

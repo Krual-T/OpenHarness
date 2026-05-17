@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Optional
 
 from .constants import (
     LABEL_ONLY_RE,
@@ -8,14 +9,13 @@ from .constants import (
     PLACEHOLDER_NUMBERED_RE,
     REQUIRED_STATUS_KEYS,
 )
-from .domain import TaskStatus, TaskType, VerifyBy
-from .models import TaskPackage
+from .models import DesignReviewMode, TaskPackage, TaskStatus, TaskType, VerifyBy
 
 
 def _extract_markdown_section(text: str, heading: str) -> str:
     lines = text.splitlines()
     target = heading.strip()
-    start: int | None = None
+    start: Optional[int] = None
     for index, line in enumerate(lines):
         if line.strip() == target:
             start = index + 1
@@ -125,7 +125,7 @@ def validate_task_package(package: TaskPackage) -> list[str]:
 
     # Validate design_review_mode if present
     design_review_mode = package.design_review_mode
-    if design_review_mode and design_review_mode not in {"stepwise", "auto"}:
+    if design_review_mode and design_review_mode not in {drm.value for drm in DesignReviewMode}:
         errors.append(
             f"unknown collaboration.design_review_mode `{design_review_mode}` in {package.root / 'task-info.yaml'}; "
             f"expected `stepwise` or `auto`"

@@ -2,11 +2,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from ..domain import TaskInfo
-from ..models import HarnessConfig, TaskPackage
-from .config import load_config, _resolve_config
-from .yaml import _load_yaml, _write_yaml
-from .utils import _current_date
+from ..models import HarnessConfig, TaskInfo, TaskPackage
+from .config import load_config
+from .yaml import load_yaml, write_yaml
+from .utils import current_date
 
 ALL_DESIGN_FILES = (
     "README.md", "task-info.yaml", "01-requirements.md",
@@ -15,8 +14,8 @@ ALL_DESIGN_FILES = (
 )
 
 
-def discover_task_packages(repo_root: Path, config: HarnessConfig | None = None) -> list[TaskPackage]:
-    current_config = _resolve_config(repo_root, config)
+def discover_task_packages(repo_root: Path) -> list[TaskPackage]:
+    current_config = load_config(repo_root)
     _auto_archive_active_packages(current_config)
     packages: list[TaskPackage] = []
     roots = [current_config.task_packages_root]
@@ -34,14 +33,14 @@ def discover_task_packages(repo_root: Path, config: HarnessConfig | None = None)
             info_path = child / "task-info.yaml"
             if not info_path.exists():
                 continue
-            raw_info = _load_yaml(info_path)
+            raw_info = load_yaml(info_path)
             info = TaskInfo.from_dict(raw_info)
             documents = {name: child / name for name in ALL_DESIGN_FILES}
             packages.append(TaskPackage(root=child, info=info, config=current_config, documents=documents))
     return packages
 
 
-def _archive_task_package(package: TaskPackage) -> tuple[bool, str]:
+def archive_task_package(package: TaskPackage) -> tuple[bool, str]:
     import shutil
     target_root = package.config.archived_task_packages_root / package.name
     target_root.parent.mkdir(parents=True, exist_ok=True)
@@ -51,10 +50,10 @@ def _archive_task_package(package: TaskPackage) -> tuple[bool, str]:
     shutil.move(str(package.root), str(target_root))
 
     info_path = target_root / "task-info.yaml"
-    raw_info = _load_yaml(info_path)
+    raw_info = load_yaml(info_path)
     raw_info["status"] = "archived"
-    raw_info["updated_at"] = _current_date()
-    _write_yaml(info_path, raw_info)
+    raw_info["updated_at"] = current_date()
+    write_yaml(info_path, raw_info)
 
     return True, ""
 
@@ -69,7 +68,7 @@ def _auto_archive_active_packages(config: HarnessConfig) -> None:
         info_path = child / "task-info.yaml"
         if not info_path.exists():
             continue
-        raw_info = _load_yaml(info_path)
+        raw_info = load_yaml(info_path)
         if str(raw_info.get("status") or "").strip() != "archived":
             continue
         info = TaskInfo.from_dict(raw_info)
@@ -77,7 +76,7 @@ def _auto_archive_active_packages(config: HarnessConfig) -> None:
             root=child, info=info, config=config,
             documents={name: child / name for name in ALL_DESIGN_FILES},
         )
-        archived_ok, detail = _archive_task_package(package)
+        archived_ok, detail = archive_task_package(package)
         if not archived_ok:
             raise ValueError(f"failed to auto-archive task package `{package.task_id}`: {detail}")
 
@@ -93,9 +92,8 @@ def find_duplicate_task_ids(packages: list[TaskPackage]) -> dict[str, list[TaskP
     }
 
 
-def resolve_task_package(repo_root: Path, task: str, config: HarnessConfig | None = None) -> TaskPackage:
-    current_config = _resolve_config(repo_root, config)
-    for package in discover_task_packages(repo_root, current_config):
+def resolve_task_package(repo_root: Path, task: str) -> TaskPackage:
+    for package in discover_task_packages(repo_root):
         if package.name == task or package.task_id == task:
             return package
     raise ValueError(f"task package not found: {task}")

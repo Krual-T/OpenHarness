@@ -6,7 +6,7 @@ from typing import Any
 import yaml
 
 
-def _load_yaml(path: Path) -> dict[str, Any]:
+def load_yaml(path: Path) -> dict[str, Any]:
     try:
         data = yaml.safe_load(path.read_text(encoding="utf-8"))
     except yaml.YAMLError as exc:
@@ -23,5 +23,5 @@ def _load_yaml(path: Path) -> dict[str, Any]:
     return data
 
 
-def _write_yaml(path: Path, data: dict[str, Any]) -> None:
+def write_yaml(path: Path, data: dict[str, Any]) -> None:
     path.write_text(yaml.safe_dump(data, sort_keys=False, allow_unicode=True), encoding="utf-8")

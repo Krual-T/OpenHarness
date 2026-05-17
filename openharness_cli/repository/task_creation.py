@@ -6,16 +6,14 @@ import json
 from pathlib import Path
 
 from ..constants import TASK_ID_RE
-from ..domain import TaskInfo, TaskStatus
-from ..models import CreateTaskInput, HarnessConfig, TaskPackage
-from .config import load_config, _resolve_config
+from ..models import CreateTaskInput, TaskInfo, TaskPackage, TaskStatus
+from .config import load_config
 from .task_packages import discover_task_packages
 from .utils import get_git_author, slugify_task_name
 
 
-def _duplicate_task_id_exists(repo_root: Path, task_id: str, config: HarnessConfig | None = None) -> bool:
-    current_config = _resolve_config(repo_root, config)
-    return any(p.task_id == task_id for p in discover_task_packages(repo_root, current_config))
+def _duplicate_task_id_exists(repo_root: Path, task_id: str) -> bool:
+    return any(p.task_id == task_id for p in discover_task_packages(repo_root))
 
 
 def _task_package_lock_path(repo_root: Path) -> Path:
@@ -46,13 +44,13 @@ def _resolve_template_root(repo_root: Path) -> Path:
     raise FileNotFoundError("template root not found")
 
 
-def _create_task_package_unlocked(request: CreateTaskInput, config: HarnessConfig | None = None) -> Path:
-    current_config = _resolve_config(request.repo_root, config)
+def _create_task_package_unlocked(request: CreateTaskInput) -> Path:
+    current_config = load_config(request.repo_root)
     task_name = slugify_task_name(request.task_name)
     task_root = current_config.task_packages_root / task_name
     if task_root.exists():
         raise FileExistsError(f"task package already exists: {task_root}")
-    if _duplicate_task_id_exists(request.repo_root, request.task_id, current_config):
+    if _duplicate_task_id_exists(request.repo_root, request.task_id):
         raise ValueError(f"duplicate task id `{request.task_id}` already exists")
 
     template_root = _resolve_template_root(request.repo_root)
@@ -85,11 +83,10 @@ def _create_task_package_unlocked(request: CreateTaskInput, config: HarnessConfi
     return task_root
 
 
-def allocate_next_task_id(repo_root: Path, config: HarnessConfig | None = None) -> str:
-    current_config = _resolve_config(repo_root, config)
+def allocate_next_task_id(repo_root: Path) -> str:
     prefix_counts: dict[str, int] = {}
     max_by_prefix: dict[str, tuple[int, int]] = {}
-    for package in discover_task_packages(repo_root, current_config):
+    for package in discover_task_packages(repo_root):
         match = TASK_ID_RE.match(package.task_id)
         if not match:
             continue
@@ -111,27 +108,36 @@ def allocate_next_task_id(repo_root: Path, config: HarnessConfig | None = None) 
     return f"{prefix}-{next_number:0{max(width, 3)}d}"
 
 
+def _resolve_owner(repo_root: Path, owner: str) -> str:
+    if owner == "unassigned":
+        return get_git_author(repo_root)
+    return owner
+
+
 def create_task_package(request: CreateTaskInput) -> Path:
-    config = load_config(request.repo_root)
+    if request.owner == "unassigned":
+        request = CreateTaskInput(
+            repo_root=request.repo_root, task_name=request.task_name,
+            task_id=request.task_id, title=request.title,
+            owner=get_git_author(request.repo_root),
+            summary=request.summary, status=request.status,
+        )
     with _task_package_creation_lock(request.repo_root):
-        return _create_task_package_unlocked(request, config)
+        return _create_task_package_unlocked(request)
 
 
 def create_task_package_with_auto_id(
     *, repo_root: Path, task_name: str, title: str,
     owner: str = "unassigned", summary: str = "", status: str = "proposing",
 ) -> tuple[Path, str]:
-    if owner == "unassigned":
-        owner = get_git_author(repo_root)
-    config = load_config(repo_root)
+    owner = _resolve_owner(repo_root, owner)
     with _task_package_creation_lock(repo_root):
-        task_id = allocate_next_task_id(repo_root, config)
+        task_id = allocate_next_task_id(repo_root)
         task_root = _create_task_package_unlocked(
             CreateTaskInput(
                 repo_root=repo_root, task_name=task_name, task_id=task_id,
                 title=title, owner=owner, summary=summary,
                 status=TaskStatus(status) if status else TaskStatus.PROPOSING,
             ),
-            config,
         )
     return task_root, task_id

@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 
 from . import commands
+from .commands.update import UpdateMode
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -103,14 +104,14 @@ def build_parser() -> argparse.ArgumentParser:
         "list", help="List Runtime Workflow Package summaries.",
         description="List Runtime Workflow Package summaries.", formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    rwp_list_parser.set_defaults(handler=commands.cmd_rwp)
+    rwp_list_parser.set_defaults(handler=commands.cmd_rwp_list)
 
     rwp_show_parser = rwp_subparsers.add_parser(
         "show", help="Show a Runtime Workflow Package workflow.md.",
         description="Show a Runtime Workflow Package workflow.md.", formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     rwp_show_parser.add_argument("workflow", help="Runtime workflow name or directory slug")
-    rwp_show_parser.set_defaults(handler=commands.cmd_rwp)
+    rwp_show_parser.set_defaults(handler=commands.cmd_rwp_show)
 
     rwp_run_parser = rwp_subparsers.add_parser(
         "run", help="Run an explicit Python script from a Runtime Workflow Package.",
@@ -119,7 +120,7 @@ def build_parser() -> argparse.ArgumentParser:
     rwp_run_parser.add_argument("workflow", help="Runtime workflow name or directory slug")
     rwp_run_parser.add_argument("script", help="Python script under the workflow scripts directory")
     rwp_run_parser.add_argument("script_args", nargs=argparse.REMAINDER, help="Arguments forwarded to the script")
-    rwp_run_parser.set_defaults(handler=commands.cmd_rwp)
+    rwp_run_parser.set_defaults(handler=commands.cmd_rwp_run)
 
     # ── transition ────────────────────────────────────────────────────
     transition_parser = subparsers.add_parser(
@@ -157,14 +158,13 @@ def build_parser() -> argparse.ArgumentParser:
         help="Discard local changes in the OpenHarness source clone and reset it to its upstream branch.",
     )
     update_parser.add_argument(
-        "--mode", choices=("pull", "force-sync"),
+        "--mode", choices=tuple(m.value for m in UpdateMode),
         help="Use one update mode for this run, overriding the saved default mode.",
     )
     update_parser.add_argument(
-        "--set-default-mode", choices=("pull", "force-sync"),
+        "--set-default-mode", choices=tuple(m.value for m in UpdateMode),
         help="Save the default update mode and exit without running update.",
     )
     update_parser.set_defaults(handler=commands.cmd_update)
-
 
     return parser
