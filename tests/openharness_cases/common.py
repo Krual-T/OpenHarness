@@ -10,8 +10,8 @@ import pytest
 openharness = importlib.import_module("openharness_cli.main")
 from openharness_cli import (
     ACTIVE_STATUSES,
-    TaskScaffoldRequest,
-    REQUIRED_TASK_PACKAGE_FILES,
+    ALL_DESIGN_FILES,
+    CreateTaskInput,
     allocate_next_task_id,
     create_task_package,
     discover_task_packages,

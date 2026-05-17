@@ -131,11 +131,9 @@ def test_openharness_single_cli_supports_all_subcommands() -> None:
     parser = openharness.build_parser()
     choices = parser._subparsers._group_actions[0].choices  # type: ignore[attr-defined]
     assert set(choices) == {
-        "bootstrap",
         "check-tasks",
         "writing-guide",
         "init",
-        "new-task",
         "rwp",
         "task-package",
         "transition",
@@ -146,7 +144,7 @@ def test_openharness_single_cli_supports_all_subcommands() -> None:
 @pytest.mark.skip(reason="openharness in tests = openharness_cli.main; public symbols like discover_task_packages live in openharness_cli, not main")
 def test_openharness_script_uses_task_package_naming_in_public_symbols() -> None:
     assert hasattr(openharness, "TaskPackage")
-    assert hasattr(openharness, "TaskScaffoldRequest")
+    assert hasattr(openharness, "CreateTaskInput")
     assert hasattr(openharness, "discover_task_packages")
     assert hasattr(openharness, "validate_task_package")
     assert hasattr(openharness, "create_task_package")
@@ -154,7 +152,6 @@ def test_openharness_script_uses_task_package_naming_in_public_symbols() -> None
     assert hasattr(openharness, "slugify_task_name")
     assert hasattr(openharness, "cmd_check_tasks")
     assert hasattr(openharness, "cmd_init")
-    assert hasattr(openharness, "cmd_new_task")
     assert not hasattr(openharness, "DesignPackage")
     assert not hasattr(openharness, "DesignScaffoldRequest")
     assert not hasattr(openharness, "discover_design_packages")
@@ -172,7 +169,7 @@ def test_task_package_commands_use_current_handlers_only() -> None:
     assert parser.parse_args(["check-tasks"]).handler == cmd.cmd_check_tasks
     assert parser.parse_args(["init"]).handler == cmd.cmd_init
     assert (
-        parser.parse_args(["new-task", "name", "--task-id", "OH-999", "--title", "Title"]).handler
+        parser.parse_args(["task-package", "new", "name", "--task-id", "OH-999", "--title", "Title"]).handler
         == cmd.cmd_task_package_new
     )
     assert parser.parse_args(["rwp", "list"]).handler == cmd.cmd_rwp
@@ -180,11 +177,11 @@ def test_task_package_commands_use_current_handlers_only() -> None:
     assert parser.parse_args(["update"]).handler == cmd.cmd_update
 
 
-def test_new_task_rejects_legacy_positional_task_id_and_title() -> None:
+def test_task_package_new_rejects_unknown_positional_args() -> None:
     parser = openharness.build_parser()
 
     with pytest.raises(SystemExit):
-        parser.parse_args(["new-task", "name", "OH-999", "Title"])
+        parser.parse_args(["task-package", "new", "name", "OH-999", "Title"])
 
 
 

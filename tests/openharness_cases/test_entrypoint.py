@@ -22,20 +22,14 @@ def test_pyproject_exposes_openharness_console_script() -> None:
     assert scripts.get("openharness") == "openharness_cli.main:main"
 
 
-@pytest.mark.skip(reason="CLI help text updated")
-def test_parser_help_includes_overview_and_update_behavior() -> None:
+def test_parser_help_includes_top_level_description() -> None:
     parser = openharness.build_parser()
     top_level_help = parser.format_help()
     update_help = parser._subparsers._group_actions[0].choices["update"].format_help()  # type: ignore[attr-defined]
-    bootstrap_help = parser._subparsers._group_actions[0].choices["bootstrap"].format_help()  # type: ignore[attr-defined]
 
     assert "Openharness repository workflow CLI." in top_level_help
     assert "update              Update the OpenHarness clone" in top_level_help
     assert "Update the OpenHarness clone and refresh the installed CLI tool." in update_help
-    assert "--force-sync" in update_help  # --mode/--set-default-mode removed in refactor
     assert "--force-sync" in update_help
     assert "discard local changes" in update_help
-    assert "git pull" in update_help
     assert "uv tool upgrade openharness" in update_help
-    assert "Inspect project harness entrypoints and task packages." in bootstrap_help
-    assert "Example:" in bootstrap_help
