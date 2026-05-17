@@ -39,7 +39,7 @@ Before executing any installation commands, prompt the user to specify the targe
 
    After this, the following commands should work:
    ```bash
-   openharness bootstrap
+   openharness task-package list
    openharness check-tasks
    ```
 
@@ -68,7 +68,7 @@ You should see a symlink (or junction on Windows) pointing to your OpenHarness s
 Then verify the global CLI from the target project's root directory:
 
 ```bash
-openharness bootstrap
+openharness task-package list
 ```
 
 If the command is not found, rerun:
@@ -118,7 +118,7 @@ uv tool install --editable ~/.agents/skill-hub/openharness
 After that, you can use:
 
 ```bash
-openharness bootstrap
+openharness task-package list
 openharness check-tasks
 openharness update
 openharness verify <task-name-or-id>
