@@ -4,6 +4,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from .domain import Workflow, TaskInfo, TaskStatus
+from .workflows import workflow_for
+
 
 @dataclass(slots=True, frozen=True)
 class HarnessConfig:
@@ -21,76 +24,71 @@ class HarnessConfig:
 @dataclass(slots=True, frozen=True)
 class TaskPackage:
     root: Path
-    status: dict[str, Any]
+    info: TaskInfo
     config: HarnessConfig
     documents: dict[str, Path] = field(default_factory=dict)
+
+    @property
+    def workflow(self) -> Workflow:
+        return workflow_for(self.task_type or None)
 
     @property
     def name(self) -> str:
         return self.root.name
 
     @property
-    def status_name(self) -> str:
-        return str(self.status.get("status") or "").strip()
+    def current_status(self) -> str:
+        return self.info.status_value
 
     @property
     def task_id(self) -> str:
-        return str(self.status.get("id") or self.root.name).strip()
+        return self.info.id or self.root.name
 
     @property
     def title(self) -> str:
-        return str(self.status.get("title") or self.root.name).strip()
+        return self.info.title or self.root.name
 
     @property
     def summary(self) -> str:
-        return str(self.status.get("summary") or "").strip()
+        return self.info.summary
 
     @property
     def owner(self) -> str:
-        return str(self.status.get("owner") or "").strip()
+        return self.info.owner
 
     @property
     def done_criteria(self) -> tuple[str, ...]:
-        raw = self.status.get("done_criteria")
-        if not isinstance(raw, list):
-            return ()
-        return tuple(str(item).strip() for item in raw if str(item).strip())
+        return self.info.done_criteria
 
     @property
     def verify_by(self) -> str:
-        verification = self.status.get("verification")
-        if not isinstance(verification, dict):
-            return ""
-        return str(verification.get("verify_by") or "").strip()
+        v = self.info.verification
+        return v.verify_by if v and v.verify_by else ""
 
     @property
     def task_type(self) -> str:
-        collaboration = self.status.get("collaboration")
-        if not isinstance(collaboration, dict):
-            return ""
-        return str(collaboration.get("task_type") or "").strip()
+        c = self.info.collaboration
+        return c.task_type if c and c.task_type else ""
 
     @property
     def design_review_mode(self) -> str:
-        collaboration = self.status.get("collaboration")
-        if not isinstance(collaboration, dict):
-            return ""
-        return str(collaboration.get("design_review_mode") or "").strip()
+        c = self.info.collaboration
+        return c.design_review_mode if c and c.design_review_mode else ""
 
     @property
-    def status_path(self) -> Path:
-        return self.root / "STATUS.yaml"
+    def info_path(self) -> Path:
+        return self.root / "task-info.yaml"
 
 
 @dataclass(slots=True, frozen=True)
-class TaskScaffoldRequest:
+class CreateTaskInput:
     repo_root: Path
     task_name: str
     task_id: str
     title: str
     owner: str = "unassigned"
     summary: str = ""
-    status: str = "proposing"
+    status: TaskStatus = TaskStatus.PROPOSING
 
 
 @dataclass(slots=True, frozen=True)
