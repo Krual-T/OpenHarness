@@ -31,5 +31,5 @@ description: <DESCRIPTION>
 
 ## Writeback Guidance
 - `03-detailed-design.md`: 写入被选中的 workflow、脚本、前置条件、预期观察和 fallback。
-- `04-verification.md`: 写入实际执行命令、退出码、stdout/stderr 摘要、runtime 观察和阻塞。
-- `05-evidence.md`: 写入 artifact 路径、日志路径、外部记录、人工步骤、残余风险和 follow-up。
+- `verification_design.md`: 写入实际执行命令、退出码、stdout/stderr 摘要、runtime 观察和阻塞。
+- `evidence.md`: 写入 artifact 路径、日志路径、外部记录、人工步骤、残余风险和 follow-up。

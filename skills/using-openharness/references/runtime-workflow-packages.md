@@ -98,9 +98,9 @@ RWP usage must enter the normal task-package loop:
   - record the selected, rejected, or deferred workflow at overview level
 - `03-detailed-design.md`
   - record prerequisites, script names, expected runtime observation, success criteria, failure evidence, and fallback path
-- `04-verification.md`
+- `verification_design.md`
   - record executed `openharness rwp run ...` commands, exit codes, stdout/stderr summaries, runtime observations, deviations, and blockers
-- `05-evidence.md`
+- `evidence.md`
   - record artifact paths, log paths, external records, manual steps, residual risks, and follow-ups
 
 If no RWP fits the task, record the missing-RWP gap rather than claiming runtime verification coverage.

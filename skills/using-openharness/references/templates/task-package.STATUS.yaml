@@ -1,11 +1,10 @@
 id: <DESIGN_ID>
 title: <TITLE>
-# Default flow: proposing -> requirements_designed -> overview_designing -> overview_designed -> detailed_designing -> detailed_designed -> implementing -> implemented -> verifying -> archived
-# Each designing/designed pair marks a design checkpoint; later statuses imply earlier checkpoints are already materially complete.
-# `detailed_designed` is the normal resting point for design-complete work before implementation.
-# `archived` means the task package is implemented, verified, and no longer active.
-# If a sentence here contains backticks or other YAML-sensitive punctuation, wrap the whole sentence in double quotes.
-# Example: summary: "`02-overview-design.md` guidance: explain the boundary."
+# Status flow (mechanical):
+#   proposing -> verification_designing -> verification_designed[G] -> implementing -> implemented[G] -> verifying -> verified[G] -> archived
+# Status flow (standard/protocol):
+#   proposing -> overview_designing -> overview_designed[G] -> detailed_designing -> detailed_designed[G] -> verification_designing -> verification_designed[G] -> implementing -> implemented[G] -> verifying -> verified[G] -> archived
+# [G] = gate state，CLI 自动推进。
 status: <STATUS>
 summary: <SUMMARY>
 owner: <OWNER>
@@ -14,7 +13,7 @@ updated_at: <DATE>
 depends_on: []
 scope:
   areas: []
-# Optional collaboration state. Write these only after the human confirms the value.
+# Write collaboration only after human confirms.
 # task_type: mechanical | standard development | protocol/architecture
 # design_review_mode: stepwise | auto
 collaboration: {}
@@ -26,14 +25,4 @@ entrypoints:
 done_criteria:
   - Replace this placeholder with real done criteria.
 verification:
-  required_commands: []
-  required_scenarios: []
-  last_run_at: ""
-  last_run_result: ""
-  last_run_artifact: ""
-evidence:
-  docs:
-    - docs/task-packages/<DESIGN_NAME>/04-verification.md
-    - docs/task-packages/<DESIGN_NAME>/05-evidence.md
-  code: []
-  tests: []
+  verify_by: ""   # unit_test | qualitative | rwp

@@ -32,7 +32,7 @@
 - 观察点和证据来源
 - 成功标准
 - 失败证据要求
-- 对 `03-detailed-design.md`、`04-verification.md`、`05-evidence.md` 的写回要求
+- 对 `03-detailed-design.md`、`verification_design.md`、`evidence.md` 的写回要求
 
 保持每个辅助窄而聚焦：
 
@@ -59,9 +59,9 @@
 - `03-detailed-design.md`
   - 记录任务是复用现有辅助、新增辅助覆盖、还是先建引导包
   - 记录选定的运行时表面、前置条件、驱动方式、预期观察，以及辅助路径（如有）
-- `04-verification.md`
+- `verification_design.md`
   - 记录实际执行的运行时路径、收集到的证据，以及辅助是否按预期工作
-- `05-evidence.md`
+- `evidence.md`
   - 记录产物路径、命令、辅助引用、残余风险，以及缺少辅助优化等后续清理
 
 ## 边界说明

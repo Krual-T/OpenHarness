@@ -1,36 +1,61 @@
 ---
 name: using-openharness
-description: 当会话开始时使用——在任何回应之前读取，判断当前状态并路由到对应技能
+description: OpenHarness 仓库入口——会话开始时加载。定义任务包协议、状态流转、受保护文件和输出约定。
 ---
 
 # using-openharness
 
-唯一仓库入口。读完本文件必须知道：当前在哪个状态、该调哪个 skill、完成条件是什么、失败时回退到哪。
+OpenHarness 是任务包驱动的协作协议。所有代码修改、设计决策、bug 修复必须通过任务包追踪，不允许绕过。
 
-## 入口流程
+## 入口判断
 
-1. 先读 `AGENTS.md`，了解仓库地图、`uv run` 约定、提交要求。
-2. 判断是否需要任务上下文——详见 [session-routing.md](references/session-routing.md)。
-3. 需要时运行 `openharness bootstrap`，按结果分三种情况处理。
-4. 确认任务分类（task_type）——详见 [task-classification.md](references/task-classification.md)。
-5. 按状态路由表调用对应 skill——详见 [state-routing-table.md](references/state-routing-table.md)。
+收到用户请求后，先读 `AGENTS.md` 了解仓库地图和约定，然后判断：
 
-## 新建任务包
+**需要任务包**：代码修改、设计决策、bug 修复、新增功能
+**不需要任务包**：纯问答、解释代码、讨论方案（未到执行）
+
+不需要时直接回应用户。需要时：
 
 ```
-openharness new-task <name> --auto-id
+openharness task-package list
 ```
 
-创建后状态为 `proposing`，调用 `brainstorming` 写 `01-requirements.md`。
+按输出：
+- **有匹配活跃包** → 读取 STATUS.yaml，按 CLI 输出的状态指令推进
+- **无匹配或空** → 新建任务包
 
-## 状态路由
+## 核心命令
 
-所有状态→skill→写作指南→退出条件的映射见 [state-routing-table.md](references/state-routing-table.md)。
+| 场景 | 命令 |
+|------|------|
+| 列出活跃任务包 | `openharness task-package list` |
+| 新建任务包 | `openharness task-package new <name> --auto-id` |
+| 推进状态 | `openharness transition <task> <目标状态>` |
+| 协议验证 | `openharness check-tasks` |
 
-## 回退
+`<name>` 用简短英文 slug，如 `fix-auth-timeout`、`add-export-csv`。
 
-任何状态可回退：`openharness transition <task> <目标状态>`。常见场景和回退目标见路由表。
+其他命令见 [references/cli-reference.md](references/cli-reference.md)。
 
-## CLI 与约束
+## 状态流转
 
-速查命令和关键约束见 [cli-reference.md](references/cli-reference.md)。
+每次 `openharness transition` 成功后，CLI 自动输出新状态的指令内容（hook 模式）。Agent 直接执行即可，不需要主动查状态路由表。
+
+中间 gate 状态（`requirements_designed`、`overview_designed`、`detailed_designed`、`verification_designed`、`implemented`、`verified`）CLI 自动检查前置条件并推进。
+
+回退：`openharness transition <task> <目标状态>`。
+
+## 受保护文件
+
+以下文件/目录不在任务包追踪内，不允许随意修改：
+
+- `AGENTS.md` — 仓库级约定，修改需明确用户同意
+- `skills/using-openharness/` — harness 协议定义，修改需通过任务包
+- `openharness_cli/` — CLI 源码，修改需通过任务包
+- `.harness/` — harness 运行时状态，不可手动修改
+
+## 输出约定
+
+- 向用户展示信息使用通俗易懂的中文，不写中英穿插的口号式短句
+- 文档正文用中文；节标题、命令、状态值、YAML 键、文件名、路径保持英文
+- 设计决策写入任务包文档，不留在聊天里

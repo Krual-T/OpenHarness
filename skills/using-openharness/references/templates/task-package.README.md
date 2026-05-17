@@ -16,5 +16,5 @@
 - `01-requirements.md`
 - `02-overview-design.md`
 - `03-detailed-design.md`
-- `04-verification.md`
-- `05-evidence.md`
+- `verification_design.md`
+- `evidence.md`

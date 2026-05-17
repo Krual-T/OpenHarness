@@ -38,9 +38,9 @@ The writeback expectations must stay inside the normal task-package flow:
   - record whether RWP selection was considered and which package was selected, rejected, or deferred
 - `03-detailed-design.md`
   - record the chosen RWP, prerequisites, scripts to run, expected observations, and fallback path
-- `04-verification.md`
+- `verification_design.md`
   - record the executed `openharness rwp run ...` command, stdout/stderr summary, runtime observations, deviations, blockers, and blind spots
-- `05-evidence.md`
+- `evidence.md`
   - record artifact paths, log paths, external evidence, commands, residual risks, and follow-up actions
 
 ## Routing Contract
