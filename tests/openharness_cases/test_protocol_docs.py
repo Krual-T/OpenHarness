@@ -132,7 +132,6 @@ def test_openharness_single_cli_supports_all_subcommands() -> None:
     choices = parser._subparsers._group_actions[0].choices  # type: ignore[attr-defined]
     assert set(choices) == {
         "check-tasks",
-        "writing-guide",
         "init",
         "rwp",
         "task-package",
