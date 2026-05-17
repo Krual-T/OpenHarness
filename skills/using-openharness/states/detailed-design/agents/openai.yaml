@@ -1,0 +1,4 @@
+interface:
+  display_name: "Detailed Design"
+policy:
+  allow_implicit_invocation: false

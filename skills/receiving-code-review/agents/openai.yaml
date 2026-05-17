@@ -1,4 +1,0 @@
-interface:
-  display_name: "Receiving Code Review"
-policy:
-  allow_implicit_invocation: true

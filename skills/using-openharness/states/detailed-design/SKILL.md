@@ -1,0 +1,111 @@
+---
+name: detailed-design
+description: 当任务状态是 detailed_designing（总体方案已收敛、需要将设计落到可编码粒度）时使用
+---
+
+# 详细设计
+
+## 何时使用
+
+`exploring-solution-space` 完成并写出自洽的 `02-overview-design.md`、transition 到 `detailed_designing` 之后，开始实施之前。
+
+## 步骤
+
+1. 读取 `02-overview-design.md`，理解已确定的总体方向、Stage Gates、已确认的设计点和约束
+2. 识别实现落脚点：哪些文件、模块或文档面承载本轮改动，为什么是这些落点而不是其他
+3. 设计落地细节：
+   - 接口精度（参数语义、输入输出约束、边界条件、错误传播、兼容性要求）
+   - 模块内部职责分解（编排、校验、状态更新、副作用、适配层分别落在哪里）
+   - 数据语义（关键数据结构、字段语义、状态转换、一致性约束）
+   - 错误处理（主要失败路径、误用风险、静默出错风险、异常传播链）
+   - 迁移顺序（实施顺序、兼容策略、切换点、回滚触发点）
+4. 撰写 `03-detailed-design.md`：
+   - 先写 Runtime Verification Plan：主验证路径、fallback、预期证据（先准备验证再落实现，但不等于默认先写 pytest）
+   - 再写 Files Added Or Changed：不只是清单，更是"为什么这些地方承载本轮实现"
+   - 然后 Interfaces、Module Internals、Data Semantics
+   - 再写 Stage Gates、Decision Closure、Error Handling、Migration Notes
+   - 最后 Recommended Diagrams 和 Detailed Reflection
+5. 详细反思：再次挑战测试策略、接口边界、迁移顺序、预期证据是否足够支撑实施
+
+## 逐项设计确认
+
+对于非 `mechanical` 任务，建议逐项确认设计：
+
+```
+设计点 N/M：<短标题>
+
+推荐方案：
+<推荐做法>
+
+理由：
+<主要取舍>
+
+影响范围：
+<写入 03 的哪些章节，会影响哪些部分>
+
+后续验证证据：
+<在 verification_design.md 中需要收什么证据>
+
+请确认：
+<明确的确认问题>
+```
+
+- `确认`/`ok`/`可以` → 仅确认当前设计点
+- `自主推进`/`你决定` → 写入 `collaboration.design_review_mode: auto`
+- 每确认一个设计点就及时写回任务包，不要攒到最后
+
+## 重入指南
+
+- 从 `detailed_designing` 首次进入 → 完整流程
+- 从 `implementing` 回退到 `detailed_designing` → 从步骤1开始（重新理解当前设计状态），但可以跳过已确认不变的设计点
+
+## Exit Check
+
+离开 detailed 阶段前，**必须**能明确回答下面 7 个问题（任何一条答不上来 → 阻塞，使用 `openharness transition <task> detailed_designed` 前必须全部通过）：
+
+1. 是否已经知道实现会落到哪些文件或模块，以及为什么是这些地方？
+2. 是否已经知道主要接口边界、接口精度和误用风险？
+3. 是否已经知道模块内部职责和关键数据语义如何拆分？
+4. 是否已经知道迁移顺序、切换点和回滚触发点？
+5. 是否已经知道先准备什么测试或验证（testing-first / verification-first 顺序）？
+6. 是否已经知道失败会通过什么信号暴露（observability 从哪里来）？
+7. 是否已经知道后续 `verification_design.md` 需要收什么证据？
+
+如果这些问题还答不清，**阻塞**。不要进入 `implementing`。
+
+## 要点
+
+- 不要把 overview 已经确定的结构重新争论一遍——如果有方向性问题，回退到 `overview_designing` 让 `exploring-solution-space` 收敛
+- 模块内部职责、数据语义和异常边界要写到 agent 能直接据此落实现
+- 先把 exploration 阶段已经确定的事实落到对应章节，再补推论；不要从空白开始
+- 不要跳过接口精度和数据语义——这是实现阶段分歧的最大来源
+- 如果你写完后还不能直接开始实施，说明 detailed 还不够具体
+- 模板文件位于 `skills/using-openharness/references/templates/task-package.03-detailed-design.md`
+
+## 与相邻文档的边界
+
+- 这里写"怎么落地"，不写"整体怎么组织"——那是 `02-overview-design.md` 的职责
+- 如果你还在讨论方案一还是方案二，说明 overview 还没真正收敛，应回退到 `overview_designing`
+- 不要把 `verification_design.md` 的实际执行结果提前写进来
+- 如果你已经开始记录实际执行结果，那部分应进入 `verification_design.md` 或 `evidence.md`
+
+## 常见失败模式
+
+- 只有文件列表，没有解释为什么这些落点合理
+- Runtime Verification Plan 只写一个命令，没有说明不足时怎么办
+- 在实现设计不清楚时就先写 pytest 或验证命令，导致验证路径替代设计
+- Interfaces 缺失，导致改动边界不清
+- 没有模块内部职责，导致实现顺序和落点只能靠临场决定
+- 没有数据语义，导致字段、状态或缓存语义在不同实现点上各写各的
+- Decision Closure 没有明确接受、拒绝或延期，挑战一直悬空
+- Migration Notes 缺失，默认认为"改完就自然生效"
+- 画了图但没有写明接口、数据语义或异常约束
+
+## 反合理化
+
+| 借口 | 为什么不成立 |
+|------|-------------|
+| "详细设计就是列文件清单" | 文件清单 ≠ 设计。设计要回答：为什么这些文件、接口精度、数据语义、失败路径。 |
+| "实现时自然就知道接口怎么定义了" | 实现时"自然知道" = 每个实现者会有不同理解。接口必须在设计阶段收敛。 |
+| "迁移太简单不需要写" | 没有迁移笔记 = 默认"改完就生效"。生产环境从没有"改完就生效"这种事。 |
+| "observability 是运维的事，设计阶段不用管" | 没有在设计阶段定义可观测性 = 上线后出了事只能靠猜。Observability 是设计的一部分。 |

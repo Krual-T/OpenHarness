@@ -1,4 +1,0 @@
-interface:
-  display_name: "Subagent-Driven Development"
-policy:
-  allow_implicit_invocation: false

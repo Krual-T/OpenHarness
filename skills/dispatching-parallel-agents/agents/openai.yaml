@@ -1,4 +1,0 @@
-interface:
-  display_name: "Dispatching Parallel Agents"
-policy:
-  allow_implicit_invocation: false
