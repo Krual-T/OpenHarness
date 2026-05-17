@@ -3,19 +3,12 @@ from __future__ import annotations
 from pathlib import Path
 
 from .constants import (
-    DEFAULT_STATUS_FLOW,
     LABEL_ONLY_RE,
-    MECHANICAL_STATUS_FLOW,
-    MECHANICAL_STATUS_REQUIRED_FILES,
-    MECHANICAL_STATUS_SECTION_REQUIREMENTS,
     PLACEHOLDER_BULLET_RE,
     PLACEHOLDER_NUMBERED_RE,
     REQUIRED_STATUS_KEYS,
-    STATUS_REQUIRED_FILES,
-    STATUS_SECTION_REQUIREMENTS,
-    TASK_TYPE_VALUES,
-    VERIFY_BY_VALUES,
 )
+from .domain import TaskStatus, TaskType, VerifyBy
 from .models import TaskPackage
 
 
@@ -102,70 +95,60 @@ def _referenced_path_exists(package: TaskPackage, raw_path: object) -> bool:
     direct_path = (repo_root / normalized).resolve()
     if direct_path.exists():
         return True
-    if package.status_name != "archived":
+    if package.current_status != "archived":
         return False
     legacy_path = (repo_root / "docs" / "archived" / "legacy" / normalized).resolve()
     return legacy_path.exists()
 
 
-def _task_type_status_flow(package: TaskPackage) -> tuple[str, ...]:
-    if package.task_type == "mechanical":
-        return MECHANICAL_STATUS_FLOW
-    return DEFAULT_STATUS_FLOW
-
-
 def validate_task_package(package: TaskPackage) -> list[str]:
     errors: list[str] = []
-    repo_root = package.config.repo_root
-    status_flow = _task_type_status_flow(package)
+    wf = package.workflow
+    status = package.info.status
 
-    # Select validation rules based on task type
-    if package.task_type == "mechanical":
-        required_files = MECHANICAL_STATUS_REQUIRED_FILES.get(package.status_name, ())
-        section_reqs = MECHANICAL_STATUS_SECTION_REQUIREMENTS
-    else:
-        required_files = STATUS_REQUIRED_FILES.get(package.status_name, ())
-        section_reqs = STATUS_SECTION_REQUIREMENTS
+    required_files = wf.required_files(status)
 
     for file_name in required_files:
         if not (package.root / file_name).exists():
-            errors.append(f"missing required file for `{package.status_name}`: {package.root / file_name}")
+            errors.append(f"missing required file for `{package.current_status}`: {package.root / file_name}")
     for key in REQUIRED_STATUS_KEYS:
-        value = package.status.get(key)
+        value = package.info.to_dict().get(key)
         if value in (None, "", []):
-            errors.append(f"missing status key `{key}` in {package.root / 'STATUS.yaml'}")
+            errors.append(f"missing required key `{key}` in {package.root / 'task-info.yaml'}")
 
     # Validate task_type if present
-    if package.task_type and package.task_type not in TASK_TYPE_VALUES:
+    if package.task_type and package.task_type not in {t.value for t in TaskType}:
         errors.append(
-            f"unknown collaboration.task_type `{package.task_type}` in {package.root / 'STATUS.yaml'}; "
-            f"expected one of: {', '.join(sorted(TASK_TYPE_VALUES))}"
+            f"unknown collaboration.task_type `{package.task_type}` in {package.root / 'task-info.yaml'}; "
+            f"expected one of: {', '.join(sorted(t.value for t in TaskType))}"
         )
 
     # Validate design_review_mode if present
     design_review_mode = package.design_review_mode
     if design_review_mode and design_review_mode not in {"stepwise", "auto"}:
         errors.append(
-            f"unknown collaboration.design_review_mode `{design_review_mode}` in {package.root / 'STATUS.yaml'}; "
+            f"unknown collaboration.design_review_mode `{design_review_mode}` in {package.root / 'task-info.yaml'}; "
             f"expected `stepwise` or `auto`"
         )
 
     # Validate verify_by if present
-    if package.verify_by and package.verify_by not in VERIFY_BY_VALUES:
+    if package.verify_by and package.verify_by not in {v.value for v in VerifyBy}:
         errors.append(
-            f"unknown verification.verify_by `{package.verify_by}` in {package.root / 'STATUS.yaml'}; "
-            f"expected one of: {', '.join(sorted(VERIFY_BY_VALUES))}"
+            f"unknown verification.verify_by `{package.verify_by}` in {package.root / 'task-info.yaml'}; "
+            f"expected one of: {', '.join(sorted(v.value for v in VerifyBy))}"
         )
 
-    verification = package.status.get("verification")
+    verification = package.info.to_dict().get("verification")
     if verification is not None and not isinstance(verification, dict):
-        errors.append(f"`verification` must be a mapping in {package.root / 'STATUS.yaml'}")
-    if package.status_name not in status_flow:
+        errors.append(f"`verification` must be a mapping in {package.root / 'task-info.yaml'}")
+
+    valid_status_values = {s.value for s in wf.status_sequence}
+    if package.current_status not in valid_status_values:
         errors.append(
-            f"unknown status `{package.status_name}` in {package.root / 'STATUS.yaml'}; "
-            f"expected one of: {', '.join(status_flow)}"
+            f"unknown status `{package.current_status}` in {package.root / 'task-info.yaml'}; "
+            f"expected one of: {', '.join(sorted(valid_status_values))}"
         )
-    if package.status_name == "archived":
+    if package.current_status == "archived":
         if package.root.resolve().parent != package.config.archived_task_packages_root:
             errors.append(
                 f"archived package must live under {package.config.archived_task_packages_root}: {package.root}"
@@ -174,18 +157,18 @@ def validate_task_package(package: TaskPackage) -> list[str]:
         errors.append(
             f"non-archived package must not live under {package.config.archived_task_packages_root}: {package.root}"
         )
-    if package.status_name != "archived":
+    if package.current_status != "archived":
         for key in ("entrypoints",):
-            raw_paths = package.status.get(key)
+            raw_paths = package.info.to_dict().get(key)
             if isinstance(raw_paths, list):
                 for raw_path in raw_paths:
                     if not _referenced_path_exists(package, raw_path):
-                        errors.append(f"missing referenced path `{raw_path}` in {package.root / 'STATUS.yaml'}")
+                        errors.append(f"missing referenced path `{raw_path}` in {package.root / 'task-info.yaml'}")
 
-        for file_name, heading in section_reqs.get(package.status_name, ()):
+        for file_name, heading in wf.section_requirements(status):
             path = package.root / file_name
             if not _section_has_meaningful_content(path, heading):
                 errors.append(
-                    f"{package.status_name} requires non-placeholder content for `{heading}` in {path}"
+                    f"{package.current_status} requires non-placeholder content for `{heading}` in {path}"
                 )
     return errors
