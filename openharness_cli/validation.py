@@ -6,17 +6,15 @@ from .constants import (
     DEFAULT_STATUS_FLOW,
     LABEL_ONLY_RE,
     MECHANICAL_STATUS_FLOW,
-    MECHANICAL_STATUS_LABEL_REQUIREMENTS,
     MECHANICAL_STATUS_REQUIRED_FILES,
     MECHANICAL_STATUS_SECTION_REQUIREMENTS,
     PLACEHOLDER_BULLET_RE,
     PLACEHOLDER_NUMBERED_RE,
     REQUIRED_STATUS_KEYS,
-    STATUS_LABEL_REQUIREMENTS,
     STATUS_REQUIRED_FILES,
     STATUS_SECTION_REQUIREMENTS,
     TASK_TYPE_VALUES,
-    VERIFICATION_RESULT_VALUES,
+    VERIFY_BY_VALUES,
 )
 from .models import TaskPackage
 
@@ -125,11 +123,9 @@ def validate_task_package(package: TaskPackage) -> list[str]:
     if package.task_type == "mechanical":
         required_files = MECHANICAL_STATUS_REQUIRED_FILES.get(package.status_name, ())
         section_reqs = MECHANICAL_STATUS_SECTION_REQUIREMENTS
-        label_reqs = MECHANICAL_STATUS_LABEL_REQUIREMENTS
     else:
         required_files = STATUS_REQUIRED_FILES.get(package.status_name, ())
         section_reqs = STATUS_SECTION_REQUIREMENTS
-        label_reqs = STATUS_LABEL_REQUIREMENTS
 
     for file_name in required_files:
         if not (package.root / file_name).exists():
@@ -154,12 +150,16 @@ def validate_task_package(package: TaskPackage) -> list[str]:
             f"expected `stepwise` or `auto`"
         )
 
+    # Validate verify_by if present
+    if package.verify_by and package.verify_by not in VERIFY_BY_VALUES:
+        errors.append(
+            f"unknown verification.verify_by `{package.verify_by}` in {package.root / 'STATUS.yaml'}; "
+            f"expected one of: {', '.join(sorted(VERIFY_BY_VALUES))}"
+        )
+
     verification = package.status.get("verification")
     if verification is not None and not isinstance(verification, dict):
         errors.append(f"`verification` must be a mapping in {package.root / 'STATUS.yaml'}")
-    evidence = package.status.get("evidence")
-    if evidence is not None and not isinstance(evidence, dict):
-        errors.append(f"`evidence` must be a mapping in {package.root / 'STATUS.yaml'}")
     if package.status_name not in status_flow:
         errors.append(
             f"unknown status `{package.status_name}` in {package.root / 'STATUS.yaml'}; "
@@ -174,27 +174,6 @@ def validate_task_package(package: TaskPackage) -> list[str]:
         errors.append(
             f"non-archived package must not live under {package.config.archived_task_packages_root}: {package.root}"
         )
-    if package.status_name == "verifying" and not package.required_commands and not package.required_scenarios:
-        errors.append(
-            f"verifying status requires at least one verification path in {package.root / 'STATUS.yaml'}"
-        )
-    if package.status_name == "archived" and not package.required_commands and not package.required_scenarios:
-        errors.append(
-            f"archived status requires at least one verification path in {package.root / 'STATUS.yaml'}"
-        )
-    if isinstance(verification, dict):
-        last_run_result = str(verification.get("last_run_result") or "").strip()
-        if last_run_result and last_run_result not in VERIFICATION_RESULT_VALUES:
-            errors.append(
-                f"unknown verification.last_run_result `{last_run_result}` in {package.root / 'STATUS.yaml'}"
-            )
-        last_run_artifact = str(verification.get("last_run_artifact") or "").strip()
-        if last_run_artifact:
-            if not _referenced_path_exists(package, last_run_artifact):
-                errors.append(
-                    f"missing referenced path `{last_run_artifact}` in {package.root / 'STATUS.yaml'}"
-                )
-
     if package.status_name != "archived":
         for key in ("entrypoints",):
             raw_paths = package.status.get(key)
@@ -203,25 +182,10 @@ def validate_task_package(package: TaskPackage) -> list[str]:
                     if not _referenced_path_exists(package, raw_path):
                         errors.append(f"missing referenced path `{raw_path}` in {package.root / 'STATUS.yaml'}")
 
-        if isinstance(evidence, dict):
-            for group in ("docs", "code", "tests"):
-                raw_paths = evidence.get(group)
-                if isinstance(raw_paths, list):
-                    for raw_path in raw_paths:
-                        if not _referenced_path_exists(package, raw_path):
-                            errors.append(f"missing referenced path `{raw_path}` in {package.root / 'STATUS.yaml'}")
-
         for file_name, heading in section_reqs.get(package.status_name, ()):
             path = package.root / file_name
             if not _section_has_meaningful_content(path, heading):
                 errors.append(
                     f"{package.status_name} requires non-placeholder content for `{heading}` in {path}"
-                )
-        for file_name, section_heading, label in label_reqs.get(package.status_name, ()):
-            path = package.root / file_name
-            if not _label_has_meaningful_content(path, section_heading, label):
-                anchor = f"`{section_heading}`" if not label else f"`{label}` inside `{section_heading}`"
-                errors.append(
-                    f"{package.status_name} requires non-placeholder content for {anchor} in {path}"
                 )
     return errors

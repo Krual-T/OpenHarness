@@ -14,7 +14,8 @@ def build_parser() -> argparse.ArgumentParser:
         description="Openharness repository workflow CLI.",
         epilog=(
             "Examples:\n"
-            "  openharness bootstrap\n"
+            "  openharness task-package list\n"
+            "  openharness task-package new feature-name --auto-id\n"
             "  openharness check-tasks\n"
             "  openharness init\n"
             "  openharness update"
@@ -23,38 +24,66 @@ def build_parser() -> argparse.ArgumentParser:
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
+    # ── task-package ──────────────────────────────────────────────────
+    task_package_parser = subparsers.add_parser(
+        "task-package", help="Manage task packages.",
+        description="List or create task packages.",
+        epilog=(
+            "Examples:\n"
+            "  openharness task-package list\n"
+            "  openharness task-package list --json\n"
+            "  openharness task-package new feature-name --auto-id"
+        ),
+        formatter_class=_HelpFormatter,
+    )
+    task_package_parser.add_argument("--repo", default=".", help="Repository root")
+    tp_subparsers = task_package_parser.add_subparsers(dest="tp_command", required=True)
+
+    tp_list_parser = tp_subparsers.add_parser(
+        "list", help="List task packages.",
+        description="List active task packages with current status and next steps.",
+        epilog="Example:\n  openharness task-package list\n  openharness task-package list --json\n  openharness task-package list --all",
+        formatter_class=_HelpFormatter,
+    )
+    tp_list_parser.add_argument("--json", action="store_true", help="Print JSON output")
+    tp_list_parser.add_argument("--all", action="store_true", help="Include archived task packages")
+    tp_list_parser.set_defaults(handler=commands.cmd_task_package_list)
+
+    tp_new_parser = tp_subparsers.add_parser(
+        "new", help="Create a new task package from harness templates.",
+        description="Create a new task package from harness templates.",
+        epilog=(
+            "Example:\n"
+            "  openharness task-package new feature-name --auto-id --title \"Feature Title\"\n"
+            "  openharness task-package new feature-name --task-id OH-999 --title \"Feature Title\""
+        ),
+        formatter_class=_HelpFormatter,
+    )
+    tp_new_parser.add_argument("task_name", help="Directory slug or human-readable task name")
+    tp_new_parser.add_argument("--task-id", default="", help="Stable task id; omit with `--auto-id` to allocate one")
+    tp_new_parser.add_argument("--title", default="", help="Human-readable task title")
+    tp_new_parser.add_argument("--auto-id", action="store_true", help="Allocate the next stable task id automatically")
+    tp_new_parser.add_argument("--owner", default="unassigned", help="Initial owner (defaults to git config user.name if not specified)")
+    tp_new_parser.add_argument("--summary", default="", help="Short summary")
+    tp_new_parser.add_argument("--status", default="proposing", help="Initial status")
+    tp_new_parser.set_defaults(handler=commands.cmd_task_package_new)
+
+    # ── bootstrap (deprecated alias for task-package list) ────────────
     bootstrap_parser = subparsers.add_parser(
-        "bootstrap", help="Inspect project harness entrypoints and task packages.",
-        description="Inspect project harness entrypoints and task packages.",
+        "bootstrap", help="[deprecated] Use `task-package list` instead.",
+        description="[deprecated] Use `task-package list` instead.",
         epilog="Example:\n  openharness bootstrap\n  openharness bootstrap --json\n  openharness bootstrap --all",
         formatter_class=_HelpFormatter,
     )
     bootstrap_parser.add_argument("--repo", default=".", help="Repository root")
     bootstrap_parser.add_argument("--json", action="store_true", help="Print JSON output")
-    bootstrap_parser.add_argument("--all", action="store_true", help="Include non-active task packages")
-    bootstrap_parser.set_defaults(handler=commands.cmd_bootstrap)
+    bootstrap_parser.add_argument("--all", action="store_true", help="Include archived task packages")
+    bootstrap_parser.set_defaults(handler=commands.cmd_task_package_list)
 
-    init_parser = subparsers.add_parser(
-        "init", help="Initialize OpenHarness local repository files.",
-        description="Initialize OpenHarness local repository files.",
-        epilog="Example:\n  openharness init\n  openharness init --repo /path/to/repo",
-        formatter_class=_HelpFormatter,
-    )
-    init_parser.add_argument("--repo", default=".", help="Repository root")
-    init_parser.set_defaults(handler=commands.cmd_init)
-
-    check_parser = subparsers.add_parser(
-        "check-tasks", help="Validate repository task packages against harness protocol.",
-        description="Validate repository task packages against harness protocol.",
-        epilog="Example:\n  openharness check-tasks\n  openharness check-tasks --repo /path/to/repo",
-        formatter_class=_HelpFormatter,
-    )
-    check_parser.add_argument("--repo", default=".", help="Repository root")
-    check_parser.set_defaults(handler=commands.cmd_check_tasks)
-
+    # ── new-task (deprecated alias for task-package new) ──────────────
     new_design_parser = subparsers.add_parser(
-        "new-task", help="Create a new task package from harness templates.",
-        description="Create a new task package from harness templates.",
+        "new-task", help="[deprecated] Use `task-package new` instead.",
+        description="[deprecated] Use `task-package new` instead.",
         epilog=(
             "Example:\n"
             "  openharness new-task feature-name --auto-id --title \"Feature Title\"\n"
@@ -70,8 +99,29 @@ def build_parser() -> argparse.ArgumentParser:
     new_design_parser.add_argument("--summary", default="", help="Short summary")
     new_design_parser.add_argument("--status", default="proposing", help="Initial status")
     new_design_parser.add_argument("--repo", default=".", help="Repository root")
-    new_design_parser.set_defaults(handler=commands.cmd_new_task)
+    new_design_parser.set_defaults(handler=commands.cmd_task_package_new)
 
+    # ── init ──────────────────────────────────────────────────────────
+    init_parser = subparsers.add_parser(
+        "init", help="Initialize OpenHarness local repository files.",
+        description="Initialize OpenHarness local repository files.",
+        epilog="Example:\n  openharness init\n  openharness init --repo /path/to/repo",
+        formatter_class=_HelpFormatter,
+    )
+    init_parser.add_argument("--repo", default=".", help="Repository root")
+    init_parser.set_defaults(handler=commands.cmd_init)
+
+    # ── check-tasks ───────────────────────────────────────────────────
+    check_parser = subparsers.add_parser(
+        "check-tasks", help="Validate repository task packages against harness protocol.",
+        description="Validate repository task packages against harness protocol.",
+        epilog="Example:\n  openharness check-tasks\n  openharness check-tasks --repo /path/to/repo",
+        formatter_class=_HelpFormatter,
+    )
+    check_parser.add_argument("--repo", default=".", help="Repository root")
+    check_parser.set_defaults(handler=commands.cmd_check_tasks)
+
+    # ── rwp ───────────────────────────────────────────────────────────
     rwp_parser = subparsers.add_parser(
         "rwp", help="Discover and run Runtime Workflow Packages.",
         description="Discover and run Runtime Workflow Packages.",
@@ -108,13 +158,14 @@ def build_parser() -> argparse.ArgumentParser:
     rwp_run_parser.add_argument("script_args", nargs=argparse.REMAINDER, help="Arguments forwarded to the script")
     rwp_run_parser.set_defaults(handler=commands.cmd_rwp)
 
+    # ── transition ────────────────────────────────────────────────────
     transition_parser = subparsers.add_parser(
         "transition", help="Move a task package to a legal workflow status.",
         description="Move a task package to a legal workflow status.",
         epilog=(
             "Example:\n"
             "  openharness transition my-task requirements_designed\n"
-            "  openharness transition OH-027 archived"
+            "  openharness transition OH-027 verification_designing"
         ),
         formatter_class=_HelpFormatter,
     )
@@ -123,22 +174,7 @@ def build_parser() -> argparse.ArgumentParser:
     transition_parser.add_argument("--repo", default=".", help="Repository root")
     transition_parser.set_defaults(handler=commands.cmd_transition)
 
-    verify_parser = subparsers.add_parser(
-        "verify", help="Run harness verification for one task package or all active packages.",
-        description="Run harness verification for one task package or all active packages.",
-        epilog=(
-            "Example:\n"
-            "  openharness verify\n"
-            "  openharness verify my-task\n"
-            "  openharness verify --check-tasks-only"
-        ),
-        formatter_class=_HelpFormatter,
-    )
-    verify_parser.add_argument("design", nargs="?", default="", help="Task package name or task id")
-    verify_parser.add_argument("--repo", default=".", help="Repository root")
-    verify_parser.add_argument("--check-tasks-only", action="store_true", help="Only validate task package protocol")
-    verify_parser.set_defaults(handler=commands.cmd_verify)
-
+    # ── update ────────────────────────────────────────────────────────
     update_parser = subparsers.add_parser(
         "update", help="Update the OpenHarness clone and refresh the installed CLI tool.",
         description="Update the OpenHarness clone and refresh the installed CLI tool.",
@@ -167,6 +203,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     update_parser.set_defaults(handler=commands.cmd_update)
 
+    # ── writing-guide ─────────────────────────────────────────────────
     writing_guide_parser = subparsers.add_parser(
         "writing-guide", help="Discover and read task-package writing guides.",
         description="List or read the writing guide documents for task packages.",

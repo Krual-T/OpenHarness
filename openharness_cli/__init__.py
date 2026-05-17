@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from .constants import (
     ACTIVE_STATUSES, DEFAULT_STATUS_FLOW,
-    REQUIRED_TASK_PACKAGE_FILES, STATUS_REQUIRED_FILES, VERIFYABLE_STATUSES,
+    REQUIRED_TASK_PACKAGE_FILES, STATUS_REQUIRED_FILES, GATE_STATUSES,
 )
 from .models import HarnessConfig, RuntimeWorkflowPackage, TaskPackage, TaskScaffoldRequest
 from .repository import (
@@ -17,7 +17,7 @@ from .main import main
 
 __all__ = [
     "ACTIVE_STATUSES", "DEFAULT_STATUS_FLOW",
-    "REQUIRED_TASK_PACKAGE_FILES", "STATUS_REQUIRED_FILES", "VERIFYABLE_STATUSES",
+    "REQUIRED_TASK_PACKAGE_FILES", "STATUS_REQUIRED_FILES", "GATE_STATUSES",
     "HarnessConfig", "RuntimeWorkflowPackage", "TaskPackage", "TaskScaffoldRequest",
     "_current_date", "_load_yaml", "_utc_now", "_utc_timestamp", "_write_yaml",
     "allocate_next_task_id", "create_task_package", "discover_task_packages",

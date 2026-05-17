@@ -2,12 +2,16 @@ from __future__ import annotations
 
 from .cli import build_parser
 from .commands import (
-    cmd_bootstrap, cmd_check_tasks, cmd_init, cmd_new_task,
-    cmd_rwp, cmd_transition, cmd_update, cmd_verify,
+    cmd_check_tasks, cmd_init, cmd_rwp,
+    cmd_task_package_list, cmd_task_package_new,
+    cmd_transition, cmd_update,
 )
-from .lifecycle import _run_command  # noqa: F401 — test monkeypatch
 from .models import TaskPackage, TaskScaffoldRequest  # noqa: F401 — test compat
 from .repository import _load_yaml  # noqa: F401 — test compat
+
+# Backward-compatible aliases for tests
+cmd_bootstrap = cmd_task_package_list
+cmd_new_task = cmd_task_package_new
 
 
 def main(argv: list[str] | None = None) -> int:

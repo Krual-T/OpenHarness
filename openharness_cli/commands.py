@@ -6,17 +6,15 @@ import os
 import shlex
 from pathlib import Path
 
-from .constants import ACTIVE_STATUSES, VERIFYABLE_STATUSES
+from .constants import ACTIVE_STATUSES
 from .lifecycle import (
     _archive_task_package,
     _build_transition_candidate,
     _check_archive_preconditions,
-    _check_verifying_rollback_preconditions,
     _ensure_transition_allowed,
-    _record_verification_artifact,
-    _run_command,
+    _output_state_hook,
+    _resolve_gate_transition,
     _save_package_status,
-    _warn_code_review_gap,
     describe_stage,
 )
 from .models import TaskScaffoldRequest
@@ -31,6 +29,7 @@ from .repository import (
 from .validation import validate_task_package
 
 UPDATE_MODES = {"pull", "force-sync"}
+
 
 def _openharness_repo_root() -> Path:
     return Path(__file__).resolve().parents[1]
@@ -94,7 +93,9 @@ def _author_entry_info(repo_root: Path) -> dict[str, str] | None:
     return {"path": str(author_entry), "summary": "Chinese-first author entry for task-package writing guidance."}
 
 
-def cmd_bootstrap(args: argparse.Namespace) -> int:
+# ── task-package list ───────────────────────────────────────────────────────
+
+def cmd_task_package_list(args: argparse.Namespace) -> int:
     repo_root = Path(args.repo).resolve()
     try:
         config = load_config(repo_root)
@@ -115,8 +116,6 @@ def cmd_bootstrap(args: argparse.Namespace) -> int:
                     "id": p.task_id, "name": p.name, "title": p.title,
                     "status": p.status_name, "summary": p.summary,
                     "owner": p.owner, "root": str(p.root),
-                    "required_commands": list(p.required_commands),
-                    "required_scenarios": list(p.required_scenarios),
                     **describe_stage(p),
                 }
                 for p in packages
@@ -138,12 +137,131 @@ def cmd_bootstrap(args: argparse.Namespace) -> int:
         print(f"  current stage: `{stage['current_stage']}` - {stage['current_stage_description']}")
         print(f"  next stage: `{stage['next_stage']}`" if stage["next_stage"] else "  next stage: none")
         print(f"  next step: {stage['next_step']}")
-        if p.required_commands:
-            print(f"  verify commands: {', '.join(p.required_commands)}")
-        if p.required_scenarios:
-            print(f"  scenarios: {', '.join(p.required_scenarios)}")
+
+    # For proposing tasks, also output brainstorming skill + current 01 content
+    proposing = [p for p in packages if p.status_name == "proposing"]
+    if proposing:
+        print("\n" + "=" * 60, flush=True)
+        for p in proposing:
+            print(f"\n## Task: {p.task_id} {p.title}", flush=True)
+            _output_state_hook(repo_root, "proposing")
+            req_path = p.root / "01-requirements.md"
+            if req_path.exists():
+                print(f"\n--- Current 01-requirements.md ({p.task_id}) ---", flush=True)
+                print(req_path.read_text(encoding="utf-8"), flush=True)
+                print(f"--- END: 01-requirements.md ({p.task_id}) ---", flush=True)
+
     return 0
 
+
+# ── task-package new ────────────────────────────────────────────────────────
+
+def cmd_task_package_new(args: argparse.Namespace) -> int:
+    repo_root = Path(args.repo).resolve()
+    explicit_task_id = str(getattr(args, "task_id", "") or "").strip()
+    explicit_title = str(getattr(args, "title", "") or "").strip()
+    auto_id = bool(getattr(args, "auto_id", False))
+    if auto_id and explicit_task_id:
+        print("ERROR: `--auto-id` cannot be combined with an explicit task id")
+        return 1
+    task_id = explicit_task_id
+    if not task_id and not auto_id:
+        print("ERROR: new-task requires either an explicit task id or `--auto-id`")
+        return 1
+    owner = args.owner
+    if owner == "unassigned":
+        owner = get_git_author(repo_root)
+    title = explicit_title or humanize_task_name(args.task_name)
+    try:
+        if auto_id:
+            task_root, task_id = create_task_package_with_auto_id(
+                repo_root=repo_root, task_name=args.task_name, title=title,
+                owner=owner, summary=args.summary, status=args.status,
+            )
+        else:
+            task_root = create_task_package(
+                TaskScaffoldRequest(
+                    repo_root=repo_root, task_name=args.task_name, task_id=task_id,
+                    title=title, owner=owner, summary=args.summary, status=args.status,
+                )
+            )
+    except (FileExistsError, FileNotFoundError, ValueError) as exc:
+        print(f"ERROR: {exc}")
+        return 1
+    print(f"Created task package: {task_root}")
+    print(f"Task id: {task_id}")
+    print(f"Title: {title}")
+    print(f"Current status: {args.status}")
+    # Output brainstorming instructions inline (O3)
+    _output_state_hook(repo_root, args.status if args.status in ACTIVE_STATUSES else "proposing")
+    print(f"\n完成后执行：openharness transition {task_id} requirements_designed")
+    return 0
+
+
+# ── transition ──────────────────────────────────────────────────────────────
+
+def cmd_transition(args: argparse.Namespace) -> int:
+    repo_root = Path(args.repo).resolve()
+    try:
+        config = load_config(repo_root)
+        package = resolve_task_package(repo_root, args.task, config)
+    except (FileNotFoundError, ValueError) as exc:
+        print(f"ERROR: {exc}")
+        return 1
+
+    target_status = args.target_status
+    transition_errors = _ensure_transition_allowed(package, target_status)
+    if transition_errors:
+        for error in transition_errors:
+            print(f"ERROR: {error}")
+        return 1
+
+    if target_status == package.status_name:
+        print(f"{package.task_id} already in `{package.status_name}`")
+        return 0
+
+    # Gate auto-advance: resolve gate target to actual next state
+    gate_next, gate_errors = _resolve_gate_transition(package, target_status)
+    if gate_errors:
+        for error in gate_errors:
+            print(f"ERROR: {error}")
+        return 1
+    if gate_next is not None:
+        print(f"Gate `{target_status}` → auto-advancing to `{gate_next}`")
+        # Recurse with the resolved target
+        args.target_status = gate_next
+        return cmd_transition(args)
+
+    if target_status == "archived":
+        precondition_errors = _check_archive_preconditions(package)
+        if precondition_errors:
+            for error in precondition_errors:
+                print(f"ERROR: {error}")
+            return 1
+        archived_ok, detail = _archive_task_package(package)
+        if not archived_ok:
+            print(f"ERROR: {detail}")
+            return 1
+        print(f"Archived task package: {package.task_id} -> {config.archived_task_packages_root / package.name}")
+        if detail:
+            print(detail)
+        _output_state_hook(repo_root, "archived")
+        return 0
+
+    candidate = _build_transition_candidate(package, target_status)
+    errors = validate_task_package(candidate)
+    if errors:
+        for error in errors:
+            print(f"ERROR: {error}")
+        return 1
+    _save_package_status(package, candidate.status)
+    print(f"Transitioned {package.task_id} from `{package.status_name}` to `{target_status}`")
+    # Output the skill file for the new state (hook)
+    _output_state_hook(repo_root, target_status)
+    return 0
+
+
+# ── check-tasks ─────────────────────────────────────────────────────────────
 
 def cmd_check_tasks(args: argparse.Namespace) -> int:
     repo_root = Path(args.repo).resolve()
@@ -179,44 +297,6 @@ def cmd_init(args: argparse.Namespace) -> int:
     return 0
 
 
-def cmd_new_task(args: argparse.Namespace) -> int:
-    repo_root = Path(args.repo).resolve()
-    explicit_task_id = str(getattr(args, "task_id", "") or "").strip()
-    explicit_title = str(getattr(args, "title", "") or "").strip()
-    auto_id = bool(getattr(args, "auto_id", False))
-    if auto_id and explicit_task_id:
-        print("ERROR: `--auto-id` cannot be combined with an explicit task id")
-        return 1
-    task_id = explicit_task_id
-    if not task_id and not auto_id:
-        print("ERROR: new-task requires either an explicit task id or `--auto-id`")
-        return 1
-    owner = args.owner
-    if owner == "unassigned":
-        owner = get_git_author(repo_root)
-    title = explicit_title or humanize_task_name(args.task_name)
-    try:
-        if auto_id:
-            task_root, task_id = create_task_package_with_auto_id(
-                repo_root=repo_root, task_name=args.task_name, title=title,
-                owner=owner, summary=args.summary, status=args.status,
-            )
-        else:
-            task_root = create_task_package(
-                TaskScaffoldRequest(
-                    repo_root=repo_root, task_name=args.task_name, task_id=task_id,
-                    title=title, owner=owner, summary=args.summary, status=args.status,
-                )
-            )
-    except (FileExistsError, FileNotFoundError, ValueError) as exc:
-        print(f"ERROR: {exc}")
-        return 1
-    print(f"Created task package: {task_root}")
-    print(f"Task id: {task_id}")
-    print(f"Title: {title}")
-    return 0
-
-
 def cmd_rwp(args: argparse.Namespace) -> int:
     repo_root = Path(args.repo).resolve()
     command = args.rwp_command
@@ -244,7 +324,10 @@ def cmd_rwp(args: argparse.Namespace) -> int:
             ])
             os.environ["PYTHONPATH"] = pythonpath
             command_line = shlex.join(["uv", "run", "python", str(script_path), *list(args.script_args)])
-            return _run_command(repo_root, command_line)
+            import subprocess
+            print(f"$ {command_line}")
+            completed = subprocess.run(command_line, shell=True, cwd=repo_root)
+            return completed.returncode
     except ValueError as exc:
         print(f"ERROR: {exc}")
         return 1
@@ -252,118 +335,14 @@ def cmd_rwp(args: argparse.Namespace) -> int:
     return 1
 
 
-def cmd_transition(args: argparse.Namespace) -> int:
-    repo_root = Path(args.repo).resolve()
-    try:
-        config = load_config(repo_root)
-        package = resolve_task_package(repo_root, args.task, config)
-    except (FileNotFoundError, ValueError) as exc:
-        print(f"ERROR: {exc}")
-        return 1
-    transition_errors = _ensure_transition_allowed(package, args.target_status)
-    if transition_errors:
-        for error in transition_errors:
-            print(f"ERROR: {error}")
-        return 1
-    rollback_errors = _check_verifying_rollback_preconditions(package, args.target_status)
-    if rollback_errors:
-        for error in rollback_errors:
-            print(f"ERROR: {error}")
-        return 1
-    _warn_code_review_gap(package, args.target_status)
-    if args.target_status == package.status_name:
-        print(f"{package.task_id} already in `{package.status_name}`")
-        return 0
-    if args.target_status == "archived":
-        precondition_errors = _check_archive_preconditions(package)
-        if precondition_errors:
-            for error in precondition_errors:
-                print(f"ERROR: {error}")
-            return 1
-        archived_ok, detail = _archive_task_package(package)
-        if not archived_ok:
-            print(f"ERROR: {detail}")
-            return 1
-        print(f"Archived task package: {package.task_id} -> {config.archived_task_packages_root / package.name}")
-        if detail:
-            print(detail)
-        return 0
-    candidate = _build_transition_candidate(package, args.target_status)
-    errors = validate_task_package(candidate)
-    if errors:
-        for error in errors:
-            print(f"ERROR: {error}")
-        return 1
-    _save_package_status(package, candidate.status)
-    print(f"Transitioned {package.task_id} from `{package.status_name}` to `{args.target_status}`")
-    return 0
-
-
-def cmd_verify(args: argparse.Namespace) -> int:
-    repo_root = Path(args.repo).resolve()
-    try:
-        config = load_config(repo_root)
-        packages = discover_task_packages(repo_root, config)
-    except (FileNotFoundError, ValueError) as exc:
-        print(f"ERROR: {exc}")
-        return 1
-    errors: list[str] = []
-    if not packages:
-        errors.append(f"no task packages found under {config.task_packages_root} or {config.archived_task_packages_root}")
-    for p in packages:
-        errors.extend(validate_task_package(p))
-    if errors:
-        for error in errors:
-            print(f"ERROR: {error}")
-        return 1
-    if getattr(args, "check_tasks_only", False):
-        return 0
-    if args.design:
-        packages = [p for p in packages if p.name == args.design or p.task_id == args.design]
-    else:
-        packages = [p for p in packages if p.status_name in VERIFYABLE_STATUSES]
-    if not packages:
-        print("No matching task packages to verify.")
-        return 0
-    saw_insufficient_verification = False
-    for p in packages:
-        print(f"== Verifying {p.task_id} {p.title} ==")
-        started_at = _utc_timestamp()
-        command_results: list[dict[str, object]] = []
-        overall_result = "passed"
-        for command in p.required_commands:
-            exit_code = _run_command(repo_root, command)
-            command_results.append({"command": command, "exit_code": exit_code})
-            if exit_code != 0:
-                overall_result = "failed"
-                artifact_path = _record_verification_artifact(
-                    p, started_at=started_at, finished_at=_utc_timestamp(),
-                    overall_result=overall_result, command_results=command_results,
-                )
-                print(f"Recorded verification artifact: {artifact_path}")
-                return 1
-        if p.required_scenarios:
-            print(f"Declared manual scenarios (not executed automatically by this CLI): {', '.join(p.required_scenarios)}")
-        if not p.required_commands and not p.required_scenarios:
-            print(f"ERROR: insufficient verification for {p.task_id} {p.title}: No command-backed verification or manual scenarios declared.")
-            overall_result = "insufficient_verification"
-            saw_insufficient_verification = True
-        artifact_path = _record_verification_artifact(
-            p, started_at=started_at, finished_at=_utc_timestamp(),
-            overall_result=overall_result, command_results=command_results,
-        )
-        print(f"Recorded verification artifact: {artifact_path}")
-    if saw_insufficient_verification:
-        return 1
-    return 0
-
+# ── writing-guide ───────────────────────────────────────────────────────────
 
 _GUIDANCE_MAP: dict[str, str] = {
-    "requirements": "skills/brainstorming/references/requirements-writing-guidance.md",
-    "overview": "skills/exploring-solution-space/references/overview-design-writing-guidance.md",
-    "detailed": "skills/exploring-solution-space/references/detailed-design-writing-guidance.md",
-    "verification": "skills/verification-before-completion/references/verification-writing-guidance.md",
-    "evidence": "skills/verification-before-completion/references/evidence-writing-guidance.md",
+    "requirements": "skills/using-openharness/references/templates/task-package.01-requirements.md",
+    "overview": "skills/using-openharness/references/templates/task-package.02-overview-design.md",
+    "detailed": "skills/using-openharness/references/templates/task-package.03-detailed-design.md",
+    "verification": "skills/using-openharness/references/templates/task-package.verification_design.md",
+    "evidence": "skills/using-openharness/references/templates/task-package.evidence.md",
     "author-entry": "skills/using-openharness/references/author-entry.md",
 }
 
@@ -399,6 +378,7 @@ def cmd_writing_guide(args: argparse.Namespace) -> int:
 
 
 def cmd_update(args: argparse.Namespace) -> int:
+    import subprocess
     repo_root = _openharness_repo_root()
     default_mode = getattr(args, "set_default_mode", None)
     if default_mode:
@@ -422,13 +402,13 @@ def cmd_update(args: argparse.Namespace) -> int:
 
     if update_mode == "force-sync":
         for command in ("git fetch --prune", "git reset --hard '@{u}'"):
-            sync_result = _run_command(repo_root, command)
+            sync_result = subprocess.run(command, shell=True, cwd=repo_root).returncode
             if sync_result != 0:
                 print(f"ERROR: force sync failed at `{command}`; refusing to continue with tool upgrade.")
                 return 1
         print(f"Force-synchronized OpenHarness source clone from {repo_root}")
     elif update_mode == "pull":
-        git_pull_result = _run_command(repo_root, "git pull")
+        git_pull_result = subprocess.run("git pull", shell=True, cwd=repo_root).returncode
         if git_pull_result != 0:
             print("ERROR: git pull failed; refusing to continue with tool upgrade.")
             return 1
@@ -436,7 +416,7 @@ def cmd_update(args: argparse.Namespace) -> int:
         print(f"ERROR: invalid update mode `{update_mode}`; expected `pull` or `force-sync`.")
         return 1
 
-    upgrade_result = _run_command(repo_root, "uv tool upgrade openharness")
+    upgrade_result = subprocess.run("uv tool upgrade openharness", shell=True, cwd=repo_root).returncode
     if upgrade_result != 0:
         print("ERROR: `uv tool upgrade openharness` failed.")
         return 1

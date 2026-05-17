@@ -57,24 +57,11 @@ class TaskPackage:
         return tuple(str(item).strip() for item in raw if str(item).strip())
 
     @property
-    def required_commands(self) -> tuple[str, ...]:
+    def verify_by(self) -> str:
         verification = self.status.get("verification")
         if not isinstance(verification, dict):
-            return ()
-        commands = verification.get("required_commands")
-        if not isinstance(commands, list):
-            return ()
-        return tuple(str(item).strip() for item in commands if str(item).strip())
-
-    @property
-    def required_scenarios(self) -> tuple[str, ...]:
-        verification = self.status.get("verification")
-        if not isinstance(verification, dict):
-            return ()
-        scenarios = verification.get("required_scenarios")
-        if not isinstance(scenarios, list):
-            return ()
-        return tuple(str(item).strip() for item in scenarios if str(item).strip())
+            return ""
+        return str(verification.get("verify_by") or "").strip()
 
     @property
     def task_type(self) -> str:

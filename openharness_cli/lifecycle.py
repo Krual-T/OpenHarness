@@ -1,15 +1,13 @@
 from __future__ import annotations
 
 import copy
-import json
 import shutil
-import subprocess
 from pathlib import Path
 from typing import Any
 
-from .constants import DEFAULT_STATUS_FLOW, MECHANICAL_STATUS_FLOW
+from .constants import DEFAULT_STATUS_FLOW, GATE_STATUSES, MECHANICAL_STATUS_FLOW, STATE_SKILL_HOOKS
 from .models import TaskPackage
-from .repository import _current_date, _load_yaml, _utc_now, _write_yaml
+from .repository import _current_date, _load_yaml, _write_yaml
 
 
 def _package_status_flow(package: TaskPackage) -> tuple[str, ...]:
@@ -26,14 +24,17 @@ def _save_package_status(package: TaskPackage, status: dict[str, Any]) -> TaskPa
 def _status_description(status: str) -> str:
     descriptions = {
         "proposing": "Converging requirements — 01-requirements.md is not yet ready.",
-        "requirements_designed": "Requirements are converged; ready to explore solutions.",
+        "requirements_designed": "Requirements converged; auto-advancing to next active state.",
         "overview_designing": "Exploring and drafting overview design.",
-        "overview_designed": "Overview design is coherent; ready for detailed design.",
+        "overview_designed": "Overview design complete; auto-advancing to detailed design.",
         "detailed_designing": "Drafting detailed design and implementation plan.",
-        "detailed_designed": "Detailed design is ready; implementation can start.",
-        "implementing": "Implementation is in progress against the task-package contract.",
-        "implemented": "Implementation is complete; ready to gather verification evidence.",
-        "verifying": "Running verification and recording evidence.",
+        "detailed_designed": "Detailed design complete; auto-advancing to verification design.",
+        "verification_designing": "Designing verification strategy (TDD red phase).",
+        "verification_designed": "Verification strategy complete; auto-advancing to implementation.",
+        "implementing": "Implementing against the verification plan (TDD green + refactor).",
+        "implemented": "Implementation complete; auto-advancing to verification execution.",
+        "verifying": "Executing verification and collecting evidence.",
+        "verified": "Verification complete; auto-advancing to archived.",
         "archived": "Verification passed; package is archived and no longer active.",
     }
     return descriptions.get(status, "Unknown workflow stage.")
@@ -53,59 +54,57 @@ def _next_step(package: TaskPackage) -> str:
     if package.task_type == "mechanical":
         steps = {
             "proposing": (
-                "Converge requirements, write `01-requirements.md`, "
-                "then transition to `requirements_designed`."
+                "Converge requirements, determine task_type and verify_by, "
+                "write `01-requirements.md`, then transition to `requirements_designed`."
             ),
-            "requirements_designed": (
-                "Start implementation, then transition to `implementing`."
+            "requirements_designed": "Auto-advancing to `verification_designing`.",
+            "verification_designing": (
+                "Design verification strategy, write `verification_design.md`, "
+                "then transition to `verification_designed`."
             ),
+            "verification_designed": "Auto-advancing to `implementing`.",
             "implementing": (
-                "Finish implementation, then transition to `verifying` "
-                "when ready for verification."
+                "Implement to pass verification, then transition to `implemented`."
             ),
+            "implemented": "Auto-advancing to `verifying`.",
             "verifying": (
-                "Complete verification and record passing evidence, "
-                "then transition to `archived`."
+                "Execute verification and write `evidence.md`, "
+                "then transition to `verified`."
             ),
+            "verified": "Auto-advancing to `archived`.",
             "archived": "No next step. The package is complete and archived.",
         }
     else:
         steps = {
             "proposing": (
-                "Converge requirements, write `01-requirements.md`, "
-                "then transition to `requirements_designed`."
+                "Converge requirements, determine task_type and verify_by, "
+                "write `01-requirements.md`, then transition to `requirements_designed`."
             ),
-            "requirements_designed": (
-                "Run exploration, draft `02-overview-design.md`, "
-                "and transition to `overview_designing`."
-            ),
+            "requirements_designed": "Auto-advancing to `overview_designing`.",
             "overview_designing": (
                 "Complete overview design and reflection, "
                 "then transition to `overview_designed`."
             ),
-            "overview_designed": (
-                "Draft `03-detailed-design.md`, "
-                "and transition to `detailed_designing`."
-            ),
+            "overview_designed": "Auto-advancing to `detailed_designing`.",
             "detailed_designing": (
                 "Complete detailed design, close design challenges, "
                 "then transition to `detailed_designed`."
             ),
-            "detailed_designed": (
-                "Start implementation, then transition to `implementing`."
+            "detailed_designed": "Auto-advancing to `verification_designing`.",
+            "verification_designing": (
+                "Design verification strategy, write `verification_design.md`, "
+                "then transition to `verification_designed`."
             ),
+            "verification_designed": "Auto-advancing to `implementing`.",
             "implementing": (
-                "Finish implementation, then transition to `implemented` "
-                "when ready for verification."
+                "Implement to pass verification, then transition to `implemented`."
             ),
-            "implemented": (
-                "Run declared verification, refresh `04-verification.md` and `05-evidence.md`, "
-                "then transition to `verifying`."
-            ),
+            "implemented": "Auto-advancing to `verifying`.",
             "verifying": (
-                "Complete verification and record passing evidence, "
-                "then transition to `archived`."
+                "Execute verification and write `evidence.md`, "
+                "then transition to `verified`."
             ),
+            "verified": "Auto-advancing to `archived`.",
             "archived": "No next step. The package is complete and archived.",
         }
     return steps.get(package.status_name, "No next step available.")
@@ -143,33 +142,87 @@ def _ensure_transition_allowed(package: TaskPackage, target_status: str) -> list
             f"cannot skip forward from `{package.status_name}` to `{target_status}`; "
             f"next legal forward status is `{status_flow[current_index + 1]}`"
         ]
-    if target_status == "archived" and package.status_name != "verifying":
-        return ["can only transition to `archived` from `verifying`"]
+    if target_status == "archived" and package.status_name != "verified":
+        return ["can only transition to `archived` from `verified`"]
     return []
 
 
-def _latest_verification_artifact_path(package: TaskPackage) -> Path | None:
-    verification = package.status.get("verification")
-    if not isinstance(verification, dict):
-        return None
-    raw = str(verification.get("last_run_artifact") or "").strip()
-    if not raw:
-        return None
-    return (package.config.repo_root / raw).resolve()
+# ── Hook: CLI outputs skill file content for the new state ──────────────────
 
+def _output_state_hook(repo_root: Path, state: str) -> None:
+    """Read and print the skill file for *state* so the Agent receives instructions inline."""
+    relative = STATE_SKILL_HOOKS.get(state)
+    if not relative:
+        return
+    skill_path = repo_root / relative
+    if not skill_path.exists():
+        print(f"[hook] skill file not found: {relative}", flush=True)
+        return
+    print(f"--- BEGIN: {relative} ---", flush=True)
+    print(skill_path.read_text(encoding="utf-8"), flush=True)
+    print(f"--- END: {relative} ---", flush=True)
+
+
+# ── Gate auto-advance ──────────────────────────────────────────────────────
+
+def _resolve_gate_transition(package: TaskPackage, target_status: str) -> tuple[str | None, list[str]]:
+    """If *target_status* is a gate, check preconditions and return the next real state.
+
+    Returns (next_state, [])  → caller should re-target to *next_state*.
+    Returns (None, errors)    → precondition failure; caller should abort.
+    Returns (None, [])        → *target_status* is not a gate; proceed normally.
+    """
+    if target_status not in GATE_STATUSES:
+        return None, []
+
+    if target_status == "requirements_designed":
+        if not package.task_type:
+            return None, [
+                "task_type 未确认。请向用户提议分类（mechanical / standard development / protocol/architecture）"
+                "并写入 STATUS.yaml.collaboration.task_type"
+            ]
+        if not package.verify_by:
+            return None, [
+                "verify_by 未确定。请确定验证策略（unit_test / qualitative / rwp）"
+                "并写入 STATUS.yaml.verification.verify_by"
+            ]
+        if package.task_type == "mechanical":
+            return "verification_designing", []
+        return "overview_designing", []
+
+    if target_status == "overview_designed":
+        return "detailed_designing", []
+
+    if target_status == "detailed_designed":
+        return "verification_designing", []
+
+    if target_status == "verification_designed":
+        return "implementing", []
+
+    if target_status == "implemented":
+        return "verifying", []
+
+    if target_status == "verified":
+        evidence_path = package.root / "evidence.md"
+        if not evidence_path.exists():
+            return None, ["证据文件 evidence.md 不存在，请先写入验证证据。"]
+        if not evidence_path.read_text(encoding="utf-8").strip():
+            return None, ["证据文件 evidence.md 内容为空，请先写入验证证据。"]
+        return "archived", []
+
+    return None, []
+
+
+# ── Archive ─────────────────────────────────────────────────────────────────
 
 def _check_archive_preconditions(package: TaskPackage) -> list[str]:
-    errors: list[str] = []
-    artifact_path = _latest_verification_artifact_path(package)
-    if artifact_path is None or not artifact_path.exists():
-        errors.append("archiving requires an existing latest verification artifact")
-        return errors
-    artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
-    if artifact.get("overall_result") != "passed":
-        errors.append("archiving requires the latest verification artifact result to be `passed`")
-    if artifact.get("task_id") != package.task_id:
-        errors.append("latest verification artifact does not match the task package id")
-    return errors
+    """Archiving requires evidence.md to exist and be non-empty."""
+    evidence_path = package.root / "evidence.md"
+    if not evidence_path.exists():
+        return ["archiving requires evidence.md to exist"]
+    if not evidence_path.read_text(encoding="utf-8").strip():
+        return ["archiving requires evidence.md to be non-empty"]
+    return []
 
 
 def _archive_task_package(package: TaskPackage) -> tuple[bool, str]:
@@ -187,85 +240,3 @@ def _archive_task_package(package: TaskPackage) -> tuple[bool, str]:
     _write_yaml(status_path, status)
 
     return True, ""
-
-
-def _record_verification_artifact(
-    package: TaskPackage,
-    *,
-    started_at: str,
-    finished_at: str,
-    overall_result: str,
-    command_results: list[dict[str, Any]],
-) -> Path:
-    run_id = _utc_now().strftime("%Y%m%dT%H%M%S%fZ")
-    artifact_root = package.config.repo_root / ".harness" / "artifacts" / package.task_id / "verification-runs"
-    artifact_root.mkdir(parents=True, exist_ok=True)
-    artifact_path = artifact_root / f"{run_id}.json"
-    artifact = {
-        "run_id": run_id,
-        "task_id": package.task_id,
-        "task_name": package.name,
-        "title": package.title,
-        "status_at_run": package.status_name,
-        "started_at": started_at,
-        "finished_at": finished_at,
-        "required_commands_snapshot": list(package.required_commands),
-        "required_scenarios_snapshot": list(package.required_scenarios),
-        "command_results": command_results,
-        "overall_result": overall_result,
-    }
-    artifact_path.write_text(json.dumps(artifact, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    latest_path = artifact_root / "latest.json"
-    latest_path.write_text(artifact_path.read_text(encoding="utf-8"), encoding="utf-8")
-
-    status = copy.deepcopy(package.status)
-    verification = status.setdefault("verification", {})
-    if isinstance(verification, dict):
-        verification["last_run_at"] = finished_at
-        verification["last_run_result"] = overall_result
-        verification["last_run_artifact"] = str(artifact_path.relative_to(package.config.repo_root))
-    status["updated_at"] = _current_date()
-    _save_package_status(package, status)
-    return artifact_path
-
-
-def _check_verifying_rollback_preconditions(package: TaskPackage, target_status: str) -> list[str]:
-    """When rolling back from verifying due to failed verification, require debugging first."""
-    if package.status_name != "verifying":
-        return []
-    if target_status != "implementing":
-        return []
-    verification = package.status.get("verification")
-    if not isinstance(verification, dict):
-        return []
-    last_result = str(verification.get("last_run_result") or "").strip()
-    if last_result == "failed":
-        return [
-            "verification failed — investigate root cause with systematic-debugging "
-            "before transitioning back to implementing. Re-run verification after fixing."
-        ]
-    return []
-
-
-def _warn_code_review_gap(package: TaskPackage, target_status: str) -> None:
-    """Warn (not block) when moving to verifying without code review for non-mechanical tasks."""
-    if target_status != "verifying" or package.status_name != "implemented":
-        return
-    if package.task_type == "mechanical":
-        return
-    evidence = package.status.get("evidence")
-    has_code_review = False
-    if isinstance(evidence, dict):
-        has_code_review = bool(evidence.get("code_review"))
-    if not has_code_review:
-        print(
-            "WARNING: No code review evidence in STATUS.yaml.evidence.code_review. "
-            "Consider running requesting-code-review before verifying.",
-            flush=True,
-        )
-
-
-def _run_command(repo_root: Path, command: str) -> int:
-    print(f"$ {command}")
-    completed = subprocess.run(command, shell=True, cwd=repo_root)
-    return completed.returncode
