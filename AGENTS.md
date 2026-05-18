@@ -11,7 +11,7 @@
 2. `docs/task-packages/<task>/`
    - 任务包（task package）的唯一事实来源。
 3. `docs/archived/task-packages/<task>/`
-   - 已归档任务包的历史事实与验证证据。
+   - 已归档历史任务包。
 
 ## 2. Python / uv 约定
 

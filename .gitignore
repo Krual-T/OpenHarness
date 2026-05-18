@@ -12,6 +12,6 @@ __pycache__/
 .harness/
 .venv/
 venv/
-
+CLAUDE.md
 .vscode/
 .idea/
