@@ -1,0 +1,26 @@
+id: TASK-004
+title: 工作流文档与技能收敛
+status: archived
+summary: 收敛 OpenHarness 工作流阶段 skill、任务包模板和 Markdown 标题校验， 让每个阶段的职责更清楚、重复更少。
+owner: Shaokun.Tang
+created_at: YYYY-MM-DD
+updated_at: '2026-05-18'
+done_criteria:
+- 实施前逐项确认工作流文档改进方向。
+- 只更新已确认的 skill、模板和 Markdown 标题校验表面。
+- 保持 CLI 状态流、hook、命令和任务包数据语义不变。
+entrypoints:
+- docs/archived/task-packages/workflow-docs-skill-sharpening/requirements.md
+collaboration:
+  task_type: protocol/architecture
+  design_review_mode: stepwise
+verification:
+  verify_by: qualitative
+depends_on: []
+scope:
+  areas:
+  - openharness_cli/models/task_package_document.py
+  - openharness_cli/validate.py
+  - tests/openharness_cases
+  - skills/using-openharness/states
+  - skills/using-openharness/references/templates

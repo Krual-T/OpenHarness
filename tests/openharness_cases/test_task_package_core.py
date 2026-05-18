@@ -365,10 +365,10 @@ def test_key_repo_skills_are_vendored_locally() -> None:
         "verification-designing",
         "implementing",
         "verifying",
-        "finishing-a-development-branch",
     ]:
         assert (states_base / name).is_dir(), f"state skill {name} missing"
         assert (states_base / name / "SKILL.md").exists(), f"state skill {name}/SKILL.md missing"
+    assert not (states_base / "finishing-a-development-branch").exists()
 
 
 def test_retired_skills_are_not_shipped_live() -> None:

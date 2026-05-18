@@ -20,11 +20,11 @@ description: 当任务状态是 detailed_designing（总体方案已收敛、需
    - 错误处理（主要失败路径、误用风险、静默出错风险、异常传播链）
    - 迁移顺序（实施顺序、兼容策略、切换点、回滚触发点）
 4. 撰写 `detailed-design.md`：
-   - 先写 Runtime Verification Plan：主验证路径、fallback、预期证据（先准备验证再落实现，但不等于默认先写 pytest）
-   - 再写 Files Added Or Changed：不只是清单，更是"为什么这些地方承载本轮实现"
-   - 然后 Interfaces、Module Internals、Data Semantics
-   - 再写 Stage Gates、Decision Closure、Error Handling、Migration Notes
-   - 最后 Recommended Diagrams 和 Detailed Reflection
+   - 先写 `## 可观察性与验证准备`：主验证路径、fallback、预期证据（先准备验证再落实现，但不等于默认先写 pytest）
+   - 再写 `## 新增或修改文件`：不只是清单，更是"为什么这些地方承载本轮实现"
+   - 然后写 `## 接口`、`## 模块内部设计`、`## 数据语义`
+   - 再写 `## 阶段门禁`、`## 决策闭合`、`## 错误处理`、`## 迁移说明`
+   - 最后写 `## 推荐图示` 和 `## 详细设计反思`
 5. 详细反思：再次挑战测试策略、接口边界、迁移顺序、预期证据是否足够支撑实施
 
 ## 逐项设计确认
@@ -92,13 +92,13 @@ description: 当任务状态是 detailed_designing（总体方案已收敛、需
 ## 常见失败模式
 
 - 只有文件列表，没有解释为什么这些落点合理
-- Runtime Verification Plan 只写一个命令，没有说明不足时怎么办
+- `## 可观察性与验证准备` 只写一个命令，没有说明不足时怎么办
 - 在实现设计不清楚时就先写 pytest 或验证命令，导致验证路径替代设计
-- Interfaces 缺失，导致改动边界不清
+- `## 接口` 缺失，导致改动边界不清
 - 没有模块内部职责，导致实现顺序和落点只能靠临场决定
 - 没有数据语义，导致字段、状态或缓存语义在不同实现点上各写各的
-- Decision Closure 没有明确接受、拒绝或延期，挑战一直悬空
-- Migration Notes 缺失，默认认为"改完就自然生效"
+- `## 决策闭合` 没有明确接受、拒绝或延期，挑战一直悬空
+- `## 迁移说明` 缺失，默认认为"改完就自然生效"
 - 画了图但没有写明接口、数据语义或异常约束
 
 ## 反合理化

@@ -14,7 +14,7 @@ description: 当任务状态是 implementing（实现使验证通过，TDD 绿+�
 ### TDD 循环：RED → GREEN → REFACTOR
 
 1. **RED**：运行 `verification-design.md` 中声明的验证命令，亲眼看到失败
-2. **GREEN**：最小实现使测试通过
+2. **GREEN**：聚焦实现，使测试通过
 3. **REFACTOR**：消除重复、提取函数、改善结构，保持测试全绿
 
 重复直到所有验证通过。
@@ -23,12 +23,11 @@ description: 当任务状态是 implementing（实现使验证通过，TDD 绿+�
 
 1. 运行全部验证命令，确认全部通过
 2. 写 `evidence.md`：
-   - **Verification Result**：verify_by 类型 + passed/failed
-   - **Test Results**（unit_test）：测试命令 + 结果 + 变更文件 + 验收标准覆盖表
-   - **Semantic Review**（qualitative）：审核对象 + 发现 + 结论 + 闭合状态
-   - **Runtime Observation**（rwp）：工作流名 + 观察结果 + 产物路径 + 盲区
-   - **Residual Risks**：本轮未覆盖的风险
-   - **Follow-ups**：延后事项
+   - `## 文件`：变更文件和改动说明
+   - `## 测试结果`（unit_test）：开发中执行过的测试命令和中间结果
+   - `## 语义审核`（qualitative）：开发中观察到的审核对象和中间发现草稿
+   - `## 运行时观察`（rwp）：开发中观察到的工作流名和输出路径
+   - 不在 implementing 阶段填写最终通过/失败结论；最终 `## 验证结果`、`## 残余风险` 和 `## 后续事项` 留给 verifying 阶段
 3. `openharness task-package transition <task> implemented`
 
 ## Exit Check

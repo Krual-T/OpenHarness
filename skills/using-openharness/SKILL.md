@@ -1,50 +1,55 @@
 ---
 name: using-openharness
-description: OpenHarness 仓库入口——会话开始时加载。定义任务包协议、状态流转、受保护文件和输出约定。
+description: 仅在每个会话开始时使用。
 ---
 
 # using-openharness
 
-OpenHarness 是任务包驱动的协作协议。所有代码修改、设计决策、bug 修复必须通过任务包追踪，不允许绕过。
+OpenHarness 是 SDD 驱动的任务包协作协议。这个入口 skill 只在每个会话开始时建立任务包协作规则；具体阶段动作由 CLI 输出的阶段 skill 接管。
 
-## 入口判断
+## 任务包边界
 
-收到用户请求后，先读 `AGENTS.md` 了解仓库地图和约定，然后判断：
+需要任务包：
 
-**需要任务包**：代码修改、设计决策、bug 修复、新增功能
-**不需要任务包**：纯问答、解释代码、讨论方案（未到执行）
+- 代码修改
+- 设计决策
+- bug 修复
+- 新增功能
+- 会改变仓库事实源的文档更新
 
-不需要时直接回应用户。需要时：
+不需要任务包：
+
+- 纯问答
+- 解释现有代码
+- 未进入执行的方案讨论
+
+不需要任务包时直接回应用户。已经进入任务包的设计讨论，确认后的设计决策仍应写回任务包文档。
+
+## 进入任务包
+
+需要任务包时：
 
 ```
 openharness task-package list
 ```
 
 按输出：
-- **有匹配活跃包** → `openharness task-package view <task>` 进入该包，CLI 输出当前活跃状态的 skill 指令
-- **无匹配或空** → `openharness task-package new <name>` 新建任务包，CLI 输出 `proposing` 指令
 
-## 核心命令
+- 有匹配活跃包：`openharness task-package view <task>`
+- 无匹配或空：`openharness task-package new <name>`
 
-| 场景 | 命令 |
-|------|------|
-| 列出活跃任务包 | `openharness task-package list` |
-| 查看/进入任务包 | `openharness task-package view <task>` |
-| 新建任务包 | `openharness task-package new <name>` |
-| 推进状态 | `openharness task-package transition <task> <目标状态>` |
+随后执行 CLI 输出的当前阶段 skill。
 
-`<name>` 用简短英文 slug，如 `fix-auth-timeout`、`add-export-csv`。
+## 阶段完成
 
-其他命令见 [references/cli-reference.md](references/cli-reference.md)。
+每个活跃阶段完成后，用 `transition` 推进到对应完成态：
 
-## 状态流转
+```
+openharness task-package transition <task> <完成态>
+```
 
-`openharness task-package new`、`view`、`transition` 会在命令输出中注入当前活跃状态的 skill 指令。Agent 直接执行 CLI 输出的指令即可，不需要主动查状态路由表。
-
-完成某个活跃阶段后，transition 目标应是对应的 gate 状态：
-
-| 当前活跃状态 | 完成后 transition 到 |
-|--------------|----------------------|
+| 当前阶段 | 完成态 |
+|----------|--------|
 | `proposing` | `requirements_designed` |
 | `overview_designing` | `overview_designed` |
 | `detailed_designing` | `detailed_designed` |
@@ -52,21 +57,4 @@ openharness task-package list
 | `implementing` | `implemented` |
 | `verifying` | `verified` |
 
-中间 gate 状态（`requirements_designed`、`overview_designed`、`detailed_designed`、`verification_designed`、`implemented`、`verified`）由 CLI 自动检查前置条件并推进到下一活跃状态或归档位置。不要跳过 gate 直接 transition 到后续活跃状态。
-
-回退：`openharness task-package transition <task> <目标状态>`。
-
-## 受保护文件
-
-以下文件/目录不在任务包追踪内，不允许随意修改：
-
-- `AGENTS.md` — 仓库级约定，修改需明确用户同意
-- `skills/using-openharness/` — harness 协议定义，修改需通过任务包
-- `openharness_cli/` — CLI 源码，修改需通过任务包
-- `.harness/` — harness 运行时状态，不可手动修改
-
-## 输出约定
-
-- 向用户展示信息使用通俗易懂的中文，不写中英穿插的口号式短句
-- 文档正文用中文；节标题、命令、状态值、YAML 键、文件名、路径保持英文
-- 设计决策写入任务包文档，不留在聊天里
+Agent 只负责把当前阶段 transition 到对应完成态；后续推进由 CLI 处理。

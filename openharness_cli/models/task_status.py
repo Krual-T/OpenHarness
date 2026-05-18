@@ -23,7 +23,7 @@ class TaskStatus(StrEnum):
     IMPLEMENTED = ("implemented", "")
     VERIFYING = ("verifying", "skills/using-openharness/states/verifying/SKILL.md")
     VERIFIED = ("verified", "")
-    ARCHIVED = ("archived", "skills/using-openharness/states/finishing-a-development-branch/SKILL.md")
+    ARCHIVED = ("archived", "")
 
     def __new__(cls, value, hook):
         obj = str.__new__(cls, value)

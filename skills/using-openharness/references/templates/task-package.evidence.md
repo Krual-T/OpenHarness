@@ -1,19 +1,21 @@
-# Evidence
+# 证据
 
-> 章节标题保留英文；正文默认使用中文；命令、状态值、YAML 键名、文件名与路径保持英文。
+> 章节标题使用中文；正文默认使用中文；命令、状态值、YAML 键名、文件名与路径保持英文。
 >
 > 按 `task-info.yaml.verification.verify_by` 类型选择对应章节填写。不要求全部填写——只写实际执行的。
 
-## Verification Result
+## 验证结果
 - **verify_by**: <unit_test / qualitative / rwp>
 - **Result**: <passed / failed>
 
-## Test Results
+## 文件
+- path/to/file — 改动说明
+
+## 测试结果
 
 `verify_by: unit_test` 时填写：
 
 - 测试命令 + 结果（退出码、通过数/失败数）
-- 变更文件清单
 - 验收标准覆盖表
 
 示例：
@@ -31,7 +33,7 @@ pytest tests/test_xxx.py -v
 | 某项标准 | test_xxx ✓ |
 ```
 
-## Semantic Review
+## 语义审核
 
 `verify_by: qualitative` 时填写：
 
@@ -40,7 +42,7 @@ pytest tests/test_xxx.py -v
 - 结论
 - 问题是否已闭合
 
-## Runtime Observation
+## 运行时观察
 
 `verify_by: rwp` 时填写：
 
@@ -49,8 +51,8 @@ pytest tests/test_xxx.py -v
 - 产物路径
 - 盲区说明
 
-## Residual Risks
+## 残余风险
 本轮未覆盖的风险、接受理由、触发重新审查的条件。
 
-## Follow-ups
+## 后续事项
 后续任务、剩余决策、延后事项。没有时写"无"。

@@ -12,7 +12,6 @@ STATE_SKILLS = [
     "brainstorming",
     "detailed-design",
     "exploring-solution-space",
-    "finishing-a-development-branch",
     "implementing",
     "verification-designing",
     "verifying",
@@ -30,7 +29,6 @@ STATE_SKILLS_EXPLICIT = {
     "brainstorming",
     "detailed-design",
     "exploring-solution-space",
-    "finishing-a-development-branch",
     "implementing",
     "verification-designing",
     "verifying",
@@ -214,28 +212,28 @@ def test_design_package_templates_include_verification_path_sections() -> None:
         / "task-package.evidence.md"
     ).read_text(encoding="utf-8")
 
-    assert "## Overview Reflection" in overview
+    assert "## 总体设计反思" in overview
     assert "模块" in overview
     assert "接口" in overview
     assert "数据" in overview
     assert "PlantUML" in overview
-    assert "## Runtime Verification Plan" in detailed
-    assert "Verification Path" in detailed
-    assert "Fallback Path" in detailed
-    assert "## Detailed Reflection" in detailed
+    assert "## 可观察性与验证准备" in detailed
+    assert "Verification Path" not in detailed
+    assert "Fallback Path" not in detailed
+    assert "## 详细设计反思" in detailed
     assert "模块内部" in detailed
     assert "数据语义" in detailed
     assert "异常" in detailed
     assert "PlantUML" in detailed
-    assert "## Stage Gates" in overview
-    assert "## Stage Gates" in detailed
-    assert "## Decision Closure" in detailed
-    assert "## Traceability" in verification
-    assert "## Risk Acceptance" in verification
-    assert "## Verification Path" in verification
-    assert "Fallback Path" in verification
-    assert "## Verification Result" in evidence
-    assert "## Residual Risks" in evidence
+    assert "## 阶段门禁" in overview
+    assert "## 阶段门禁" in detailed
+    assert "## 决策闭合" in detailed
+    assert "## 可追溯性" in verification
+    assert "## 风险接受" in verification
+    assert "## 验证路径" in verification
+    assert "Fallback Path" not in verification
+    assert "## 验证结果" in evidence
+    assert "## 残余风险" in evidence
 
 def test_runtime_capability_reference_defines_declaration_shape_and_writeback() -> None:
     text = (
@@ -331,7 +329,7 @@ def test_runtime_workflow_package_reference_defines_env_and_logger_boundaries() 
     assert "logs/" in text
     assert "OpenHarness does not define workflow-specific script names" in text
 
-def test_task_package_templates_default_to_chinese_narrative_with_english_anchors() -> None:
+def test_task_package_templates_default_to_chinese_narrative_and_headings() -> None:
     requirements = (
         REPO_ROOT
         / "skills"
@@ -375,11 +373,11 @@ def test_task_package_templates_default_to_chinese_narrative_with_english_anchor
 
     for text in (requirements, overview, detailed, verification, evidence):
         assert "正文默认使用中文" in text
-        assert "章节标题保留英文" in text
+        assert "章节标题使用中文" in text
         assert "YAML 键名" in text
 
-    assert "## Goal" in requirements
-    assert "## Proposed Structure" in overview
-    assert "## Runtime Verification Plan" in detailed
-    assert "## Verification Path" in verification
-    assert "## Residual Risks" in evidence
+    assert "## 目标" in requirements
+    assert "## 推荐结构" in overview
+    assert "## 可观察性与验证准备" in detailed
+    assert "## 验证路径" in verification
+    assert "## 残余风险" in evidence

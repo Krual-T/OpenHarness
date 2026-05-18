@@ -122,7 +122,7 @@ def test_transition_verified_reports_auto_archive(tmp_path: Path) -> None:
     for doc in ALL_DESIGN_FILES:
         doc.path_from(root).write_text("# x\n", encoding="utf-8")
     TaskPackageDocument.EVIDENCE.path_from(root).write_text(
-        "# Evidence\n\n## Verification Result\npassed\n",
+        "# 证据\n\n## 验证结果\npassed\n",
         encoding="utf-8",
     )
     TaskPackageDocument.TASK_INFO.path_from(root).write_text(
@@ -167,7 +167,7 @@ def test_transition_verified_keeps_source_status_when_archive_target_exists(tmp_
     for doc in ALL_DESIGN_FILES:
         doc.path_from(root).write_text("# x\n", encoding="utf-8")
     TaskPackageDocument.EVIDENCE.path_from(root).write_text(
-        "# Evidence\n\n## Verification Result\npassed\n",
+        "# 证据\n\n## 验证结果\npassed\n",
         encoding="utf-8",
     )
     info_path = TaskPackageDocument.TASK_INFO.path_from(root)
@@ -283,20 +283,20 @@ def test_validate_design_package_rejects_overview_designed_without_reflection(tm
     (repo_root / "docs" / "task-packages" / "overview-no-reflection").mkdir(parents=True)
     root = repo_root / "docs" / "task-packages" / "overview-no-reflection"
     TaskPackageDocument.REQUIREMENTS.path_from(root).write_text(
-        "# Requirements\n\n"
-        "## Goal\nA\n\n"
-        "## Problem Statement\nB\n\n"
-        "## Required Outcomes\n1. C\n\n"
-        "## Non-Goals\n- D\n\n"
-        "## Constraints\n- E\n",
+        "# 需求\n\n"
+        "## 目标\nA\n\n"
+        "## 问题陈述\nB\n\n"
+        "## 必须交付的结果\n1. C\n\n"
+        "## 非目标\n- D\n\n"
+        "## 约束\n- E\n",
         encoding="utf-8",
     )
     TaskPackageDocument.OVERVIEW_DESIGN.path_from(root).write_text(
-        "# Overview Design\n\n"
-        "## System Boundary\nA\n\n"
-        "## Proposed Structure\nB\n\n"
-        "## Key Flows\nC\n\n"
-        "## Trade-offs\nD\n",
+        "# 总体设计\n\n"
+        "## 系统边界\nA\n\n"
+        "## 推荐结构\nB\n\n"
+        "## 关键流程\nC\n\n"
+        "## 取舍\nD\n",
         encoding="utf-8",
     )
     TaskPackageDocument.DETAILED_DESIGN.path_from(root).write_text("x\n", encoding="utf-8")
@@ -323,4 +323,4 @@ def test_validate_design_package_rejects_overview_designed_without_reflection(tm
     errors = validate_task_package(package)
 
     assert any("overview_designed requires non-placeholder content" in error for error in errors)
-    assert any("## Overview Reflection" in error for error in errors)
+    assert any("## 总体设计反思" in error for error in errors)

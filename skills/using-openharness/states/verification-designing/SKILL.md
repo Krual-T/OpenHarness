@@ -11,17 +11,17 @@ description: 当任务状态是 verification_designing（设计验证策略，TD
 
 ## 步骤
 
-1. **读需求文档**：打开 `requirements.md`，确认 Required Outcomes 和 acceptance criteria
+1. **读需求文档**：打开 `requirements.md`，确认必须交付的结果和验收标准
 2. **确定验证方式**：根据 `task-info.yaml.verification.verify_by` 选择
    - `unit_test` → 列出测试文件和测试命令
    - `qualitative` → 明确审核对象、审核标准和判定准则
    - `rwp` → 选择或编写运行时工作流脚本
 3. **写 `verification-design.md`**：参考模板 `skills/using-openharness/references/templates/task-package.verification-design.md`
-   - **Verification Path**：计划路径（怎么验证）和预期执行路径
-   - **Required Commands**：逐条列出验证命令（命令、期望退出码、期望输出）
-   - **Expected Outcomes**：每项验收标准的预期结果
-   - **Traceability**：需求 → 验证的对应关系
-   - **Risk Acceptance**：哪些风险本轮不覆盖，以及为什么可以接受
+   - `## 验证路径`：计划路径（怎么验证）和预期执行路径
+   - `## 必需命令`：逐条列出验证命令（命令、期望退出码、期望输出）
+   - `## 预期结果`：每项验收标准的预期结果
+   - `## 可追溯性`：需求 → 验证的对应关系
+   - `## 风险接受`：哪些风险本轮不覆盖，以及为什么可以接受
 4. **自检 Exit Check**
 
 ## Exit Check
@@ -61,7 +61,7 @@ description: 当任务状态是 verification_designing（设计验证策略，TD
 
 | 卡住原因 | 回退动作 |
 |---------|---------|
-| 某项 Required Outcome 找不到对应验证方法 | 回到 `requirements.md` 修正该 Outcome——它不可验证，等于没写 |
+| 某项必须交付的结果找不到对应验证方法 | 回到 `requirements.md` 修正该结果——它不可验证，等于没写 |
 | 验证命令无法精确到复制粘贴执行 | 命令依赖的上下文不完整——补充文件路径、参数、环境变量 |
 | verify_by 与需求性质冲突 | 重新提议 verify_by 并更新 `task-info.yaml` |
 | 无法决定边界场景的验证粒度 | 优先覆盖安全/数据完整性边界；UI 微调类边界可声明不覆盖 |
@@ -72,11 +72,11 @@ description: 当任务状态是 verification_designing（设计验证策略，TD
 - 不要在这里写实现方案——那是 `overview-design.md` 和 `detailed-design.md` 的职责
 - 如果发现验证策略本身有歧义，回到 `requirements.md` 澄清需求
 - 模板位于 `skills/using-openharness/references/templates/task-package.verification-design.md`
-- Required Commands 中每条命令的期望退出码必须写明——implementing 和 verifying 阶段依赖这个来做 pass/fail 判定
+- `## 必需命令` 中每条命令的期望退出码必须写明——implementing 和 verifying 阶段依赖这个来做 pass/fail 判定
 
 ## 常见失败模式
 
 - 把验证命令写成抽象描述（"运行测试"），而非可执行命令（`pytest tests/test_xxx.py -v`）
 - verify_by == rwp 时没有检查现有 RWP 就新建工作流脚本，导致重复
 - 对定性验证（qualitative）不写判定准则，只写"审查通过"，导致 verifying 阶段无判断标准
-- 把所有能想到的验证都塞进去，导致 implementing 阶段验证负担过重——只验证 Required Outcomes，边界场景保留在 Risk Acceptance
+- 把所有能想到的验证都塞进去，导致 implementing 阶段验证负担过重——只验证必须交付的结果，边界场景保留在 `## 风险接受`

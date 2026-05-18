@@ -43,7 +43,7 @@ description: 当任务状态是 proposing（需求未收敛、范围未明确）
    - 不确定性高 → 2-3 个方案，含取舍分析和明确推荐
    - 不要因为某个方案看起来明显就跳过替代方案
 5. **写入 `requirements.md`**：目标用户、核心场景、成功指标、边界、约束、验收标准、至少一个反例
-6. **自检 Exit Check**：逐项确认下面 7 个问题都能明确回答
+6. **自检 Exit Check**：逐项确认下面问题都能明确回答
 
 ### 快通道
 
@@ -55,16 +55,17 @@ description: 当任务状态是 proposing（需求未收敛、范围未明确）
 
 ## Exit Check
 
-离开需求阶段前，**必须**能明确回答下面 7 个问题（任何一条答不上来 → 阻塞，使用 `openharness task-package transition <task> requirements_designed` 前必须全部通过）：
+离开需求阶段前，**必须**能明确回答下面问题（任何一条答不上来 → 阻塞，使用 `openharness task-package transition <task> requirements_designed` 前必须全部通过）：
 
 1. 目标用户是谁？
 2. 核心场景是什么？
 3. 单一成功指标是什么？
-4. 哪些 acceptance criteria 会决定本轮是否算完成？
+4. 哪些验收标准会决定本轮是否算完成？
 5. 哪个 counterexample 必须被排除？
 6. 哪个限制一旦被突破，这就不再是同一个 task package？
 7. task_type（`mechanical` / `standard development` / `protocol/architecture`）是否已确认并写入 `task-info.yaml`？
-8. verify_by（`unit_test` / `qualitative` / `rwp`）是否已确定并写入 `task-info.yaml.verification.verify_by`？
+8. design_review_mode（`stepwise` / `auto`）是否已确认并写入 `task-info.yaml.collaboration.design_review_mode`？
+9. verify_by（`unit_test` / `qualitative` / `rwp`）是否已确定并写入 `task-info.yaml.verification.verify_by`？
 
 如果这些问题还答不上来，**阻塞**。不要进入 `overview-design.md`。
 
@@ -73,12 +74,13 @@ description: 当任务状态是 proposing（需求未收敛、范围未明确）
 - 模板文件位于 `skills/using-openharness/references/templates/task-package.requirements.md`
 - 需求阶段的结束标志是 `requirements.md` 足够坚实（Exit Check 全部能回答），不是文字变得更长
 - 在任务包里记录讨论结论，不要只留在聊天里
-- 需求收敛后，提议一种任务分类（`mechanical` / `standard development` / `protocol/architecture`），等用户确认后写入 `task-info.yaml.collaboration.task_type`
-- Goal 不要写成抽象价值词；应该能回答"做完以后什么事实会成立"
-- Problem Statement 至少要写出一个已经存在的矛盾，而不是只写未来愿景
-- Required Outcomes 的每一项，后续都应该能在 `verification-design.md` 里找到对应验证
-- Non-Goals 至少写一个 counterexample
-- Constraints 写协议边界、兼容性条件、依赖限制和 cost cap；如果某个限制被突破就会变成另一个 task package，也写在这里
+- 需求收敛后，必须确认并写入 `task-info.yaml` 的三项工作流分叉字段：`collaboration.task_type`、`collaboration.design_review_mode`、`verification.verify_by`
+- 后续阶段只消费这三项字段；如果后续发现分类错误，应回退需求阶段修正
+- 目标不要写成抽象价值词；应该能回答"做完以后什么事实会成立"
+- 问题陈述至少要写出一个已经存在的矛盾，而不是只写未来愿景
+- 必须交付的结果中每一项，后续都应该能在 `verification-design.md` 里找到对应验证
+- 非目标至少写一个 counterexample
+- 约束写协议边界、兼容性条件、依赖限制和 cost cap；如果某个限制被突破就会变成另一个 task package，也写在这里
 
 ## 与相邻文档的边界
 
@@ -91,7 +93,7 @@ description: 当任务状态是 proposing（需求未收敛、范围未明确）
 - 把 Goal 写成空泛口号，例如"提升质量""优化体验"
 - 只列功能愿望，不说明当前问题
 - Non-Goals 缺失，导致范围自然膨胀
-- Required Outcomes 不可验证，只剩主观表述
+- 必须交付的结果不可验证，只剩主观表述
 - 把设计方案提前写进需求，导致后续没有真正的探索空间
 
 ## 反合理化

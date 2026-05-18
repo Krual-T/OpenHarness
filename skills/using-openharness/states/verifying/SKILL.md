@@ -14,10 +14,11 @@ description: 当任务状态是 verifying（执行验证、收集证据）时由
 1. **执行验证命令**：运行 `verification-design.md` 中声明的全部验证命令
 2. **判断结果**：逐条对比期望退出码 vs 实际退出码和输出
 3. **处理失败**：见下方"验证失败处理"
-4. **补充 evidence.md**：
+4. **补充 `evidence.md`**：
    - 补充实际执行的命令和结果
    - 补充验收标准覆盖表
    - 标记残余风险和延后事项
+   - 写入最终 `## 验证结果`，明确通过 / 有条件通过 / 不通过
 5. **自检 Exit Check**
 
 完成后：`openharness task-package transition <task> verified`
@@ -75,7 +76,7 @@ description: 当任务状态是 verifying（执行验证、收集证据）时由
 ## 要点
 
 - verifying 阶段不是"跑一遍测试就过"——必须逐条对比期望退出码和实际输出
-- evidence.md 的 checklist 是硬门禁：缺一项就不能 transition
+- `evidence.md` 的 checklist 是硬门禁：缺一项就不能 transition
 - 验证失败时先诊断再跳转，不要默认回到 implementing
 
 ## 常见失败模式
