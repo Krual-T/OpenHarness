@@ -7,7 +7,7 @@ import typer
 
 from ..display import describe_stage, output_state_hook
 from ..models import TaskStatus
-from ..repository import (
+from ..core import (
     create_task_package,
     discover_task_packages,
     humanize_task_name,
@@ -23,19 +23,19 @@ task_app = typer.Typer(help="Manage task packages.")
 
 @task_app.command(name="list")
 def list_packages(
-    repo: str = typer.Option(".", "--repo", help="Repository root"),
+    ctx: typer.Context,
     as_json: bool = typer.Option(False, "--json", help="Print JSON output"),
     show_all: bool = typer.Option(False, "--all", help="Include archived task packages"),
 ) -> None:
     """List task packages with current status and next steps."""
-    repo_root = Path(repo).resolve()
+    hx = ctx.obj
     try:
-        packages = discover_task_packages(repo_root)
+        packages = discover_task_packages()
     except (FileNotFoundError, ValueError) as exc:
         print(f"ERROR: {exc}")
         raise typer.Exit(code=1)
 
-    author_entry_path = repo_root / "skills" / "using-openharness" / "references" / "author-entry.md"
+    author_entry_path = hx.repo_root / "skills" / "using-openharness" / "references" / "author-entry.md"
     author_entry: dict | None = None
     if author_entry_path.exists():
         author_entry = {"path": str(author_entry_path), "summary": "Chinese-first author entry for task-package writing guidance."}
@@ -45,10 +45,10 @@ def list_packages(
 
     if as_json:
         cfg = packages[0].config if packages else None
-        task_packages_root = str(cfg.task_packages_root) if cfg else str(repo_root / "docs" / "task-packages")
-        archived_root = str(cfg.archived_task_packages_root) if cfg else str(repo_root / "docs" / "archived" / "task-packages")
+        task_packages_root = str(cfg.task_packages_root) if cfg else str(hx.repo_root / "docs" / "task-packages")
+        archived_root = str(cfg.archived_task_packages_root) if cfg else str(hx.repo_root / "docs" / "archived" / "task-packages")
         payload = {
-            "repo": str(repo_root),
+            "repo": str(hx.repo_root),
             "task_packages_root": task_packages_root,
             "archived_task_packages_root": archived_root,
             "task_packages": [
@@ -85,7 +85,7 @@ def list_packages(
         print("\n" + "=" * 60, flush=True)
         for p in proposing:
             print(f"\n## Task: {p.task_id} {p.title}", flush=True)
-            output_state_hook(repo_root, "proposing")
+            output_state_hook("proposing")
             req_path = p.root / "01-requirements.md"
             if req_path.exists():
                 print(f"\n--- Current 01-requirements.md ({p.task_id}) ---", flush=True)
@@ -100,14 +100,11 @@ def new_package(
     owner: str = typer.Option("unassigned", "--owner", help="Initial owner"),
     summary: str = typer.Option("", "--summary", help="Short summary"),
     status: str = typer.Option("proposing", "--status", help="Initial status"),
-    repo: str = typer.Option(".", "--repo", help="Repository root"),
 ) -> None:
     """Create a new task package with an auto-allocated task ID."""
-    repo_root = Path(repo).resolve()
     human_title = title or humanize_task_name(task_name)
     try:
         task_root, task_id = create_task_package(
-            repo_root=repo_root,
             task_name=task_name,
             title=human_title,
             owner=owner,
@@ -122,7 +119,7 @@ def new_package(
     print(f"Task id: {task_id}")
     print(f"Title: {human_title}")
     print(f"Current status: {status}")
-    output_state_hook(repo_root, status if status in ACTIVE_STATUSES else "proposing")
+    output_state_hook(status if status in ACTIVE_STATUSES else "proposing")
     print(f"\n完成后执行：openharness task-package transition {task_id} requirements_designed")
 
 
@@ -130,12 +127,10 @@ def new_package(
 def transition(
     task: str = typer.Argument(..., help="Task package name or task id"),
     target_status: str = typer.Argument(..., help="Target workflow status"),
-    repo: str = typer.Option(".", "--repo", help="Repository root"),
 ) -> None:
     """Move a task package to a legal workflow status."""
-    repo_root = Path(repo).resolve()
     try:
-        package = resolve_task_package(repo_root, task)
+        package = resolve_task_package(task)
     except (FileNotFoundError, ValueError) as exc:
         print(f"ERROR: {exc}")
         raise typer.Exit(code=1)
@@ -154,9 +149,9 @@ def transition(
             raise typer.Exit(code=1)
         target = updated.current_status
         print(f"Transitioned {package.task_id} from `{package.current_status}` to `{target}`")
-        output_state_hook(repo_root, target)
+        output_state_hook(target)
     elif target_status == "archived":
         print(f"Archived task package: {package.task_id} -> {package.config.archived_task_packages_root / package.name}")
-        output_state_hook(repo_root, "archived")
+        output_state_hook("archived")
     else:
         print(f"{package.task_id} already in `{package.current_status}`")

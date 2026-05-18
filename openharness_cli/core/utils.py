@@ -3,14 +3,16 @@ from __future__ import annotations
 import re
 import subprocess
 from datetime import datetime, timezone
-from pathlib import Path
+
+from ..harness_context import harness, HarnessContext
 
 
-def get_git_author(repo_root: Path) -> str:
+@harness
+def get_git_author(ctx: HarnessContext) -> str:
     try:
         result = subprocess.run(
             ["git", "config", "user.name"], capture_output=True, text=True,
-            cwd=repo_root, timeout=5,
+            cwd=ctx.repo_root, timeout=5,
         )
         name = result.stdout.strip()
         if name:

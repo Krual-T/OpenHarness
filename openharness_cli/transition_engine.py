@@ -4,7 +4,7 @@ import dataclasses
 from typing import Optional
 
 from .models import TaskInfo, TaskPackage, TaskStatus, parse_status
-from .repository import archive_task_package, current_date, write_yaml
+from .core import archive_task_package, current_date, write_yaml
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

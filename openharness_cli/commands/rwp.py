@@ -7,7 +7,7 @@ from pathlib import Path
 
 import typer
 
-from ..repository import (
+from ..core import (
     discover_runtime_workflow_packages,
     resolve_runtime_workflow_package,
     resolve_runtime_workflow_script,
@@ -17,13 +17,11 @@ rwp_app = typer.Typer(help="Discover and run Runtime Workflow Packages.")
 
 
 @rwp_app.command(name="list")
-def rwp_list(
-    repo: str = typer.Option(".", "--repo", help="Repository root"),
-) -> None:
+def rwp_list(ctx: typer.Context) -> None:
     """List Runtime Workflow Package summaries."""
-    repo_root = Path(repo).resolve()
+    hx = ctx.obj
     try:
-        packages = discover_runtime_workflow_packages(repo_root)
+        packages = discover_runtime_workflow_packages()
     except ValueError as exc:
         print(f"ERROR: {exc}")
         raise typer.Exit(code=1)
@@ -31,7 +29,7 @@ def rwp_list(
         print("No runtime workflow packages found.")
         return
     for p in packages:
-        rel_root = p.root.relative_to(repo_root)
+        rel_root = p.root.relative_to(hx.repo_root)
         print(f"- {p.name} - {p.description}")
         print(f"  path: {rel_root}")
 
@@ -39,12 +37,10 @@ def rwp_list(
 @rwp_app.command(name="show")
 def rwp_show(
     workflow: str = typer.Argument(...),
-    repo: str = typer.Option(".", "--repo", help="Repository root"),
 ) -> None:
     """Show a Runtime Workflow Package workflow.md."""
-    repo_root = Path(repo).resolve()
     try:
-        pkg = resolve_runtime_workflow_package(repo_root, workflow)
+        pkg = resolve_runtime_workflow_package(workflow)
     except ValueError as exc:
         print(f"ERROR: {exc}")
         raise typer.Exit(code=1)
@@ -53,15 +49,15 @@ def rwp_show(
 
 @rwp_app.command(name="run")
 def rwp_run(
+    ctx: typer.Context,
     workflow: str = typer.Argument(...),
     script: str = typer.Argument(...),
     script_args: list[str] = typer.Argument(default_factory=list),
-    repo: str = typer.Option(".", "--repo", help="Repository root"),
 ) -> None:
     """Run an explicit Python script from a Runtime Workflow Package."""
-    repo_root = Path(repo).resolve()
+    hx = ctx.obj
     try:
-        script_path = resolve_runtime_workflow_script(repo_root, workflow, script)
+        script_path = resolve_runtime_workflow_script(workflow, script)
     except ValueError as exc:
         print(f"ERROR: {exc}")
         raise typer.Exit(code=1)
@@ -73,5 +69,5 @@ def rwp_run(
     os.environ["PYTHONPATH"] = pythonpath
     cmd_parts = ["uv", "run", "python", str(script_path), *list(script_args)]
     print(f"$ {shlex.join(cmd_parts)}")
-    completed = subprocess.run(cmd_parts, cwd=repo_root)
+    completed = subprocess.run(cmd_parts, cwd=hx.repo_root)
     raise typer.Exit(code=completed.returncode)

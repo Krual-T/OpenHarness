@@ -6,7 +6,7 @@ from pathlib import Path
 
 import typer
 
-from ..repository import load_yaml, write_yaml
+from ..core import load_yaml, write_yaml
 
 
 class UpdateMode(StrEnum):

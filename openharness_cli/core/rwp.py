@@ -5,15 +5,18 @@ from typing import Any
 
 import yaml
 
+from ..harness_context import harness, HarnessContext
 from ..models import RuntimeWorkflowPackage
 
 
-def _rwp_root(repo_root: Path) -> Path:
-    return (repo_root / ".harness" / "rwp").resolve()
+@harness
+def _rwp_root(ctx: HarnessContext) -> Path:
+    return (ctx.repo_root / ".harness" / "rwp").resolve()
 
 
-def _rwp_workflows_root(repo_root: Path) -> Path:
-    return _rwp_root(repo_root) / "workflows"
+@harness
+def _rwp_workflows_root(ctx: HarnessContext) -> Path:
+    return _rwp_root() / "workflows"
 
 
 def _load_workflow_metadata(workflow_path: Path) -> dict[str, Any]:
@@ -37,8 +40,9 @@ def _load_workflow_metadata(workflow_path: Path) -> dict[str, Any]:
     return {"name": name, "description": description}
 
 
-def discover_runtime_workflow_packages(repo_root: Path) -> list[RuntimeWorkflowPackage]:
-    workflows_root = _rwp_workflows_root(repo_root)
+@harness
+def discover_runtime_workflow_packages(ctx: HarnessContext) -> list[RuntimeWorkflowPackage]:
+    workflows_root = _rwp_workflows_root()
     if not workflows_root.exists():
         return []
     packages: list[RuntimeWorkflowPackage] = []
@@ -56,9 +60,10 @@ def discover_runtime_workflow_packages(repo_root: Path) -> list[RuntimeWorkflowP
     return packages
 
 
-def resolve_runtime_workflow_package(repo_root: Path, workflow: str) -> RuntimeWorkflowPackage:
+@harness
+def resolve_runtime_workflow_package(ctx: HarnessContext, workflow: str) -> RuntimeWorkflowPackage:
     matches = [
-        p for p in discover_runtime_workflow_packages(repo_root)
+        p for p in discover_runtime_workflow_packages()
         if p.name == workflow or p.root.name == workflow
     ]
     if not matches:
@@ -69,7 +74,8 @@ def resolve_runtime_workflow_package(repo_root: Path, workflow: str) -> RuntimeW
     return matches[0]
 
 
-def resolve_runtime_workflow_script(repo_root: Path, workflow: str, script: str) -> Path:
+@harness
+def resolve_runtime_workflow_script(ctx: HarnessContext, workflow: str, script: str) -> Path:
     script_name = str(script or "").strip()
     if not script_name:
         raise ValueError("rwp run requires an explicit script name")
@@ -77,7 +83,7 @@ def resolve_runtime_workflow_script(repo_root: Path, workflow: str, script: str)
         raise ValueError("rwp script name must refer to a file directly under `scripts/`")
     if not script_name.endswith(".py"):
         raise ValueError("rwp run only supports `.py` scripts")
-    package = resolve_runtime_workflow_package(repo_root, workflow)
+    package = resolve_runtime_workflow_package(workflow)
     script_path = package.root / "scripts" / script_name
     if not script_path.exists() or not script_path.is_file():
         raise ValueError(f"rwp script not found: {script_name}")

@@ -37,7 +37,7 @@ def test_rwp_list_reports_workflow_summaries(tmp_path: Path, capsys) -> None:
         description="Validate real Lark message runtime behavior.",
     )
 
-    result = runner.invoke(app, ["rwp", "list", "--repo", str(repo_root)])
+    result = runner.invoke(app, ["--repo", str(repo_root), "rwp", "list"])
     assert result.exit_code == 0
     assert "lark-message-runtime-validation" in result.stdout
     assert "Validate real Lark message runtime behavior." in result.stdout
@@ -53,7 +53,7 @@ def test_rwp_show_prints_full_workflow_document(tmp_path: Path, capsys) -> None:
         description="Validate runtime smoke behavior.",
     )
 
-    result = runner.invoke(app, ["rwp", "show", "custom-runtime-smoke", "--repo", str(repo_root)])
+    result = runner.invoke(app, ["--repo", str(repo_root), "rwp", "show", "custom-runtime-smoke"])
     assert result.exit_code == 0
     assert "# Workflow" in result.stdout
     assert "Exercise runtime behavior." in result.stdout
@@ -97,7 +97,7 @@ def test_rwp_run_executes_explicit_python_script_and_loads_env_files(
     monkeypatch.setattr(subprocess, "run", fake_run)
 
     result = runner.invoke(app, [
-        "rwp", "run", "runtime-smoke", "smoke.py", "--repo", str(repo_root),
+        "--repo", str(repo_root), "rwp", "run", "runtime-smoke", "smoke.py",
         "--target", "sandbox",
     ])
 
@@ -130,7 +130,7 @@ def test_rwp_run_exposes_openharness_runtime_api_to_project_python(
     )
 
     result = runner.invoke(app, [
-        "rwp", "run", "runtime-api", "runtime_api.py", "--repo", str(repo_root),
+        "--repo", str(repo_root), "rwp", "run", "runtime-api", "runtime_api.py",
     ])
 
     assert result.exit_code == 0
@@ -147,7 +147,7 @@ def test_rwp_run_rejects_missing_script_name(tmp_path: Path) -> None:
     )
 
     result = runner.invoke(app, [
-        "rwp", "run", "runtime-smoke", "", "--repo", str(repo_root),
+        "--repo", str(repo_root), "rwp", "run", "runtime-smoke", "",
     ])
 
     assert result.exit_code == 1

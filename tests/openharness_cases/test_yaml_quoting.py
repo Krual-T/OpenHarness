@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pytest
 
-from .common import Path, REPO_ROOT, CreateTaskInput, create_task_package, openharness
-from openharness_cli.repository.yaml import load_yaml
+from .common import Path, REPO_ROOT, CreateTaskInput, create_task_package, setup_harness, openharness
+from openharness_cli.core.yaml import load_yaml
 
 
 def test_create_task_package_quotes_yaml_sensitive_status_fields(tmp_path: Path) -> None:
@@ -45,8 +45,8 @@ def test_create_task_package_quotes_yaml_sensitive_status_fields(tmp_path: Path)
     ):
         (template_root / name).write_text("x\n", encoding="utf-8")
 
+    setup_harness(repo_root)
     task_root, task_id = create_task_package(
-        repo_root=repo_root,
         task_name="Quote Probe",
         title="`02-overview-design.md` guidance: quote YAML",
         owner="codex",

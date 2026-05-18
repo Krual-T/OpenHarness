@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from pathlib import Path
 from typing import TYPE_CHECKING
 
+from .harness_context import harness, HarnessContext
 from .models import parse_status
 
 if TYPE_CHECKING:
@@ -21,14 +21,15 @@ def describe_stage(package: TaskPackage) -> dict[str, str]:
     }
 
 
-def output_state_hook(repo_root: Path, state: str) -> None:
+@harness
+def output_state_hook(ctx: HarnessContext, state: str) -> None:
     status = parse_status(state)
     if status is None:
         return
     relative = status.hook
     if not relative:
         return
-    skill_path = repo_root / relative
+    skill_path = ctx.repo_root / relative
     if not skill_path.exists():
         print(f"[hook] skill file not found: {relative}", flush=True)
         return

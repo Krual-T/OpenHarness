@@ -8,16 +8,17 @@ from .common import (
     REPO_ROOT,
     ALL_DESIGN_FILES,
     CreateTaskInput,
+    HarnessConfig,
     allocate_next_task_id,
     create_task_package,
     discover_task_packages,
     find_duplicate_task_ids,
-    load_config,
+    setup_harness,
     slugify_task_name,
     summarize_task_package,
     validate_task_package,
 )
-from openharness_cli.repository.yaml import load_yaml
+from openharness_cli.core.yaml import load_yaml
 
 
 def _write_minimal_openharness_repo(repo_root: Path) -> None:
@@ -69,14 +70,15 @@ def _write_minimal_openharness_repo(repo_root: Path) -> None:
 
 
 def test_manifest_points_to_task_package_roots() -> None:
-    manifest = load_config(REPO_ROOT)
-    assert manifest.task_packages_root == REPO_ROOT / "docs" / "task-packages"
-    assert manifest.archived_task_packages_root == REPO_ROOT / "docs" / "archived" / "task-packages"
+    setup_harness(REPO_ROOT)
+    hx = setup_harness(REPO_ROOT)
+    assert hx.config.task_packages_root == REPO_ROOT / "docs" / "task-packages"
+    assert hx.config.archived_task_packages_root == REPO_ROOT / "docs" / "archived" / "task-packages"
 
 
 def test_self_hosting_design_package_is_discoverable() -> None:
-    manifest = load_config(REPO_ROOT)
-    packages = discover_task_packages(REPO_ROOT)
+    setup_harness(REPO_ROOT)
+    packages = discover_task_packages()
     package = next(package for package in packages if package.name == "self-hosting-bootstrap")
     assert package.task_id == "OH-001"
     assert package.current_status == "archived"
@@ -84,8 +86,8 @@ def test_self_hosting_design_package_is_discoverable() -> None:
 
 
 def test_workflow_redesign_package_is_discoverable() -> None:
-    manifest = load_config(REPO_ROOT)
-    packages = discover_task_packages(REPO_ROOT)
+    setup_harness(REPO_ROOT)
+    packages = discover_task_packages()
     package = next(package for package in packages if package.name == "workflow-redesign")
     assert package.task_id == "OH-002"
     assert package.current_status == "archived"
@@ -93,8 +95,8 @@ def test_workflow_redesign_package_is_discoverable() -> None:
 
 
 def test_reflective_design_review_package_is_discoverable() -> None:
-    manifest = load_config(REPO_ROOT)
-    packages = discover_task_packages(REPO_ROOT)
+    setup_harness(REPO_ROOT)
+    packages = discover_task_packages()
     package = next(package for package in packages if package.name == "reflective-design-review")
     assert package.task_id == "OH-003"
     assert package.current_status == "archived"
@@ -151,7 +153,8 @@ def test_allocate_next_task_id_uses_existing_prefix_and_width(tmp_path: Path) ->
             encoding="utf-8",
         )
 
-    assert allocate_next_task_id(repo_root) == "OH-100"
+    setup_harness(repo_root)
+    assert allocate_next_task_id() == "OH-100"
 
 
 def test_new_package_creates_with_auto_id(tmp_path: Path, capsys) -> None:
@@ -178,6 +181,7 @@ def test_new_package_creates_with_auto_id(tmp_path: Path, capsys) -> None:
         encoding="utf-8",
     )
 
+    setup_harness(repo_root)
     from openharness_cli.commands.task_package import new_package
     new_package(
         task_name="next-task",
@@ -185,7 +189,6 @@ def test_new_package_creates_with_auto_id(tmp_path: Path, capsys) -> None:
         owner="codex",
         summary="auto id",
         status="proposing",
-        repo=str(repo_root),
     )
 
     captured = capsys.readouterr()
@@ -240,8 +243,8 @@ def test_find_duplicate_task_ids_reports_conflicts(tmp_path: Path) -> None:
             encoding="utf-8",
         )
 
-    manifest = load_config(repo_root)
-    packages = discover_task_packages(repo_root)
+    setup_harness(repo_root)
+    packages = discover_task_packages()
     duplicates = find_duplicate_task_ids(packages)
 
     assert set(duplicates) == {"OH-999"}
@@ -258,8 +261,8 @@ def test_load_config_prefers_repo_local_skills_layout(tmp_path: Path) -> None:
         encoding="utf-8",
     )
 
-    manifest = load_config(repo_root)
-    assert manifest.task_packages_root == repo_root / "docs" / "task-packages"
+    hx = setup_harness(repo_root)
+    assert hx.config.task_packages_root == repo_root / "docs" / "task-packages"
 
 
 def test_validate_task_package_rejects_unknown_status_and_missing_paths(tmp_path: Path) -> None:
@@ -315,8 +318,8 @@ def test_validate_task_package_rejects_unknown_status_and_missing_paths(tmp_path
         encoding="utf-8",
     )
 
-    manifest = load_config(repo_root)
-    package = discover_task_packages(repo_root)[0]
+    setup_harness(repo_root)
+    package = discover_task_packages()[0]
     errors = validate_task_package(package)
 
     assert any("unknown status" in error for error in errors)
@@ -373,8 +376,8 @@ def test_validate_task_package_allows_archived_legacy_reference_fallback(tmp_pat
         encoding="utf-8",
     )
 
-    manifest = load_config(repo_root)
-    package = discover_task_packages(repo_root)[0]
+    setup_harness(repo_root)
+    package = discover_task_packages()[0]
     errors = validate_task_package(package)
 
     assert all("missing referenced path" not in error for error in errors)
@@ -406,8 +409,8 @@ def test_create_task_package_from_templates(tmp_path: Path) -> None:
     }.items():
         (template_root / file_name).write_text(content, encoding="utf-8")
 
+    setup_harness(repo_root)
     task_root, task_id = create_task_package(
-        repo_root=repo_root,
         task_name="Harness Replay",
         title="Harness Replay",
         owner="codex",

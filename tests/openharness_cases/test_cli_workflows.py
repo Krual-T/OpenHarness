@@ -5,8 +5,8 @@ from .common import (
     ALL_DESIGN_FILES,
     REPO_ROOT,
     json,
-    load_config,
     pytest,
+    setup_harness,
     validate_task_package,
     discover_task_packages,
 )
@@ -54,7 +54,7 @@ def test_bootstrap_reports_yaml_quote_hint_for_invalid_status_yaml(tmp_path: Pat
         encoding="utf-8",
     )
 
-    result = runner.invoke(app, ["task-package", "list", "--repo", str(repo_root), "--json"])
+    result = runner.invoke(app, ["--repo", str(repo_root), "task-package", "list", "--json"])
     assert result.exit_code == 1
     assert "wrap the whole sentence in double quotes" in result.stdout
     assert 'summary: "`02-overview-design.md` guidance: fix quoting"' in result.stdout
@@ -106,7 +106,7 @@ def test_bootstrap_reports_stage_guidance_in_text_output(tmp_path: Path, capsys)
         encoding="utf-8",
     )
 
-    result = runner.invoke(app, ["task-package", "list", "--repo", str(repo_root)])
+    result = runner.invoke(app, ["--repo", str(repo_root), "task-package", "list"])
     assert result.exit_code == 0
     assert "Harness manifest:" not in result.stdout
     assert "Task package root:" not in result.stdout
@@ -164,14 +164,14 @@ def test_bootstrap_reports_author_entry_when_present(tmp_path: Path, capsys) -> 
         encoding="utf-8",
     )
 
-    result = runner.invoke(app, ["task-package", "list", "--repo", str(repo_root)])
+    result = runner.invoke(app, ["--repo", str(repo_root), "task-package", "list"])
     assert result.exit_code == 0
     assert "author entry:" in result.stdout
     assert "author-entry.md" in result.stdout
 
 
 def test_init_parser_accepts_repo_argument() -> None:
-    result = runner.invoke(app, ["init", "--repo", "/tmp/example-repo"])
+    result = runner.invoke(app, ["--repo", "/tmp/example-repo", "init"])
     assert result.exit_code == 0
 
 
@@ -181,12 +181,11 @@ def test_init_creates_harness_gitignore_that_ignores_everything(
     repo_root = tmp_path / "repo"
     repo_root.mkdir()
 
-    from openharness_cli.commands.init_cmd import init
-    init(repo=str(repo_root))
-
+    result = runner.invoke(app, ["--repo", str(repo_root), "init"])
     captured = capsys.readouterr()
+    assert result.exit_code == 0
     assert (repo_root / ".harness" / ".gitignore").read_text(encoding="utf-8") == "*\n"
-    assert str(repo_root / ".harness") in captured.out
+    assert str(repo_root / ".harness") in result.stdout
 
 
 def test_bootstrap_json_includes_author_entry_when_present(tmp_path: Path, capsys) -> None:
@@ -237,7 +236,7 @@ def test_bootstrap_json_includes_author_entry_when_present(tmp_path: Path, capsy
         encoding="utf-8",
     )
 
-    result = runner.invoke(app, ["task-package", "list", "--repo", str(repo_root), "--json"])
+    result = runner.invoke(app, ["--repo", str(repo_root), "task-package", "list", "--json"])
     payload = json.loads(result.stdout)
     assert result.exit_code == 0
     assert payload["author_entry"]["path"].endswith("author-entry.md")
@@ -308,8 +307,8 @@ def test_validate_design_package_rejects_overview_designed_without_reflection(tm
         encoding="utf-8",
     )
 
-    manifest = load_config(repo_root)
-    package = discover_task_packages(repo_root)[0]
+    setup_harness(repo_root)
+    package = discover_task_packages()[0]
     errors = validate_task_package(package)
 
     assert any("overview_designed requires non-placeholder content" in error for error in errors)

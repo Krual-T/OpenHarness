@@ -11,11 +11,12 @@ from openharness_cli import (
     ACTIVE_STATUSES,
     ALL_DESIGN_FILES,
     CreateTaskInput,
+    HarnessConfig,
+    HarnessContext,
     allocate_next_task_id,
     create_task_package,
     discover_task_packages,
     find_duplicate_task_ids,
-    load_config,
     slugify_task_name,
     summarize_task_package,
     validate_task_package,
@@ -23,3 +24,8 @@ from openharness_cli import (
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SKILL_ROOT = REPO_ROOT / "skills" / "using-openharness"
+
+
+def setup_harness(repo_root: Path) -> HarnessContext:
+    """Activate a HarnessContext for tests that call @harness-decorated functions."""
+    return HarnessContext(repo_root).activate()
