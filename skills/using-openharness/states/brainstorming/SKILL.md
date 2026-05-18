@@ -63,8 +63,8 @@ description: 当任务状态是 proposing（需求未收敛、范围未明确）
 4. 哪些 acceptance criteria 会决定本轮是否算完成？
 5. 哪个 counterexample 必须被排除？
 6. 哪个限制一旦被突破，这就不再是同一个 task package？
-7. task_type（`mechanical` / `standard development` / `protocol/architecture`）是否已确认并写入 `STATUS.yaml`？
-8. verify_by（`unit_test` / `qualitative` / `rwp`）是否已确定并写入 `STATUS.yaml.verification.verify_by`？
+7. task_type（`mechanical` / `standard development` / `protocol/architecture`）是否已确认并写入 `task-info.yaml`？
+8. verify_by（`unit_test` / `qualitative` / `rwp`）是否已确定并写入 `task-info.yaml.verification.verify_by`？
 
 如果这些问题还答不上来，**阻塞**。不要进入 `02-overview-design.md`。
 
@@ -73,7 +73,7 @@ description: 当任务状态是 proposing（需求未收敛、范围未明确）
 - 模板文件位于 `skills/using-openharness/references/templates/task-package.01-requirements.md`
 - 需求阶段的结束标志是 `01-requirements.md` 足够坚实（Exit Check 全部能回答），不是文字变得更长
 - 在任务包里记录讨论结论，不要只留在聊天里
-- 需求收敛后，提议一种任务分类（`mechanical` / `standard development` / `protocol/architecture`），等用户确认后写入 `STATUS.yaml.collaboration.task_type`
+- 需求收敛后，提议一种任务分类（`mechanical` / `standard development` / `protocol/architecture`），等用户确认后写入 `task-info.yaml.collaboration.task_type`
 - Goal 不要写成抽象价值词；应该能回答"做完以后什么事实会成立"
 - Problem Statement 至少要写出一个已经存在的矛盾，而不是只写未来愿景
 - Required Outcomes 的每一项，后续都应该能在 `verification_design.md` 里找到对应验证

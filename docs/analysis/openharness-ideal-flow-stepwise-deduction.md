@@ -47,7 +47,7 @@ Agent 调用 `brainstorming`。
 ### 完整流程
 
 1. **读上下文**：打开 `openharness_cli/commands.py`，看现有 CLI 命令的注册和输出模式。
-2. **挑战前提**：用户说"加 status 命令"，但真正问题可能是"现在看任务状态要翻 STATUS.yaml 文件不方便"。需求本质：提供比直接读 YAML 更便捷的任务概览方式。
+2. **挑战前提**：用户说"加 status 命令"，但真正问题可能是"现在看任务状态要翻 task-info.yaml 文件不方便"。需求本质：提供比直接读 YAML 更便捷的任务概览方式。
 3. **识别歧义**——只需问一个问题：
 
    > 默认输出格式用表格（类似 `docker ps`），另外提供 `--json` flag 给脚本用。这样可以吗？
@@ -65,7 +65,7 @@ Agent 判断：
 - 单一命令、无架构决策 → **task_type: mechanical**
 - CLI 命令有明确输入输出、可自动测试 → **verify_by: unit_test**
 
-Agent 将两者写入 `STATUS.yaml`：
+Agent 将两者写入 `task-info.yaml`：
 
 ```yaml
 collaboration:
@@ -90,11 +90,11 @@ verification:
 ```
 Agent 执行 openharness transition <task> requirements_designed
 
-CLI 检查 STATUS.yaml：
+CLI 检查 task-info.yaml：
   task_type 为空？
-    → 报错："task_type 未确认。请向用户提议分类并写入 STATUS.yaml.collaboration.task_type"
+    → 报错："task_type 未确认。请向用户提议分类并写入 task-info.yaml.collaboration.task_type"
   verify_by 为空？
-    → 报错："verify_by 未确定。请确定验证策略（unit_test / qualitative / rwp）并写入 STATUS.yaml.verification.verify_by"
+    → 报错："verify_by 未确定。请确定验证策略（unit_test / qualitative / rwp）并写入 task-info.yaml.verification.verify_by"
 
   全部通过？
     → task_type == mechanical → 自动推进到 implementing
@@ -137,7 +137,7 @@ brainstorming 是"需求从无到有"，不是"每次进入 proposing 都重跑"
 2. 读上下文、挑战前提、识别歧义
 3. 写 01-requirements.md（模板路径：...）
 4. Exit Check：7 个问题逐项确认
-5. 提议 task_type 和 verify_by，等用户确认后写入 STATUS.yaml
+5. 提议 task_type 和 verify_by，等用户确认后写入 task-info.yaml
 
 完成后执行：openharness transition add-status-command requirements_designed
 ```
@@ -244,7 +244,7 @@ pytest tests/test_cli_status.py -v
 openharness transition add-status-command archived
 ```
 
-CLI 检查 `evidence.md` 存在且非空 → 将任务包移至 `docs/archived/task-packages/` → 更新 STATUS.yaml 为 archived。终态。
+CLI 检查 `evidence.md` 存在且非空 → 将任务包移至 `docs/archived/task-packages/` → 更新 task-info.yaml 为 archived。终态。
 
 ---
 
@@ -308,7 +308,7 @@ new-task → proposing → overview_designing → detailed_designing → impleme
 
 ---
 
-## STATUS.yaml 最终状态
+## task-info.yaml 最终状态
 
 ```yaml
 id: <DESIGN_ID>

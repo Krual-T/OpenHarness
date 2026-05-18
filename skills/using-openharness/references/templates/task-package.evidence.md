@@ -2,7 +2,7 @@
 
 > 章节标题保留英文；正文默认使用中文；命令、状态值、YAML 键名、文件名与路径保持英文。
 >
-> 按 `STATUS.yaml.verification.verify_by` 类型选择对应章节填写。不要求全部填写——只写实际执行的。
+> 按 `task-info.yaml.verification.verify_by` 类型选择对应章节填写。不要求全部填写——只写实际执行的。
 
 ## Verification Result
 - **verify_by**: <unit_test / qualitative / rwp>

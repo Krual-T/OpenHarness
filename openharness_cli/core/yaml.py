@@ -11,7 +11,7 @@ def load_yaml(path: Path) -> dict[str, Any]:
     except yaml.YAMLError as exc:
         raise ValueError(
             f"failed to parse YAML at {path}. "
-            "If a STATUS.yaml sentence contains backticks or other YAML-sensitive punctuation, "
+            "If a task-info.yaml sentence contains backticks or other YAML-sensitive punctuation, "
             'wrap the whole sentence in double quotes, for example: '
             'summary: "`02-overview-design.md` guidance: fix quoting"'
         ) from exc
