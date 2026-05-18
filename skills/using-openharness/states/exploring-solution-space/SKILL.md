@@ -7,7 +7,7 @@ description: 当任务状态是 overview_designing（需求已明确、需要收
 
 ## 何时使用
 
-`brainstorming` 完成并写出 `01-requirements.md`、transition 到 `overview_designing` 之后，总体方案收敛之前。
+`brainstorming` 完成并写出 `requirements.md`、transition 到 `overview_designing` 之后，总体方案收敛之前。
 
 ## 步骤
 
@@ -17,9 +17,9 @@ description: 当任务状态是 overview_designing（需求已明确、需要收
 4. 总结本地约束、可行选项和推荐方向
 5. 判断是否需要运行时验证：
    - 如果任务可能依赖运行时行为（API、服务、工作流），运行 `openharness rwp list` 检查候选 RWP
-   - 如有匹配的 RWP，记录到 `02-overview-design.md` 的 Runtime Verification Plan 中
+   - 如有匹配的 RWP，记录到 `overview-design.md` 的 Runtime Verification Plan 中
    - 如无匹配则记录 RWP gap，作为后续验证的已知盲区
-6. 撰写 `02-overview-design.md`：覆盖范围、排除范围、主体结构、关键边界、主流、备选方案，以及至少一个被拒绝的替代方案及其被拒原因
+6. 撰写 `overview-design.md`：覆盖范围、排除范围、主体结构、关键边界、主流、备选方案，以及至少一个被拒绝的替代方案及其被拒原因
 7. 概览反思：挑战主路径，比较替代方案，检查是否有遗漏的验证影响因素
 
 ## Exit Check
@@ -58,7 +58,7 @@ description: 当任务状态是 overview_designing（需求已明确、需要收
 - `确认`/`ok`/`可以` → 仅确认当前设计点
 - `自主推进`/`你决定` → 写入 `collaboration.design_review_mode: auto`
 - 每确认一个设计点就及时写回任务包，不要攒到最后
-- 不要把 detailed 级文件、字段、命令或迁移步骤塞进 `02`；这些内容应进入 `03-detailed-design.md`
+- 不要把 detailed 级文件、字段、命令或迁移步骤塞进 `02`；这些内容应进入 `detailed-design.md`
 
 ## 重入指南
 
@@ -71,14 +71,14 @@ description: 当任务状态是 overview_designing（需求已明确、需要收
 - 不要跳过网络搜索（当信息有时效性或来自外部时）
 - 反思过程必须写下来，不能只在脑中过一遍
 - 被拒绝或推迟的替代方案要在任务包中记录并说明原因
-- `02-overview-design.md` 需完成反思才能视为就绪
-- 模板文件位于 `skills/using-openharness/references/templates/task-package.02-overview-design.md`
+- `overview-design.md` 需完成反思才能视为就绪
+- 模板文件位于 `skills/using-openharness/references/templates/task-package.overview-design.md`
 - 如果任务需要运行时验证，在设计阶段就用 `openharness rwp list` 检查可用 RWP，不要留到实现阶段才发现缺失
 
 ## 与相邻文档的边界
 
 - 这里写"整体怎么组织"，不写"每个文件具体改什么实现细节"
-- 如果你已经开始列函数、类、命令细节、迁移步骤或测试清单，说明内容已经落到 `03-detailed-design.md`
+- 如果你已经开始列函数、类、命令细节、迁移步骤或测试清单，说明内容已经落到 `detailed-design.md`
 - 这里可以写接口责任、关键数据/状态模型和架构级约束，但不要细化到字段、参数、错误码或函数级签名
 - 这里也不应该重写需求背景；背景只需引用需求结论
 

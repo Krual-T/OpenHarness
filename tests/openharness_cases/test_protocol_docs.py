@@ -162,7 +162,7 @@ def test_readme_describes_runtime_capability_contract() -> None:
     assert "Runtime Workflow Package" in readme
     assert "openharness rwp list" in readme
     assert ".harness/rwp/workflows" in readme
-    assert "03-detailed-design.md" in readme
+    assert "detailed-design.md" in readme
 
 def test_agents_md_routes_repo_skill_usage_through_openharness() -> None:
     agents_path = REPO_ROOT / "AGENTS.md"
@@ -187,7 +187,7 @@ def test_design_package_templates_include_verification_path_sections() -> None:
         / "using-openharness"
         / "references"
         / "templates"
-        / "task-package.02-overview-design.md"
+        / "task-package.overview-design.md"
     ).read_text(encoding="utf-8")
     detailed = (
         REPO_ROOT
@@ -195,7 +195,7 @@ def test_design_package_templates_include_verification_path_sections() -> None:
         / "using-openharness"
         / "references"
         / "templates"
-        / "task-package.03-detailed-design.md"
+        / "task-package.detailed-design.md"
     ).read_text(encoding="utf-8")
     verification = (
         REPO_ROOT
@@ -203,7 +203,7 @@ def test_design_package_templates_include_verification_path_sections() -> None:
         / "using-openharness"
         / "references"
         / "templates"
-        / "task-package.verification_design.md"
+        / "task-package.verification-design.md"
     ).read_text(encoding="utf-8")
     evidence = (
         REPO_ROOT
@@ -256,8 +256,8 @@ def test_runtime_capability_reference_defines_declaration_shape_and_writeback() 
     assert "runtime observation" in text
     assert "success criteria" in text
     assert "failure evidence" in text
-    assert "03-detailed-design.md" in text
-    assert "verification_design.md" in text
+    assert "detailed-design.md" in text
+    assert "verification-design.md" in text
     assert "evidence.md" in text
     assert "## Routing Contract" in text
     assert "openharness rwp list" in text
@@ -290,8 +290,8 @@ def test_runtime_workflow_package_reference_defines_minimum_contents_and_selecti
     assert "openharness rwp list" in text
     assert "openharness rwp show" in text
     assert "openharness rwp run" in text
-    assert "03-detailed-design.md" in text
-    assert "verification_design.md" in text
+    assert "detailed-design.md" in text
+    assert "verification-design.md" in text
     assert "evidence.md" in text
 
 def test_runtime_workflow_package_template_provides_adoption_shape() -> None:
@@ -311,8 +311,8 @@ def test_runtime_workflow_package_template_provides_adoption_shape() -> None:
     assert "## Runtime Observation" in text
     assert "## Success Criteria" in text
     assert "## Failure Evidence" in text
-    assert "03-detailed-design.md" in text
-    assert "verification_design.md" in text
+    assert "detailed-design.md" in text
+    assert "verification-design.md" in text
     assert "evidence.md" in text
 
 def test_runtime_workflow_package_reference_defines_env_and_logger_boundaries() -> None:
@@ -338,7 +338,7 @@ def test_task_package_templates_default_to_chinese_narrative_with_english_anchor
         / "using-openharness"
         / "references"
         / "templates"
-        / "task-package.01-requirements.md"
+        / "task-package.requirements.md"
     ).read_text(encoding="utf-8")
     overview = (
         REPO_ROOT
@@ -346,7 +346,7 @@ def test_task_package_templates_default_to_chinese_narrative_with_english_anchor
         / "using-openharness"
         / "references"
         / "templates"
-        / "task-package.02-overview-design.md"
+        / "task-package.overview-design.md"
     ).read_text(encoding="utf-8")
     detailed = (
         REPO_ROOT
@@ -354,7 +354,7 @@ def test_task_package_templates_default_to_chinese_narrative_with_english_anchor
         / "using-openharness"
         / "references"
         / "templates"
-        / "task-package.03-detailed-design.md"
+        / "task-package.detailed-design.md"
     ).read_text(encoding="utf-8")
     verification = (
         REPO_ROOT
@@ -362,7 +362,7 @@ def test_task_package_templates_default_to_chinese_narrative_with_english_anchor
         / "using-openharness"
         / "references"
         / "templates"
-        / "task-package.verification_design.md"
+        / "task-package.verification-design.md"
     ).read_text(encoding="utf-8")
     evidence = (
         REPO_ROOT

@@ -7,6 +7,7 @@ from pathlib import Path
 from ..constants import TASK_ID_RE
 from ..harness_context import harness, HarnessContext
 from ..models import CreateTaskInput, TaskInfo, TaskPackage, TaskStatus, TaskPackageDocument
+from ..workflows import workflow_for
 from .yaml import load_yaml, write_yaml
 from .utils import current_date, get_git_author, slugify_task_name
 
@@ -78,14 +79,41 @@ def archive_task_package(package: TaskPackage) -> tuple[bool, str]:
         return False, f"archive target already exists: {target_root}"
 
     shutil.move(str(package.root), str(target_root))
+    if package.root.exists():
+        try:
+            package.root.rmdir()
+        except OSError:
+            return False, f"archive source still exists after move: {package.root}"
 
     info_path = TaskPackageDocument.TASK_INFO.path_from(target_root)
     raw_info = load_yaml(info_path)
     raw_info["status"] = "archived"
     raw_info["updated_at"] = current_date()
+    _rewrite_archived_package_paths(raw_info, package)
     write_yaml(info_path, raw_info)
 
     return True, ""
+
+
+def _rewrite_archived_package_paths(raw_info: dict, package: TaskPackage) -> None:
+    active_prefix = str(package.config.task_packages_root.relative_to(package.config.repo_root) / package.name)
+    archived_prefix = str(package.config.archived_task_packages_root.relative_to(package.config.repo_root) / package.name)
+
+    def rewrite(value):
+        if isinstance(value, str):
+            if value == active_prefix:
+                return archived_prefix
+            if value.startswith(f"{active_prefix}/"):
+                return f"{archived_prefix}/{value[len(active_prefix) + 1:]}"
+            return value
+        if isinstance(value, list):
+            return [rewrite(item) for item in value]
+        if isinstance(value, dict):
+            return {key: rewrite(item) for key, item in value.items()}
+        return value
+
+    for key, value in list(raw_info.items()):
+        raw_info[key] = rewrite(value)
 
 
 @harness
@@ -164,23 +192,57 @@ def _create_task_package_unlocked(ctx: HarnessContext, request: CreateTaskInput,
         "<DATE>": "YYYY-MM-DD",
     }
     task_root.mkdir(parents=True, exist_ok=False)
-    for template in sorted(template_root.glob("task-package.*")):
-        target_name = template.name.removeprefix("task-package.")
-        content = template.read_text(encoding="utf-8")
-        template_replacements = dict(replacements)
-        if target_name == TaskPackageDocument.TASK_INFO:
-            template_replacements.update({
-                "<DESIGN_ID>": json.dumps(task_id, ensure_ascii=False),
-                "<TITLE>": json.dumps(request.title, ensure_ascii=False),
-                "<OWNER>": json.dumps(request.owner, ensure_ascii=False),
-                "<STATUS>": json.dumps(request.status.value, ensure_ascii=False),
-                "<SUMMARY>": json.dumps(request.summary or f"Describe the goal of {request.title}.", ensure_ascii=False),
-                "<DATE>": json.dumps("YYYY-MM-DD", ensure_ascii=False),
-            })
-        for source, target in template_replacements.items():
-            content = content.replace(source, target)
-        (task_root / target_name).write_text(content, encoding="utf-8")
+    for doc in workflow_for(None).scaffold_files(request.status):
+        _create_task_package_document(template_root, task_root, doc, replacements)
     return task_root
+
+
+def _create_task_package_document(
+    template_root: Path,
+    task_root: Path,
+    doc: TaskPackageDocument,
+    replacements: dict[str, str],
+) -> None:
+    template = template_root / f"task-package.{doc.value}"
+    if not template.exists():
+        raise FileNotFoundError(f"template not found: {template}")
+    target_path = doc.path_from(task_root)
+    if target_path.exists():
+        return
+    content = template.read_text(encoding="utf-8")
+    template_replacements = dict(replacements)
+    if doc == TaskPackageDocument.TASK_INFO:
+        template_replacements.update({
+            "<DESIGN_ID>": json.dumps(replacements["<DESIGN_ID>"], ensure_ascii=False),
+            "<TITLE>": json.dumps(replacements["<TITLE>"], ensure_ascii=False),
+            "<OWNER>": json.dumps(replacements["<OWNER>"], ensure_ascii=False),
+            "<STATUS>": json.dumps(replacements["<STATUS>"], ensure_ascii=False),
+            "<SUMMARY>": json.dumps(replacements["<SUMMARY>"], ensure_ascii=False),
+            "<DATE>": json.dumps("YYYY-MM-DD", ensure_ascii=False),
+        })
+    for source, target in template_replacements.items():
+        content = content.replace(source, target)
+    target_path.write_text(content, encoding="utf-8")
+
+
+@harness
+def ensure_task_package_stage_files(ctx: HarnessContext, package: TaskPackage) -> None:
+    docs = package.workflow.scaffold_files(package.info.status)
+    missing_docs = [doc for doc in docs if not doc.path_from(package.root).exists()]
+    if not missing_docs:
+        return
+    template_root = _resolve_template_root()
+    replacements = {
+        "<DESIGN_ID>": package.task_id,
+        "<TITLE>": package.title,
+        "<DESIGN_NAME>": package.name,
+        "<OWNER>": package.owner,
+        "<STATUS>": package.current_status,
+        "<SUMMARY>": package.summary,
+        "<DATE>": "YYYY-MM-DD",
+    }
+    for doc in missing_docs:
+        _create_task_package_document(template_root, package.root, doc, replacements)
 
 
 @harness

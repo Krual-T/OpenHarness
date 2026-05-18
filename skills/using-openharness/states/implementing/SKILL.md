@@ -7,13 +7,13 @@ description: 当任务状态是 implementing（实现使验证通过，TDD 绿+�
 
 ## 何时使用
 
-验证策略已设计完成（`verification_design.md` 就绪），开始写代码使验证通过。
+验证策略已设计完成（`verification-design.md` 就绪），开始写代码使验证通过。
 
 ## 步骤
 
 ### TDD 循环：RED → GREEN → REFACTOR
 
-1. **RED**：运行 `verification_design.md` 中声明的验证命令，亲眼看到失败
+1. **RED**：运行 `verification-design.md` 中声明的验证命令，亲眼看到失败
 2. **GREEN**：最小实现使测试通过
 3. **REFACTOR**：消除重复、提取函数、改善结构，保持测试全绿
 
@@ -33,7 +33,7 @@ description: 当任务状态是 implementing（实现使验证通过，TDD 绿+�
 
 ## Exit Check
 
-1. 所有 `verification_design.md` 中声明的验证命令是否全部通过？
+1. 所有 `verification-design.md` 中声明的验证命令是否全部通过？
 2. `evidence.md` 是否存在且内容非空？
 3. 变更文件是否已全部列出？
 
@@ -47,11 +47,11 @@ description: 当任务状态是 implementing（实现使验证通过，TDD 绿+�
 
 | 失败现象 | 诊断 | 回退动作 |
 |---------|------|---------|
-| RED 阶段命令本身无法运行（文件不存在、import 错误） | 验证基础设施未就绪，不是被测代码的问题 | 回到 `verification_design.md` 修正命令路径或依赖 |
+| RED 阶段命令本身无法运行（文件不存在、import 错误） | 验证基础设施未就绪，不是被测代码的问题 | 回到 `verification-design.md` 修正命令路径或依赖 |
 | RED 阶段失败原因与预期不符（测试报错而不是 assertion failure） | 测试代码有 bug | 修复测试，仍在 RED 阶段 |
-| GREEN 阶段多个循环后仍无法让测试通过 | 设计有缺陷，或需求不可实现 | 回到 `02-overview-design.md` 或 `01-requirements.md` |
+| GREEN 阶段多个循环后仍无法让测试通过 | 设计有缺陷，或需求不可实现 | 回到 `overview-design.md` 或 `requirements.md` |
 | REFACTOR 后原先通过的测试变红 | 重构引入了回归 | 回滚最近一次重构，小步重做 |
-| 所有验证通过，但发现遗漏场景 | 验证策略覆盖不足 | 回到 `verification_design.md` 补充验证命令 |
+| 所有验证通过，但发现遗漏场景 | 验证策略覆盖不足 | 回到 `verification-design.md` 补充验证命令 |
 
 每完成一轮 TDD 循环，**立即**在 `evidence.md` 中追加该轮的测试命令和结果——不要等全部完成再补写。防止遗漏。
 
@@ -69,6 +69,6 @@ description: 当任务状态是 implementing（实现使验证通过，TDD 绿+�
 
 - 先让测试失败，再写实现——不要跳过 RED
 - evidence.md 只写事实，不写评价
-- 如果验证失败且不是代码问题，回到 `verification_design.md` 修正验证策略
+- 如果验证失败且不是代码问题，回到 `verification-design.md` 修正验证策略
 - 并行调度是横切策略，可在本阶段自行选择使用
 - 不要等全部实现完成再补 evidence.md——每轮循环写完立即追加

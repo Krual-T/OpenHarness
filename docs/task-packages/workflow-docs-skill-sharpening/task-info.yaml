@@ -23,9 +23,9 @@ collaboration:
   design_review_mode: stepwise
 entrypoints:
   - docs/task-packages/workflow-docs-skill-sharpening/README.md
-  - docs/task-packages/workflow-docs-skill-sharpening/01-requirements.md
-  - docs/task-packages/workflow-docs-skill-sharpening/02-overview-design.md
-  - docs/task-packages/workflow-docs-skill-sharpening/03-detailed-design.md
+  - docs/task-packages/workflow-docs-skill-sharpening/requirements.md
+  - docs/task-packages/workflow-docs-skill-sharpening/overview-design.md
+  - docs/task-packages/workflow-docs-skill-sharpening/detailed-design.md
 done_criteria:
   - Confirm each workflow documentation improvement direction with the user before implementation.
   - Update only the confirmed skill/template documentation surfaces.

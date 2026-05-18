@@ -10,6 +10,7 @@ from .task_packages import (
     summarize_task_package,
     allocate_next_task_id,
     create_task_package,
+    ensure_task_package_stage_files,
 )
 from .rwp import (
     discover_runtime_workflow_packages,
@@ -27,7 +28,7 @@ __all__ = [
     "archive_task_package",
     "discover_task_packages", "find_duplicate_task_ids",
     "resolve_task_package", "summarize_task_package",
-    "allocate_next_task_id", "create_task_package",
+    "allocate_next_task_id", "create_task_package", "ensure_task_package_stage_files",
     # rwp
     "discover_runtime_workflow_packages", "resolve_runtime_workflow_package",
     "resolve_runtime_workflow_script",

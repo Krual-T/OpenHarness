@@ -19,10 +19,10 @@ def test_create_task_package_quotes_yaml_sensitive_status_fields(tmp_path: Path)
         encoding="utf-8",
     )
     for name in (
-        "task-package.01-requirements.md",
-        "task-package.02-overview-design.md",
-        "task-package.03-detailed-design.md",
-        "task-package.verification_design.md",
+        "task-package.requirements.md",
+        "task-package.overview-design.md",
+        "task-package.detailed-design.md",
+        "task-package.verification-design.md",
         "task-package.evidence.md",
     ):
         (template_root / name).write_text("x\n", encoding="utf-8")
@@ -30,15 +30,15 @@ def test_create_task_package_quotes_yaml_sensitive_status_fields(tmp_path: Path)
     setup_harness(repo_root)
     task_root, task_id = create_task_package(
         task_name="Quote Probe",
-        title="`02-overview-design.md` guidance: quote YAML",
+        title="`overview-design.md` guidance: quote YAML",
         owner="codex",
-        summary="`02-overview-design.md` guidance: explain quoting.",
+        summary="`overview-design.md` guidance: explain quoting.",
     )
 
     status_text = TaskPackageDocument.TASK_INFO.path_from(task_root).read_text(encoding="utf-8")
     status = load_yaml(TaskPackageDocument.TASK_INFO.path_from(task_root))
 
-    assert 'title: "`02-overview-design.md` guidance: quote YAML"' in status_text
-    assert 'summary: "`02-overview-design.md` guidance: explain quoting."' in status_text
-    assert status["title"] == "`02-overview-design.md` guidance: quote YAML"
-    assert status["summary"] == "`02-overview-design.md` guidance: explain quoting."
+    assert 'title: "`overview-design.md` guidance: quote YAML"' in status_text
+    assert 'summary: "`overview-design.md` guidance: explain quoting."' in status_text
+    assert status["title"] == "`overview-design.md` guidance: quote YAML"
+    assert status["summary"] == "`overview-design.md` guidance: explain quoting."

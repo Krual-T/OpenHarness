@@ -11,7 +11,7 @@ description: 当任务状态是 verifying（执行验证、收集证据）时由
 
 ## 步骤
 
-1. **执行验证命令**：运行 `verification_design.md` 中声明的全部验证命令
+1. **执行验证命令**：运行 `verification-design.md` 中声明的全部验证命令
 2. **判断结果**：逐条对比期望退出码 vs 实际退出码和输出
 3. **处理失败**：见下方"验证失败处理"
 4. **补充 evidence.md**：
@@ -32,9 +32,9 @@ description: 当任务状态是 verifying（执行验证、收集证据）时由
 |---------|------|------|
 | 命令执行报错（找不到文件、权限拒绝、环境变量缺失） | 验证环境问题，非代码问题 | 修复环境后重新执行 |
 | 退出码与期望不符（期望 0，实际 1） | 代码未通过验证 | 回到 `implementing` 修复代码 |
-| 输出内容与预期不符，但退出码为 0 | 验证命令不够精确——期望输出写得太宽 | 回到 `verification_design.md` 收紧期望输出 |
+| 输出内容与预期不符，但退出码为 0 | 验证命令不够精确——期望输出写得太宽 | 回到 `verification-design.md` 收紧期望输出 |
 | rwp 脚本超时或挂起 | 工作流脚本有资源泄漏或死循环 | 回到 `implementing`，同时检查工作流脚本自身的 bug |
-| qualitative 审核结论模糊（"差不多""基本可以"） | 审核判定准则不够具体 | 回到 `verification_design.md` 补充判定准则 |
+| qualitative 审核结论模糊（"差不多""基本可以"） | 审核判定准则不够具体 | 回到 `verification-design.md` 补充判定准则 |
 
 **关键约束**：不要看到失败就自动跳回 implementing。先判断失败属于代码问题、环境问题还是验证策略问题——三者回退路径不同。
 
@@ -81,7 +81,7 @@ description: 当任务状态是 verifying（执行验证、收集证据）时由
 ## 常见失败模式
 
 - 跳过验证命令直接写 evidence.md——evidence 必须基于实际执行结果
-- verification_design.md 中声明了 N 条命令，但 verifying 只跑了 N-1 条——遗漏的命令不声不响
+- verification-design.md 中声明了 N 条命令，但 verifying 只跑了 N-1 条——遗漏的命令不声不响
 - rwp 工作流执行后只看了 stdout，忽略了 stderr 中的异常日志
 - qualitative 审核写成"代码看起来不错"——没有任何判定准则可对照
 - 验证失败后直接改代码而不先判断失败根因，导致反复 RED-GREEN 空转

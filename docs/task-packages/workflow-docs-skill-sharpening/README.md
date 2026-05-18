@@ -13,8 +13,8 @@
 
 ## Read This First
 - `task-info.yaml`
-- `01-requirements.md`
-- `02-overview-design.md`
-- `03-detailed-design.md`
-- `verification_design.md`
+- `requirements.md`
+- `overview-design.md`
+- `detailed-design.md`
+- `verification-design.md`
 - `evidence.md`

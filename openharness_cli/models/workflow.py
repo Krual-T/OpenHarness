@@ -13,6 +13,7 @@ class Workflow:
     gate_next: dict[TaskStatus, TaskStatus]
     gate_preconditions: dict[TaskStatus, Callable[..., list[str]]]
     file_additions: dict[TaskStatus, tuple[TaskPackageDocument, ...]]
+    working_files: dict[TaskStatus, tuple[TaskPackageDocument, ...]]
     section_specs: dict[TaskPackageDocument, tuple[tuple[TaskPackageDocument, str], ...]]
     descriptions: dict[TaskStatus, str]
     next_steps: dict[TaskStatus, str]
@@ -44,6 +45,11 @@ class Workflow:
             if s == status:
                 break
         return tuple(accumulated)
+
+    def scaffold_files(self, status: TaskStatus) -> tuple[TaskPackageDocument, ...]:
+        docs = list(self.required_files(status))
+        docs.extend(self.working_files.get(status, ()))
+        return tuple(dict.fromkeys(docs))
 
     def section_requirements(self, status: TaskStatus) -> tuple[tuple[TaskPackageDocument, str], ...]:
         sections: list[tuple[TaskPackageDocument, str]] = [

@@ -19,9 +19,9 @@ scope:
 collaboration: {}
 entrypoints:
   - docs/task-packages/<DESIGN_NAME>/README.md
-  - docs/task-packages/<DESIGN_NAME>/01-requirements.md
-  - docs/task-packages/<DESIGN_NAME>/02-overview-design.md
-  - docs/task-packages/<DESIGN_NAME>/03-detailed-design.md
+  - docs/task-packages/<DESIGN_NAME>/requirements.md
+  - docs/task-packages/<DESIGN_NAME>/overview-design.md
+  - docs/task-packages/<DESIGN_NAME>/detailed-design.md
 done_criteria:
   - Replace this placeholder with real done criteria.
 verification:

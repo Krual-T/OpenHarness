@@ -20,7 +20,7 @@
 ## Runtime Verification Plan
 - **Verification Path**：用中文列出将执行的验证路径，命令本身保持英文原样；先写主验证路径，再写 fallback。
 - **Fallback Path**：用中文说明如果主验证路径被阻塞时如何处理，以及何时不能宣称完成。
-- **Planned Evidence**：用中文写明预计要产出的证据、产物或观察结果，并说明后续 `verification_design.md` 需要收什么。
+- **Planned Evidence**：用中文写明预计要产出的证据、产物或观察结果，并说明后续 `verification-design.md` 需要收什么。
 
 **最低要求**：至少写主验证路径、阻塞时的 fallback 和预期证据。这里必须体现 testing-first / verification-first：先准备适合对象的测试或验证，再落实现；它不等于默认先写 pytest。
 

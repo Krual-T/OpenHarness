@@ -94,11 +94,11 @@ logger = get_logger()
 
 RWP usage must enter the normal task-package loop:
 
-- `02-overview-design.md`
+- `overview-design.md`
   - record the selected, rejected, or deferred workflow at overview level
-- `03-detailed-design.md`
+- `detailed-design.md`
   - record prerequisites, script names, expected runtime observation, success criteria, failure evidence, and fallback path
-- `verification_design.md`
+- `verification-design.md`
   - record executed `openharness rwp run ...` commands, exit codes, stdout/stderr summaries, runtime observations, deviations, and blockers
 - `evidence.md`
   - record artifact paths, log paths, external records, manual steps, residual risks, and follow-ups

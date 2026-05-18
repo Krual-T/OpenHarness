@@ -41,10 +41,10 @@ def _write_minimal_openharness_repo(repo_root: Path) -> None:
             "  required_commands: []\n"
             "  required_scenarios: []\n"
         ),
-        "task-package.01-requirements.md": "req\n",
-        "task-package.02-overview-design.md": "overview\n",
-        "task-package.03-detailed-design.md": "detailed\n",
-        "task-package.verification_design.md": "verify\n",
+        "task-package.requirements.md": "req\n",
+        "task-package.overview-design.md": "overview\n",
+        "task-package.detailed-design.md": "detailed\n",
+        "task-package.verification-design.md": "verify\n",
         "task-package.evidence.md": "evidence\n",
     }.items():
         (repo_root / "skills" / "using-openharness" / "references" / "templates" / name).write_text(
@@ -327,10 +327,10 @@ def test_create_task_package_from_templates(tmp_path: Path) -> None:
     for file_name, content in {
         "task-package.README.md": "# <DESIGN_ID> <TITLE>\n",
         "task-package.task-info.yaml": "id: <DESIGN_ID>\ntitle: <TITLE>\nstatus: <STATUS>\nsummary: <SUMMARY>\nowner: <OWNER>\ncreated_at: <DATE>\nupdated_at: <DATE>\ndone_criteria:\n  - x\nverification:\n  required_commands: []\n",
-        "task-package.01-requirements.md": "req\n",
-        "task-package.02-overview-design.md": "overview\n",
-        "task-package.03-detailed-design.md": "detail\n",
-        "task-package.verification_design.md": "verify\n",
+        "task-package.requirements.md": "req\n",
+        "task-package.overview-design.md": "overview\n",
+        "task-package.detailed-design.md": "detail\n",
+        "task-package.verification-design.md": "verify\n",
         "task-package.evidence.md": "evidence\n",
     }.items():
         (template_root / file_name).write_text(content, encoding="utf-8")
@@ -346,7 +346,11 @@ def test_create_task_package_from_templates(tmp_path: Path) -> None:
     assert task_root == repo_root / "docs" / "task-packages" / "harness-replay"
     assert task_id.startswith("TASK-")
     assert TaskPackageDocument.README.path_from(task_root).read_text(encoding="utf-8") == f"# {task_id} Harness Replay\n"
-    assert not (task_root / "04-implementation-plan.md").exists()
+    assert TaskPackageDocument.REQUIREMENTS.path_from(task_root).exists()
+    assert not TaskPackageDocument.OVERVIEW_DESIGN.path_from(task_root).exists()
+    assert not TaskPackageDocument.DETAILED_DESIGN.path_from(task_root).exists()
+    assert not TaskPackageDocument.VERIFICATION_DESIGN.path_from(task_root).exists()
+    assert not TaskPackageDocument.EVIDENCE.path_from(task_root).exists()
     status = load_yaml(TaskPackageDocument.TASK_INFO.path_from(task_root))
     assert status["summary"] == "Replay scenarios."
 

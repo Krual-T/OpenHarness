@@ -20,10 +20,10 @@ OpenHarness 要求需要运行时感知验证的仓库维护一份可发现的�
 
 写回要求应指向正常的任务包流程：
 
-- `03-detailed-design.md`
+- `detailed-design.md`
   - 记录是否需要运行时验证
   - 记录选定的表面、前置条件、驱动方式和预期观察
-- `verification_design.md`
+- `verification-design.md`
   - 记录实际执行的运行时路径和收集到的证据
 - `evidence.md`
   - 记录产物路径、命令、辅助引用、残余风险和后续操作

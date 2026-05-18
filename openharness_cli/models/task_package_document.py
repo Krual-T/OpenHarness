@@ -6,20 +6,20 @@ from pathlib import Path
 class TaskPackageDocument(StrEnum):
     README = ("README.md", True, ("## Overview",))
     TASK_INFO = ("task-info.yaml", True, ())
-    REQUIREMENTS = ("01-requirements.md", False, (
+    REQUIREMENTS = ("requirements.md", False, (
         "## Goal", "## Problem Statement", "## Required Outcomes", "## Constraints",
     ))
-    OVERVIEW_DESIGN = ("02-overview-design.md", False, (
+    OVERVIEW_DESIGN = ("overview-design.md", False, (
         "## System Boundary", "## Proposed Structure", "## Key Flows",
         "## Stage Gates", "## Trade-offs", "## Overview Reflection",
     ))
-    DETAILED_DESIGN = ("03-detailed-design.md", False, (
+    DETAILED_DESIGN = ("detailed-design.md", False, (
         "## Runtime Verification Plan", "## Files Added Or Changed",
         "## Interfaces", "## Module Internals", "## Data Semantics",
         "## Decision Closure", "## Error Handling", "## Migration Notes",
         "## Detailed Reflection",
     ))
-    VERIFICATION_DESIGN = ("verification_design.md", False, (
+    VERIFICATION_DESIGN = ("verification-design.md", False, (
         "## Verification Path", "## Required Commands", "## Expected Outcomes",
         "## Traceability", "## Risk Acceptance",
     ))

@@ -28,7 +28,7 @@ def test_bootstrap_reports_yaml_quote_hint_for_invalid_status_yaml(tmp_path: Pat
         "id: OH-998\n"
         "title: Bad YAML\n"
         "status: proposed\n"
-        "summary: `02-overview-design.md` guidance: fix quoting\n"
+        "summary: `overview-design.md` guidance: fix quoting\n"
         "owner: codex\n"
         "created_at: 2026-03-30\n"
         "updated_at: 2026-03-30\n"
@@ -43,7 +43,7 @@ def test_bootstrap_reports_yaml_quote_hint_for_invalid_status_yaml(tmp_path: Pat
     result = runner.invoke(app, ["--repo", str(repo_root), "task-package", "list", "--json"])
     assert result.exit_code == 1
     assert "wrap the whole sentence in double quotes" in result.stdout
-    assert 'summary: "`02-overview-design.md` guidance: fix quoting"' in result.stdout
+    assert 'summary: "`overview-design.md` guidance: fix quoting"' in result.stdout
 
 
 def test_bootstrap_reports_stage_guidance_in_text_output(tmp_path: Path, capsys) -> None:
@@ -135,6 +135,9 @@ def test_transition_verified_reports_auto_archive(tmp_path: Path) -> None:
         "updated_at: 2026-05-18\n"
         "done_criteria:\n"
         "  - x\n"
+        "entrypoints:\n"
+        "  - docs/task-packages/ready-to-archive/README.md\n"
+        "  - docs/task-packages/ready-to-archive/requirements.md\n"
         "verification:\n"
         "  verify_by: qualitative\n",
         encoding="utf-8",
@@ -149,7 +152,48 @@ def test_transition_verified_reports_auto_archive(tmp_path: Path) -> None:
     assert "Archived task package: OH-966" in result.stdout
     assert "already in `verifying`" not in result.stdout
     assert not root.exists()
-    assert (repo_root / "docs" / "archived" / "task-packages" / "ready-to-archive").exists()
+    archived_info = repo_root / "docs" / "archived" / "task-packages" / "ready-to-archive" / "task-info.yaml"
+    assert archived_info.exists()
+    assert "docs/archived/task-packages/ready-to-archive/README.md" in archived_info.read_text(encoding="utf-8")
+
+
+def test_transition_verified_keeps_source_status_when_archive_target_exists(tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
+    (repo_root / "docs" / "task-packages" / "archive-conflict").mkdir(parents=True)
+    (repo_root / "docs" / "archived" / "task-packages" / "archive-conflict").mkdir(parents=True)
+    root = repo_root / "docs" / "task-packages" / "archive-conflict"
+    for doc in ALL_DESIGN_FILES:
+        doc.path_from(root).write_text("# x\n", encoding="utf-8")
+    TaskPackageDocument.EVIDENCE.path_from(root).write_text(
+        "# Evidence\n\n## Verification Result\npassed\n",
+        encoding="utf-8",
+    )
+    info_path = TaskPackageDocument.TASK_INFO.path_from(root)
+    info_path.write_text(
+        "id: OH-967\n"
+        "title: Archive Conflict\n"
+        "status: verifying\n"
+        "summary: archive conflict\n"
+        "owner: codex\n"
+        "created_at: 2026-05-18\n"
+        "updated_at: 2026-05-18\n"
+        "done_criteria:\n"
+        "  - x\n"
+        "verification:\n"
+        "  verify_by: qualitative\n",
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        ["--repo", str(repo_root), "task-package", "transition", "archive-conflict", "verified"],
+    )
+
+    assert result.exit_code == 1
+    assert "archive target already exists" in result.stdout
+    assert root.exists()
+    assert "status: verifying" in info_path.read_text(encoding="utf-8")
 
 
 def test_bootstrap_reports_author_entry_when_present(tmp_path: Path, capsys) -> None:

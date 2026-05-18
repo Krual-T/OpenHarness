@@ -26,7 +26,7 @@
 ## Required Outcomes
 1. 用中文写出必须交付的结果，按可验证的粒度列清楚，并为核心结果写最小 `acceptance criteria`。
 
-**最低要求**：至少按可检查粒度列出必须交付物。这里的每一项，后续都应该能在 `verification_design.md` 里找到对应验证。
+**最低要求**：至少按可检查粒度列出必须交付物。这里的每一项，后续都应该能在 `verification-design.md` 里找到对应验证。
 
 ## Non-Goals
 - 用中文写明本轮明确不做什么，避免范围漂移。

@@ -7,16 +7,16 @@ description: 当任务状态是 verification_designing（设计验证策略，TD
 
 ## 何时使用
 
-需求已收敛（`01-requirements.md` 完成），需要先设计验证策略再动手实现。这是 TDD 的红阶段——先写"怎么验证"，再写"怎么实现"。
+需求已收敛（`requirements.md` 完成），需要先设计验证策略再动手实现。这是 TDD 的红阶段——先写"怎么验证"，再写"怎么实现"。
 
 ## 步骤
 
-1. **读需求文档**：打开 `01-requirements.md`，确认 Required Outcomes 和 acceptance criteria
+1. **读需求文档**：打开 `requirements.md`，确认 Required Outcomes 和 acceptance criteria
 2. **确定验证方式**：根据 `task-info.yaml.verification.verify_by` 选择
    - `unit_test` → 列出测试文件和测试命令
    - `qualitative` → 明确审核对象、审核标准和判定准则
    - `rwp` → 选择或编写运行时工作流脚本
-3. **写 `verification_design.md`**：参考模板 `skills/using-openharness/references/templates/task-package.verification_design.md`
+3. **写 `verification-design.md`**：参考模板 `skills/using-openharness/references/templates/task-package.verification-design.md`
    - **Verification Path**：计划路径（怎么验证）和预期执行路径
    - **Required Commands**：逐条列出验证命令（命令、期望退出码、期望输出）
    - **Expected Outcomes**：每项验收标准的预期结果
@@ -45,7 +45,7 @@ description: 当任务状态是 verification_designing（设计验证策略，TD
 | `qualitative` | 验证对象是设计文档、API 契约、命名规范等语义产物 | 不能对"函数返回 42"用 qualitative |
 | `rwp` | 需要端到端运行、跨进程交互、或依赖外部环境 | 不能对纯逻辑单元用 rwp（过重） |
 
-如果 `task-info.yaml.verification.verify_by` 与上述规则冲突，**阻塞**——回到 `01-requirements.md` 重新确定 verify_by。
+如果 `task-info.yaml.verification.verify_by` 与上述规则冲突，**阻塞**——回到 `requirements.md` 重新确定 verify_by。
 
 ### RWP 选择与设计约束
 
@@ -61,7 +61,7 @@ description: 当任务状态是 verification_designing（设计验证策略，TD
 
 | 卡住原因 | 回退动作 |
 |---------|---------|
-| 某项 Required Outcome 找不到对应验证方法 | 回到 `01-requirements.md` 修正该 Outcome——它不可验证，等于没写 |
+| 某项 Required Outcome 找不到对应验证方法 | 回到 `requirements.md` 修正该 Outcome——它不可验证，等于没写 |
 | 验证命令无法精确到复制粘贴执行 | 命令依赖的上下文不完整——补充文件路径、参数、环境变量 |
 | verify_by 与需求性质冲突 | 重新提议 verify_by 并更新 `task-info.yaml` |
 | 无法决定边界场景的验证粒度 | 优先覆盖安全/数据完整性边界；UI 微调类边界可声明不覆盖 |
@@ -69,9 +69,9 @@ description: 当任务状态是 verification_designing（设计验证策略，TD
 ## 要点
 
 - 验证策略是"契约先行"：实现代码时必须让这些验证通过
-- 不要在这里写实现方案——那是 `02-overview-design.md` 和 `03-detailed-design.md` 的职责
-- 如果发现验证策略本身有歧义，回到 `01-requirements.md` 澄清需求
-- 模板位于 `skills/using-openharness/references/templates/task-package.verification_design.md`
+- 不要在这里写实现方案——那是 `overview-design.md` 和 `detailed-design.md` 的职责
+- 如果发现验证策略本身有歧义，回到 `requirements.md` 澄清需求
+- 模板位于 `skills/using-openharness/references/templates/task-package.verification-design.md`
 - Required Commands 中每条命令的期望退出码必须写明——implementing 和 verifying 阶段依赖这个来做 pass/fail 判定
 
 ## 常见失败模式

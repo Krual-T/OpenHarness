@@ -7,11 +7,11 @@ description: 当任务状态是 detailed_designing（总体方案已收敛、需
 
 ## 何时使用
 
-`exploring-solution-space` 完成并写出自洽的 `02-overview-design.md`、transition 到 `detailed_designing` 之后，开始实施之前。
+`exploring-solution-space` 完成并写出自洽的 `overview-design.md`、transition 到 `detailed_designing` 之后，开始实施之前。
 
 ## 步骤
 
-1. 读取 `02-overview-design.md`，理解已确定的总体方向、Stage Gates、已确认的设计点和约束
+1. 读取 `overview-design.md`，理解已确定的总体方向、Stage Gates、已确认的设计点和约束
 2. 识别实现落脚点：哪些文件、模块或文档面承载本轮改动，为什么是这些落点而不是其他
 3. 设计落地细节：
    - 接口精度（参数语义、输入输出约束、边界条件、错误传播、兼容性要求）
@@ -19,7 +19,7 @@ description: 当任务状态是 detailed_designing（总体方案已收敛、需
    - 数据语义（关键数据结构、字段语义、状态转换、一致性约束）
    - 错误处理（主要失败路径、误用风险、静默出错风险、异常传播链）
    - 迁移顺序（实施顺序、兼容策略、切换点、回滚触发点）
-4. 撰写 `03-detailed-design.md`：
+4. 撰写 `detailed-design.md`：
    - 先写 Runtime Verification Plan：主验证路径、fallback、预期证据（先准备验证再落实现，但不等于默认先写 pytest）
    - 再写 Files Added Or Changed：不只是清单，更是"为什么这些地方承载本轮实现"
    - 然后 Interfaces、Module Internals、Data Semantics
@@ -44,7 +44,7 @@ description: 当任务状态是 detailed_designing（总体方案已收敛、需
 <写入 03 的哪些章节，会影响哪些部分>
 
 后续验证证据：
-<在 verification_design.md 中需要收什么证据>
+<在 verification-design.md 中需要收什么证据>
 
 请确认：
 <明确的确认问题>
@@ -69,7 +69,7 @@ description: 当任务状态是 detailed_designing（总体方案已收敛、需
 4. 是否已经知道迁移顺序、切换点和回滚触发点？
 5. 是否已经知道先准备什么测试或验证（testing-first / verification-first 顺序）？
 6. 是否已经知道失败会通过什么信号暴露（observability 从哪里来）？
-7. 是否已经知道后续 `verification_design.md` 需要收什么证据？
+7. 是否已经知道后续 `verification-design.md` 需要收什么证据？
 
 如果这些问题还答不清，**阻塞**。不要进入 `implementing`。
 
@@ -80,14 +80,14 @@ description: 当任务状态是 detailed_designing（总体方案已收敛、需
 - 先把 exploration 阶段已经确定的事实落到对应章节，再补推论；不要从空白开始
 - 不要跳过接口精度和数据语义——这是实现阶段分歧的最大来源
 - 如果你写完后还不能直接开始实施，说明 detailed 还不够具体
-- 模板文件位于 `skills/using-openharness/references/templates/task-package.03-detailed-design.md`
+- 模板文件位于 `skills/using-openharness/references/templates/task-package.detailed-design.md`
 
 ## 与相邻文档的边界
 
-- 这里写"怎么落地"，不写"整体怎么组织"——那是 `02-overview-design.md` 的职责
+- 这里写"怎么落地"，不写"整体怎么组织"——那是 `overview-design.md` 的职责
 - 如果你还在讨论方案一还是方案二，说明 overview 还没真正收敛，应回退到 `overview_designing`
 - 不要把实际执行结果提前写进来
-- `verification_design.md` 写验证计划；如果你已经开始记录实际执行结果，那部分应进入 `evidence.md`
+- `verification-design.md` 写验证计划；如果你已经开始记录实际执行结果，那部分应进入 `evidence.md`
 
 ## 常见失败模式
 

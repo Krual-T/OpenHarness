@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Optional
 
 from .models import TaskInfo, TaskPackage, TaskStatus, parse_status
-from .core import archive_task_package, current_date, write_yaml
+from .core import archive_task_package, current_date, ensure_task_package_stage_files, write_yaml
 
 
 @dataclass(frozen=True)
@@ -20,7 +20,9 @@ class TransitionResult:
 
 def _save_package_status(package: TaskPackage, info: TaskInfo) -> TaskPackage:
     write_yaml(package.info_path, info.to_dict())
-    return TaskPackage(root=package.root, info=info, config=package.config)
+    updated = TaskPackage(root=package.root, info=info, config=package.config)
+    ensure_task_package_stage_files(updated)
+    return updated
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -106,6 +108,15 @@ def execute_transition(package: TaskPackage, target_status: str) -> tuple[Transi
     gate_next, gate_errors = _resolve_gate_transition(package, target_status)
     if gate_errors:
         return TransitionResult(), gate_errors
+
+    if gate_next == TaskStatus.ARCHIVED.value:
+        archived_path = package.config.archived_task_packages_root / package.name
+        if archived_path.exists():
+            return TransitionResult(), [f"archive target already exists: {archived_path}"]
+        archived_ok, detail = archive_task_package(package)
+        if not archived_ok:
+            return TransitionResult(), [detail]
+        return TransitionResult(archived_path=archived_path), []
 
     target = parse_status(target_status) or TaskStatus.PROPOSING
     candidate_info = dataclasses.replace(

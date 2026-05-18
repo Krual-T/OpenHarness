@@ -7,6 +7,7 @@ from ..display import describe_stage, output_state_hook
 from ..core import (
     create_task_package,
     discover_task_packages,
+    ensure_task_package_stage_files,
     humanize_task_name,
     resolve_task_package,
     summarize_task_package,
@@ -149,6 +150,7 @@ def transition(
 
     if result.package is not None:
         updated = result.package
+        ensure_task_package_stage_files(updated)
         validation_errors = validate_task_package(updated)
         if validation_errors:
             for error in validation_errors:

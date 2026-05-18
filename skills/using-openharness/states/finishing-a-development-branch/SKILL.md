@@ -14,7 +14,7 @@ description: 当任务状态是 archived（验证通过、任务包已完成）�
 ### 1. 验证任务证据
 
 确保任务包反映已完成的工作：
-- `verification_design.md` 有最新的验证结果
+- `verification-design.md` 有最新的验证结果
 - `evidence.md` 有变更文件、执行的命令和残留风险
 - `task-info.yaml` 与实际工作状态一致
 

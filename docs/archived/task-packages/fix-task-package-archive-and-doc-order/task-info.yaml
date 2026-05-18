@@ -1,0 +1,28 @@
+id: TASK-005
+title: Fix Task Package Archive And Doc Order
+status: archived
+summary: Fix task package archive moves and stage-ordered document creation.
+owner: Shaokun.Tang
+created_at: YYYY-MM-DD
+updated_at: '2026-05-18'
+done_criteria:
+- Archived task packages are moved as whole directories and do not leave empty active
+  package directories behind.
+- New task packages are not scaffolded with every future design document at creation
+  time.
+- Task package document filenames use semantic names; workflow status determines creation
+  order.
+- CLI tests cover creation, stage document scaffolding, and archive cleanup.
+entrypoints:
+- docs/archived/task-packages/fix-task-package-archive-and-doc-order/README.md
+- docs/archived/task-packages/fix-task-package-archive-and-doc-order/requirements.md
+- docs/archived/task-packages/fix-task-package-archive-and-doc-order/overview-design.md
+- docs/archived/task-packages/fix-task-package-archive-and-doc-order/detailed-design.md
+collaboration:
+  task_type: standard development
+  design_review_mode: auto
+verification:
+  verify_by: unit_test
+depends_on: []
+scope:
+  areas: []

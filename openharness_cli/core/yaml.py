@@ -13,7 +13,7 @@ def load_yaml(path: Path) -> dict[str, Any]:
             f"failed to parse YAML at {path}. "
             "If a task-info.yaml sentence contains backticks or other YAML-sensitive punctuation, "
             'wrap the whole sentence in double quotes, for example: '
-            'summary: "`02-overview-design.md` guidance: fix quoting"'
+            'summary: "`overview-design.md` guidance: fix quoting"'
         ) from exc
     if data is None:
         return {}

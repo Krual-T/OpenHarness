@@ -122,7 +122,7 @@ Instead, it defines Runtime Workflow Package (RWP) support:
 - repositories can declare runtime workflow packages under `.harness/rwp/workflows`
 - agents use `openharness rwp list` and `openharness rwp show` for progressive disclosure instead of loading every workflow into context
 - runtime execution uses `openharness rwp run <workflow> <script.py> [args...]`
-- selected workflows, execution plans, observations, and evidence are written back into `03-detailed-design.md`, `verification_design.md`, and `evidence.md`
+- selected workflows, execution plans, observations, and evidence are written back into `detailed-design.md`, `verification-design.md`, and `evidence.md`
 
 ## The OpenHarness workflow
 

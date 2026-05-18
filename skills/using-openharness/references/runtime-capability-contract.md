@@ -34,11 +34,11 @@ Each Runtime Workflow Package should declare at least:
 
 The writeback expectations must stay inside the normal task-package flow:
 
-- `02-overview-design.md`
+- `overview-design.md`
   - record whether RWP selection was considered and which package was selected, rejected, or deferred
-- `03-detailed-design.md`
+- `detailed-design.md`
   - record the chosen RWP, prerequisites, scripts to run, expected observations, and fallback path
-- `verification_design.md`
+- `verification-design.md`
   - record the executed `openharness rwp run ...` command, stdout/stderr summary, runtime observations, deviations, blockers, and blind spots
 - `evidence.md`
   - record artifact paths, log paths, external evidence, commands, residual risks, and follow-up actions
