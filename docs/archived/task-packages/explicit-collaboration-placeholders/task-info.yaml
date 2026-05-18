@@ -1,0 +1,12 @@
+id: TASK-015
+title: Explicit Collaboration Placeholders
+status: archived
+summary: Make collaboration placeholders explicit in the task-info template.
+owner: Shaokun.Tang
+created_at: YYYY-MM-DD
+updated_at: '2026-05-18'
+collaboration:
+  task_type: standard development
+  design_review_mode: auto
+verification:
+  verify_by: unit_test

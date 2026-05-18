@@ -1,6 +1,10 @@
 from .common import Path, REPO_ROOT, TaskPackageDocument, create_task_package, setup_harness, openharness
 from openharness_cli.core.yaml import load_yaml
 
+TASK_TYPE_PLACEHOLDER = "<mechanical|standard development|protocol/architecture|>"
+DESIGN_REVIEW_MODE_PLACEHOLDER = "<stepwise|auto|>"
+VERIFY_BY_PLACEHOLDER = "<unit_test|qualitative|rwp|>"
+
 
 def test_create_task_package_quotes_yaml_sensitive_status_fields(tmp_path: Path) -> None:
     repo_root = tmp_path / "repo"
@@ -14,7 +18,12 @@ def test_create_task_package_quotes_yaml_sensitive_status_fields(tmp_path: Path)
         "summary: <SUMMARY>\n"
         "owner: <OWNER>\n"
         "created_at: <DATE>\n"
-        "updated_at: <DATE>\n",
+        "updated_at: <DATE>\n"
+        "collaboration:\n"
+        f"  task_type: {TASK_TYPE_PLACEHOLDER}\n"
+        f"  design_review_mode: {DESIGN_REVIEW_MODE_PLACEHOLDER}\n"
+        "verification:\n"
+        f"  verify_by: {VERIFY_BY_PLACEHOLDER}\n",
         encoding="utf-8",
     )
     for name in (
@@ -42,3 +51,6 @@ def test_create_task_package_quotes_yaml_sensitive_status_fields(tmp_path: Path)
     assert status["id"] == task_id
     assert status["title"] == "`overview-design.md` guidance: quote YAML"
     assert status["summary"] == "`overview-design.md` guidance: explain quoting."
+    assert status["collaboration"]["task_type"] == TASK_TYPE_PLACEHOLDER
+    assert status["collaboration"]["design_review_mode"] == DESIGN_REVIEW_MODE_PLACEHOLDER
+    assert status["verification"]["verify_by"] == VERIFY_BY_PLACEHOLDER

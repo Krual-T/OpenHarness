@@ -22,6 +22,9 @@ from openharness_cli.core.yaml import load_yaml
 
 runner = CliRunner()
 REMOVED_TASK_INFO_KEYS = ("done" + "_criteria", "depends" + "_on", "scope")
+TASK_TYPE_PLACEHOLDER = "<mechanical|standard development|protocol/architecture|>"
+DESIGN_REVIEW_MODE_PLACEHOLDER = "<stepwise|auto|>"
+VERIFY_BY_PLACEHOLDER = "<unit_test|qualitative|rwp|>"
 
 
 def _write_minimal_openharness_repo(repo_root: Path) -> None:
@@ -35,9 +38,11 @@ def _write_minimal_openharness_repo(repo_root: Path) -> None:
             "owner: <OWNER>\n"
             "created_at: <DATE>\n"
             "updated_at: <DATE>\n"
+            "collaboration:\n"
+            f"  task_type: {TASK_TYPE_PLACEHOLDER}\n"
+            f"  design_review_mode: {DESIGN_REVIEW_MODE_PLACEHOLDER}\n"
             "verification:\n"
-            "  required_commands: []\n"
-            "  required_scenarios: []\n"
+            f"  verify_by: {VERIFY_BY_PLACEHOLDER}\n"
         ),
         "task-package.requirements.md": "req\n",
         "task-package.overview-design.md": "overview\n",
@@ -313,7 +318,20 @@ def test_create_task_package_from_templates(tmp_path: Path) -> None:
     (repo_root / "docs" / "task-packages").mkdir(parents=True)
     template_root = repo_root / "skills" / "using-openharness" / "references" / "templates"
     for file_name, content in {
-        "task-package.task-info.yaml": "id: <TASK_ID>\ntitle: <TITLE>\nstatus: <STATUS>\nsummary: <SUMMARY>\nowner: <OWNER>\ncreated_at: <DATE>\nupdated_at: <DATE>\nverification:\n  required_commands: []\n",
+        "task-package.task-info.yaml": (
+            "id: <TASK_ID>\n"
+            "title: <TITLE>\n"
+            "status: <STATUS>\n"
+            "summary: <SUMMARY>\n"
+            "owner: <OWNER>\n"
+            "created_at: <DATE>\n"
+            "updated_at: <DATE>\n"
+            "collaboration:\n"
+            f"  task_type: {TASK_TYPE_PLACEHOLDER}\n"
+            f"  design_review_mode: {DESIGN_REVIEW_MODE_PLACEHOLDER}\n"
+            "verification:\n"
+            f"  verify_by: {VERIFY_BY_PLACEHOLDER}\n"
+        ),
         "task-package.requirements.md": "req\n",
         "task-package.overview-design.md": "overview\n",
         "task-package.detailed-design.md": "detail\n",
@@ -342,6 +360,9 @@ def test_create_task_package_from_templates(tmp_path: Path) -> None:
     assert status["id"] == task_id
     assert status["summary"] == "Replay scenarios."
     assert all(key not in status for key in REMOVED_TASK_INFO_KEYS)
+    assert status["collaboration"]["task_type"] == TASK_TYPE_PLACEHOLDER
+    assert status["collaboration"]["design_review_mode"] == DESIGN_REVIEW_MODE_PLACEHOLDER
+    assert status["verification"]["verify_by"] == VERIFY_BY_PLACEHOLDER
 
 
 def test_key_repo_skills_are_vendored_locally() -> None:

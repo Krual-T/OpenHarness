@@ -13,6 +13,8 @@ updated_at: <DATE>
 # Write collaboration only after human confirms.
 # task_type: mechanical | standard development | protocol/architecture
 # design_review_mode: stepwise | auto
-collaboration: {}
+collaboration:
+  task_type: <mechanical|standard development|protocol/architecture|>
+  design_review_mode: <stepwise|auto|>
 verification:
-  verify_by: ""   # unit_test | qualitative | rwp
+  verify_by: <unit_test|qualitative|rwp|>
