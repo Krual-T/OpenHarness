@@ -92,17 +92,18 @@ def execute_transition(package: TaskPackage, target_status: str) -> tuple[Option
             return None, [detail]
         return None, []
 
-    # Save the transition to the target state first
+    # Check gate preconditions BEFORE persisting, so a failed gate check
+    # doesn't leave task-info.yaml in an intermediate state.
+    gate_next, gate_errors = _resolve_gate_transition(package, target_status)
+    if gate_errors:
+        return None, gate_errors
+
     target = parse_status(target_status) or TaskStatus.PROPOSING
     candidate_info = dataclasses.replace(
         package.info, status=target, updated_at=current_date(), _raw_status=None,
     )
     updated = _save_package_status(package, candidate_info)
 
-    # Then check if the new state is a gate that should auto-advance
-    gate_next, gate_errors = _resolve_gate_transition(updated, target_status)
-    if gate_errors:
-        return None, gate_errors
     if gate_next is not None:
         return execute_transition(updated, gate_next)
 

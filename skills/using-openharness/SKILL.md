@@ -21,7 +21,7 @@ openharness task-package list
 ```
 
 按输出：
-- **有匹配活跃包** → 读取 STATUS.yaml，按 CLI 输出的状态指令推进
+- **有匹配活跃包** → `openharness task-package view <task>` 进入该包，CLI 自动输出当前阶段指令
 - **无匹配或空** → 新建任务包
 
 ## 核心命令
@@ -29,6 +29,7 @@ openharness task-package list
 | 场景 | 命令 |
 |------|------|
 | 列出活跃任务包 | `openharness task-package list` |
+| 查看/进入任务包 | `openharness task-package view <task>` |
 | 新建任务包 | `openharness task-package new <name>` |
 | 推进状态 | `openharness task-package transition <task> <目标状态>` |
 

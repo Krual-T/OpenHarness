@@ -1,11 +1,9 @@
 
 import json
-from pathlib import Path
 
 import typer
 
 from ..display import describe_stage, output_state_hook
-from ..models import TaskStatus, TaskPackageDocument
 from ..core import (
     create_task_package,
     discover_task_packages,
@@ -80,17 +78,24 @@ def list_packages(
         print(f"  next stage: `{stage['next_stage']}`" if stage["next_stage"] else "  next stage: none")
         print(f"  next step: {stage['next_step']}")
 
-    proposing = [p for p in packages if p.current_status == "proposing"]
-    if proposing:
-        print("\n" + "=" * 60, flush=True)
-        for p in proposing:
-            print(f"\n## Task: {p.task_id} {p.title}", flush=True)
-            output_state_hook("proposing")
-            req_path = TaskPackageDocument.REQUIREMENTS.path_from(p.root)
-            if req_path.exists():
-                print(f"\n--- Current {TaskPackageDocument.REQUIREMENTS.value} ({p.task_id}) ---", flush=True)
-                print(req_path.read_text(encoding="utf-8"), flush=True)
-                print(f"--- END: {TaskPackageDocument.REQUIREMENTS.value} ({p.task_id}) ---", flush=True)
+
+@task_app.command(name="view")
+def view_package(
+    task: str = typer.Argument(..., help="Task package name or task id"),
+) -> None:
+    """Show task package details and inject the current stage's skill instructions."""
+    try:
+        package = resolve_task_package(task)
+    except (FileNotFoundError, ValueError) as exc:
+        print(f"ERROR: {exc}")
+        raise typer.Exit(code=1)
+
+    stage = describe_stage(package)
+    print(f"Task: {package.task_id} {package.title}")
+    print(f"Owner: {package.owner}")
+    print(f"Status: `{stage['current_stage']}` — {stage['current_stage_description']}")
+    print(f"Next: `{stage['next_stage']}` — {stage['next_step']}" if stage["next_stage"] else f"Next: none")
+    output_state_hook(package.current_status)
 
 
 @task_app.command(name="new")
