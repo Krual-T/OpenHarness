@@ -1,0 +1,24 @@
+id: TASK-006
+title: 从任务包协议中移除 README
+status: archived
+summary: 从 OpenHarness 任务包协议、模板、CLI 期望和测试中移除 per-task README.md。
+owner: Shaokun.Tang
+created_at: YYYY-MM-DD
+updated_at: '2026-05-18'
+done_criteria:
+- 任务包协议不再生成或要求 per-task README.md。
+- 任务包模板不再包含 task-package.README.md，也不默认写入 README entrypoint。
+- 相关 CLI 和测试覆盖新行为，并保留旧 entrypoints 字段的兼容读取。
+collaboration:
+  task_type: protocol/architecture
+  design_review_mode: stepwise
+verification:
+  verify_by: unit_test
+depends_on: []
+scope:
+  areas:
+  - openharness_cli/models/task_package_document.py
+  - openharness_cli/models/workflow.py
+  - skills/using-openharness/references/templates
+  - skills/using-openharness/references/cli-reference.md
+  - tests/openharness_cases

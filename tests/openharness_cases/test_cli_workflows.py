@@ -136,7 +136,6 @@ def test_transition_verified_reports_auto_archive(tmp_path: Path) -> None:
         "done_criteria:\n"
         "  - x\n"
         "entrypoints:\n"
-        "  - docs/task-packages/ready-to-archive/README.md\n"
         "  - docs/task-packages/ready-to-archive/requirements.md\n"
         "verification:\n"
         "  verify_by: qualitative\n",
@@ -154,7 +153,9 @@ def test_transition_verified_reports_auto_archive(tmp_path: Path) -> None:
     assert not root.exists()
     archived_info = repo_root / "docs" / "archived" / "task-packages" / "ready-to-archive" / "task-info.yaml"
     assert archived_info.exists()
-    assert "docs/archived/task-packages/ready-to-archive/README.md" in archived_info.read_text(encoding="utf-8")
+    archived_text = archived_info.read_text(encoding="utf-8")
+    assert "docs/archived/task-packages/ready-to-archive/requirements.md" in archived_text
+    assert "README.md" not in archived_text
 
 
 def test_transition_verified_keeps_source_status_when_archive_target_exists(tmp_path: Path) -> None:
@@ -281,7 +282,6 @@ def test_validate_design_package_rejects_overview_designed_without_reflection(tm
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
     (repo_root / "docs" / "task-packages" / "overview-no-reflection").mkdir(parents=True)
     root = repo_root / "docs" / "task-packages" / "overview-no-reflection"
-    TaskPackageDocument.README.path_from(root).write_text("# Overview No Reflection\n", encoding="utf-8")
     TaskPackageDocument.REQUIREMENTS.path_from(root).write_text(
         "# Requirements\n\n"
         "## Goal\nA\n\n"

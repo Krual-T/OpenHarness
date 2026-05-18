@@ -26,7 +26,6 @@ runner = CliRunner()
 def _write_minimal_openharness_repo(repo_root: Path) -> None:
     (repo_root / "skills" / "using-openharness" / "references" / "templates").mkdir(parents=True)
     for name, contents in {
-        "task-package.README.md": "# <DESIGN_ID> <TITLE>\n",
         "task-package.task-info.yaml": (
             "id: <DESIGN_ID>\n"
             "title: <TITLE>\n"
@@ -203,7 +202,6 @@ def test_validate_task_package_rejects_unknown_status_and_missing_paths(tmp_path
     (repo_root / "docs" / "task-packages" / "broken").mkdir(parents=True)
     root = repo_root / "docs" / "task-packages" / "broken"
     for doc in (
-        TaskPackageDocument.README,
         TaskPackageDocument.REQUIREMENTS,
         TaskPackageDocument.OVERVIEW_DESIGN,
         TaskPackageDocument.DETAILED_DESIGN,
@@ -222,7 +220,6 @@ def test_validate_task_package_rejects_unknown_status_and_missing_paths(tmp_path
         "done_criteria:\n"
         "  - x\n"
         "entrypoints:\n"
-        "  - docs/task-packages/broken/README.md\n"
         "  - docs/task-packages/broken/missing.md\n"
         "verification:\n"
         "  required_commands: []\n"
@@ -325,7 +322,6 @@ def test_create_task_package_from_templates(tmp_path: Path) -> None:
     (repo_root / "docs" / "task-packages").mkdir(parents=True)
     template_root = repo_root / "skills" / "using-openharness" / "references" / "templates"
     for file_name, content in {
-        "task-package.README.md": "# <DESIGN_ID> <TITLE>\n",
         "task-package.task-info.yaml": "id: <DESIGN_ID>\ntitle: <TITLE>\nstatus: <STATUS>\nsummary: <SUMMARY>\nowner: <OWNER>\ncreated_at: <DATE>\nupdated_at: <DATE>\ndone_criteria:\n  - x\nverification:\n  required_commands: []\n",
         "task-package.requirements.md": "req\n",
         "task-package.overview-design.md": "overview\n",
@@ -345,7 +341,7 @@ def test_create_task_package_from_templates(tmp_path: Path) -> None:
 
     assert task_root == repo_root / "docs" / "task-packages" / "harness-replay"
     assert task_id.startswith("TASK-")
-    assert TaskPackageDocument.README.path_from(task_root).read_text(encoding="utf-8") == f"# {task_id} Harness Replay\n"
+    assert not (task_root / "README.md").exists()
     assert TaskPackageDocument.REQUIREMENTS.path_from(task_root).exists()
     assert not TaskPackageDocument.OVERVIEW_DESIGN.path_from(task_root).exists()
     assert not TaskPackageDocument.DETAILED_DESIGN.path_from(task_root).exists()

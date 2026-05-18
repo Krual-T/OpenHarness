@@ -52,9 +52,7 @@ class Workflow:
         return tuple(dict.fromkeys(docs))
 
     def section_requirements(self, status: TaskStatus) -> tuple[tuple[TaskPackageDocument, str], ...]:
-        sections: list[tuple[TaskPackageDocument, str]] = [
-            (TaskPackageDocument.README, h) for h in TaskPackageDocument.README.sections
-        ]
+        sections: list[tuple[TaskPackageDocument, str]] = []
         accumulated_files: set[TaskPackageDocument] = set()
         for s in self.status_sequence:
             for f in self.file_additions.get(s, ()):

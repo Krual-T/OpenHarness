@@ -17,11 +17,6 @@ scope:
 # task_type: mechanical | standard development | protocol/architecture
 # design_review_mode: stepwise | auto
 collaboration: {}
-entrypoints:
-  - docs/task-packages/<DESIGN_NAME>/README.md
-  - docs/task-packages/<DESIGN_NAME>/requirements.md
-  - docs/task-packages/<DESIGN_NAME>/overview-design.md
-  - docs/task-packages/<DESIGN_NAME>/detailed-design.md
 done_criteria:
   - Replace this placeholder with real done criteria.
 verification:

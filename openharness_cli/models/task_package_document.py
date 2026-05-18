@@ -4,7 +4,6 @@ from pathlib import Path
 
 
 class TaskPackageDocument(StrEnum):
-    README = ("README.md", True, ("## Overview",))
     TASK_INFO = ("task-info.yaml", True, ())
     REQUIREMENTS = ("requirements.md", False, (
         "## Goal", "## Problem Statement", "## Required Outcomes", "## Constraints",

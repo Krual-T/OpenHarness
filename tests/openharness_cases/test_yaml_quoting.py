@@ -7,7 +7,6 @@ def test_create_task_package_quotes_yaml_sensitive_status_fields(tmp_path: Path)
     (repo_root / "skills" / "using-openharness" / "references" / "templates").mkdir(parents=True)
     (repo_root / "docs" / "task-packages").mkdir(parents=True)
     template_root = repo_root / "skills" / "using-openharness" / "references" / "templates"
-    (template_root / "task-package.README.md").write_text("# <DESIGN_ID> <TITLE>\n", encoding="utf-8")
     (template_root / "task-package.task-info.yaml").write_text(
         "id: <DESIGN_ID>\n"
         "title: <TITLE>\n"

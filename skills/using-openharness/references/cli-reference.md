@@ -15,7 +15,7 @@
 
 ## 关键约束
 
-- `task-info.yaml` 是唯一状态源；`README.md` 的 Current Status 必须与其一致
+- `task-info.yaml` 是唯一状态源；任务包不再维护单独的 `README.md`
 - 文档正文中文；节标题、命令、状态值、YAML 键、文件名、路径保持英文
 - 设计决策写入 task-package 文档，不留在聊天里
 - 不要绕过 using-openharness 自创平行工作流
