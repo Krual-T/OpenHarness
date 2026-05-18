@@ -1,15 +1,11 @@
-from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 from .harness_config import HarnessConfig
 from .task_info import TaskInfo
 from .task_package_document import TaskPackageDocument
-
-if TYPE_CHECKING:
-    from .workflow import Workflow
+from .workflow import Workflow
 
 
 @dataclass(slots=True, frozen=True)

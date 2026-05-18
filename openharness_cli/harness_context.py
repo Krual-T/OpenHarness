@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 import contextvars
 import functools
@@ -53,10 +52,7 @@ def harness(func):
     sig = inspect.signature(func)
     params = list(sig.parameters.values())
 
-    # Resolve string annotations caused by ``from __future__ import annotations``
-    if params and (
-        params[0].annotation is HarnessContext or params[0].annotation == "HarnessContext"
-    ):
+    if params and params[0].annotation is HarnessContext:
 
         @functools.wraps(func)
         def wrapper(*args, **kwargs):

@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 import importlib
 import json
@@ -10,8 +9,6 @@ openharness = importlib.import_module("openharness_cli.main")
 from openharness_cli import (
     ACTIVE_STATUSES,
     ALL_DESIGN_FILES,
-    CreateTaskInput,
-    HarnessConfig,
     HarnessContext,
     TaskPackageDocument,
     allocate_next_task_id,

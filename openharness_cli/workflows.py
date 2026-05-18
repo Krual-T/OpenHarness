@@ -1,11 +1,7 @@
-from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, Union
+from typing import Optional, Union
 
-from .models import TaskStatus, TaskType, Workflow, TaskPackageDocument
-
-if TYPE_CHECKING:
-    from .models import TaskPackage
+from .models import TaskPackage, TaskStatus, TaskType, Workflow, TaskPackageDocument
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

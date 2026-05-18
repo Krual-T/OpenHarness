@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from .common import (
     Path,
@@ -21,20 +20,6 @@ def test_bootstrap_reports_yaml_quote_hint_for_invalid_status_yaml(tmp_path: Pat
     repo_root = tmp_path / "repo"
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
     (repo_root / "docs" / "task-packages" / "bad-yaml").mkdir(parents=True)
-    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
-        "version: 1\n"
-        "task_packages_root: docs/task-packages\n"
-        "archived_task_packages_root: docs/archived/task-packages\n"
-        "required_design_files:\n"
-        "  - README.md\n"
-        "  - task-info.yaml\n"
-        "  - 01-requirements.md\n"
-        "  - 02-overview-design.md\n"
-        "  - 03-detailed-design.md\n"
-        "  - verification_design.md\n"
-        "  - evidence.md\n",
-        encoding="utf-8",
-    )
     root = repo_root / "docs" / "task-packages" / "bad-yaml"
     for doc in ALL_DESIGN_FILES:
         if doc != TaskPackageDocument.TASK_INFO:
@@ -65,29 +50,6 @@ def test_bootstrap_reports_stage_guidance_in_text_output(tmp_path: Path, capsys)
     repo_root = tmp_path / "repo"
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
     (repo_root / "docs" / "task-packages" / "visible-stage").mkdir(parents=True)
-    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
-        "version: 1\n"
-        "task_packages_root: docs/task-packages\n"
-        "archived_task_packages_root: docs/archived/task-packages\n"
-        "required_design_files:\n"
-        "  - README.md\n"
-        "  - task-info.yaml\n"
-        "  - 01-requirements.md\n"
-        "  - 02-overview-design.md\n"
-        "  - 03-detailed-design.md\n"
-        "  - verification_design.md\n"
-        "  - evidence.md\n"
-        "workflow:\n"
-        "  default_status_flow:\n"
-        "    - proposed\n"
-        "    - requirements_designed\n"
-        "    - overview_designed\n"
-        "    - detailed_designed\n"
-        "    - in_progress\n"
-        "    - verifying\n"
-        "    - archived\n",
-        encoding="utf-8",
-    )
     root = repo_root / "docs" / "task-packages" / "visible-stage"
     for doc in ALL_DESIGN_FILES:
         doc.path_from(root).write_text("# x\n", encoding="utf-8")
@@ -122,29 +84,6 @@ def test_bootstrap_reports_author_entry_when_present(tmp_path: Path, capsys) -> 
     references_root = repo_root / "skills" / "using-openharness" / "references"
     references_root.mkdir(parents=True)
     (repo_root / "docs" / "task-packages" / "visible-stage").mkdir(parents=True)
-    (references_root / "manifest.yaml").write_text(
-        "version: 1\n"
-        "task_packages_root: docs/task-packages\n"
-        "archived_task_packages_root: docs/archived/task-packages\n"
-        "required_design_files:\n"
-        "  - README.md\n"
-        "  - task-info.yaml\n"
-        "  - 01-requirements.md\n"
-        "  - 02-overview-design.md\n"
-        "  - 03-detailed-design.md\n"
-        "  - verification_design.md\n"
-        "  - evidence.md\n"
-        "workflow:\n"
-        "  default_status_flow:\n"
-        "    - proposed\n"
-        "    - requirements_designed\n"
-        "    - overview_designed\n"
-        "    - detailed_designed\n"
-        "    - in_progress\n"
-        "    - verifying\n"
-        "    - archived\n",
-        encoding="utf-8",
-    )
     (references_root / "author-entry.md").write_text("# Author Entry\n", encoding="utf-8")
     root = repo_root / "docs" / "task-packages" / "visible-stage"
     for doc in ALL_DESIGN_FILES:
@@ -194,29 +133,6 @@ def test_bootstrap_json_includes_author_entry_when_present(tmp_path: Path, capsy
     references_root = repo_root / "skills" / "using-openharness" / "references"
     references_root.mkdir(parents=True)
     (repo_root / "docs" / "task-packages" / "visible-stage").mkdir(parents=True)
-    (references_root / "manifest.yaml").write_text(
-        "version: 1\n"
-        "task_packages_root: docs/task-packages\n"
-        "archived_task_packages_root: docs/archived/task-packages\n"
-        "required_design_files:\n"
-        "  - README.md\n"
-        "  - task-info.yaml\n"
-        "  - 01-requirements.md\n"
-        "  - 02-overview-design.md\n"
-        "  - 03-detailed-design.md\n"
-        "  - verification_design.md\n"
-        "  - evidence.md\n"
-        "workflow:\n"
-        "  default_status_flow:\n"
-        "    - proposed\n"
-        "    - requirements_designed\n"
-        "    - overview_designed\n"
-        "    - detailed_designed\n"
-        "    - in_progress\n"
-        "    - verifying\n"
-        "    - archived\n",
-        encoding="utf-8",
-    )
     (references_root / "author-entry.md").write_text("# Author Entry\n", encoding="utf-8")
     root = repo_root / "docs" / "task-packages" / "visible-stage"
     for doc in ALL_DESIGN_FILES:
@@ -247,29 +163,6 @@ def test_validate_design_package_rejects_overview_designed_without_reflection(tm
     repo_root = tmp_path / "repo"
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
     (repo_root / "docs" / "task-packages" / "overview-no-reflection").mkdir(parents=True)
-    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
-        "version: 1\n"
-        "task_packages_root: docs/task-packages\n"
-        "archived_task_packages_root: docs/archived/task-packages\n"
-        "required_design_files:\n"
-        "  - README.md\n"
-        "  - task-info.yaml\n"
-        "  - 01-requirements.md\n"
-        "  - 02-overview-design.md\n"
-        "  - 03-detailed-design.md\n"
-        "  - verification_design.md\n"
-        "  - evidence.md\n"
-        "workflow:\n"
-        "  default_status_flow:\n"
-        "    - proposed\n"
-        "    - requirements_designed\n"
-        "    - overview_designed\n"
-        "    - detailed_designed\n"
-        "    - in_progress\n"
-        "    - verifying\n"
-        "    - archived\n",
-        encoding="utf-8",
-    )
     root = repo_root / "docs" / "task-packages" / "overview-no-reflection"
     TaskPackageDocument.README.path_from(root).write_text("# Overview No Reflection\n", encoding="utf-8")
     TaskPackageDocument.REQUIREMENTS.path_from(root).write_text(

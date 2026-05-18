@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 import pytest
 
@@ -7,9 +6,7 @@ from .common import (
     Path,
     REPO_ROOT,
     ALL_DESIGN_FILES,
-    CreateTaskInput,
     TaskPackageDocument,
-    HarnessConfig,
     allocate_next_task_id,
     create_task_package,
     discover_task_packages,
@@ -24,24 +21,6 @@ from openharness_cli.core.yaml import load_yaml
 
 def _write_minimal_openharness_repo(repo_root: Path) -> None:
     (repo_root / "skills" / "using-openharness" / "references" / "templates").mkdir(parents=True)
-    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
-        "version: 1\n"
-        "task_packages_root: docs/task-packages\n"
-        "archived_task_packages_root: docs/archived/task-packages\n"
-        "required_design_files:\n"
-        "  - README.md\n"
-        "  - task-info.yaml\n"
-        "  - 01-requirements.md\n"
-        "  - 02-overview-design.md\n"
-        "  - 03-detailed-design.md\n"
-        "  - verification_design.md\n"
-        "  - evidence.md\n"
-        "workflow:\n"
-        "  default_status_flow:\n"
-        "    - proposed\n"
-        "    - archived\n",
-        encoding="utf-8",
-    )
     for name, contents in {
         "task-package.README.md": "# <DESIGN_ID> <TITLE>\n",
         "task-package.task-info.yaml": (
@@ -70,8 +49,7 @@ def _write_minimal_openharness_repo(repo_root: Path) -> None:
         )
 
 
-def test_manifest_points_to_task_package_roots() -> None:
-    setup_harness(REPO_ROOT)
+def test_harness_config_default_task_package_paths() -> None:
     hx = setup_harness(REPO_ROOT)
     assert hx.config.task_packages_root == REPO_ROOT / "docs" / "task-packages"
     assert hx.config.archived_task_packages_root == REPO_ROOT / "docs" / "archived" / "task-packages"
@@ -112,27 +90,9 @@ def test_active_statuses_do_not_include_archived() -> None:
 def test_allocate_next_task_id_uses_existing_prefix_and_width(tmp_path: Path) -> None:
     repo_root = tmp_path / "repo"
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
-    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
-        "version: 1\n"
-        "task_packages_root: docs/task-packages\n"
-        "archived_task_packages_root: docs/archived/task-packages\n"
-        "required_design_files:\n"
-        "  - README.md\n"
-        "  - task-info.yaml\n"
-        "  - 01-requirements.md\n"
-        "  - 02-overview-design.md\n"
-        "  - 03-detailed-design.md\n"
-        "  - verification_design.md\n"
-        "  - evidence.md\n"
-        "workflow:\n"
-        "  default_status_flow:\n"
-        "    - proposed\n"
-        "    - archived\n",
-        encoding="utf-8",
-    )
     for root_name, task_id, status in (
-        ("one", "OH-018", "proposing"),
-        ("two", "OH-099", "archived"),
+        ("one", "TASK-018", "proposing"),
+        ("two", "TASK-099", "archived"),
     ):
         root = repo_root / "docs" / ("task-packages" if status == "proposing" else "archived/task-packages") / root_name
         root.mkdir(parents=True)
@@ -155,7 +115,7 @@ def test_allocate_next_task_id_uses_existing_prefix_and_width(tmp_path: Path) ->
         )
 
     setup_harness(repo_root)
-    assert allocate_next_task_id() == "OH-100"
+    assert allocate_next_task_id() == "TASK-100"
 
 
 def test_new_package_creates_with_auto_id(tmp_path: Path, capsys) -> None:
@@ -167,7 +127,7 @@ def test_new_package_creates_with_auto_id(tmp_path: Path, capsys) -> None:
     for doc in ALL_DESIGN_FILES:
         doc.path_from(existing).write_text("# x\n", encoding="utf-8")
     TaskPackageDocument.TASK_INFO.path_from(existing).write_text(
-        "id: OH-009\n"
+        "id: TASK-009\n"
         "title: Existing\n"
         "status: proposed\n"
         "summary: existing\n"
@@ -195,31 +155,13 @@ def test_new_package_creates_with_auto_id(tmp_path: Path, capsys) -> None:
     captured = capsys.readouterr()
     created = repo_root / "docs" / "task-packages" / "next-task" / "task-info.yaml"
     status = load_yaml(created)
-    assert "Task id: OH-010" in captured.out
-    assert status["id"] == "OH-010"
+    assert "Task id: TASK-010" in captured.out
+    assert status["id"] == "TASK-010"
 
 
 def test_find_duplicate_task_ids_reports_conflicts(tmp_path: Path) -> None:
     repo_root = tmp_path / "repo"
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
-    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
-        "version: 1\n"
-        "task_packages_root: docs/task-packages\n"
-        "archived_task_packages_root: docs/archived/task-packages\n"
-        "required_design_files:\n"
-        "  - README.md\n"
-        "  - task-info.yaml\n"
-        "  - 01-requirements.md\n"
-        "  - 02-overview-design.md\n"
-        "  - 03-detailed-design.md\n"
-        "  - verification_design.md\n"
-        "  - evidence.md\n"
-        "workflow:\n"
-        "  default_status_flow:\n"
-        "    - proposed\n"
-        "    - archived\n",
-        encoding="utf-8",
-    )
 
     first = repo_root / "docs" / "task-packages" / "one"
     second = repo_root / "docs" / "archived" / "task-packages" / "two"
@@ -252,41 +194,9 @@ def test_find_duplicate_task_ids_reports_conflicts(tmp_path: Path) -> None:
     assert {package.name for package in duplicates["OH-999"]} == {"one", "two"}
 
 
-def test_load_config_prefers_repo_local_skills_layout(tmp_path: Path) -> None:
-    repo_root = tmp_path / "repo"
-    (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
-    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
-        "version: 1\n"
-        "task_packages_root: docs/task-packages\n"
-        "archived_task_packages_root: docs/archived/task-packages\n",
-        encoding="utf-8",
-    )
-
-    hx = setup_harness(repo_root)
-    assert hx.config.task_packages_root == repo_root / "docs" / "task-packages"
-
-
 def test_validate_task_package_rejects_unknown_status_and_missing_paths(tmp_path: Path) -> None:
     repo_root = tmp_path / "repo"
-    (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
     (repo_root / "docs" / "task-packages" / "broken").mkdir(parents=True)
-    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
-        "version: 1\n"
-        "task_packages_root: docs/task-packages\n"
-        "required_design_files:\n"
-        "  - README.md\n"
-        "  - task-info.yaml\n"
-        "  - 01-requirements.md\n"
-        "  - 02-overview-design.md\n"
-        "  - 03-detailed-design.md\n"
-        "  - verification_design.md\n"
-        "  - evidence.md\n"
-        "workflow:\n"
-        "  default_status_flow:\n"
-        "    - proposed\n"
-        "    - archived\n",
-        encoding="utf-8",
-    )
     root = repo_root / "docs" / "task-packages" / "broken"
     for doc in (
         TaskPackageDocument.README,
@@ -336,24 +246,6 @@ def test_validate_task_package_allows_archived_legacy_reference_fallback(tmp_pat
         "legacy snapshot\n",
         encoding="utf-8",
     )
-    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
-        "version: 1\n"
-        "task_packages_root: docs/task-packages\n"
-        "archived_task_packages_root: docs/archived/task-packages\n"
-        "required_design_files:\n"
-        "  - README.md\n"
-        "  - task-info.yaml\n"
-        "  - 01-requirements.md\n"
-        "  - 02-overview-design.md\n"
-        "  - 03-detailed-design.md\n"
-        "  - verification_design.md\n"
-        "  - evidence.md\n"
-        "workflow:\n"
-        "  default_status_flow:\n"
-        "    - proposed\n"
-        "    - archived\n",
-        encoding="utf-8",
-    )
     root = repo_root / "docs" / "archived" / "task-packages" / "archived-legacy"
     for doc in ALL_DESIGN_FILES:
         doc.path_from(root).write_text("x\n", encoding="utf-8")
@@ -392,12 +284,6 @@ def test_create_task_package_from_templates(tmp_path: Path) -> None:
     repo_root = tmp_path / "repo"
     (repo_root / "skills" / "using-openharness" / "references" / "templates").mkdir(parents=True)
     (repo_root / "docs" / "task-packages").mkdir(parents=True)
-    (repo_root / "skills" / "using-openharness" / "references" / "manifest.yaml").write_text(
-        "version: 1\ntask_packages_root: docs/task-packages\narchived_task_packages_root: docs/archived/task-packages\nrequired_design_files:\n"
-        "  - README.md\n  - task-info.yaml\n  - 01-requirements.md\n  - 02-overview-design.md\n"
-        "  - 03-detailed-design.md\n  - verification_design.md\n  - evidence.md\n",
-        encoding="utf-8",
-    )
     template_root = repo_root / "skills" / "using-openharness" / "references" / "templates"
     for file_name, content in {
         "task-package.README.md": "# <DESIGN_ID> <TITLE>\n",
@@ -419,7 +305,7 @@ def test_create_task_package_from_templates(tmp_path: Path) -> None:
     )
 
     assert task_root == repo_root / "docs" / "task-packages" / "harness-replay"
-    assert task_id.startswith("TASK-") or task_id.startswith("OH-")
+    assert task_id.startswith("TASK-")
     assert TaskPackageDocument.README.path_from(task_root).read_text(encoding="utf-8") == f"# {task_id} Harness Replay\n"
     assert not (task_root / "04-implementation-plan.md").exists()
     status = load_yaml(TaskPackageDocument.TASK_INFO.path_from(task_root))

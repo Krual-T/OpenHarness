@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 import contextlib
 import fcntl
@@ -20,7 +19,6 @@ ALL_DESIGN_FILES: tuple[TaskPackageDocument, ...] = tuple(TaskPackageDocument)
 
 @harness
 def discover_task_packages(ctx: HarnessContext) -> list[TaskPackage]:
-    _auto_archive_active_packages()
     config = ctx.config
     packages: list[TaskPackage] = []
     roots = [config.task_packages_root]
@@ -109,7 +107,7 @@ def _auto_archive_active_packages(ctx: HarnessContext) -> None:
         package = TaskPackage(root=child, info=info, config=config)
         archived_ok, detail = archive_task_package(package)
         if not archived_ok:
-            raise ValueError(f"failed to auto-archive task package `{package.task_id}`: {detail}")
+            print(f"WARNING: failed to auto-archive task package `{package.task_id}`: {detail}", flush=True)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -187,28 +185,25 @@ def _create_task_package_unlocked(ctx: HarnessContext, request: CreateTaskInput,
 
 @harness
 def allocate_next_task_id(ctx: HarnessContext) -> str:
-    prefix_counts: dict[str, int] = {}
-    max_by_prefix: dict[str, tuple[int, int]] = {}
+    max_number = 0
+    max_width = 0
     for package in discover_task_packages():
         match = TASK_ID_RE.match(package.task_id)
         if not match:
             continue
         prefix, raw_number = match.groups()
+        if prefix != "TASK":
+            continue
         number = int(raw_number)
         width = len(raw_number)
-        prefix_counts[prefix] = prefix_counts.get(prefix, 0) + 1
-        previous = max_by_prefix.get(prefix)
-        if previous is None or number > previous[0]:
-            max_by_prefix[prefix] = (number, width)
-        elif number == previous[0] and width > previous[1]:
-            max_by_prefix[prefix] = (number, width)
+        if number > max_number:
+            max_number = number
+            max_width = width
+        elif number == max_number and width > max_width:
+            max_width = width
 
-    if not max_by_prefix:
-        return "TASK-001"
-    prefix = max(prefix_counts.items(), key=lambda item: (item[1], item[0]))[0]
-    max_number, width = max_by_prefix[prefix]
     next_number = max_number + 1
-    return f"{prefix}-{next_number:0{max(width, 3)}d}"
+    return f"TASK-{next_number:0{max(max_width, 3)}d}"
 
 
 @harness

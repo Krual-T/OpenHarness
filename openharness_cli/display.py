@@ -1,12 +1,6 @@
-from __future__ import annotations
-
-from typing import TYPE_CHECKING
 
 from .harness_context import harness, HarnessContext
-from .models import parse_status
-
-if TYPE_CHECKING:
-    from .models import TaskPackage
+from .models import parse_status, TaskPackage
 
 
 def describe_stage(package: TaskPackage) -> dict[str, str]:

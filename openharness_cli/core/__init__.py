@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from .yaml import load_yaml, write_yaml
 from .utils import get_git_author, current_date, slugify_task_name, humanize_task_name

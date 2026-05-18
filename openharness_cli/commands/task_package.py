@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 import json
 from pathlib import Path
@@ -14,6 +13,7 @@ from ..core import (
     resolve_task_package,
     summarize_task_package,
 )
+from ..core.task_packages import _auto_archive_active_packages
 from ..transition_engine import execute_transition
 from ..validate import validate_task_package
 from ..workflows import ACTIVE_STATUSES
@@ -129,6 +129,7 @@ def transition(
     target_status: str = typer.Argument(..., help="Target workflow status"),
 ) -> None:
     """Move a task package to a legal workflow status."""
+    _auto_archive_active_packages()
     try:
         package = resolve_task_package(task)
     except (FileNotFoundError, ValueError) as exc:

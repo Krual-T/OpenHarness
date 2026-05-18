@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from .task_package import task_app, list_packages, new_package, transition
 from .init_cmd import init

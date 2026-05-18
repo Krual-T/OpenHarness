@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from .task_status import TaskStatus, parse_status
 from .task_type import TaskType
