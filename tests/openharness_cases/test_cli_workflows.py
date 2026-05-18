@@ -79,6 +79,41 @@ def test_bootstrap_reports_stage_guidance_in_text_output(tmp_path: Path, capsys)
     assert "`overview_designing`" in result.stdout
 
 
+def test_task_package_view_injects_current_stage_skill(tmp_path: Path, capsys) -> None:
+    repo_root = tmp_path / "repo"
+    state_root = repo_root / "skills" / "using-openharness" / "states" / "exploring-solution-space"
+    state_root.mkdir(parents=True)
+    (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
+    (state_root / "SKILL.md").write_text("# Overview Stage\n\nUse overview guidance.\n", encoding="utf-8")
+    (repo_root / "docs" / "task-packages" / "visible-stage").mkdir(parents=True)
+    root = repo_root / "docs" / "task-packages" / "visible-stage"
+    for doc in ALL_DESIGN_FILES:
+        doc.path_from(root).write_text("# x\n", encoding="utf-8")
+    TaskPackageDocument.TASK_INFO.path_from(root).write_text(
+        "id: OH-964\n"
+        "title: Visible Stage View\n"
+        "status: overview_designing\n"
+        "summary: stage view\n"
+        "owner: codex\n"
+        "created_at: 2026-05-18\n"
+        "updated_at: 2026-05-18\n"
+        "done_criteria:\n"
+        "  - x\n"
+        "verification:\n"
+        "  required_commands: []\n"
+        "  required_scenarios: []\n",
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(app, ["--repo", str(repo_root), "task-package", "view", "visible-stage"])
+
+    assert result.exit_code == 0
+    assert "Task: OH-964 Visible Stage View" in result.stdout
+    assert "Status: `overview_designing`" in result.stdout
+    assert "--- BEGIN: skills/using-openharness/states/exploring-solution-space/SKILL.md ---" in result.stdout
+    assert "# Overview Stage" in result.stdout
+
+
 def test_bootstrap_reports_author_entry_when_present(tmp_path: Path, capsys) -> None:
     repo_root = tmp_path / "repo"
     references_root = repo_root / "skills" / "using-openharness" / "references"

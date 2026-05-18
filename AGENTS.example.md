@@ -8,17 +8,15 @@
 
 1. `AGENTS.md`
    - 仓库地图、默认协作协议、结构约束、验证要求。
-2. `skills/using-openharness/references/manifest.yaml`
-   - harness 的机器可读入口；声明 active / archived task package 布局、状态流和 artifact 根目录。
-3. `docs/task-packages/<task>/`
+2. `docs/task-packages/<task>/`
    - 任务包（task package）的唯一事实来源；每个任务是一个独立 task package。
-4. `docs/archived/task-packages/<task>/`
+3. `docs/archived/task-packages/<task>/`
    - 已完成 task package 的归档区；保留历史事实与验证证据，但不再属于 active package 集合。
-5. `docs/architecture.md`
+4. `docs/architecture.md`
    - 当前系统结构说明。
-6. `.project-memory/`
+5. `.project-memory/`
    - 已验证的项目事实、决策和可复用 workflow。
-7. `docs/archived/legacy/`
+6. `docs/archived/legacy/`
    - 历史材料归档区；仅作为 legacy evidence，不再作为当前任务事实源。
 
 ### 设计任务包协议
@@ -26,7 +24,7 @@
 每个任务包应放在 `docs/task-packages/<task>/`，并固定包含：
 
 - `README.md`：任务入口页和阅读导航。
-- `STATUS.yaml`：机器可读状态源。
+- `task-info.yaml`：机器可读状态源。
 - `01-requirements.md`：需求、目标、非目标、完成定义。
 - `02-overview-design.md`：总体设计、边界、主数据流/状态流。
 - `03-detailed-design.md`：详细设计，先写测试设计，再写实现落点、runtime 验证方式与实施顺序。
@@ -36,14 +34,13 @@
 默认阅读顺序：
 
 1. `AGENTS.md`
-2. `skills/using-openharness/references/manifest.yaml`
-3. `docs/task-packages/<task>/README.md`
-4. `docs/task-packages/<task>/STATUS.yaml`
-5. `docs/task-packages/<task>/01-requirements.md`
-6. `docs/task-packages/<task>/02-overview-design.md`
-7. `docs/task-packages/<task>/03-detailed-design.md`
-8. `docs/task-packages/<task>/verification_design.md`
-9. `docs/task-packages/<task>/evidence.md`
+2. `docs/task-packages/<task>/README.md`
+3. `docs/task-packages/<task>/task-info.yaml`
+4. `docs/task-packages/<task>/01-requirements.md`
+5. `docs/task-packages/<task>/02-overview-design.md`
+6. `docs/task-packages/<task>/03-detailed-design.md`
+7. `docs/task-packages/<task>/verification_design.md`
+8. `docs/task-packages/<task>/evidence.md`
 
 ## 2. 默认工作流
 
@@ -51,14 +48,14 @@
 
 - 先读 `AGENTS.md`，建立仓库地图。
 - 先把 `using-openharness` 视为本仓库的默认入口技能；任何可能涉及仓库协议、task package、验证流或技能路由的工作，都先从它开始判断该走哪个 skill。
-- 再读 `skills/using-openharness/references/manifest.yaml`，确认 harness 协议。
-- 运行 `openharness bootstrap` 查看当前 active task packages。
+- 运行 `openharness task-package list` 查看当前 active task packages。
+- 如果有匹配任务包，运行 `openharness task-package view <task>` 进入该包并读取当前阶段指令。
 - 默认在项目根目录运行 `openharness`；如果当前不在项目根目录，显式传入 `--repo <项目根目录>`。
 - 只在 task package 足够清晰时开始实现；若任务边界缺失，先补任务包而不是直接改代码。
 
 ### 执行任务时
 
-- 先经过 `using-openharness` 做 skill routing，再进入 `brainstorming`、`exploring-solution-space`、`systematic-debugging` 或直接实现；
+- 先经过 `using-openharness` 做 skill routing，再按 CLI 输出进入当前 workflow stage；
 - 需求、总体设计、详细设计分层书写，不要混在一个随手增长的长文档里。
 - 先写需求，再探索（本地仓库 + web search），再形成总体设计与详细设计。
 - `02-overview-design.md` 与 `03-detailed-design.md` 都应经过一轮显式反思（reflection）；若仍存在高影响不确定性，应触发有边界的子智能体讨论或评审。
@@ -69,8 +66,8 @@
 ### 完成任务时
 
 - 先更新 `verification_design.md` 和 `evidence.md`。
-- 再更新 `STATUS.yaml` 中的 `status`、`updated_at`、证据字段。
-- 当 task package 已完成并不再属于 active work 时，应将 `STATUS.yaml.status` 设为 `archived`，并把整个包从 `docs/task-packages/<task>/` 移动到 `docs/archived/task-packages/<task>/`。
+- 再通过 `openharness task-package transition <task> <target>` 更新 `task-info.yaml` 中的 `status` 和 `updated_at`。
+- 当 task package 已完成并不再属于 active work 时，运行 `openharness task-package transition <task> verified`，由 CLI 检查证据并归档到 `docs/archived/task-packages/<task>/`。
 - 归档后必须同步修正该 package 内部引用，以及仓库内指向该 package 的证据或 memory 引用。
 - 每次完成一轮可独立成立的改动后，应做一次聚焦提交。
 
@@ -105,7 +102,7 @@
 - 需求变化先写 `01-requirements.md`；探索结论与总体设计变化写 `02-overview-design.md`；测试设计、实现落点、runtime 验证方式变化写 `03-detailed-design.md`。
 - 完成前至少运行：
   - `openharness task-package list`
-  - 当前 task package 在 `STATUS.yaml.verification.required_commands` 中声明的命令
+  - 当前 task package 的 `verification_design.md` 中声明的命令
 - 若本轮只是补设计，仍应保证 task package 协议完整。
 
 ## 5. Python / uv 约定

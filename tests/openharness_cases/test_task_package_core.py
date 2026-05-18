@@ -1,5 +1,6 @@
 
 import pytest
+from typer.testing import CliRunner
 
 from .common import (
     ACTIVE_STATUSES,
@@ -16,7 +17,10 @@ from .common import (
     summarize_task_package,
     validate_task_package,
 )
+from openharness_cli.cli import app
 from openharness_cli.core.yaml import load_yaml
+
+runner = CliRunner()
 
 
 def _write_minimal_openharness_repo(repo_root: Path) -> None:
@@ -274,6 +278,41 @@ def test_validate_task_package_allows_archived_legacy_reference_fallback(tmp_pat
     errors = validate_task_package(package)
 
     assert all("missing referenced path" not in error for error in errors)
+
+
+def test_gate_precondition_failure_does_not_persist_intermediate_status(tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
+    (repo_root / "docs" / "task-packages" / "missing-gate-fields").mkdir(parents=True)
+    root = repo_root / "docs" / "task-packages" / "missing-gate-fields"
+    for doc in ALL_DESIGN_FILES:
+        doc.path_from(root).write_text("# x\n", encoding="utf-8")
+    info_path = TaskPackageDocument.TASK_INFO.path_from(root)
+    info_path.write_text(
+        "id: OH-965\n"
+        "title: Missing Gate Fields\n"
+        "status: proposing\n"
+        "summary: gate precondition\n"
+        "owner: codex\n"
+        "created_at: 2026-05-18\n"
+        "updated_at: 2026-05-18\n"
+        "done_criteria:\n"
+        "  - x\n"
+        "verification:\n"
+        "  required_commands: []\n"
+        "  required_scenarios: []\n",
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        ["--repo", str(repo_root), "task-package", "transition", "missing-gate-fields", "requirements_designed"],
+    )
+
+    assert result.exit_code == 1
+    assert "task_type is not confirmed" in result.stdout
+    assert "verify_by is not determined" in result.stdout
+    assert load_yaml(info_path)["status"] == "proposing"
 
 
 def test_slugify_task_name_normalizes_human_text() -> None:

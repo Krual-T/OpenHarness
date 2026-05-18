@@ -1,0 +1,28 @@
+id: TASK-001
+title: Align AGENTS example and CLI regression tests
+status: archived
+summary: 修正 AGENTS 示例协议漂移，并补充 task-package view 与 gate 失败不落盘的回归测试。
+owner: codex
+created_at: '2026-05-18'
+updated_at: '2026-05-18'
+done_criteria:
+- AGENTS.example.md 不再引用已废弃的 STATUS.yaml、bootstrap、manifest.yaml 或 systematic-debugging
+  协议。
+- task-package view 有回归测试覆盖，会输出任务详情并注入当前阶段 skill。
+- gate 前置条件失败时 task-info.yaml 不会被写入中间 gate 状态，并有回归测试覆盖。
+entrypoints:
+- docs/task-packages/agents-example-and-cli-regression-tests/README.md
+- docs/task-packages/agents-example-and-cli-regression-tests/01-requirements.md
+- docs/task-packages/agents-example-and-cli-regression-tests/02-overview-design.md
+- docs/task-packages/agents-example-and-cli-regression-tests/03-detailed-design.md
+collaboration:
+  task_type: mechanical
+  design_review_mode: auto
+verification:
+  verify_by: unit_test
+depends_on: []
+scope:
+  areas:
+  - AGENTS.example.md
+  - tests/openharness_cases/test_cli_workflows.py
+  - tests/openharness_cases/test_task_package_core.py
