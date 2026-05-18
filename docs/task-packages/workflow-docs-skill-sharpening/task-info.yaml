@@ -1,24 +1,34 @@
-id: TASK-004
-title: 工作流文档与技能说明收敛
-status: overview_designing
-summary: 改进 OpenHarness 的阶段 skill 和任务包模板，让每个阶段的指导更清晰、职责更少重复。
-owner: Shaokun.Tang
-created_at: YYYY-MM-DD
-updated_at: '2026-05-18'
-done_criteria:
-- 实现前逐项确认工作流文档改进方向。
-- 只更新已确认的 skill 和模板文档表面。
-- 保持 CLI 行为和任务包状态语义不变。
-collaboration:
-  task_type: protocol/architecture
-  design_review_mode: stepwise
-verification:
-  verify_by: qualitative
-entrypoints:
-- docs/task-packages/workflow-docs-skill-sharpening/requirements.md
-- docs/task-packages/workflow-docs-skill-sharpening/overview-design.md
+id: "TASK-004"
+title: "Workflow Docs Skill Sharpening"
+# Status flow (mechanical):
+#   proposing -> requirements_designed[G] -> verification_designing -> verification_designed[G] -> implementing -> implemented[G] -> verifying -> verified[G] -> archived
+# Status flow (standard/protocol):
+#   proposing -> overview_designing -> overview_designed[G] -> detailed_designing -> detailed_designed[G] -> verification_designing -> verification_designed[G] -> implementing -> implemented[G] -> verifying -> verified[G] -> archived
+# [G] = gate state，CLI 自动推进。
+status: "proposing"
+summary: "Improve OpenHarness workflow skills and task-package templates so each stage gives clearer, less repetitive guidance."
+owner: "codex"
+created_at: "YYYY-MM-DD"
+updated_at: "YYYY-MM-DD"
 depends_on: []
 scope:
   areas:
-  - skills/using-openharness/states
-  - skills/using-openharness/references/templates
+    - skills/using-openharness/states
+    - skills/using-openharness/references/templates
+# Write collaboration only after human confirms.
+# task_type: mechanical | standard development | protocol/architecture
+# design_review_mode: stepwise | auto
+collaboration:
+  task_type: protocol/architecture
+  design_review_mode: stepwise
+entrypoints:
+  - docs/task-packages/workflow-docs-skill-sharpening/README.md
+  - docs/task-packages/workflow-docs-skill-sharpening/requirements.md
+  - docs/task-packages/workflow-docs-skill-sharpening/overview-design.md
+  - docs/task-packages/workflow-docs-skill-sharpening/detailed-design.md
+done_criteria:
+  - Confirm each workflow documentation improvement direction with the user before implementation.
+  - Update only the confirmed skill/template documentation surfaces.
+  - Keep CLI behavior and task package status semantics unchanged.
+verification:
+  verify_by: qualitative   # unit_test | qualitative | rwp

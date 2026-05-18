@@ -42,9 +42,11 @@
    - acceptance criteria：分类规则有清晰权威位置，其他 skill 只引用或做最小提醒，不重复维护多份规则。
 7. 降低重复文本和上下文负担。
    - acceptance criteria：删除或压缩阶段 skill 中与模板重复的长篇写作指导，但不删除必要门禁、失败分流和回退动作。
-8. 统一任务文档的章节标题语言。
+8. 移除不再作为主工作流自动注入阶段的收尾 skill。
+   - acceptance criteria：将 `skills/using-openharness/states/finishing-a-development-branch/` 移到 `.tmp/skills-backup/` 下保留备份；主工作流文档不再把它作为当前阶段优化对象。
+9. 统一任务文档的章节标题语言。
    - acceptance criteria：任务包 Markdown 文档中的章节标题全部使用英文，例如 `Goal`、`Problem Statement`、`Required Outcomes`、`Constraints`；正文继续使用中文；命令、状态值、YAML 键、文件名和路径保持英文原样。
-9. 规范 `task-info.yaml` 的自然语言字段。
+10. 规范 `task-info.yaml` 的自然语言字段。
    - acceptance criteria：`task-info.yaml` 保留 YAML 键、状态值、枚举值和路径的英文原样；非枚举的自然语言字段使用中文填写，例如 `title`、`summary`、`done_criteria` 中的描述文本。
 
 ## Non-Goals
@@ -54,7 +56,6 @@
 - 不在未确认方向上直接改 skill 正文。
 - 不把所有文件名、状态值、命令和 YAML 键翻译成中文。
 - 不把流程教学、阶段解释或写作指南塞进 `task-info.yaml`；`task-info.yaml` 只保留元信息和机器可读字段。
-- 不移动、归档或移除现有阶段 skill；即使某个阶段不是主工作流自动注入对象，本轮也只处理文档职责和模板表达。
 
 Counterexample：新增 `openharness task-package hook` 子命令看起来和 skill 触发相关，但本轮问题是文档内容质量，不属于本任务包。
 
