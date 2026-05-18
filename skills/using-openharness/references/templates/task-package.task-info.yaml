@@ -1,4 +1,4 @@
-id: <DESIGN_ID>
+id: TASK_ID
 title: <TITLE>
 # Status flow (mechanical):
 #   proposing -> requirements_designed[G] -> verification_designing -> verification_designed[G] -> implementing -> implemented[G] -> verifying -> verified[G] -> archived

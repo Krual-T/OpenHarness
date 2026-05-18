@@ -1,0 +1,18 @@
+id: TASK-011
+title: Replace Design Id Placeholder
+status: archived
+summary: Replace the task-info template id placeholder from DESIGN_ID to TASK_ID.
+owner: Shaokun.Tang
+created_at: YYYY-MM-DD
+updated_at: '2026-05-18'
+done_criteria:
+- Template id placeholder uses TASK_ID instead of DESIGN_ID.
+collaboration:
+  task_type: mechanical
+  design_review_mode: auto
+verification:
+  verify_by: qualitative
+depends_on: []
+scope:
+  areas:
+  - skills/using-openharness/references/templates/task-package.task-info.yaml
