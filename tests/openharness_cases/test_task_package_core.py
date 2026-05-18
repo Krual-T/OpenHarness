@@ -21,6 +21,7 @@ from openharness_cli.cli import app
 from openharness_cli.core.yaml import load_yaml
 
 runner = CliRunner()
+REMOVED_TASK_INFO_KEYS = ("done" + "_criteria", "depends" + "_on", "scope")
 
 
 def _write_minimal_openharness_repo(repo_root: Path) -> None:
@@ -34,8 +35,6 @@ def _write_minimal_openharness_repo(repo_root: Path) -> None:
             "owner: <OWNER>\n"
             "created_at: <DATE>\n"
             "updated_at: <DATE>\n"
-            "done_criteria:\n"
-            "  - x\n"
             "verification:\n"
             "  required_commands: []\n"
             "  required_scenarios: []\n"
@@ -109,8 +108,6 @@ def test_allocate_next_task_id_uses_existing_prefix_and_width(tmp_path: Path) ->
             "owner: codex\n"
             "created_at: 2026-03-24\n"
             "updated_at: 2026-03-24\n"
-            "done_criteria:\n"
-            "  - x\n"
             "verification:\n"
             "  required_commands: []\n"
             "  required_scenarios: []\n",
@@ -137,8 +134,6 @@ def test_new_package_creates_with_auto_id(tmp_path: Path, capsys) -> None:
         "owner: codex\n"
         "created_at: 2026-03-24\n"
         "updated_at: 2026-03-24\n"
-        "done_criteria:\n"
-        "  - x\n"
         "verification:\n"
         "  required_commands: []\n"
         "  required_scenarios: []\n",
@@ -160,6 +155,7 @@ def test_new_package_creates_with_auto_id(tmp_path: Path, capsys) -> None:
     status = load_yaml(created)
     assert "Task id: TASK-010" in captured.out
     assert status["id"] == "TASK-010"
+    assert all(key not in status for key in REMOVED_TASK_INFO_KEYS)
 
 
 def test_find_duplicate_task_ids_reports_conflicts(tmp_path: Path) -> None:
@@ -180,8 +176,6 @@ def test_find_duplicate_task_ids_reports_conflicts(tmp_path: Path) -> None:
             "owner: codex\n"
             "created_at: 2026-03-23\n"
             "updated_at: 2026-03-23\n"
-            "done_criteria:\n"
-            "  - x\n"
             "verification:\n"
             "  required_commands:\n"
             "    - uv run pytest\n"
@@ -217,8 +211,6 @@ def test_validate_task_package_rejects_unknown_status_but_allows_stale_entrypoin
         "owner: codex\n"
         "created_at: 2026-03-20\n"
         "updated_at: 2026-03-20\n"
-        "done_criteria:\n"
-        "  - x\n"
         "entrypoints:\n"
         "  - docs/task-packages/broken/README.md\n"
         "  - docs/task-packages/broken/missing.md\n"
@@ -236,6 +228,8 @@ def test_validate_task_package_rejects_unknown_status_but_allows_stale_entrypoin
     errors = validate_task_package(package)
 
     assert any("unknown status" in error for error in errors)
+    removed_done_key = REMOVED_TASK_INFO_KEYS[0]
+    assert all(f"missing required key `{removed_done_key}`" not in error for error in errors)
     assert all("missing referenced path" not in error for error in errors)
 
 
@@ -259,8 +253,6 @@ def test_validate_task_package_ignores_archived_legacy_references(tmp_path: Path
         "owner: codex\n"
         "created_at: 2026-03-27\n"
         "updated_at: 2026-03-27\n"
-        "done_criteria:\n"
-        "  - x\n"
         "verification:\n"
         "  required_commands:\n"
         "    - uv run pytest\n"
@@ -294,8 +286,6 @@ def test_gate_precondition_failure_does_not_persist_intermediate_status(tmp_path
         "owner: codex\n"
         "created_at: 2026-05-18\n"
         "updated_at: 2026-05-18\n"
-        "done_criteria:\n"
-        "  - x\n"
         "verification:\n"
         "  required_commands: []\n"
         "  required_scenarios: []\n",
@@ -323,7 +313,7 @@ def test_create_task_package_from_templates(tmp_path: Path) -> None:
     (repo_root / "docs" / "task-packages").mkdir(parents=True)
     template_root = repo_root / "skills" / "using-openharness" / "references" / "templates"
     for file_name, content in {
-        "task-package.task-info.yaml": "id: <TASK_ID>\ntitle: <TITLE>\nstatus: <STATUS>\nsummary: <SUMMARY>\nowner: <OWNER>\ncreated_at: <DATE>\nupdated_at: <DATE>\ndone_criteria:\n  - x\nverification:\n  required_commands: []\n",
+        "task-package.task-info.yaml": "id: <TASK_ID>\ntitle: <TITLE>\nstatus: <STATUS>\nsummary: <SUMMARY>\nowner: <OWNER>\ncreated_at: <DATE>\nupdated_at: <DATE>\nverification:\n  required_commands: []\n",
         "task-package.requirements.md": "req\n",
         "task-package.overview-design.md": "overview\n",
         "task-package.detailed-design.md": "detail\n",
@@ -351,6 +341,7 @@ def test_create_task_package_from_templates(tmp_path: Path) -> None:
     status = load_yaml(TaskPackageDocument.TASK_INFO.path_from(task_root))
     assert status["id"] == task_id
     assert status["summary"] == "Replay scenarios."
+    assert all(key not in status for key in REMOVED_TASK_INFO_KEYS)
 
 
 def test_key_repo_skills_are_vendored_locally() -> None:

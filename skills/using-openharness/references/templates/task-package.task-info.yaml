@@ -10,14 +10,9 @@ summary: <SUMMARY>
 owner: <OWNER>
 created_at: <DATE>
 updated_at: <DATE>
-depends_on: []
-scope:
-  areas: []
 # Write collaboration only after human confirms.
 # task_type: mechanical | standard development | protocol/architecture
 # design_review_mode: stepwise | auto
 collaboration: {}
-done_criteria:
-  - Replace this placeholder with real done criteria.
 verification:
   verify_by: ""   # unit_test | qualitative | rwp

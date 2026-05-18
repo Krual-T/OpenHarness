@@ -1,0 +1,12 @@
+id: TASK-013
+title: Remove Task Info Low Value Fields
+status: archived
+summary: Remove low-value task-info fields from the template and required schema.
+owner: Shaokun.Tang
+created_at: YYYY-MM-DD
+updated_at: '2026-05-18'
+collaboration:
+  task_type: standard development
+  design_review_mode: auto
+verification:
+  verify_by: unit_test

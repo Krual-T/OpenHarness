@@ -48,10 +48,6 @@ class TaskPackage:
         return self.info.owner
 
     @property
-    def done_criteria(self) -> tuple[str, ...]:
-        return self.info.done_criteria
-
-    @property
     def verify_by(self) -> str:
         v = self.info.verification
         return v.verify_by.value if v and v.verify_by else ""

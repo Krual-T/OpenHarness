@@ -34,8 +34,6 @@ def test_bootstrap_reports_yaml_quote_hint_for_invalid_status_yaml(tmp_path: Pat
         "owner: codex\n"
         "created_at: 2026-03-30\n"
         "updated_at: 2026-03-30\n"
-        "done_criteria:\n"
-        "  - x\n"
         "verification:\n"
         "  required_commands: []\n"
         "  required_scenarios: []\n",
@@ -63,8 +61,6 @@ def test_bootstrap_reports_stage_guidance_in_text_output(tmp_path: Path, capsys)
         "owner: codex\n"
         "created_at: 2026-03-24\n"
         "updated_at: 2026-03-24\n"
-        "done_criteria:\n"
-        "  - x\n"
         "verification:\n"
         "  required_commands: []\n"
         "  required_scenarios: []\n",
@@ -99,8 +95,6 @@ def test_task_package_view_injects_current_stage_skill(tmp_path: Path, capsys) -
         "owner: codex\n"
         "created_at: 2026-05-18\n"
         "updated_at: 2026-05-18\n"
-        "done_criteria:\n"
-        "  - x\n"
         "verification:\n"
         "  required_commands: []\n"
         "  required_scenarios: []\n",
@@ -135,8 +129,6 @@ def test_transition_verified_reports_auto_archive(tmp_path: Path) -> None:
         "owner: codex\n"
         "created_at: 2026-05-18\n"
         "updated_at: 2026-05-18\n"
-        "done_criteria:\n"
-        "  - x\n"
         "entrypoints:\n"
         "  - docs/task-packages/ready-to-archive/requirements.md\n"
         "verification:\n"
@@ -181,8 +173,6 @@ def test_transition_verified_keeps_source_status_when_archive_target_exists(tmp_
         "owner: codex\n"
         "created_at: 2026-05-18\n"
         "updated_at: 2026-05-18\n"
-        "done_criteria:\n"
-        "  - x\n"
         "verification:\n"
         "  verify_by: qualitative\n",
         encoding="utf-8",
@@ -216,8 +206,6 @@ def test_bootstrap_reports_author_entry_when_present(tmp_path: Path, capsys) -> 
         "owner: codex\n"
         "created_at: 2026-03-27\n"
         "updated_at: 2026-03-27\n"
-        "done_criteria:\n"
-        "  - x\n"
         "verification:\n"
         "  required_commands: []\n"
         "  required_scenarios: []\n",
@@ -297,8 +285,6 @@ def test_bootstrap_json_includes_author_entry_when_present(tmp_path: Path, capsy
         "owner: codex\n"
         "created_at: 2026-03-27\n"
         "updated_at: 2026-03-27\n"
-        "done_criteria:\n"
-        "  - x\n"
         "verification:\n"
         "  required_commands: []\n"
         "  required_scenarios: []\n",
@@ -344,8 +330,6 @@ def test_validate_design_package_rejects_overview_designed_without_reflection(tm
         "owner: codex\n"
         "created_at: 2026-03-22\n"
         "updated_at: 2026-03-22\n"
-        "done_criteria:\n"
-        "  - x\n"
         "verification:\n"
         "  required_commands: []\n"
         "  required_scenarios: []\n",

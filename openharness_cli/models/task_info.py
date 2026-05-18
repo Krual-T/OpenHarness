@@ -16,7 +16,6 @@ class TaskInfo:
     owner: str
     created_at: str
     updated_at: str
-    done_criteria: tuple[str, ...] = ()
     entrypoints: tuple[str, ...] = ()
     collaboration: Optional[CollaborationInfo] = None
     verification: Optional[VerificationInfo] = None
@@ -51,11 +50,6 @@ class TaskInfo:
         verif_raw = raw.pop("verification", None)
         verification = VerificationInfo.from_dict(verif_raw) if isinstance(verif_raw, dict) else None
 
-        done_raw = raw.pop("done_criteria", None)
-        done_criteria: tuple[str, ...] = ()
-        if isinstance(done_raw, list):
-            done_criteria = tuple(str(item).strip() for item in done_raw if str(item).strip())
-
         ep_raw = raw.pop("entrypoints", None)
         entrypoints: tuple[str, ...] = ()
         if isinstance(ep_raw, list):
@@ -69,7 +63,6 @@ class TaskInfo:
             owner=str(raw.pop("owner", "")).strip(),
             created_at=str(raw.pop("created_at", "")).strip(),
             updated_at=str(raw.pop("updated_at", "")).strip(),
-            done_criteria=done_criteria,
             entrypoints=entrypoints,
             collaboration=collaboration,
             verification=verification,
@@ -86,8 +79,6 @@ class TaskInfo:
         result["owner"] = self.owner
         result["created_at"] = self.created_at
         result["updated_at"] = self.updated_at
-        if self.done_criteria:
-            result["done_criteria"] = list(self.done_criteria)
         if self.entrypoints:
             result["entrypoints"] = list(self.entrypoints)
         if self.collaboration is not None:

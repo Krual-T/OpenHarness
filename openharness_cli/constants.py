@@ -13,7 +13,6 @@ REQUIRED_STATUS_KEYS = (
     "owner",
     "created_at",
     "updated_at",
-    "done_criteria",
     "verification",
 )
 
