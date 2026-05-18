@@ -7,7 +7,7 @@ name = "openharness"
 version = "0.1.0"
 description = "Agent-first repository scaffold and workflow harness for Codex."
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.14"
 dependencies = [
     "PyYAML>=6.0,<7",
     "typer>=0.15,<1",
