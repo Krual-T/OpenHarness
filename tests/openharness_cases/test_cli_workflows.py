@@ -10,6 +10,8 @@ from .common import (
     validate_task_package,
     discover_task_packages,
 )
+import importlib
+import subprocess
 from typer.testing import CliRunner
 from openharness_cli.cli import app
 
@@ -226,6 +228,28 @@ def test_bootstrap_reports_author_entry_when_present(tmp_path: Path, capsys) -> 
     assert result.exit_code == 0
     assert "author entry:" in result.stdout
     assert "author-entry.md" in result.stdout
+
+
+def test_update_uses_harness_context_repo_root(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    repo_root = tmp_path / "repo"
+    repo_root.mkdir()
+    update_module = importlib.import_module("openharness_cli.commands.update")
+    calls: list[tuple[tuple[str, ...], Path | None]] = []
+
+    def fake_run(command_parts, cwd=None):
+        calls.append((tuple(command_parts), Path(cwd) if cwd is not None else None))
+        return subprocess.CompletedProcess(command_parts, 0)
+
+    monkeypatch.setattr(update_module.subprocess, "run", fake_run)
+
+    result = runner.invoke(app, ["--repo", str(repo_root), "update"])
+
+    assert result.exit_code == 0
+    assert calls == [
+        (("git", "pull"), repo_root),
+        (("uv", "tool", "upgrade", "--reinstall", "openharness"), repo_root),
+    ]
+    assert f"Updated OpenHarness from {repo_root}" in result.stdout
 
 
 def test_init_parser_accepts_repo_argument() -> None:

@@ -6,6 +6,7 @@ from pathlib import Path
 import typer
 
 from ..core import load_yaml, write_yaml
+from ..harness_context import HarnessContext
 
 
 class UpdateMode(StrEnum):
@@ -23,7 +24,7 @@ def update(
     set_default_mode: str | None = typer.Option(None, "--set-default-mode", help="Save default update mode and exit (pull / force-sync)"),
 ) -> None:
     """Update the OpenHarness clone and refresh the installed CLI tool."""
-    repo_root = Path(__file__).resolve().parents[1]
+    repo_root = HarnessContext.current().config.repo_root
 
     if set_default_mode:
         m = UpdateMode(str(set_default_mode))
