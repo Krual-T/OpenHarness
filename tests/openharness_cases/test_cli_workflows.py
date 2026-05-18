@@ -230,9 +230,11 @@ def test_bootstrap_reports_author_entry_when_present(tmp_path: Path, capsys) -> 
     assert "author-entry.md" in result.stdout
 
 
-def test_update_uses_harness_context_repo_root(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    repo_root = tmp_path / "repo"
-    repo_root.mkdir()
+def test_update_uses_installed_openharness_source_root(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    project_root = tmp_path / "project"
+    project_root.mkdir()
+    source_root = tmp_path / "openharness-source"
+    source_root.mkdir()
     update_module = importlib.import_module("openharness_cli.commands.update")
     calls: list[tuple[tuple[str, ...], Path | None]] = []
 
@@ -241,15 +243,23 @@ def test_update_uses_harness_context_repo_root(tmp_path: Path, monkeypatch: pyte
         return subprocess.CompletedProcess(command_parts, 0)
 
     monkeypatch.setattr(update_module.subprocess, "run", fake_run)
+    monkeypatch.setattr(update_module, "_source_root_from_installed_metadata", lambda: source_root)
 
-    result = runner.invoke(app, ["--repo", str(repo_root), "update"])
+    result = runner.invoke(app, ["--repo", str(project_root), "update"])
 
     assert result.exit_code == 0
     assert calls == [
-        (("git", "pull"), repo_root),
-        (("uv", "tool", "upgrade", "--reinstall", "openharness"), repo_root),
+        (("git", "pull"), source_root),
+        (("uv", "tool", "upgrade", "--reinstall", "openharness"), source_root),
     ]
-    assert f"Updated OpenHarness from {repo_root}" in result.stdout
+    assert f"Updated OpenHarness from {source_root}" in result.stdout
+
+
+def test_openharness_source_root_falls_back_to_module_repo(monkeypatch: pytest.MonkeyPatch) -> None:
+    update_module = importlib.import_module("openharness_cli.commands.update")
+    monkeypatch.setattr(update_module, "_source_root_from_installed_metadata", lambda: None)
+
+    assert update_module._openharness_source_root() == REPO_ROOT
 
 
 def test_init_parser_accepts_repo_argument() -> None:

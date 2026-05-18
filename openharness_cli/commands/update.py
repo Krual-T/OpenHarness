@@ -1,12 +1,14 @@
 
+import json
+import importlib.metadata
 import subprocess
 from enum import StrEnum
 from pathlib import Path
+from urllib.parse import unquote, urlparse
 
 import typer
 
 from ..core import load_yaml, write_yaml
-from ..harness_context import HarnessContext
 
 
 class UpdateMode(StrEnum):
@@ -18,13 +20,52 @@ def _project_settings_path(repo_root: Path) -> Path:
     return (repo_root / ".harness" / "settings.yaml").resolve()
 
 
+def _openharness_source_root() -> Path:
+    direct_url = _source_root_from_installed_metadata()
+    if direct_url is not None:
+        return direct_url
+
+    module_path = Path(__file__).resolve()
+    for parent in module_path.parents:
+        if (parent / ".git").exists() and (parent / "pyproject.toml").exists():
+            return parent
+
+    return module_path.parents[2]
+
+
+def _source_root_from_installed_metadata() -> Path | None:
+    try:
+        distribution = importlib.metadata.distribution("openharness")
+    except importlib.metadata.PackageNotFoundError:
+        return None
+
+    direct_url_text = distribution.read_text("direct_url.json")
+    if not direct_url_text:
+        return None
+
+    try:
+        direct_url = json.loads(direct_url_text)
+    except json.JSONDecodeError:
+        return None
+
+    url = direct_url.get("url")
+    if not isinstance(url, str):
+        return None
+
+    parsed = urlparse(url)
+    if parsed.scheme != "file":
+        return None
+
+    return Path(unquote(parsed.path)).resolve()
+
+
 def update(
     force_sync: bool = typer.Option(False, "--force-sync", help="Discard local changes and reset to upstream branch"),
     mode: str | None = typer.Option(None, "--mode", help="Override saved default update mode (pull / force-sync)"),
     set_default_mode: str | None = typer.Option(None, "--set-default-mode", help="Save default update mode and exit (pull / force-sync)"),
 ) -> None:
     """Update the OpenHarness clone and refresh the installed CLI tool."""
-    repo_root = HarnessContext.current().config.repo_root
+    repo_root = _openharness_source_root()
 
     if set_default_mode:
         m = UpdateMode(str(set_default_mode))
