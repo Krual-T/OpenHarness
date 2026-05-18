@@ -1,0 +1,19 @@
+id: TASK-008
+title: 修复全局 CLI 包发现
+status: archived
+summary: 打包 OpenHarness CLI 子包，确保 uv tool install 生成的全局 openharness 命令可用。
+owner: Shaokun.Tang
+created_at: YYYY-MM-DD
+updated_at: '2026-05-18'
+done_criteria:
+- 全局 openharness 安装包包含 openharness_cli 子包。
+- 从仓库外运行全局 openharness 能正常导入并执行 task-package transition。
+collaboration:
+  task_type: mechanical
+  design_review_mode: auto
+verification:
+  verify_by: unit_test
+depends_on: []
+scope:
+  areas:
+  - pyproject.toml

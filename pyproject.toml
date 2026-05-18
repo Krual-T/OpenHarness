@@ -21,8 +21,8 @@ dev = [
     "pytest>=8.0,<9",
 ]
 
-[tool.setuptools]
-packages = ["openharness_cli", "openharness"]
+[tool.setuptools.packages.find]
+include = ["openharness", "openharness.*", "openharness_cli", "openharness_cli.*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
