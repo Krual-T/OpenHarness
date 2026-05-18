@@ -141,13 +141,14 @@ def transition(
         print(f"ERROR: {exc}")
         raise typer.Exit(code=1)
 
-    updated, errors = execute_transition(package, target_status)
+    result, errors = execute_transition(package, target_status)
     if errors:
         for error in errors:
             print(f"ERROR: {error}")
         raise typer.Exit(code=1)
 
-    if updated is not None:
+    if result.package is not None:
+        updated = result.package
         validation_errors = validate_task_package(updated)
         if validation_errors:
             for error in validation_errors:
@@ -156,8 +157,8 @@ def transition(
         target = updated.current_status
         print(f"Transitioned {package.task_id} from `{package.current_status}` to `{target}`")
         output_state_hook(target)
-    elif target_status == "archived":
-        print(f"Archived task package: {package.task_id} -> {package.config.archived_task_packages_root / package.name}")
+    elif result.archived_path is not None:
+        print(f"Archived task package: {package.task_id} -> {result.archived_path}")
         output_state_hook("archived")
     else:
         print(f"{package.task_id} already in `{package.current_status}`")

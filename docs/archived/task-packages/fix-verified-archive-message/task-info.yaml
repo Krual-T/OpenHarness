@@ -1,0 +1,24 @@
+id: TASK-003
+title: Fix Verified Archive Message
+status: archived
+summary: 修复 transition verified 自动归档后的 CLI 输出。
+owner: unassigned
+created_at: '2026-05-18'
+updated_at: '2026-05-18'
+done_criteria:
+- transition 到 `verified` 并触发自动归档时，CLI 输出归档成功信息。
+- 直接 transition 到 `archived` 的输出保持正确。
+- 不再把自动归档成功误报为原状态 already in。
+entrypoints:
+- docs/task-packages/fix-verified-archive-message/README.md
+- docs/task-packages/fix-verified-archive-message/01-requirements.md
+- docs/task-packages/fix-verified-archive-message/02-overview-design.md
+- docs/task-packages/fix-verified-archive-message/03-detailed-design.md
+collaboration:
+  task_type: mechanical
+  design_review_mode: auto
+verification:
+  verify_by: unit_test
+depends_on: []
+scope:
+  areas: []

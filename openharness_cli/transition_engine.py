@@ -1,9 +1,17 @@
 
 import dataclasses
+from dataclasses import dataclass
+from pathlib import Path
 from typing import Optional
 
 from .models import TaskInfo, TaskPackage, TaskStatus, parse_status
 from .core import archive_task_package, current_date, write_yaml
+
+
+@dataclass(frozen=True)
+class TransitionResult:
+    package: Optional[TaskPackage] = None
+    archived_path: Optional[Path] = None
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -69,34 +77,35 @@ def _resolve_gate_transition(package: TaskPackage, target_status: str) -> tuple[
 # Public entry point
 # ═══════════════════════════════════════════════════════════════════════════════
 
-def execute_transition(package: TaskPackage, target_status: str) -> tuple[Optional[TaskPackage], list[str]]:
+def execute_transition(package: TaskPackage, target_status: str) -> tuple[TransitionResult, list[str]]:
     """Attempt to transition *package* to *target_status*.
 
-    Returns (updated_package, []) on success.
-    Returns (None, errors) on failure.
+    Returns (TransitionResult(...), []) on success.
+    Returns (TransitionResult(), errors) on failure.
     """
     errors = _ensure_transition_allowed(package, target_status)
     if errors:
-        return None, errors
+        return TransitionResult(), errors
 
     if target_status == package.current_status:
-        return package, []
+        return TransitionResult(package=package), []
 
     # Archive
     if target_status == "archived":
         _, gate_errors = package.workflow.resolve_gate(package, TaskStatus.VERIFIED)
         if gate_errors:
-            return None, gate_errors
+            return TransitionResult(), gate_errors
+        archived_path = package.config.archived_task_packages_root / package.name
         archived_ok, detail = archive_task_package(package)
         if not archived_ok:
-            return None, [detail]
-        return None, []
+            return TransitionResult(), [detail]
+        return TransitionResult(archived_path=archived_path), []
 
     # Check gate preconditions BEFORE persisting, so a failed gate check
     # doesn't leave task-info.yaml in an intermediate state.
     gate_next, gate_errors = _resolve_gate_transition(package, target_status)
     if gate_errors:
-        return None, gate_errors
+        return TransitionResult(), gate_errors
 
     target = parse_status(target_status) or TaskStatus.PROPOSING
     candidate_info = dataclasses.replace(
@@ -107,4 +116,4 @@ def execute_transition(package: TaskPackage, target_status: str) -> tuple[Option
     if gate_next is not None:
         return execute_transition(updated, gate_next)
 
-    return updated, []
+    return TransitionResult(package=updated), []

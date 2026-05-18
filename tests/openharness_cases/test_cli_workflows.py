@@ -114,6 +114,44 @@ def test_task_package_view_injects_current_stage_skill(tmp_path: Path, capsys) -
     assert "# Overview Stage" in result.stdout
 
 
+def test_transition_verified_reports_auto_archive(tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
+    (repo_root / "docs" / "task-packages" / "ready-to-archive").mkdir(parents=True)
+    root = repo_root / "docs" / "task-packages" / "ready-to-archive"
+    for doc in ALL_DESIGN_FILES:
+        doc.path_from(root).write_text("# x\n", encoding="utf-8")
+    TaskPackageDocument.EVIDENCE.path_from(root).write_text(
+        "# Evidence\n\n## Verification Result\npassed\n",
+        encoding="utf-8",
+    )
+    TaskPackageDocument.TASK_INFO.path_from(root).write_text(
+        "id: OH-966\n"
+        "title: Ready To Archive\n"
+        "status: verifying\n"
+        "summary: auto archive message\n"
+        "owner: codex\n"
+        "created_at: 2026-05-18\n"
+        "updated_at: 2026-05-18\n"
+        "done_criteria:\n"
+        "  - x\n"
+        "verification:\n"
+        "  verify_by: qualitative\n",
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        ["--repo", str(repo_root), "task-package", "transition", "ready-to-archive", "verified"],
+    )
+
+    assert result.exit_code == 0
+    assert "Archived task package: OH-966" in result.stdout
+    assert "already in `verifying`" not in result.stdout
+    assert not root.exists()
+    assert (repo_root / "docs" / "archived" / "task-packages" / "ready-to-archive").exists()
+
+
 def test_bootstrap_reports_author_entry_when_present(tmp_path: Path, capsys) -> None:
     repo_root = tmp_path / "repo"
     references_root = repo_root / "skills" / "using-openharness" / "references"
