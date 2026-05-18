@@ -1,0 +1,20 @@
+id: TASK-009
+title: update 使用 reinstall 刷新工具
+status: archived
+summary: 将 openharness update 的工具刷新方式改为 uv tool upgrade --reinstall openharness。
+owner: Shaokun.Tang
+created_at: YYYY-MM-DD
+updated_at: '2026-05-18'
+done_criteria:
+- update 使用 uv tool upgrade --reinstall openharness 刷新全局工具。
+- 测试覆盖 subprocess 调用参数。
+collaboration:
+  task_type: mechanical
+  design_review_mode: auto
+verification:
+  verify_by: unit_test
+depends_on: []
+scope:
+  areas:
+  - openharness_cli/commands/update.py
+  - tests/openharness_cases

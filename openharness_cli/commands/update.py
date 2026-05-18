@@ -76,8 +76,8 @@ def update(
             print("ERROR: git pull failed; refusing to continue with tool upgrade.")
             raise typer.Exit(code=1)
 
-    upgrade_result = subprocess.run(["uv", "tool", "upgrade", "openharness"], cwd=repo_root).returncode
+    upgrade_result = subprocess.run(["uv", "tool", "upgrade", "--reinstall", "openharness"], cwd=repo_root).returncode
     if upgrade_result != 0:
-        print("ERROR: `uv tool upgrade openharness` failed.")
+        print("ERROR: `uv tool upgrade --reinstall openharness` failed.")
         raise typer.Exit(code=1)
     print(f"Updated OpenHarness from {repo_root}")

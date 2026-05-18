@@ -35,3 +35,26 @@ def test_parser_help_includes_top_level_description() -> None:
     assert "Update the OpenHarness clone and refresh the installed CLI tool." in result.stdout
     assert "--force-sync" in result.stdout
     assert "Discard local changes" in result.stdout
+
+
+def test_update_reinstalls_existing_tool_source(monkeypatch) -> None:
+    from typer.testing import CliRunner
+    import subprocess
+    from openharness_cli.cli import app
+
+    calls: list[tuple[list[str], str]] = []
+
+    def fake_run(command, cwd=None):
+        calls.append((list(command), str(cwd)))
+        return subprocess.CompletedProcess(args=command, returncode=0)
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+
+    runner = CliRunner()
+    result = runner.invoke(app, ["update", "--mode", "pull"])
+
+    assert result.exit_code == 0
+    assert [command for command, _ in calls] == [
+        ["git", "pull"],
+        ["uv", "tool", "upgrade", "--reinstall", "openharness"],
+    ]
