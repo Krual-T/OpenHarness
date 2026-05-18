@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from .common import Path, REPO_ROOT, CreateTaskInput, create_task_package, setup_harness, openharness
+from .common import Path, REPO_ROOT, CreateTaskInput, TaskPackageDocument, create_task_package, setup_harness, openharness
 from openharness_cli.core.yaml import load_yaml
 
 
@@ -53,8 +53,8 @@ def test_create_task_package_quotes_yaml_sensitive_status_fields(tmp_path: Path)
         summary="`02-overview-design.md` guidance: explain quoting.",
     )
 
-    status_text = (task_root / "task-info.yaml").read_text(encoding="utf-8")
-    status = load_yaml(task_root / "task-info.yaml")
+    status_text = TaskPackageDocument.TASK_INFO.path_from(task_root).read_text(encoding="utf-8")
+    status = load_yaml(TaskPackageDocument.TASK_INFO.path_from(task_root))
 
     assert 'title: "`02-overview-design.md` guidance: quote YAML"' in status_text
     assert 'summary: "`02-overview-design.md` guidance: explain quoting."' in status_text

@@ -7,15 +7,11 @@ from pathlib import Path
 
 from ..constants import TASK_ID_RE
 from ..harness_context import harness, HarnessContext
-from ..models import CreateTaskInput, TaskInfo, TaskPackage, TaskStatus
+from ..models import CreateTaskInput, TaskInfo, TaskPackage, TaskStatus, TaskPackageDocument
 from .yaml import load_yaml, write_yaml
 from .utils import current_date, get_git_author, slugify_task_name
 
-ALL_DESIGN_FILES = (
-    "README.md", "task-info.yaml", "01-requirements.md",
-    "02-overview-design.md", "03-detailed-design.md",
-    "verification_design.md", "evidence.md",
-)
+ALL_DESIGN_FILES: tuple[TaskPackageDocument, ...] = tuple(TaskPackageDocument)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -39,13 +35,12 @@ def discover_task_packages(ctx: HarnessContext) -> list[TaskPackage]:
             if resolved in seen:
                 continue
             seen.add(resolved)
-            info_path = child / "task-info.yaml"
+            info_path = TaskPackageDocument.TASK_INFO.path_from(child)
             if not info_path.exists():
                 continue
             raw_info = load_yaml(info_path)
             info = TaskInfo.from_dict(raw_info)
-            documents = {name: child / name for name in ALL_DESIGN_FILES}
-            packages.append(TaskPackage(root=child, info=info, config=config, documents=documents))
+            packages.append(TaskPackage(root=child, info=info, config=config))
     return packages
 
 
@@ -86,7 +81,7 @@ def archive_task_package(package: TaskPackage) -> tuple[bool, str]:
 
     shutil.move(str(package.root), str(target_root))
 
-    info_path = target_root / "task-info.yaml"
+    info_path = TaskPackageDocument.TASK_INFO.path_from(target_root)
     raw_info = load_yaml(info_path)
     raw_info["status"] = "archived"
     raw_info["updated_at"] = current_date()
@@ -111,10 +106,7 @@ def _auto_archive_active_packages(ctx: HarnessContext) -> None:
         if str(raw_info.get("status") or "").strip() != "archived":
             continue
         info = TaskInfo.from_dict(raw_info)
-        package = TaskPackage(
-            root=child, info=info, config=config,
-            documents={name: child / name for name in ALL_DESIGN_FILES},
-        )
+        package = TaskPackage(root=child, info=info, config=config)
         archived_ok, detail = archive_task_package(package)
         if not archived_ok:
             raise ValueError(f"failed to auto-archive task package `{package.task_id}`: {detail}")
@@ -178,7 +170,7 @@ def _create_task_package_unlocked(ctx: HarnessContext, request: CreateTaskInput,
         target_name = template.name.removeprefix("task-package.")
         content = template.read_text(encoding="utf-8")
         template_replacements = dict(replacements)
-        if target_name == "task-info.yaml":
+        if target_name == TaskPackageDocument.TASK_INFO:
             template_replacements.update({
                 "<DESIGN_ID>": json.dumps(task_id, ensure_ascii=False),
                 "<TITLE>": json.dumps(request.title, ensure_ascii=False),

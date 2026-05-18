@@ -13,6 +13,7 @@ from openharness_cli import (
     CreateTaskInput,
     HarnessConfig,
     HarnessContext,
+    TaskPackageDocument,
     allocate_next_task_id,
     create_task_package,
     discover_task_packages,

@@ -10,6 +10,7 @@ from .task_info import TaskInfo
 from .workflow import Workflow
 from .harness_config import HarnessConfig
 from .task_package import TaskPackage
+from .task_package_document import TaskPackageDocument
 from .create_task_input import CreateTaskInput
 from .runtime_workflow_package import RuntimeWorkflowPackage
 
@@ -17,6 +18,7 @@ __all__ = [
     "TaskStatus", "TaskType", "VerifyBy", "DesignReviewMode",
     "CollaborationInfo", "VerificationInfo",
     "TaskInfo", "Workflow",
-    "HarnessConfig", "TaskPackage", "CreateTaskInput", "RuntimeWorkflowPackage",
+    "HarnessConfig", "TaskPackage", "TaskPackageDocument",
+    "CreateTaskInput", "RuntimeWorkflowPackage",
     "parse_status",
 ]

@@ -4,6 +4,7 @@ from .common import (
     Path,
     ALL_DESIGN_FILES,
     REPO_ROOT,
+    TaskPackageDocument,
     json,
     pytest,
     setup_harness,
@@ -35,10 +36,10 @@ def test_bootstrap_reports_yaml_quote_hint_for_invalid_status_yaml(tmp_path: Pat
         encoding="utf-8",
     )
     root = repo_root / "docs" / "task-packages" / "bad-yaml"
-    for name in ALL_DESIGN_FILES:
-        if name != "task-info.yaml":
-            (root / name).write_text("x\n", encoding="utf-8")
-    (root / "task-info.yaml").write_text(
+    for doc in ALL_DESIGN_FILES:
+        if doc != TaskPackageDocument.TASK_INFO:
+            doc.path_from(root).write_text("x\n", encoding="utf-8")
+    TaskPackageDocument.TASK_INFO.path_from(root).write_text(
         "id: OH-998\n"
         "title: Bad YAML\n"
         "status: proposed\n"
@@ -88,9 +89,9 @@ def test_bootstrap_reports_stage_guidance_in_text_output(tmp_path: Path, capsys)
         encoding="utf-8",
     )
     root = repo_root / "docs" / "task-packages" / "visible-stage"
-    for name in ALL_DESIGN_FILES:
-        (root / name).write_text("# x\n", encoding="utf-8")
-    (root / "task-info.yaml").write_text(
+    for doc in ALL_DESIGN_FILES:
+        doc.path_from(root).write_text("# x\n", encoding="utf-8")
+    TaskPackageDocument.TASK_INFO.path_from(root).write_text(
         "id: OH-960\n"
         "title: Visible Stage\n"
         "status: overview_designing\n"
@@ -146,9 +147,9 @@ def test_bootstrap_reports_author_entry_when_present(tmp_path: Path, capsys) -> 
     )
     (references_root / "author-entry.md").write_text("# Author Entry\n", encoding="utf-8")
     root = repo_root / "docs" / "task-packages" / "visible-stage"
-    for name in ALL_DESIGN_FILES:
-        (root / name).write_text("# x\n", encoding="utf-8")
-    (root / "task-info.yaml").write_text(
+    for doc in ALL_DESIGN_FILES:
+        doc.path_from(root).write_text("# x\n", encoding="utf-8")
+    TaskPackageDocument.TASK_INFO.path_from(root).write_text(
         "id: OH-962\n"
         "title: Visible Stage Author Entry\n"
         "status: proposing\n"
@@ -218,9 +219,9 @@ def test_bootstrap_json_includes_author_entry_when_present(tmp_path: Path, capsy
     )
     (references_root / "author-entry.md").write_text("# Author Entry\n", encoding="utf-8")
     root = repo_root / "docs" / "task-packages" / "visible-stage"
-    for name in ALL_DESIGN_FILES:
-        (root / name).write_text("# x\n", encoding="utf-8")
-    (root / "task-info.yaml").write_text(
+    for doc in ALL_DESIGN_FILES:
+        doc.path_from(root).write_text("# x\n", encoding="utf-8")
+    TaskPackageDocument.TASK_INFO.path_from(root).write_text(
         "id: OH-963\n"
         "title: Visible Stage Json Author Entry\n"
         "status: detailed_designed\n"
@@ -270,8 +271,8 @@ def test_validate_design_package_rejects_overview_designed_without_reflection(tm
         encoding="utf-8",
     )
     root = repo_root / "docs" / "task-packages" / "overview-no-reflection"
-    (root / "README.md").write_text("# Overview No Reflection\n", encoding="utf-8")
-    (root / "01-requirements.md").write_text(
+    TaskPackageDocument.README.path_from(root).write_text("# Overview No Reflection\n", encoding="utf-8")
+    TaskPackageDocument.REQUIREMENTS.path_from(root).write_text(
         "# Requirements\n\n"
         "## Goal\nA\n\n"
         "## Problem Statement\nB\n\n"
@@ -280,7 +281,7 @@ def test_validate_design_package_rejects_overview_designed_without_reflection(tm
         "## Constraints\n- E\n",
         encoding="utf-8",
     )
-    (root / "02-overview-design.md").write_text(
+    TaskPackageDocument.OVERVIEW_DESIGN.path_from(root).write_text(
         "# Overview Design\n\n"
         "## System Boundary\nA\n\n"
         "## Proposed Structure\nB\n\n"
@@ -288,10 +289,10 @@ def test_validate_design_package_rejects_overview_designed_without_reflection(tm
         "## Trade-offs\nD\n",
         encoding="utf-8",
     )
-    (root / "03-detailed-design.md").write_text("x\n", encoding="utf-8")
-    (root / "verification_design.md").write_text("x\n", encoding="utf-8")
-    (root / "evidence.md").write_text("x\n", encoding="utf-8")
-    (root / "task-info.yaml").write_text(
+    TaskPackageDocument.DETAILED_DESIGN.path_from(root).write_text("x\n", encoding="utf-8")
+    TaskPackageDocument.VERIFICATION_DESIGN.path_from(root).write_text("x\n", encoding="utf-8")
+    TaskPackageDocument.EVIDENCE.path_from(root).write_text("x\n", encoding="utf-8")
+    TaskPackageDocument.TASK_INFO.path_from(root).write_text(
         "id: OH-904\n"
         "title: Overview No Reflection\n"
         "status: overview_designed\n"

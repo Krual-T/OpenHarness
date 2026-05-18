@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Callable, Optional
 
 from .task_status import TaskStatus
+from .task_package_document import TaskPackageDocument
 
 
 @dataclass(frozen=True)
@@ -12,8 +13,8 @@ class Workflow:
     status_sequence: tuple[TaskStatus, ...]
     gate_next: dict[TaskStatus, TaskStatus]
     gate_preconditions: dict[TaskStatus, Callable[..., list[str]]]
-    file_additions: dict[TaskStatus, tuple[str, ...]]
-    section_specs: dict[str, tuple[tuple[str, str], ...]]
+    file_additions: dict[TaskStatus, tuple[TaskPackageDocument, ...]]
+    section_specs: dict[TaskPackageDocument, tuple[tuple[TaskPackageDocument, str], ...]]
     descriptions: dict[TaskStatus, str]
     next_steps: dict[TaskStatus, str]
 
@@ -36,8 +37,8 @@ class Workflow:
             return None
         return self.status_sequence[idx + 1]
 
-    def required_files(self, status: TaskStatus) -> tuple[str, ...]:
-        base = ("README.md", "task-info.yaml")
+    def required_files(self, status: TaskStatus) -> tuple[TaskPackageDocument, ...]:
+        base = TaskPackageDocument.base_files()
         accumulated = list(base)
         for s in self.status_sequence:
             accumulated.extend(self.file_additions.get(s, ()))
@@ -45,10 +46,11 @@ class Workflow:
                 break
         return tuple(accumulated)
 
-    def section_requirements(self, status: TaskStatus) -> tuple[tuple[str, str], ...]:
-        """Cumulative section requirements up to *status*, computed from file_additions."""
-        sections: list[tuple[str, str]] = [("README.md", "## Overview")]
-        accumulated_files: set[str] = set()
+    def section_requirements(self, status: TaskStatus) -> tuple[tuple[TaskPackageDocument, str], ...]:
+        sections: list[tuple[TaskPackageDocument, str]] = [
+            (TaskPackageDocument.README, h) for h in TaskPackageDocument.README.sections
+        ]
+        accumulated_files: set[TaskPackageDocument] = set()
         for s in self.status_sequence:
             for f in self.file_additions.get(s, ()):
                 accumulated_files.add(f)

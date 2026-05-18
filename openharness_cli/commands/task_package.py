@@ -6,7 +6,7 @@ from pathlib import Path
 import typer
 
 from ..display import describe_stage, output_state_hook
-from ..models import TaskStatus
+from ..models import TaskStatus, TaskPackageDocument
 from ..core import (
     create_task_package,
     discover_task_packages,
@@ -86,11 +86,11 @@ def list_packages(
         for p in proposing:
             print(f"\n## Task: {p.task_id} {p.title}", flush=True)
             output_state_hook("proposing")
-            req_path = p.root / "01-requirements.md"
+            req_path = TaskPackageDocument.REQUIREMENTS.path_from(p.root)
             if req_path.exists():
-                print(f"\n--- Current 01-requirements.md ({p.task_id}) ---", flush=True)
+                print(f"\n--- Current {TaskPackageDocument.REQUIREMENTS.value} ({p.task_id}) ---", flush=True)
                 print(req_path.read_text(encoding="utf-8"), flush=True)
-                print(f"--- END: 01-requirements.md ({p.task_id}) ---", flush=True)
+                print(f"--- END: {TaskPackageDocument.REQUIREMENTS.value} ({p.task_id}) ---", flush=True)
 
 
 @task_app.command(name="new")

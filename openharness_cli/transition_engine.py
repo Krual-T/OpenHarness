@@ -13,7 +13,7 @@ from .core import archive_task_package, current_date, write_yaml
 
 def _save_package_status(package: TaskPackage, info: TaskInfo) -> TaskPackage:
     write_yaml(package.info_path, info.to_dict())
-    return TaskPackage(root=package.root, info=info, config=package.config, documents=package.documents)
+    return TaskPackage(root=package.root, info=info, config=package.config)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 from .harness_config import HarnessConfig
 from .task_info import TaskInfo
+from .task_package_document import TaskPackageDocument
 
 if TYPE_CHECKING:
     from .workflow import Workflow
@@ -16,12 +17,15 @@ class TaskPackage:
     root: Path
     info: TaskInfo
     config: HarnessConfig
-    documents: dict[str, Path] = field(default_factory=dict)
 
     @property
     def workflow(self) -> Workflow:
         from ..workflows import workflow_for
         return workflow_for(self.task_type or None)
+
+    @property
+    def documents(self) -> dict[TaskPackageDocument, Path]:
+        return {d: d.path_from(self.root) for d in TaskPackageDocument}
 
     @property
     def name(self) -> str:
@@ -68,4 +72,4 @@ class TaskPackage:
 
     @property
     def info_path(self) -> Path:
-        return self.root / "task-info.yaml"
+        return TaskPackageDocument.TASK_INFO.path_from(self.root)

@@ -9,7 +9,7 @@ from .constants import (
     PLACEHOLDER_NUMBERED_RE,
     REQUIRED_STATUS_KEYS,
 )
-from .models import DesignReviewMode, TaskPackage, TaskStatus, TaskType, VerifyBy
+from .models import DesignReviewMode, TaskPackage, TaskStatus, TaskType, VerifyBy, TaskPackageDocument
 
 
 def _extract_markdown_section(text: str, heading: str) -> str:
@@ -108,18 +108,18 @@ def validate_task_package(package: TaskPackage) -> list[str]:
 
     required_files = wf.required_files(status)
 
-    for file_name in required_files:
-        if not (package.root / file_name).exists():
-            errors.append(f"missing required file for `{package.current_status}`: {package.root / file_name}")
+    for doc in required_files:
+        if not doc.path_from(package.root).exists():
+            errors.append(f"missing required file for `{package.current_status}`: {doc.path_from(package.root)}")
     for key in REQUIRED_STATUS_KEYS:
         value = package.info.to_dict().get(key)
         if value in (None, "", []):
-            errors.append(f"missing required key `{key}` in {package.root / 'task-info.yaml'}")
+            errors.append(f"missing required key `{key}` in {TaskPackageDocument.TASK_INFO.path_from(package.root)}")
 
     # Validate task_type if present
     if package.task_type and package.task_type not in {t.value for t in TaskType}:
         errors.append(
-            f"unknown collaboration.task_type `{package.task_type}` in {package.root / 'task-info.yaml'}; "
+            f"unknown collaboration.task_type `{package.task_type}` in {TaskPackageDocument.TASK_INFO.path_from(package.root)}; "
             f"expected one of: {', '.join(sorted(t.value for t in TaskType))}"
         )
 
@@ -127,25 +127,25 @@ def validate_task_package(package: TaskPackage) -> list[str]:
     design_review_mode = package.design_review_mode
     if design_review_mode and design_review_mode not in {drm.value for drm in DesignReviewMode}:
         errors.append(
-            f"unknown collaboration.design_review_mode `{design_review_mode}` in {package.root / 'task-info.yaml'}; "
+            f"unknown collaboration.design_review_mode `{design_review_mode}` in {TaskPackageDocument.TASK_INFO.path_from(package.root)}; "
             f"expected `stepwise` or `auto`"
         )
 
     # Validate verify_by if present
     if package.verify_by and package.verify_by not in {v.value for v in VerifyBy}:
         errors.append(
-            f"unknown verification.verify_by `{package.verify_by}` in {package.root / 'task-info.yaml'}; "
+            f"unknown verification.verify_by `{package.verify_by}` in {TaskPackageDocument.TASK_INFO.path_from(package.root)}; "
             f"expected one of: {', '.join(sorted(v.value for v in VerifyBy))}"
         )
 
     verification = package.info.to_dict().get("verification")
     if verification is not None and not isinstance(verification, dict):
-        errors.append(f"`verification` must be a mapping in {package.root / 'task-info.yaml'}")
+        errors.append(f"`verification` must be a mapping in {TaskPackageDocument.TASK_INFO.path_from(package.root)}")
 
     valid_status_values = {s.value for s in wf.status_sequence}
     if package.current_status not in valid_status_values:
         errors.append(
-            f"unknown status `{package.current_status}` in {package.root / 'task-info.yaml'}; "
+            f"unknown status `{package.current_status}` in {TaskPackageDocument.TASK_INFO.path_from(package.root)}; "
             f"expected one of: {', '.join(sorted(valid_status_values))}"
         )
     if package.current_status == "archived":
@@ -163,10 +163,10 @@ def validate_task_package(package: TaskPackage) -> list[str]:
             if isinstance(raw_paths, list):
                 for raw_path in raw_paths:
                     if not _referenced_path_exists(package, raw_path):
-                        errors.append(f"missing referenced path `{raw_path}` in {package.root / 'task-info.yaml'}")
+                        errors.append(f"missing referenced path `{raw_path}` in {TaskPackageDocument.TASK_INFO.path_from(package.root)}")
 
-        for file_name, heading in wf.section_requirements(status):
-            path = package.root / file_name
+        for doc, heading in wf.section_requirements(status):
+            path = doc.path_from(package.root)
             if not _section_has_meaningful_content(path, heading):
                 errors.append(
                     f"{package.current_status} requires non-placeholder content for `{heading}` in {path}"

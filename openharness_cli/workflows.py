@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional, Union
 
-from .models import TaskStatus, TaskType, Workflow
+from .models import TaskStatus, TaskType, Workflow, TaskPackageDocument
 
 if TYPE_CHECKING:
     from .models import TaskPackage
@@ -12,45 +12,7 @@ if TYPE_CHECKING:
 # Per-file section requirements — used by Workflow.section_requirements()
 # ═══════════════════════════════════════════════════════════════════════════════
 
-_FILE_SECTION_REQUIREMENTS: dict[str, tuple[tuple[str, str], ...]] = {
-    "01-requirements.md": (
-        ("01-requirements.md", "## Goal"),
-        ("01-requirements.md", "## Problem Statement"),
-        ("01-requirements.md", "## Required Outcomes"),
-        ("01-requirements.md", "## Constraints"),
-    ),
-    "02-overview-design.md": (
-        ("02-overview-design.md", "## System Boundary"),
-        ("02-overview-design.md", "## Proposed Structure"),
-        ("02-overview-design.md", "## Key Flows"),
-        ("02-overview-design.md", "## Stage Gates"),
-        ("02-overview-design.md", "## Trade-offs"),
-        ("02-overview-design.md", "## Overview Reflection"),
-    ),
-    "03-detailed-design.md": (
-        ("03-detailed-design.md", "## Runtime Verification Plan"),
-        ("03-detailed-design.md", "## Files Added Or Changed"),
-        ("03-detailed-design.md", "## Interfaces"),
-        ("03-detailed-design.md", "## Module Internals"),
-        ("03-detailed-design.md", "## Data Semantics"),
-        ("03-detailed-design.md", "## Decision Closure"),
-        ("03-detailed-design.md", "## Error Handling"),
-        ("03-detailed-design.md", "## Migration Notes"),
-        ("03-detailed-design.md", "## Detailed Reflection"),
-    ),
-    "verification_design.md": (
-        ("verification_design.md", "## Verification Path"),
-        ("verification_design.md", "## Required Commands"),
-        ("verification_design.md", "## Expected Outcomes"),
-        ("verification_design.md", "## Traceability"),
-        ("verification_design.md", "## Risk Acceptance"),
-    ),
-    "evidence.md": (
-        ("evidence.md", "## Verification Result"),
-        ("evidence.md", "## Files"),
-        ("evidence.md", "## Residual Risks"),
-    ),
-}
+_FILE_SECTION_REQUIREMENTS = TaskPackageDocument.section_specs()
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -58,7 +20,7 @@ _FILE_SECTION_REQUIREMENTS: dict[str, tuple[tuple[str, str], ...]] = {
 # ═══════════════════════════════════════════════════════════════════════════════
 
 DESCRIPTIONS: dict[TaskStatus, str] = {
-    TaskStatus.PROPOSING: "Converging requirements — 01-requirements.md is not yet ready.",
+    TaskStatus.PROPOSING: f"Converging requirements — {TaskPackageDocument.REQUIREMENTS.value} is not yet ready.",
     TaskStatus.REQUIREMENTS_DESIGNED: "Requirements converged; auto-advancing to next active state.",
     TaskStatus.OVERVIEW_DESIGNING: "Exploring and drafting overview design.",
     TaskStatus.OVERVIEW_DESIGNED: "Overview design complete; auto-advancing to detailed design.",
@@ -80,7 +42,7 @@ DESCRIPTIONS: dict[TaskStatus, str] = {
 
 _PROPOSING_STEP = (
     "Converge requirements, determine task_type and verify_by, "
-    "write `01-requirements.md`, then transition to `requirements_designed`."
+    f"write `{TaskPackageDocument.REQUIREMENTS.value}`, then transition to `requirements_designed`."
 )
 
 STANDARD_NEXT_STEPS: dict[TaskStatus, str] = {
@@ -97,7 +59,7 @@ STANDARD_NEXT_STEPS: dict[TaskStatus, str] = {
     ),
     TaskStatus.DETAILED_DESIGNED: "Auto-advancing to `verification_designing`.",
     TaskStatus.VERIFICATION_DESIGNING: (
-        "Design verification strategy, write `verification_design.md`, "
+        f"Design verification strategy, write `{TaskPackageDocument.VERIFICATION_DESIGN.value}`, "
         "then transition to `verification_designed`."
     ),
     TaskStatus.VERIFICATION_DESIGNED: "Auto-advancing to `implementing`.",
@@ -106,7 +68,7 @@ STANDARD_NEXT_STEPS: dict[TaskStatus, str] = {
     ),
     TaskStatus.IMPLEMENTED: "Auto-advancing to `verifying`.",
     TaskStatus.VERIFYING: (
-        "Execute verification and write `evidence.md`, "
+        f"Execute verification and write `{TaskPackageDocument.EVIDENCE.value}`, "
         "then transition to `verified`."
     ),
     TaskStatus.VERIFIED: "Auto-advancing to `archived`.",
@@ -117,7 +79,7 @@ MECHANICAL_NEXT_STEPS: dict[TaskStatus, str] = {
     TaskStatus.PROPOSING: _PROPOSING_STEP,
     TaskStatus.REQUIREMENTS_DESIGNED: "Auto-advancing to `verification_designing`.",
     TaskStatus.VERIFICATION_DESIGNING: (
-        "Design verification strategy, write `verification_design.md`, "
+        f"Design verification strategy, write `{TaskPackageDocument.VERIFICATION_DESIGN.value}`, "
         "then transition to `verification_designed`."
     ),
     TaskStatus.VERIFICATION_DESIGNED: "Auto-advancing to `implementing`.",
@@ -126,7 +88,7 @@ MECHANICAL_NEXT_STEPS: dict[TaskStatus, str] = {
     ),
     TaskStatus.IMPLEMENTED: "Auto-advancing to `verifying`.",
     TaskStatus.VERIFYING: (
-        "Execute verification and write `evidence.md`, "
+        f"Execute verification and write `{TaskPackageDocument.EVIDENCE.value}`, "
         "then transition to `verified`."
     ),
     TaskStatus.VERIFIED: "Auto-advancing to `archived`.",
@@ -156,11 +118,11 @@ def _check_requirements_gate(package: TaskPackage) -> list[str]:
 
 
 def _check_verified_gate(package: TaskPackage) -> list[str]:
-    evidence_path = package.root / "evidence.md"
+    evidence_path = TaskPackageDocument.EVIDENCE.path_from(package.root)
     if not evidence_path.exists():
-        return ["evidence.md does not exist; write verification evidence first."]
+        return [f"{TaskPackageDocument.EVIDENCE.value} does not exist; write verification evidence first."]
     if not evidence_path.read_text(encoding="utf-8").strip():
-        return ["evidence.md is empty; write verification evidence first."]
+        return [f"{TaskPackageDocument.EVIDENCE.value} is empty; write verification evidence first."]
     return []
 
 
@@ -198,11 +160,11 @@ STANDARD_WORKFLOW = Workflow(
         TaskStatus.VERIFIED: _check_verified_gate,
     },
     file_additions={
-        TaskStatus.REQUIREMENTS_DESIGNED: ("01-requirements.md",),
-        TaskStatus.OVERVIEW_DESIGNED: ("02-overview-design.md",),
-        TaskStatus.DETAILED_DESIGNED: ("03-detailed-design.md",),
-        TaskStatus.VERIFICATION_DESIGNED: ("verification_design.md",),
-        TaskStatus.VERIFIED: ("evidence.md",),
+        TaskStatus.REQUIREMENTS_DESIGNED: (TaskPackageDocument.REQUIREMENTS,),
+        TaskStatus.OVERVIEW_DESIGNED: (TaskPackageDocument.OVERVIEW_DESIGN,),
+        TaskStatus.DETAILED_DESIGNED: (TaskPackageDocument.DETAILED_DESIGN,),
+        TaskStatus.VERIFICATION_DESIGNED: (TaskPackageDocument.VERIFICATION_DESIGN,),
+        TaskStatus.VERIFIED: (TaskPackageDocument.EVIDENCE,),
     },
     section_specs=_FILE_SECTION_REQUIREMENTS,
     descriptions=DESCRIPTIONS,
@@ -233,9 +195,9 @@ MECHANICAL_WORKFLOW = Workflow(
         TaskStatus.VERIFIED: _check_verified_gate,
     },
     file_additions={
-        TaskStatus.REQUIREMENTS_DESIGNED: ("01-requirements.md",),
-        TaskStatus.VERIFICATION_DESIGNED: ("verification_design.md",),
-        TaskStatus.VERIFIED: ("evidence.md",),
+        TaskStatus.REQUIREMENTS_DESIGNED: (TaskPackageDocument.REQUIREMENTS,),
+        TaskStatus.VERIFICATION_DESIGNED: (TaskPackageDocument.VERIFICATION_DESIGN,),
+        TaskStatus.VERIFIED: (TaskPackageDocument.EVIDENCE,),
     },
     section_specs=_FILE_SECTION_REQUIREMENTS,
     descriptions=DESCRIPTIONS,

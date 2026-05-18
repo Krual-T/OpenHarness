@@ -8,6 +8,7 @@ from .common import (
     REPO_ROOT,
     ALL_DESIGN_FILES,
     CreateTaskInput,
+    TaskPackageDocument,
     HarnessConfig,
     allocate_next_task_id,
     create_task_package,
@@ -135,9 +136,9 @@ def test_allocate_next_task_id_uses_existing_prefix_and_width(tmp_path: Path) ->
     ):
         root = repo_root / "docs" / ("task-packages" if status == "proposing" else "archived/task-packages") / root_name
         root.mkdir(parents=True)
-        for name in ALL_DESIGN_FILES:
-            (root / name).write_text("# x\n", encoding="utf-8")
-        (root / "task-info.yaml").write_text(
+        for doc in ALL_DESIGN_FILES:
+            doc.path_from(root).write_text("# x\n", encoding="utf-8")
+        TaskPackageDocument.TASK_INFO.path_from(root).write_text(
             f"id: {task_id}\n"
             "title: Example\n"
             f"status: {status}\n"
@@ -163,9 +164,9 @@ def test_new_package_creates_with_auto_id(tmp_path: Path, capsys) -> None:
 
     existing = repo_root / "docs" / "task-packages" / "existing"
     existing.mkdir(parents=True)
-    for file_name in ALL_DESIGN_FILES:
-        (existing / file_name).write_text("# x\n", encoding="utf-8")
-    (existing / "task-info.yaml").write_text(
+    for doc in ALL_DESIGN_FILES:
+        doc.path_from(existing).write_text("# x\n", encoding="utf-8")
+    TaskPackageDocument.TASK_INFO.path_from(existing).write_text(
         "id: OH-009\n"
         "title: Existing\n"
         "status: proposed\n"
@@ -224,9 +225,9 @@ def test_find_duplicate_task_ids_reports_conflicts(tmp_path: Path) -> None:
     second = repo_root / "docs" / "archived" / "task-packages" / "two"
     for root, status in ((first, "proposing"), (second, "archived")):
         root.mkdir(parents=True)
-        for name in ALL_DESIGN_FILES:
-            (root / name).write_text("# x\n", encoding="utf-8")
-        (root / "task-info.yaml").write_text(
+        for doc in ALL_DESIGN_FILES:
+            doc.path_from(root).write_text("# x\n", encoding="utf-8")
+        TaskPackageDocument.TASK_INFO.path_from(root).write_text(
             "id: OH-999\n"
             "title: Duplicate\n"
             f"status: {status}\n"
@@ -287,16 +288,16 @@ def test_validate_task_package_rejects_unknown_status_and_missing_paths(tmp_path
         encoding="utf-8",
     )
     root = repo_root / "docs" / "task-packages" / "broken"
-    for name in (
-        "README.md",
-        "01-requirements.md",
-        "02-overview-design.md",
-        "03-detailed-design.md",
-        "verification_design.md",
-        "evidence.md",
+    for doc in (
+        TaskPackageDocument.README,
+        TaskPackageDocument.REQUIREMENTS,
+        TaskPackageDocument.OVERVIEW_DESIGN,
+        TaskPackageDocument.DETAILED_DESIGN,
+        TaskPackageDocument.VERIFICATION_DESIGN,
+        TaskPackageDocument.EVIDENCE,
     ):
-        (root / name).write_text("x\n", encoding="utf-8")
-    (root / "task-info.yaml").write_text(
+        doc.path_from(root).write_text("x\n", encoding="utf-8")
+    TaskPackageDocument.TASK_INFO.path_from(root).write_text(
         "id: OH-999\n"
         "title: Broken Package\n"
         "status: invalid_status\n"
@@ -354,9 +355,9 @@ def test_validate_task_package_allows_archived_legacy_reference_fallback(tmp_pat
         encoding="utf-8",
     )
     root = repo_root / "docs" / "archived" / "task-packages" / "archived-legacy"
-    for name in ALL_DESIGN_FILES:
-        (root / name).write_text("x\n", encoding="utf-8")
-    (root / "task-info.yaml").write_text(
+    for doc in ALL_DESIGN_FILES:
+        doc.path_from(root).write_text("x\n", encoding="utf-8")
+    TaskPackageDocument.TASK_INFO.path_from(root).write_text(
         "id: OH-903\n"
         "title: Archived Legacy\n"
         "status: archived\n"
@@ -419,9 +420,9 @@ def test_create_task_package_from_templates(tmp_path: Path) -> None:
 
     assert task_root == repo_root / "docs" / "task-packages" / "harness-replay"
     assert task_id.startswith("TASK-") or task_id.startswith("OH-")
-    assert (task_root / "README.md").read_text(encoding="utf-8") == f"# {task_id} Harness Replay\n"
+    assert TaskPackageDocument.README.path_from(task_root).read_text(encoding="utf-8") == f"# {task_id} Harness Replay\n"
     assert not (task_root / "04-implementation-plan.md").exists()
-    status = load_yaml(task_root / "task-info.yaml")
+    status = load_yaml(TaskPackageDocument.TASK_INFO.path_from(task_root))
     assert status["summary"] == "Replay scenarios."
 
 

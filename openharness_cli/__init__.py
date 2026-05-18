@@ -13,6 +13,7 @@ from .models import (
     RuntimeWorkflowPackage,
     TaskInfo,
     TaskPackage,
+    TaskPackageDocument,
     TaskStatus,
     TaskType,
     VerifyBy,
@@ -55,7 +56,8 @@ __all__ = [
     # Backward-compat
     "ACTIVE_STATUSES", "ALL_STATUS_VALUES",
     # Models
-    "HarnessConfig", "TaskPackage", "CreateTaskInput", "RuntimeWorkflowPackage",
+    "HarnessConfig", "TaskPackage", "TaskPackageDocument",
+    "CreateTaskInput", "RuntimeWorkflowPackage",
     # Constants
     "ALL_DESIGN_FILES", "REQUIRED_STATUS_KEYS", "TASK_ID_RE",
     # Core (public API)
