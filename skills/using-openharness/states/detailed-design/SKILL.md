@@ -86,8 +86,8 @@ description: 当任务状态是 detailed_designing（总体方案已收敛、需
 
 - 这里写"怎么落地"，不写"整体怎么组织"——那是 `02-overview-design.md` 的职责
 - 如果你还在讨论方案一还是方案二，说明 overview 还没真正收敛，应回退到 `overview_designing`
-- 不要把 `verification_design.md` 的实际执行结果提前写进来
-- 如果你已经开始记录实际执行结果，那部分应进入 `verification_design.md` 或 `evidence.md`
+- 不要把实际执行结果提前写进来
+- `verification_design.md` 写验证计划；如果你已经开始记录实际执行结果，那部分应进入 `evidence.md`
 
 ## 常见失败模式
 

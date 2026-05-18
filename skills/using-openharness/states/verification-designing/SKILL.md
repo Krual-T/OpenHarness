@@ -31,7 +31,9 @@ description: 当任务状态是 verification_designing（设计验证策略，TD
 3. 是否有至少一个边界或错误场景的验证？
 4. 是否明确了本轮不覆盖的风险和接受理由？
 
-全部能回答 → `openharness task-package transition <task> implementing`
+全部能回答 → `openharness task-package transition <task> verification_designed`
+
+`verification_designed` 是 gate 状态，CLI 会自动推进到 `implementing` 并输出实现阶段指令。
 
 ## verify_by 选择约束
 

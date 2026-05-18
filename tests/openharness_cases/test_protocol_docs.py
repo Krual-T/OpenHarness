@@ -233,7 +233,7 @@ def test_design_package_templates_include_verification_path_sections() -> None:
     assert "## Traceability" in verification
     assert "## Risk Acceptance" in verification
     assert "## Verification Path" in verification
-    assert "Executed Path" in verification
+    assert "Fallback Path" in verification
     assert "## Verification Result" in evidence
     assert "## Residual Risks" in evidence
 

@@ -21,8 +21,8 @@ openharness task-package list
 ```
 
 按输出：
-- **有匹配活跃包** → `openharness task-package view <task>` 进入该包，CLI 自动输出当前阶段指令
-- **无匹配或空** → 新建任务包
+- **有匹配活跃包** → `openharness task-package view <task>` 进入该包，CLI 输出当前活跃状态的 skill 指令
+- **无匹配或空** → `openharness task-package new <name>` 新建任务包，CLI 输出 `proposing` 指令
 
 ## 核心命令
 
@@ -39,9 +39,20 @@ openharness task-package list
 
 ## 状态流转
 
-每次 `openharness task-package transition` 成功后，CLI 自动输出新状态的指令内容（hook 模式）。Agent 直接执行即可，不需要主动查状态路由表。
+`openharness task-package new`、`view`、`transition` 会在命令输出中注入当前活跃状态的 skill 指令。Agent 直接执行 CLI 输出的指令即可，不需要主动查状态路由表。
 
-中间 gate 状态（`requirements_designed`、`overview_designed`、`detailed_designed`、`verification_designed`、`implemented`、`verified`）CLI 自动检查前置条件并推进。
+完成某个活跃阶段后，transition 目标应是对应的 gate 状态：
+
+| 当前活跃状态 | 完成后 transition 到 |
+|--------------|----------------------|
+| `proposing` | `requirements_designed` |
+| `overview_designing` | `overview_designed` |
+| `detailed_designing` | `detailed_designed` |
+| `verification_designing` | `verification_designed` |
+| `implementing` | `implemented` |
+| `verifying` | `verified` |
+
+中间 gate 状态（`requirements_designed`、`overview_designed`、`detailed_designed`、`verification_designed`、`implemented`、`verified`）由 CLI 自动检查前置条件并推进到下一活跃状态或归档位置。不要跳过 gate 直接 transition 到后续活跃状态。
 
 回退：`openharness task-package transition <task> <目标状态>`。
 

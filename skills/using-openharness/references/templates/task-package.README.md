@@ -2,7 +2,7 @@
 
 > 章节标题保留英文；正文默认使用中文；命令、状态值、YAML 键名、文件名与路径保持英文。
 
-## Summary
+## Overview
 - 用中文概述这个 task package 解决的问题、主结论或本轮交付范围。
 
 ## Current Status

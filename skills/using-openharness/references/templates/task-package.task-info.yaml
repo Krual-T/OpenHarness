@@ -1,7 +1,7 @@
 id: <DESIGN_ID>
 title: <TITLE>
 # Status flow (mechanical):
-#   proposing -> verification_designing -> verification_designed[G] -> implementing -> implemented[G] -> verifying -> verified[G] -> archived
+#   proposing -> requirements_designed[G] -> verification_designing -> verification_designed[G] -> implementing -> implemented[G] -> verifying -> verified[G] -> archived
 # Status flow (standard/protocol):
 #   proposing -> overview_designing -> overview_designed[G] -> detailed_designing -> detailed_designed[G] -> verification_designing -> verification_designed[G] -> implementing -> implemented[G] -> verifying -> verified[G] -> archived
 # [G] = gate state，CLI 自动推进。
