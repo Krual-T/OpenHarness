@@ -1,0 +1,24 @@
+id: TASK-012
+title: Correct Task Id Placeholder
+status: archived
+summary: Correct task package id placeholder from TASK_ID to <TASK_ID> and align creation
+  logic.
+owner: Shaokun.Tang
+created_at: YYYY-MM-DD
+updated_at: '2026-05-18'
+done_criteria:
+- Task package template uses <TASK_ID>.
+- Task package creation replaces <TASK_ID> with the allocated task id.
+- Relevant tests cover the corrected placeholder.
+collaboration:
+  task_type: standard development
+  design_review_mode: auto
+verification:
+  verify_by: unit_test
+depends_on: []
+scope:
+  areas:
+  - skills/using-openharness/references/templates/task-package.task-info.yaml
+  - openharness_cli/core/task_packages.py
+  - tests/openharness_cases/test_task_package_core.py
+  - tests/openharness_cases/test_yaml_quoting.py

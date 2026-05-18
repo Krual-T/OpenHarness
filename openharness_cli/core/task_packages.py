@@ -183,6 +183,7 @@ def _create_task_package_unlocked(ctx: HarnessContext, request: CreateTaskInput,
 
     template_root = _resolve_template_root()
     replacements = {
+        "<TASK_ID>": task_id,
         "<DESIGN_ID>": task_id,
         "<TITLE>": request.title,
         "<DESIGN_NAME>": task_name,
@@ -213,6 +214,7 @@ def _create_task_package_document(
     template_replacements = dict(replacements)
     if doc == TaskPackageDocument.TASK_INFO:
         template_replacements.update({
+            "<TASK_ID>": json.dumps(replacements["<TASK_ID>"], ensure_ascii=False),
             "<DESIGN_ID>": json.dumps(replacements["<DESIGN_ID>"], ensure_ascii=False),
             "<TITLE>": json.dumps(replacements["<TITLE>"], ensure_ascii=False),
             "<OWNER>": json.dumps(replacements["<OWNER>"], ensure_ascii=False),
@@ -233,6 +235,7 @@ def ensure_task_package_stage_files(ctx: HarnessContext, package: TaskPackage) -
         return
     template_root = _resolve_template_root()
     replacements = {
+        "<TASK_ID>": package.task_id,
         "<DESIGN_ID>": package.task_id,
         "<TITLE>": package.title,
         "<DESIGN_NAME>": package.name,

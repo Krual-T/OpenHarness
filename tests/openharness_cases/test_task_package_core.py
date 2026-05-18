@@ -27,7 +27,7 @@ def _write_minimal_openharness_repo(repo_root: Path) -> None:
     (repo_root / "skills" / "using-openharness" / "references" / "templates").mkdir(parents=True)
     for name, contents in {
         "task-package.task-info.yaml": (
-            "id: <DESIGN_ID>\n"
+            "id: <TASK_ID>\n"
             "title: <TITLE>\n"
             "status: <STATUS>\n"
             "summary: <SUMMARY>\n"
@@ -323,7 +323,7 @@ def test_create_task_package_from_templates(tmp_path: Path) -> None:
     (repo_root / "docs" / "task-packages").mkdir(parents=True)
     template_root = repo_root / "skills" / "using-openharness" / "references" / "templates"
     for file_name, content in {
-        "task-package.task-info.yaml": "id: <DESIGN_ID>\ntitle: <TITLE>\nstatus: <STATUS>\nsummary: <SUMMARY>\nowner: <OWNER>\ncreated_at: <DATE>\nupdated_at: <DATE>\ndone_criteria:\n  - x\nverification:\n  required_commands: []\n",
+        "task-package.task-info.yaml": "id: <TASK_ID>\ntitle: <TITLE>\nstatus: <STATUS>\nsummary: <SUMMARY>\nowner: <OWNER>\ncreated_at: <DATE>\nupdated_at: <DATE>\ndone_criteria:\n  - x\nverification:\n  required_commands: []\n",
         "task-package.requirements.md": "req\n",
         "task-package.overview-design.md": "overview\n",
         "task-package.detailed-design.md": "detail\n",
@@ -349,6 +349,7 @@ def test_create_task_package_from_templates(tmp_path: Path) -> None:
     assert not TaskPackageDocument.VERIFICATION_DESIGN.path_from(task_root).exists()
     assert not TaskPackageDocument.EVIDENCE.path_from(task_root).exists()
     status = load_yaml(TaskPackageDocument.TASK_INFO.path_from(task_root))
+    assert status["id"] == task_id
     assert status["summary"] == "Replay scenarios."
 
 

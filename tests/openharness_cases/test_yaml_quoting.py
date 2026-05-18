@@ -8,7 +8,7 @@ def test_create_task_package_quotes_yaml_sensitive_status_fields(tmp_path: Path)
     (repo_root / "docs" / "task-packages").mkdir(parents=True)
     template_root = repo_root / "skills" / "using-openharness" / "references" / "templates"
     (template_root / "task-package.task-info.yaml").write_text(
-        "id: <DESIGN_ID>\n"
+        "id: <TASK_ID>\n"
         "title: <TITLE>\n"
         "status: <STATUS>\n"
         "summary: <SUMMARY>\n"
@@ -39,5 +39,6 @@ def test_create_task_package_quotes_yaml_sensitive_status_fields(tmp_path: Path)
 
     assert 'title: "`overview-design.md` guidance: quote YAML"' in status_text
     assert 'summary: "`overview-design.md` guidance: explain quoting."' in status_text
+    assert status["id"] == task_id
     assert status["title"] == "`overview-design.md` guidance: quote YAML"
     assert status["summary"] == "`overview-design.md` guidance: explain quoting."
