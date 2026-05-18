@@ -88,18 +88,6 @@ def _label_has_meaningful_content(path: Path, section_heading: str, label: str) 
     return False
 
 
-def _referenced_path_exists(package: TaskPackage, raw_path: object) -> bool:
-    repo_root = package.config.repo_root
-    normalized = str(raw_path)
-    direct_path = (repo_root / normalized).resolve()
-    if direct_path.exists():
-        return True
-    if package.current_status != "archived":
-        return False
-    legacy_path = (repo_root / "docs" / "archived" / "legacy" / normalized).resolve()
-    return legacy_path.exists()
-
-
 def validate_task_package(package: TaskPackage) -> list[str]:
     errors: list[str] = []
     wf = package.workflow
@@ -157,13 +145,6 @@ def validate_task_package(package: TaskPackage) -> list[str]:
             f"non-archived package must not live under {package.config.archived_task_packages_root}: {package.root}"
         )
     if package.current_status != "archived":
-        for key in ("entrypoints",):
-            raw_paths = package.info.to_dict().get(key)
-            if isinstance(raw_paths, list):
-                for raw_path in raw_paths:
-                    if not _referenced_path_exists(package, raw_path):
-                        errors.append(f"missing referenced path `{raw_path}` in {TaskPackageDocument.TASK_INFO.path_from(package.root)}")
-
         for doc, heading in wf.section_requirements(status):
             path = doc.path_from(package.root)
             if not _section_has_meaningful_content(path, heading):

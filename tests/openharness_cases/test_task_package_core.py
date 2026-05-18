@@ -197,7 +197,7 @@ def test_find_duplicate_task_ids_reports_conflicts(tmp_path: Path) -> None:
     assert {package.name for package in duplicates["OH-999"]} == {"one", "two"}
 
 
-def test_validate_task_package_rejects_unknown_status_and_missing_paths(tmp_path: Path) -> None:
+def test_validate_task_package_rejects_unknown_status_but_allows_stale_entrypoints(tmp_path: Path) -> None:
     repo_root = tmp_path / "repo"
     (repo_root / "docs" / "task-packages" / "broken").mkdir(parents=True)
     root = repo_root / "docs" / "task-packages" / "broken"
@@ -220,6 +220,7 @@ def test_validate_task_package_rejects_unknown_status_and_missing_paths(tmp_path
         "done_criteria:\n"
         "  - x\n"
         "entrypoints:\n"
+        "  - docs/task-packages/broken/README.md\n"
         "  - docs/task-packages/broken/missing.md\n"
         "verification:\n"
         "  required_commands: []\n"
@@ -235,10 +236,10 @@ def test_validate_task_package_rejects_unknown_status_and_missing_paths(tmp_path
     errors = validate_task_package(package)
 
     assert any("unknown status" in error for error in errors)
-    assert any("missing referenced path" in error for error in errors)
+    assert all("missing referenced path" not in error for error in errors)
 
 
-def test_validate_task_package_allows_archived_legacy_reference_fallback(tmp_path: Path) -> None:
+def test_validate_task_package_ignores_archived_legacy_references(tmp_path: Path) -> None:
     repo_root = tmp_path / "repo"
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
     (repo_root / "docs" / "archived" / "task-packages" / "archived-legacy").mkdir(parents=True)

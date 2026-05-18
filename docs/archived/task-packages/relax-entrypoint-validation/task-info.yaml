@@ -1,0 +1,20 @@
+id: TASK-007
+title: 放宽任务包 entrypoints 校验
+status: archived
+summary: 移除任务包 README 后，不再把可选 task-info.yaml entrypoints 当成必须存在的路径清单。
+owner: Shaokun.Tang
+created_at: YYYY-MM-DD
+updated_at: '2026-05-18'
+done_criteria:
+- validate_task_package 不再因为 entrypoints 路径不存在报 missing referenced path。
+- stale README entrypoint 有测试覆盖。
+collaboration:
+  task_type: mechanical
+  design_review_mode: auto
+verification:
+  verify_by: unit_test
+depends_on: []
+scope:
+  areas:
+  - openharness_cli/validate.py
+  - tests/openharness_cases/test_task_package_core.py
