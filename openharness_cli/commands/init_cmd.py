@@ -34,6 +34,16 @@ def _write_session_start_hook(repo_root: Path) -> None:
     claude_dir = repo_root / ".claude"
     settings_path = claude_dir / "settings.json"
 
+    hook_entry = {
+        "matcher": "startup|resume",
+        "hooks": [
+            {
+                "type": "command",
+                "command": "cat $HOME/.agents/skill-hub/openharness/skills/using-openharness/SKILL.md",
+            }
+        ],
+    }
+
     settings: dict = {}
     if settings_path.exists():
         try:
@@ -42,15 +52,13 @@ def _write_session_start_hook(repo_root: Path) -> None:
             print(f"ERROR: {settings_path} is not valid JSON, fix it manually before retrying")
             raise typer.Exit(code=1)
 
-    hooks: dict = settings.setdefault("hooks", {})
-    existing = hooks.get("SessionStart")
-    if existing and existing != "using-openharness":
-        print(f"WARNING: SessionStart hook already set to '{existing}', not overwriting")
-        return
-    if existing == "using-openharness":
-        return
+    hooks: list = settings.setdefault("hooks", {}).setdefault("SessionStart", [])
 
-    hooks["SessionStart"] = "using-openharness"
+    for existing in hooks:
+        if existing == hook_entry:
+            return
+
+    hooks.append(hook_entry)
     claude_dir.mkdir(parents=True, exist_ok=True)
     settings_path.write_text(json.dumps(settings, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
@@ -75,7 +83,7 @@ def _setup_codex_hook(repo_root: Path) -> None:
                     "hooks": [
                         {
                             "type": "command",
-                            "command": f"cat {OH_CLONE}/skills/using-openharness/SKILL.md",
+                            "command": "cat $HOME/.agents/skill-hub/openharness/skills/using-openharness/SKILL.md",
                         }
                     ],
                 }
