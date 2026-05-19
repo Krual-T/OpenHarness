@@ -46,14 +46,20 @@ def rwp_show(
     print(pkg.workflow_path.read_text(encoding="utf-8"), end="")
 
 
-@rwp_app.command(name="run")
+@rwp_app.command(
+    name="run",
+    context_settings={"ignore_unknown_options": True, "allow_extra_args": True},
+)
 def rwp_run(
     ctx: typer.Context,
     workflow: str = typer.Argument(...),
     script: str = typer.Argument(...),
-    script_args: list[str] = typer.Argument(default_factory=list),
 ) -> None:
-    """Run an explicit Python script from a Runtime Workflow Package."""
+    """Run an explicit Python script from a Runtime Workflow Package.
+
+    All extra arguments, including flags like --verbose, are forwarded
+    directly to the Python script.
+    """
     hx = ctx.obj
     try:
         script_path = resolve_runtime_workflow_script(workflow, script)
@@ -66,7 +72,7 @@ def rwp_run(
         *([os.environ["PYTHONPATH"]] if os.environ.get("PYTHONPATH") else []),
     ])
     os.environ["PYTHONPATH"] = pythonpath
-    cmd_parts = ["uv", "run", "python", str(script_path), *list(script_args)]
+    cmd_parts = ["uv", "run", "python", str(script_path), *ctx.args]
     print(f"$ {shlex.join(cmd_parts)}")
     completed = subprocess.run(cmd_parts, cwd=hx.repo_root)
     raise typer.Exit(code=completed.returncode)
