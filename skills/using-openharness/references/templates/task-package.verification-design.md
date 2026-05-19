@@ -47,3 +47,4 @@
 
 **完成标准**：明确责任人、执行时机和执行环境。实现完成后立即执行，不延迟到"后面再验"。
 - 验证失败时：回到 `implementing` 修改代码，或回到 `verification_designing` 修正策略。
+- `verify_by: qualitative` 时：必须明确审核由子 Agent 和人类审阅者双轨执行，两方结论均需写入 `evidence.md`；审核矩阵的判定准则必须对双方都明确无歧义。

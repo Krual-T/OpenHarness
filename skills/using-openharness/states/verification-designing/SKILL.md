@@ -14,7 +14,7 @@ description: 当任务状态是 verification_designing（设计验证策略，TD
 1. **读需求文档**：打开 `requirements.md`，确认必须交付的结果和验收标准
 2. **确定验证方式**：根据 `task-info.yaml.verification.verify_by` 选择
    - `unit_test` → 列出测试文件和测试命令
-   - `qualitative` → 明确审核对象、审核标准和判定准则
+   - `qualitative` → 明确审核对象、审核标准和判定准则；审核需由子 Agent 和人类审阅者双轨执行，两方结论均需记录
    - `rwp` → 选择或编写运行时工作流脚本
 3. **写 `verification-design.md`**：参考模板 `skills/using-openharness/references/templates/task-package.verification-design.md`
    - `## 验证路径`：计划路径（怎么验证）和预期执行路径
@@ -42,7 +42,7 @@ description: 当任务状态是 verification_designing（设计验证策略，TD
 | verify_by | 强制条件 | 反例 |
 |-----------|---------|------|
 | `unit_test` | 输入输出可编程、无外部副作用、失败可自动判定 | 不能对"代码可读性"用 unit_test |
-| `qualitative` | 验证对象是设计文档、API 契约、命名规范等语义产物 | 不能对"函数返回 42"用 qualitative |
+| `qualitative` | 验证对象是设计文档、API 契约、命名规范等语义产物；审核必须由子 Agent 和人类审阅者双轨执行 | 不能对"函数返回 42"用 qualitative |
 | `rwp` | 需要端到端运行、跨进程交互、或依赖外部环境 | 不能对纯逻辑单元用 rwp（过重） |
 
 如果 `task-info.yaml.verification.verify_by` 与上述规则冲突，**阻塞**——回到 `requirements.md` 重新确定 verify_by。
@@ -79,4 +79,5 @@ description: 当任务状态是 verification_designing（设计验证策略，TD
 - 把验证命令写成抽象描述（"运行测试"），而非可执行命令（`pytest tests/test_xxx.py -v`）
 - verify_by == rwp 时没有检查现有 RWP 就新建工作流脚本，导致重复
 - 对定性验证（qualitative）不写判定准则，只写"审查通过"，导致 verifying 阶段无判断标准
+- 定性验证只安排了 AI 审核未安排人类审核——人类审阅者的反馈是定性审核的必要组成部分，缺失则审核不完整
 - 把所有能想到的验证都塞进去，导致 implementing 阶段验证负担过重——只验证必须交付的结果，边界场景保留在 `## 风险接受`
