@@ -14,6 +14,15 @@ else:
     _SKILL_CAT_CMD = "cat $HOME/.agents/skill-hub/openharness/skills/using-openharness/SKILL.md"
 
 
+def _prompt_overwrite(path: Path) -> bool:
+    try:
+        answer = input(f"{path} already exists with different hook config. Overwrite? [y/N]: ")
+        return answer.strip().lower() in ("y", "yes")
+    except (EOFError, OSError):
+        print(f"Skipping {path} (non-interactive mode)")
+        return False
+
+
 def _ensure_clone_exists() -> None:
     if not OH_CLONE.exists():
         print(f"ERROR: OpenHarness clone not found at {OH_CLONE}")
@@ -64,6 +73,10 @@ def _write_session_start_hook(repo_root: Path) -> None:
         if existing == hook_entry:
             return
 
+    if hooks:
+        if not _prompt_overwrite(settings_path):
+            return
+
     hooks.append(hook_entry)
     claude_dir.mkdir(parents=True, exist_ok=True)
     settings_path.write_text(json.dumps(settings, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -103,12 +116,12 @@ def _setup_codex_hook(repo_root: Path) -> None:
         try:
             existing = json.loads(hooks_path.read_text(encoding="utf-8"))
         except json.JSONDecodeError:
-            print(f"WARNING: {hooks_path} is not valid JSON, overwriting")
+            if _prompt_overwrite(hooks_path):
+                hooks_path.write_text(json.dumps(hooks_config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         else:
             if existing == hooks_config:
-                pass  # already correct, skip write
-            else:
-                print(f"WARNING: {hooks_path} exists with different content, overwriting")
+                pass
+            elif _prompt_overwrite(hooks_path):
                 hooks_path.write_text(json.dumps(hooks_config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     else:
         hooks_path.write_text(json.dumps(hooks_config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
