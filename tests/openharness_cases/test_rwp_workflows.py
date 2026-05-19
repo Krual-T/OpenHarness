@@ -42,7 +42,7 @@ def test_rwp_list_reports_workflow_summaries(tmp_path: Path, capsys) -> None:
     assert ".harness/rwp/workflows/lark-message-runtime-validation" in result.stdout
 
 
-def test_rwp_show_prints_full_workflow_document(tmp_path: Path, capsys) -> None:
+def test_rwp_view_prints_full_workflow_document(tmp_path: Path, capsys) -> None:
     repo_root = tmp_path / "repo"
     _write_workflow(
         repo_root,
@@ -51,7 +51,7 @@ def test_rwp_show_prints_full_workflow_document(tmp_path: Path, capsys) -> None:
         description="Validate runtime smoke behavior.",
     )
 
-    result = runner.invoke(app, ["--repo", str(repo_root), "rwp", "show", "custom-runtime-smoke"])
+    result = runner.invoke(app, ["--repo", str(repo_root), "rwp", "view", "custom-runtime-smoke"])
     assert result.exit_code == 0
     assert "# Workflow" in result.stdout
     assert "Exercise runtime behavior." in result.stdout

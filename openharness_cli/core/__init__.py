@@ -13,6 +13,7 @@ from .task_packages import (
     ensure_task_package_stage_files,
 )
 from .rwp import (
+    create_runtime_workflow_package,
     discover_runtime_workflow_packages,
     resolve_runtime_workflow_package,
     resolve_runtime_workflow_script,
@@ -30,6 +31,7 @@ __all__ = [
     "resolve_task_package", "summarize_task_package",
     "allocate_next_task_id", "create_task_package", "ensure_task_package_stage_files",
     # rwp
+    "create_runtime_workflow_package",
     "discover_runtime_workflow_packages", "resolve_runtime_workflow_package",
     "resolve_runtime_workflow_script",
 ]

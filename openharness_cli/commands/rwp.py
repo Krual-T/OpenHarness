@@ -7,6 +7,7 @@ from pathlib import Path
 import typer
 
 from ..core import (
+    create_runtime_workflow_package,
     discover_runtime_workflow_packages,
     resolve_runtime_workflow_package,
     resolve_runtime_workflow_script,
@@ -33,17 +34,34 @@ def rwp_list(ctx: typer.Context) -> None:
         print(f"  path: {rel_root}")
 
 
-@rwp_app.command(name="show")
-def rwp_show(
+@rwp_app.command(name="view")
+def rwp_view(
     workflow: str = typer.Argument(...),
 ) -> None:
-    """Show a Runtime Workflow Package workflow.md."""
+    """View a Runtime Workflow Package workflow.md."""
     try:
         pkg = resolve_runtime_workflow_package(workflow)
     except ValueError as exc:
         print(f"ERROR: {exc}")
         raise typer.Exit(code=1)
     print(pkg.workflow_path.read_text(encoding="utf-8"), end="")
+
+
+@rwp_app.command(name="create")
+def rwp_create(
+    ctx: typer.Context,
+    name: str = typer.Argument(..., help="Workflow name (directory slug)"),
+    description: str = typer.Argument(..., help="Workflow description"),
+) -> None:
+    """Create a new Runtime Workflow Package."""
+    try:
+        pkg = create_runtime_workflow_package(name, description)
+    except ValueError as exc:
+        print(f"ERROR: {exc}")
+        raise typer.Exit(code=1)
+    rel_root = pkg.root.relative_to(ctx.obj.repo_root)
+    print(f"created: {rel_root}")
+    print(f"  workflow: {pkg.workflow_path.relative_to(ctx.obj.repo_root)}")
 
 
 @rwp_app.command(
@@ -67,8 +85,10 @@ def rwp_run(
         print(f"ERROR: {exc}")
         raise typer.Exit(code=1)
     runtime_api_root = Path(__file__).resolve().parents[1]
+    rwp_root = hx.config.rwp_root
     pythonpath = os.pathsep.join([
         str(runtime_api_root),
+        str(rwp_root),
         *([os.environ["PYTHONPATH"]] if os.environ.get("PYTHONPATH") else []),
     ])
     os.environ["PYTHONPATH"] = pythonpath

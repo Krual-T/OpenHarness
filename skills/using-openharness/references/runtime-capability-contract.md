@@ -16,7 +16,7 @@ OpenHarness separates runtime support into three layers:
    - Each package describes prerequisites, scripts/, runtime observation, success criteria, failure evidence, and task-package writeback.
 3. `runtime execution`
    - `openharness rwp list` exposes only workflow summaries.
-   - `openharness rwp show <workflow>` exposes one workflow detail document.
+   - `openharness rwp view <workflow>` exposes one workflow detail document.
    - `openharness rwp run <workflow> <script.py> [args...]` runs an explicit Python script from that workflow.
 
 ## Declaration Shape
@@ -51,7 +51,7 @@ When a task needs runtime-aware evidence, `using-openharness` should choose exac
    - the task does not require runtime-aware evidence beyond the existing package verification plan
 2. `select an existing RWP`
    - assign a subagent to inspect `openharness rwp list`
-   - inspect details with `openharness rwp show <workflow>` only for strong candidates
+   - inspect details with `openharness rwp view <workflow>` only for strong candidates
    - write the selected RWP into the task package before claiming runtime coverage
 3. `missing RWP gap`
    - no declared package fits the task

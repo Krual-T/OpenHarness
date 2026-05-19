@@ -118,7 +118,7 @@ OpenHarness does not assume one generic runtime-debug skill can cover API, brows
 Instead, it defines Runtime Workflow Package (RWP) support:
 - the core harness decides when runtime-aware routing applies
 - repositories can declare runtime workflow packages under `.harness/rwp/workflows`
-- agents use `openharness rwp list` and `openharness rwp show` for progressive disclosure instead of loading every workflow into context
+- agents use `openharness rwp list` and `openharness rwp view` for progressive disclosure instead of loading every workflow into context
 - runtime execution uses `openharness rwp run <workflow> <script.py> [args...]`
 - selected workflows, execution plans, observations, and evidence are written back into `detailed-design.md`, `verification-design.md`, and `evidence.md`
 

@@ -11,7 +11,7 @@
 | 创建任务包 | `openharness task-package new <name>` |
 | 推进状态 | `openharness task-package transition <task> <target>` |
 | 自更新 | `openharness update` |
-| 运行时工作流 | `openharness rwp list` / `show` / `run` |
+| 运行时工作流 | `openharness rwp list` / `view` / `create` / `run` |
 
 ## 关键约束
 

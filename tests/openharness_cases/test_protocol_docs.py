@@ -259,7 +259,7 @@ def test_runtime_capability_reference_defines_declaration_shape_and_writeback() 
     assert "evidence.md" in text
     assert "## Routing Contract" in text
     assert "openharness rwp list" in text
-    assert "openharness rwp show" in text
+    assert "openharness rwp view" in text
     assert "openharness rwp run" in text
     assert "runtime-workflow-packages.md" in text
 
@@ -286,7 +286,7 @@ def test_runtime_workflow_package_reference_defines_minimum_contents_and_selecti
     assert "## Selection Flow" in text
     assert "subagent" in text
     assert "openharness rwp list" in text
-    assert "openharness rwp show" in text
+    assert "openharness rwp view" in text
     assert "openharness rwp run" in text
     assert "detailed-design.md" in text
     assert "verification-design.md" in text
