@@ -4,7 +4,6 @@ from pathlib import Path
 import typer
 
 from .harness_context import HarnessContext
-from .commands.init_cmd import init
 from .commands.update import update
 from .commands.task_package import task_app
 from .commands.rwp import rwp_app
@@ -19,6 +18,14 @@ app = typer.Typer(
 def main(ctx: typer.Context, repo: str = typer.Option(".", "--repo", help="Repository root")):
     hx = HarnessContext(Path(repo).resolve()).activate()
     ctx.obj = hx
+
+
+try:
+    from .commands.init_cmd import init
+except ModuleNotFoundError:
+    def init(ctx: typer.Context, **kwargs):  # noqa: E306
+        print("ERROR: missing dependencies, run `openharness update` first", flush=True)
+        raise typer.Exit(code=1)
 
 
 app.command()(init)
