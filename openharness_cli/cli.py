@@ -3,7 +3,7 @@ from pathlib import Path
 
 import typer
 
-from .harness_context import HarnessContext
+from .harness_context import HarnessContext, find_harness_root
 from .commands.update import update
 from .commands.task_package import task_app
 from .commands.rwp import rwp_app
@@ -16,7 +16,7 @@ app = typer.Typer(
 
 @app.callback()
 def main(ctx: typer.Context, repo: str = typer.Option(".", "--repo", help="Repository root")):
-    hx = HarnessContext(Path(repo).resolve()).activate()
+    hx = HarnessContext(find_harness_root(Path(repo))).activate()
     ctx.obj = hx
 
 

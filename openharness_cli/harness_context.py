@@ -7,6 +7,15 @@ from typing import Optional
 
 from .models import HarnessConfig
 
+
+def find_harness_root(start: Path) -> Path:
+    """从 start 向上查找第一个包含 .harness/ 的目录，找不到则回退到 start.resolve()。"""
+    start = start.resolve()
+    for parent in [start, *start.parents]:
+        if (parent / ".harness").is_dir():
+            return parent
+    return start
+
 _current: contextvars.ContextVar[Optional[HarnessContext]] = contextvars.ContextVar(
     "harness_ctx", default=None
 )
