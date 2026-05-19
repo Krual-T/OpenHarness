@@ -162,10 +162,10 @@ def _task_package_creation_lock(ctx: HarnessContext):
 
 @harness
 def _resolve_template_root(ctx: HarnessContext) -> Path:
-    skill_root = Path(__file__).resolve().parents[1]
+    skill_root = Path(__file__).resolve().parents[2]
     candidates = (
         ctx.repo_root / "skills" / "using-openharness" / "references" / "templates",
-        skill_root / "references" / "templates",
+        skill_root / "skills" / "using-openharness" / "references" / "templates",
     )
     for candidate in candidates:
         if candidate.resolve().exists():
