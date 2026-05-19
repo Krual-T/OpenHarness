@@ -5,6 +5,7 @@ from .constants import (
 )
 from .harness_context import HarnessContext, harness
 from .models import (
+    AgentType,
     CollaborationInfo,
     CreateTaskInput,
     DesignReviewMode,
@@ -48,6 +49,7 @@ __all__ = [
     # Harness context
     "HarnessContext", "harness",
     # Domain types
+    "AgentType",
     "TaskStatus", "TaskType", "VerifyBy", "DesignReviewMode",
     "CollaborationInfo", "VerificationInfo",
     "Workflow", "TaskInfo", "parse_status",

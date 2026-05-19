@@ -1,4 +1,5 @@
 
+from .agent_type import AgentType
 from .task_status import TaskStatus, parse_status
 from .task_type import TaskType
 from .verify_by import VerifyBy
@@ -14,6 +15,7 @@ from .create_task_input import CreateTaskInput
 from .runtime_workflow_package import RuntimeWorkflowPackage
 
 __all__ = [
+    "AgentType",
     "TaskStatus", "TaskType", "VerifyBy", "DesignReviewMode",
     "CollaborationInfo", "VerificationInfo",
     "TaskInfo", "Workflow",

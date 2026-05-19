@@ -1,0 +1,12 @@
+id: TASK-016
+title: 安装脚本与 init --agent 命令
+status: archived
+summary: 创建 install-codex.sh/install-claude.sh 安装脚本，并扩展 openharness init --agent 实现项目级配置
+owner: Shaokun.Tang
+created_at: '2026-05-19'
+updated_at: '2026-05-19'
+collaboration:
+  task_type: standard development
+  design_review_mode: auto
+verification:
+  verify_by: qualitative
