@@ -195,8 +195,8 @@ def _create_task_package_unlocked(ctx: HarnessContext, request: CreateTaskInput,
         "<DESIGN_NAME>": task_name,
         "<OWNER>": request.owner,
         "<STATUS>": request.status.value,
-        "<SUMMARY>": request.summary or f"Describe the goal of {request.title}.",
-        "<DATE>": "YYYY-MM-DD",
+        "<SUMMARY>": request.summary or f"描述《{request.title}》的目标和要求。",
+        "<DATE>": current_date(),
     }
     task_root.mkdir(parents=True, exist_ok=False)
     for doc in workflow_for(None).scaffold_files(request.status):

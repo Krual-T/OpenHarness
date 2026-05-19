@@ -8,6 +8,7 @@ title: <TITLE>
 status: <STATUS>
 summary: <SUMMARY>
 owner: <GIT OWNER>
+# ⚠ owner 和 created_at 由 CLI 自动注入（owner 取自 git config user.name），禁止手动修改。
 created_at: <DATE>
 updated_at: <DATE>
 # collaboration 在人工确认后再填写。
