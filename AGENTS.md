@@ -1,4 +1,4 @@
-# AGENTS.md
+# 项目事实地图
 
 以下是本仓库地图，说明事实来源，以及少量仓库级约定，你必须首先使用using-openharness技能。
 
@@ -6,11 +6,9 @@
 
 ### 事实来源
 
-1. `AGENTS.md`
-   - 仓库地图、默认协作协议、结构约束、验证要求。
-2. `docs/task-packages/<task>/`
+1. `docs/task-packages/<task>/`
    - 任务包（task package）的唯一事实来源。
-3. `docs/archived/task-packages/<task>/`
+2. `docs/archived/task-packages/<task>/`
    - 已归档历史任务包。
 
 ## 2. Python / uv 约定
