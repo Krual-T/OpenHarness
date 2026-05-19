@@ -5,10 +5,6 @@ description: 当任务状态是 proposing（需求未收敛、范围未明确）
 
 # 需求分析
 
-## 何时使用
-
-任务需求不明确、范围未收敛、需要先写清楚需求再动手时。本 skill 由 CLI 在 transition 到 `proposing` 或 `task-package new` 时自动注入。
-
 ## 入口分流
 
 在开始工作前，先判断当前处于哪种场景：
@@ -43,7 +39,8 @@ description: 当任务状态是 proposing（需求未收敛、范围未明确）
    - 不确定性高 → 2-3 个方案，含取舍分析和明确推荐
    - 不要因为某个方案看起来明显就跳过替代方案
 5. **写入 `requirements.md`**：目标用户、核心场景、成功指标、边界、约束、验收标准、至少一个反例
-6. **自检 Exit Check**：逐项确认下面问题都能明确回答
+6. **确认工作流分叉字段**：向下述三条字段逐一解释含义、给出建议值及理由、获得用户确认后写入 `task-info.yaml`（三条可批量或逐个确认，取决于歧义程度）
+7. **自检 Exit Check**：逐项确认下面问题都能明确回答
 
 ### 快通道
 
@@ -51,7 +48,22 @@ description: 当任务状态是 proposing（需求未收敛、范围未明确）
 
 - 用产品视角快速确认：用户是谁、为什么现在做（3-5 行即可）
 - 写入 `requirements.md`
+- 确认工作流分叉字段（同上步骤6）
 - 自检 Exit Check
+
+## 工作流分叉字段
+
+Exit Check 第 7-9 项依赖以下三条字段，**必须在自检 Exit Check 前确认完毕**。每条字段向用户解释含义、给出建议值及理由、询问并获得用户确认后才写入 `task-info.yaml`。
+
+| 字段 | 可选值 | 说明 |
+|------|-------|------|
+| `collaboration.task_type` | `mechanical` / `standard development` / `protocol/architecture` | `mechanical` — 格式、命名、路径等低判断成本改动，跳过 overview/detailed；`standard development` — 常规功能、修复，需要设计但非架构级；`protocol/architecture` — 影响长期协议、skill 行为、公共接口，需逐项设计确认 |
+| `collaboration.design_review_mode` | `stepwise` / `auto` | `stepwise` — 每个设计点逐个确认；`auto` — agent 自主推进但记录关键决策。`mechanical` 不需要此字段 |
+| `verification.verify_by` | `unit_test` / `qualitative` / `rwp` | `unit_test` — pytest 验证可明确断言的逻辑；`qualitative` — 人工/子 agent 审核文档、协议、skill 行为；`rwp` — 真实世界场景手动验证 |
+
+- `protocol/architecture` 默认建议 `stepwise`；`standard development` 默认建议 `stepwise`，用户可选 `auto`
+- 混合任务可设主 `verify_by`，其余在 `verification-design.md` 补充
+- 后续阶段只消费这三项字段；如果后续发现分类错误，应回退需求阶段修正
 
 ## Exit Check
 

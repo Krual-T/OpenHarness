@@ -5,10 +5,6 @@ description: 当任务状态是 detailed_designing（总体方案已收敛、需
 
 # 详细设计
 
-## 何时使用
-
-`exploring-solution-space` 完成并写出自洽的 `overview-design.md`、transition 到 `detailed_designing` 之后，开始实施之前。
-
 ## 步骤
 
 1. 读取 `overview-design.md`，理解已确定的总体方向、Stage Gates、已确认的设计点和约束

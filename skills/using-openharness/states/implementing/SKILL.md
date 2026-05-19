@@ -5,10 +5,6 @@ description: 当任务状态是 implementing（实现使验证通过，TDD 绿+�
 
 # 实现
 
-## 何时使用
-
-验证策略已设计完成（`verification-design.md` 就绪），开始写代码使验证通过。
-
 ## 步骤
 
 ### TDD 循环：RED → GREEN → REFACTOR

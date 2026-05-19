@@ -5,10 +5,6 @@ description: 当任务状态是 verification_designing（设计验证策略，TD
 
 # 验证策略设计
 
-## 何时使用
-
-需求已收敛（`requirements.md` 完成），需要先设计验证策略再动手实现。这是 TDD 的红阶段——先写"怎么验证"，再写"怎么实现"。
-
 ## 步骤
 
 1. **读需求文档**：打开 `requirements.md`，确认必须交付的结果和验收标准

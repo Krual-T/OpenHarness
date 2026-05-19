@@ -5,10 +5,6 @@ description: 当任务状态是 overview_designing（需求已明确、需要收
 
 # 方案探索（总体设计）
 
-## 何时使用
-
-`brainstorming` 完成并写出 `requirements.md`、transition 到 `overview_designing` 之后，总体方案收敛之前。
-
 ## 步骤
 
 1. 重述要探索的具体问题
