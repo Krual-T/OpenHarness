@@ -1,0 +1,13 @@
+id: TASK-018
+title: init 命令补全 .harness 和 RWP 基本目录结构
+status: archived
+summary: openharness init 命令应创建 .harness/settings.yaml、.harness/rwp/、.harness/rwp/rwplib/__init__.py、.harness/rwp/workflows/、.harness/locks/、docs/task-packages/、docs/archived/task-packages/
+  等基本目录
+owner: <GIT OWNER>
+created_at: YYYY-MM-DD
+updated_at: '2026-05-19'
+collaboration:
+  task_type: mechanical
+  design_review_mode: auto
+verification:
+  verify_by: qualitative

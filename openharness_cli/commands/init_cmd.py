@@ -186,6 +186,25 @@ def init(
     harness_root.mkdir(parents=True, exist_ok=True)
     (harness_root / ".gitignore").write_text("*\n", encoding="utf-8")
 
+    # RWP runtime directories
+    rwp_root = harness_root / "rwp"
+    rwplib = rwp_root / "rwplib"
+    rwplib.mkdir(parents=True, exist_ok=True)
+    if not (rwplib / "__init__.py").exists():
+        (rwplib / "__init__.py").write_text("", encoding="utf-8")
+
+    workflows_root = rwp_root / "workflows"
+    workflows_root.mkdir(parents=True, exist_ok=True)
+
+    # Lock directory
+    locks_root = harness_root / "locks"
+    locks_root.mkdir(parents=True, exist_ok=True)
+
+    # Task package directories
+    docs_root = repo_root / "docs"
+    (docs_root / "task-packages").mkdir(parents=True, exist_ok=True)
+    (docs_root / "archived" / "task-packages").mkdir(parents=True, exist_ok=True)
+
     # Verify clone exists
     _ensure_clone_exists()
 
