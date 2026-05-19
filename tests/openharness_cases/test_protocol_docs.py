@@ -169,13 +169,13 @@ def test_agents_md_routes_repo_skill_usage_through_openharness() -> None:
     assert "using-openharness" in text
 
 def test_install_doc_describes_global_openharness_command_install_and_upgrade() -> None:
-    text = (REPO_ROOT / "INSTALL.codex.md").read_text(encoding="utf-8")
+    text = (REPO_ROOT / "INSTALL.md").read_text(encoding="utf-8")
     assert "uv tool install --editable" in text
     assert "openharness task-package list" in text
-    assert "已安装" in text or "existing" in text
+    assert "已有安装" in text or "existing" in text
 
 def test_install_doc_mentions_openharness_update() -> None:
-    text = (REPO_ROOT / "INSTALL.codex.md").read_text(encoding="utf-8")
+    text = (REPO_ROOT / "INSTALL.md").read_text(encoding="utf-8")
     assert "openharness update" in text
 
 def test_design_package_templates_include_verification_path_sections() -> None:

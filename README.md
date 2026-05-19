@@ -45,25 +45,23 @@ The model is simple:
 
 That is the real harness.
 
-## Install in Codex
+## 安装
 
-Tell Codex:
+告诉你的 Agent：
 
 ```text
-Fetch and follow instructions from https://raw.githubusercontent.com/Krual-T/OpenHarness/refs/heads/main/INSTALL.codex.md
+Fetch and follow instructions from https://raw.githubusercontent.com/Krual-T/OpenHarness/refs/heads/main/INSTALL.md
 ```
 
-Or install manually:
+或手动安装：
 
 ```bash
 git clone https://github.com/Krual-T/OpenHarness.git ~/.agents/skill-hub/openharness
-mkdir -p <target dir>/.agents/skills
-ln -s ~/.agents/skill-hub/openharness/skills <target dir>/.agents/skills/openharness
+uv tool install --editable ~/.agents/skill-hub/openharness
+openharness init --agent all
 ```
 
-Codex should ask you which `<target dir>` to use before running those commands. The expected skill location is `<target dir>/.agents/skills/openharness`.
-
-Then restart Codex.
+详见 [INSTALL.md](INSTALL.md)。
 
 ## What you get
 
@@ -197,7 +195,7 @@ OpenHarness is a derivative work.
 
 This repository directly reuses and adapts code from [`obra/superpowers`](https://github.com/obra/superpowers). In particular:
 - the project was bootstrapped by copying the adapted skills library from [`openrelay`](https://github.com/Krual-T/OpenRelay), which itself includes code and skill content derived from `superpowers`
-- the Codex install flow in `INSTALL.codex.md` intentionally follows the same "Fetch and follow instructions from ..." pattern popularized by `superpowers`
+- the install flow in `INSTALL.md` intentionally follows the same "Fetch and follow instructions from ..." pattern popularized by `superpowers`
 
 OpenHarness is therefore not presented as an original invention of the entire workflow. It is a derivative adaptation that reuses upstream code and restructures it into a repository-centered harness model.
 
