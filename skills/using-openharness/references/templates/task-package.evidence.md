@@ -1,24 +1,20 @@
 # 证据
 
-> 章节标题使用中文；正文默认使用中文；命令、状态值、YAML 键名、文件名与路径保持英文。
+> **语言规则**：章节标题使用中文；正文默认使用中文；命令、状态值、YAML 键名、文件名与路径保持英文。
 >
-> 按 `task-info.yaml.verification.verify_by` 类型选择对应章节填写。不要求全部填写——只写实际执行的。
+> 按 `task-info.yaml` 中 `verification.verify_by` 的类型选择对应章节填写。只写实际执行过的验证。
 
 ## 验证结果
 - **verify_by**: <unit_test / qualitative / rwp>
 - **Result**: <passed / failed>
 
-## 文件
+## 变更文件
 - path/to/file — 改动说明
 
 ## 测试结果
 
 `verify_by: unit_test` 时填写：
 
-- 测试命令 + 结果（退出码、通过数/失败数）
-- 验收标准覆盖表
-
-示例：
 ```
 pytest tests/test_xxx.py -v
 结果：3 passed, 0 failed
@@ -49,7 +45,7 @@ pytest tests/test_xxx.py -v
 - 工作流名称
 - 观察结果
 - 产物路径
-- 盲区说明
+- 未覆盖范围
 
 ## 残余风险
 本轮未覆盖的风险、接受理由、触发重新审查的条件。

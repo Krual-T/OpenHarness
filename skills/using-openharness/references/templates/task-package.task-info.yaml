@@ -1,20 +1,23 @@
 id: <TASK_ID>
 title: <TITLE>
-# Status flow (mechanical):
+# 状态流转（mechanical）：
 #   proposing -> requirements_designed[G] -> verification_designing -> verification_designed[G] -> implementing -> implemented[G] -> verifying -> verified[G] -> archived
-# Status flow (standard/protocol):
+# 状态流转（standard / protocol）：
 #   proposing -> overview_designing -> overview_designed[G] -> detailed_designing -> detailed_designed[G] -> verification_designing -> verification_designed[G] -> implementing -> implemented[G] -> verifying -> verified[G] -> archived
-# [G] = gate state，CLI 自动推进。
+# [G] = 门禁状态，CLI 自动推进。
 status: <STATUS>
 summary: <SUMMARY>
 owner: <OWNER>
 created_at: <DATE>
 updated_at: <DATE>
-# Write collaboration only after human confirms.
-# task_type: mechanical | standard development | protocol/architecture
-# design_review_mode: stepwise | auto
-collaboration:
-  task_type: <mechanical|standard development|protocol/architecture|>
-  design_review_mode: <stepwise|auto|>
+depends_on: []
+scope:
+  areas: []
+# collaboration 在人工确认后再填写。
+#   task_type: mechanical | standard development | protocol/architecture
+#   design_review_mode: stepwise | auto
+collaboration: {}
+done_criteria:
+  - 替换为实际的完成标准。
 verification:
-  verify_by: <unit_test|qualitative|rwp|>
+  verify_by: ""   # unit_test | qualitative | rwp
