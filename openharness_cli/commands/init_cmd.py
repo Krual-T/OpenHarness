@@ -63,11 +63,61 @@ def _setup_claude(repo_root: Path) -> None:
     _write_session_start_hook(repo_root)
 
 
+def _setup_codex_hook(repo_root: Path) -> None:
+    codex_dir = repo_root / ".codex"
+    hooks_path = codex_dir / "hooks.json"
+
+    hooks_config = {
+        "hooks": {
+            "SessionStart": [
+                {
+                    "matcher": "startup|resume",
+                    "hooks": [
+                        {
+                            "type": "command",
+                            "command": f"cat {OH_CLONE}/skills/using-openharness/SKILL.md",
+                        }
+                    ],
+                }
+            ]
+        }
+    }
+
+    codex_dir.mkdir(parents=True, exist_ok=True)
+
+    if hooks_path.exists():
+        try:
+            existing = json.loads(hooks_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            print(f"WARNING: {hooks_path} is not valid JSON, overwriting")
+        else:
+            if existing == hooks_config:
+                pass  # already correct, skip write
+            else:
+                print(f"WARNING: {hooks_path} exists with different content, overwriting")
+                hooks_path.write_text(json.dumps(hooks_config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    else:
+        hooks_path.write_text(json.dumps(hooks_config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+    # Ensure codex_hooks is enabled in config.toml
+    config_path = codex_dir / "config.toml"
+    if config_path.exists():
+        content = config_path.read_text(encoding="utf-8")
+        if "codex_hooks" not in content:
+            print(f"WARNING: {config_path} exists but 'codex_hooks' is not set")
+            print("Add the following to enable hooks:")
+            print("  [features]")
+            print("  codex_hooks = true")
+    else:
+        config_path.write_text("[features]\ncodex_hooks = true\n", encoding="utf-8")
+
+
 def _setup_codex(repo_root: Path) -> None:
     agents_dir = repo_root / ".agents" / "skills"
     link = agents_dir / "openharness"
     target = OH_CLONE / "skills"
     _create_symlink(link, target)
+    _setup_codex_hook(repo_root)
 
 
 def _bridge_agent_files(repo_root: Path, agent_type: AgentType) -> None:

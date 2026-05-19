@@ -1,0 +1,12 @@
+id: TASK-017
+title: Codex SessionStart hook 配置
+status: archived
+summary: 在 init --agent codex 中新增 .codex/hooks.json 和 .codex/config.toml 的项目级配置
+owner: Shaokun.Tang
+created_at: '2026-05-19'
+updated_at: '2026-05-19'
+collaboration:
+  task_type: mechanical
+  design_review_mode: auto
+verification:
+  verify_by: qualitative
