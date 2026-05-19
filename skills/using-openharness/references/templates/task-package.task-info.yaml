@@ -7,17 +7,14 @@ title: <TITLE>
 # [G] = 门禁状态，CLI 自动推进。
 status: <STATUS>
 summary: <SUMMARY>
-owner: <OWNER>
+owner: <GIT OWNER>
 created_at: <DATE>
 updated_at: <DATE>
-depends_on: []
-scope:
-  areas: []
 # collaboration 在人工确认后再填写。
 #   task_type: mechanical | standard development | protocol/architecture
 #   design_review_mode: stepwise | auto
-collaboration: {}
-done_criteria:
-  - 替换为实际的完成标准。
+collaboration:
+  task_type: < mechanical | standard development | protocol/architecture >
+  design_review_mode: <stepwise|auto>
 verification:
-  verify_by: ""   # unit_test | qualitative | rwp
+  verify_by: < unit_test | qualitative | rwp >

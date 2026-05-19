@@ -189,35 +189,6 @@ def test_transition_verified_keeps_source_status_when_archive_target_exists(tmp_
     assert "status: verifying" in info_path.read_text(encoding="utf-8")
 
 
-def test_bootstrap_reports_author_entry_when_present(tmp_path: Path, capsys) -> None:
-    repo_root = tmp_path / "repo"
-    references_root = repo_root / "skills" / "using-openharness" / "references"
-    references_root.mkdir(parents=True)
-    (repo_root / "docs" / "task-packages" / "visible-stage").mkdir(parents=True)
-    (references_root / "author-entry.md").write_text("# Author Entry\n", encoding="utf-8")
-    root = repo_root / "docs" / "task-packages" / "visible-stage"
-    for doc in ALL_DESIGN_FILES:
-        doc.path_from(root).write_text("# x\n", encoding="utf-8")
-    TaskPackageDocument.TASK_INFO.path_from(root).write_text(
-        "id: OH-962\n"
-        "title: Visible Stage Author Entry\n"
-        "status: proposing\n"
-        "summary: author entry surface\n"
-        "owner: codex\n"
-        "created_at: 2026-03-27\n"
-        "updated_at: 2026-03-27\n"
-        "verification:\n"
-        "  required_commands: []\n"
-        "  required_scenarios: []\n",
-        encoding="utf-8",
-    )
-
-    result = runner.invoke(app, ["--repo", str(repo_root), "task-package", "list"])
-    assert result.exit_code == 0
-    assert "author entry:" in result.stdout
-    assert "author-entry.md" in result.stdout
-
-
 def test_update_uses_installed_openharness_source_root(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     project_root = tmp_path / "project"
     project_root.mkdir()
@@ -266,35 +237,6 @@ def test_init_creates_harness_gitignore_that_ignores_everything(
     assert result.exit_code == 0
     assert (repo_root / ".harness" / ".gitignore").read_text(encoding="utf-8") == "*\n"
     assert str(repo_root / ".harness") in result.stdout
-
-
-def test_bootstrap_json_includes_author_entry_when_present(tmp_path: Path, capsys) -> None:
-    repo_root = tmp_path / "repo"
-    references_root = repo_root / "skills" / "using-openharness" / "references"
-    references_root.mkdir(parents=True)
-    (repo_root / "docs" / "task-packages" / "visible-stage").mkdir(parents=True)
-    (references_root / "author-entry.md").write_text("# Author Entry\n", encoding="utf-8")
-    root = repo_root / "docs" / "task-packages" / "visible-stage"
-    for doc in ALL_DESIGN_FILES:
-        doc.path_from(root).write_text("# x\n", encoding="utf-8")
-    TaskPackageDocument.TASK_INFO.path_from(root).write_text(
-        "id: OH-963\n"
-        "title: Visible Stage Json Author Entry\n"
-        "status: detailed_designed\n"
-        "summary: author entry json\n"
-        "owner: codex\n"
-        "created_at: 2026-03-27\n"
-        "updated_at: 2026-03-27\n"
-        "verification:\n"
-        "  required_commands: []\n"
-        "  required_scenarios: []\n",
-        encoding="utf-8",
-    )
-
-    result = runner.invoke(app, ["--repo", str(repo_root), "task-package", "list", "--json"])
-    payload = json.loads(result.stdout)
-    assert result.exit_code == 0
-    assert payload["author_entry"]["path"].endswith("author-entry.md")
 
 
 def test_validate_design_package_rejects_overview_designed_without_reflection(tmp_path: Path) -> None:

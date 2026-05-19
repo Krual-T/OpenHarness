@@ -34,11 +34,6 @@ def list_packages(
         print(f"ERROR: {exc}")
         raise typer.Exit(code=1)
 
-    author_entry_path = hx.repo_root / "skills" / "using-openharness" / "references" / "author-entry.md"
-    author_entry: dict | None = None
-    if author_entry_path.exists():
-        author_entry = {"path": str(author_entry_path), "summary": "Chinese-first author entry for task-package writing guidance."}
-
     if not show_all:
         packages = [p for p in packages if p.current_status in ACTIVE_STATUSES]
 
@@ -60,13 +55,9 @@ def list_packages(
                 for p in packages
             ],
         }
-        if author_entry is not None:
-            payload["author_entry"] = author_entry
         print(json.dumps(payload, ensure_ascii=False, indent=2))
         return
 
-    if author_entry is not None:
-        print(f"author entry: {author_entry['path']}")
     if not packages:
         print("No matching task packages found.")
         return
