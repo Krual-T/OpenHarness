@@ -132,12 +132,12 @@ def _setup_codex_hook(repo_root: Path) -> None:
     config_path = codex_dir / "config.toml"
     if config_path.exists():
         config = tomllib.loads(config_path.read_text(encoding="utf-8"))
-        features = config.get("features", {})
+        features = config.setdefault("features", {})
         if "hooks" not in features:
             print(f"WARNING: {config_path} exists but 'hooks' is not enabled")
-            print("Add the following to enable hooks:")
-            print("  [features]")
-            print("  hooks = true")
+            if _prompt_overwrite(config_path):
+                features["hooks"] = True
+                config_path.write_text(tomli_w.dumps(config), encoding="utf-8")
     else:
         config = {"features": {"hooks": True}}
         config_path.write_text(tomli_w.dumps(config), encoding="utf-8")
