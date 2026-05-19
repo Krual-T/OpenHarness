@@ -1,4 +1,5 @@
 import json
+import platform
 from pathlib import Path
 
 import typer
@@ -6,6 +7,11 @@ import typer
 from ..models.agent_type import AgentType
 
 OH_CLONE = Path.home() / ".agents" / "skill-hub" / "openharness"
+
+if platform.system() == "Windows":
+    _SKILL_CAT_CMD = "Get-Content $env:USERPROFILE/.agents/skill-hub/openharness/skills/using-openharness/SKILL.md"
+else:
+    _SKILL_CAT_CMD = "cat $HOME/.agents/skill-hub/openharness/skills/using-openharness/SKILL.md"
 
 
 def _ensure_clone_exists() -> None:
@@ -39,7 +45,7 @@ def _write_session_start_hook(repo_root: Path) -> None:
         "hooks": [
             {
                 "type": "command",
-                "command": "cat $HOME/.agents/skill-hub/openharness/skills/using-openharness/SKILL.md",
+                "command": _SKILL_CAT_CMD,
             }
         ],
     }
@@ -83,7 +89,7 @@ def _setup_codex_hook(repo_root: Path) -> None:
                     "hooks": [
                         {
                             "type": "command",
-                            "command": "cat $HOME/.agents/skill-hub/openharness/skills/using-openharness/SKILL.md",
+                            "command": _SKILL_CAT_CMD,
                         }
                     ],
                 }
