@@ -1,7 +1,9 @@
 import json
 import platform
+import tomllib
 from pathlib import Path
 
+import tomli_w
 import typer
 
 from ..models.agent_type import AgentType
@@ -126,17 +128,19 @@ def _setup_codex_hook(repo_root: Path) -> None:
     else:
         hooks_path.write_text(json.dumps(hooks_config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
-    # Ensure codex_hooks is enabled in config.toml
+    # Ensure hooks is enabled in config.toml
     config_path = codex_dir / "config.toml"
     if config_path.exists():
-        content = config_path.read_text(encoding="utf-8")
-        if "codex_hooks" not in content:
-            print(f"WARNING: {config_path} exists but 'codex_hooks' is not set")
+        config = tomllib.loads(config_path.read_text(encoding="utf-8"))
+        features = config.get("features", {})
+        if "hooks" not in features:
+            print(f"WARNING: {config_path} exists but 'hooks' is not enabled")
             print("Add the following to enable hooks:")
             print("  [features]")
-            print("  codex_hooks = true")
+            print("  hooks = true")
     else:
-        config_path.write_text("[features]\ncodex_hooks = true\n", encoding="utf-8")
+        config = {"features": {"hooks": True}}
+        config_path.write_text(tomli_w.dumps(config), encoding="utf-8")
 
 
 def _setup_codex(repo_root: Path) -> None:
