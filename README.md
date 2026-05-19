@@ -1,216 +1,393 @@
-# OpenHarness
+<p align="center">
+  <img src="https://img.shields.io/github/license/Krual-T/OpenHarness?style=flat-square" alt="License">
+  <img src="https://img.shields.io/badge/Python-3.14+-blue?style=flat-square&logo=python" alt="Python">
+  <img src="https://img.shields.io/badge/uv-package_manager-8A2BE2?style=flat-square" alt="uv">
+</p>
 
-**OpenHarness is an agent-first, plug-and-play repository scaffold for Codex.**
+<h1 align="center">OpenHarness</h1>
 
-It is built around a simple belief: the bottleneck is no longer typing code. The bottleneck is giving coding agents a repository they can actually reason about.
+<p align="center">
+  <strong>不是给智能体下指令的工具。<br>是人机共生协作的工程框架。</strong>
+</p>
 
-OpenHarness packages the workflow patterns, skills, and repository structure we found most useful when adapting agent-driven development inside [`openrelay`](https://github.com/Krual-T/OpenRelay). It directly reuses and adapts code and skill content from [`obra/superpowers`](https://github.com/obra/superpowers), and it is also conceptually aligned with OpenAI's article on [harness engineering](https://openai.com/index/harness-engineering/).
+<p align="center">
+  瓶颈从来不是代码生成的速度。<br>
+  瓶颈是：<strong>人和智能体之间，有没有一套使双方对等参与、共同决策、可追溯验证的协作协议。</strong>
+</p>
 
-OpenHarness is intentionally Python-first. For Python-first repositories, `uv run pytest` is the default automated verification floor for code behavior when no stronger project-specific test command is documented. It is not the only valid evidence path for documentation semantics, collaboration protocols, skill behavior, agent workflows, or runtime behavior; those need object-appropriate evidence defined in task packages.
+<p align="center">
+  <a href="#设计哲学">设计哲学</a> ·
+  <a href="#核心模型">核心模型</a> ·
+  <a href="#快速开始">快速开始</a> ·
+  <a href="#设计原则">设计原则</a> ·
+  <a href="#反馈闭环">反馈闭环</a> ·
+  <a href="#命令速览">命令速览</a>
+</p>
 
-If you want Codex to stop improvising and start operating inside a legible, verifiable system, this repo is for you.
+---
 
-## Why OpenHarness exists
+## 设计哲学
 
-Most agent failures are not model failures. They are environment failures.
+OpenHarness 不是一个 Prompt 合集，也不是一个技能库。它的底层是一组**工程设计原则**，这些原则共同构成了智能体协作的"控制论骨架"。
 
-Agents do badly when:
-- the repository has no map
-- the important context lives in chat, docs tools, or people's heads
-- requirements, architecture, implementation notes, and verification evidence are mixed together
-- there is no mechanical way to tell what is current, what is stale, and what is done
+### 人机共生：协作系统，不是指令执行器
 
-OpenHarness exists to fix that.
+1960 年，J.C.R. Licklider 发表了《人机共生》（Man-Computer Symbiosis），开篇写道：
 
-It gives Codex a working environment where:
-- `AGENTS.md` is a map, not an encyclopedia
-- repository-local docs are the system of record
-- each task has a structured task package
-- verification is explicit and repeatable
-- reusable workflow knowledge lives in version control
-- humans steer and review the system, while agents do the heavy execution
+> 人机共生的希望在于，在不太多年内，人的大脑与计算机将被紧密耦合在一起，由此产生的协作将让人的大脑以前所未有的方式思考，以我们从未见过的能力处理信息。
 
-## The core idea
+Licklider 描述的不是一个"输入指令—输出结果"的主仆模型。他描述的是一个**对等的协作系统**——人和机器各自做自己擅长的事，在一个共享的工作空间里协同推进。
 
-OpenHarness is not just a bundle of prompts.
+六十年后，AI 编程智能体出现了。但大多数人对智能体的用法，仍然停留在**指令-执行模式**：
 
-It is a repository operating model.
-
-The model is simple:
-1. Keep the entrypoint small.
-2. Put the truth in the repo.
-3. Structure work so agents can discover what matters.
-4. Make design, implementation, and verification separate artifacts.
-5. Treat agent legibility as a first-class engineering goal.
-
-That is the real harness.
-
-## 安装
-
-告诉你的 Agent：
-
-```text
-Fetch and follow instructions from https://raw.githubusercontent.com/Krual-T/OpenHarness/refs/heads/main/INSTALL.md
+```
+人：帮我实现一个用户登录功能
+智能体：好，这是代码
+人：不对，要加双因素认证
+智能体：好，改好了
+人：还不对，不应该用 JWT，换成 session
+...
 ```
 
-或手动安装：
+这不是协作。这是**用自然语言做命令行操作**。
+
+OpenHarness 的设计第一性原理是：**智能体不是工具，是协作方**。这意味着整个系统不能围绕"如何让智能体听话"来设计，而必须围绕"如何让人和智能体成为一个高效的联合认知系统"来设计。
+
+这个转向需要回答四个问题：
+
+| 问题 | 指令-执行模式 | OpenHarness 的协作模式 |
+|------|-------------|----------------------|
+| 谁知道"要做什么"？ | 只有人知道，人负责描述完整需求 | 人和智能体共同收敛需求，任务包是共享的认知产物 |
+| 谁判断"做得对不对"？ | 人肉判断，每次输出都要人 Review | 三级验证谱系：自动化测试（unit_test）、语义审核（qualitative）、运行时观察（rwp）——验证手段由任务性质决定，证据写入任务包 |
+| 工作状态存在哪里？ | 聊天记录，散落，不可检索 | 任务包，版本化，可 `git diff`，可审计 |
+| 智能体学到什么？ | 零积累，每次会话从零开始 | 归档任务包成为项目结构化记忆，反哺未来任务 |
+
+OpenHarness 不是让智能体"更听话"。它是让智能体**成为一个双向可问责的协作方**：人需要对需求提出足够明确的验收标准；智能体需要产出可验证、可追溯的证据。双方的贡献都被记录在同一套文档里，对等可见。
+
+这个思想直接继承自三个学术传统：
+
+- **人机共生**（Licklider, 1960）— 人与计算机的紧密耦合，不是替代，是增强
+- **增强人类智能**（Engelbart, 1962）— 计算技术的目标是放大人的认知能力
+- **联合认知系统**（Woods & Hollnagel, 2006）— 人和机器应被视为一个整体的认知单元，各有所长
+
+OpenHarness 做的事，本质上是把这些已经存在半个多世纪的学术洞见，翻译成一套**工程上可落地的协议**。任务包是共享工作空间。阶段门禁是协作的 Handoff 点。证据记录是双向可追溯的审计日志。AGENTS.md 是人和智能体之间的协作接口规范。
+
+### 工程控制论：将反馈原理工程化
+
+1948 年，Norbert Wiener 在《控制论》中奠定了理论基础：**通过反馈回路让系统自我修正**。但真正把控制论从数学理论变成可落地的工程学科的，是钱学森 1954 年的《工程控制论》——它回答了"如何在真实系统中设计反馈、门禁和自修正机制"。
+
+把这个工程化思想翻译到 AI 编程场景：
+
+```
+没有反馈的智能体 = 开环系统
+一次 Prompt → 一次输出 → 人肉判断对错 → 再 Prompt → 再输出 → ...
+
+有反馈的智能体 = 闭环系统
+提出需求 → 设计 → 实现 → 按设计验证 → 证据写入 → 阶段门禁 → 推进或回退
+```
+
+OpenHarness 做的事，本质上是钱学森式的工程化：**把反馈原理翻译成每个阶段之间可检查的门禁**。不通过门禁，不能进入下一阶段。这不是靠人肉感觉判断，而是靠预先设计、事后有据的验证。
+
+### 渐进式披露：不为不需要的信息付费
+
+软件架构里有一个著名原则：**信息应该在最需要的时刻才被拉取，而不是在入口处全部推送**。
+
+OpenHarness 把这个原则做成了三层：
+
+| 层级 | 内容 | 触发时机 |
+|------|------|----------|
+| 入口层 | `AGENTS.md` — 仓库地图 | 会话启动，一次性 |
+| 任务层 | 任务包详情 + 当前阶段 Skill | 进入具体任务 |
+| 执行层 | RWP 运行时工作流 | 需要运行时验证时才加载 |
+
+智能体不用一次性加载整个知识库。它只看到当前阶段需要的上下文。这既控制 Token 消耗，也控制认知负荷。
+
+### 信息熵减：把混乱变成结构
+
+香农的信息论告诉我们：**不确定性越高，信息熵越高**。
+
+AI 编程场景的熵源：
+
+- 需求藏在聊天记录里 → 高熵，无法检索
+- 设计决策在人的脑子里 → 高熵，智能体不可见
+- 验证结果在终端历史里 → 高熵，无法追溯
+
+OpenHarness 做的是**信息熵减工程**：
+
+```
+聊天记录（高熵）          →  需求文档（低熵，结构化）
+人的脑内决策（高熵）      →  设计文档（低熵，可 Review）
+终端输出（高熵）          →  证据记录（低熵，可追溯）
+```
+
+每次阶段 Transition 都是一次**熵减操作**：把散落在各处的信息收敛到一个版本化、可检索、可验证的结构中。
+
+### 约束即解放：结构化不是限制，是降低决策成本
+
+Barry Schwartz 在《选择的悖论》里论证过：**选项越多，决策质量越差**。
+
+给智能体完全的自由度，它会在每个节点重新发明工作流。OpenHarness 的做法相反：
+
+- 每个阶段只有明确的入口和出口
+- 每个门禁只有明确的通过条件
+- 每个产物只有明确的模板边界
+
+这些约束消除了"接下来该做什么"的决策成本。智能体不需要在每个节点重新思考流程——它只需要在当前阶段的边界内，做到最好。
+
+---
+
+## 核心模型
+
+```
+                        ┌──────────────────────┐
+                        │     AGENTS.md         │
+                        │     项目事实地图       │
+                        │  (入口层，渐进式披露)   │
+                        └──────────┬───────────┘
+                                   │
+              ┌────────────────────┼────────────────────┐
+              │                    │                    │
+              ▼                    ▼                    ▼
+     ┌────────────────┐  ┌────────────────┐  ┌────────────────┐
+     │    任务包       │  │    技能库       │  │  RWP 运行时     │
+     │                │  │                │  │  工作流包       │
+     │  需求 (SSOT)    │  │  过程约束       │  │                │
+     │  概要设计        │  │  阶段指引       │  │  按需发现       │
+     │  详细设计        │  │  角色注入       │  │  按需加载       │
+     │  验证设计        │  │                │  │  按需执行       │
+     │  证据记录        │  │                │  │                │
+     └───────┬────────┘  └───────┬────────┘  └───────┬────────┘
+             │                   │                   │
+             └───────────────────┼───────────────────┘
+                                 │
+                                 ▼
+              ┌──────────────────────────────────────┐
+              │           阶段门禁（反馈回路）         │
+              │                                      │
+              │  proposing ──→ overview_designing    │
+              │      │              │                │
+              │      ▼              ▼                │
+              │  requirements_  overview_            │
+              │  designed       designed             │
+              │                                   │
+              │  detailed_designing ──→ implementing │
+              │      │                    │          │
+              │      ▼                    ▼          │
+              │  detailed_           implemented     │
+              │  designed                            │
+              │                                   │
+              │  verification_ ──→ verifying         │
+              │  designing           │               │
+              │      │               ▼               │
+              │      ▼          verified ──→ archived│
+              │  verification_                       │
+              │  designed                            │
+              └──────────────────────────────────────┘
+```
+
+这是一个**自修正系统**。每个门禁都是一次反馈检查：产物是否符合上一阶段的要求？如果不符合，回退修正。如果符合，推进。
+
+---
+
+## 快速开始
+
+**前提**：已安装 [Git](https://git-scm.com/) 和 [uv](https://docs.astral.sh/uv/)。
+
+**Linux / macOS：**
 
 ```bash
-git clone https://github.com/Krual-T/OpenHarness.git ~/.agents/skill-hub/openharness
-uv tool install --editable ~/.agents/skill-hub/openharness
+curl -fsSL https://raw.githubusercontent.com/Krual-T/OpenHarness/refs/heads/main/install.sh | bash
+```
+
+**Windows（PowerShell）：**
+
+```powershell
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Krual-T/OpenHarness/refs/heads/main/install.ps1" | Invoke-Expression
+```
+
+在你的项目中初始化：
+
+```bash
 openharness init --agent all
 ```
 
-详见 [INSTALL.md](INSTALL.md)。
+目录创建、技能链接、会话 Hook 全部自动完成。详见 [INSTALL.md](INSTALL.md)。
 
-## What you get
+---
 
-### 1. A repository map instead of a giant prompt blob
+## 设计原则
 
-OpenHarness uses `AGENTS.md` as the repository map.
+OpenHarness 的每一个功能模块都不是随意堆砌的——它们各自对应一条明确的设计原则。
 
-It tells the agent where truth lives, what the default workflow is, what must be verified, and what needs to be written back before a task is considered complete.
+### 1. 真相单一来源 → 任务包
 
-This follows the same spirit described by OpenAI's harness engineering article: the entrypoint should orient the agent, not drown it.
+**原则**：每项工作有且只有一个权威事实源。
 
-### 2. Task packages instead of vague task memory
+任务包 `docs/task-packages/<任务名>/` 是一套固定结构：
 
-Every meaningful task lives in `docs/task-packages/<task>/` as a package with stable files for:
-- requirements
-- overview design
-- detailed design
-- verification
-- evidence
-- machine-readable status
-
-That gives both humans and agents a shared source of truth that can be reviewed, diffed, validated, and archived.
-
-### 3. Skills that enforce process, not just style
-
-OpenHarness includes a copied and adapted skills library under `skills/`, including workflows for:
-- brainstorming before implementation
-- systematic debugging
-- TDD-oriented execution for testable code behavior
-- verification before claiming success
-- code review loops
-- project memory capture
-
-These skills are meant to shape how work gets done, not merely how answers are phrased.
-
-The live skill model separates two questions:
-- protocol status: is this part of the fixed harness or an optional helper?
-- workflow stage: when should the agent actually use it?
-
-That keeps the harness plug-and-play instead of forcing every repository to rediscover which skills are mandatory, optional, or only conditionally triggered.
-
-### 4. A bias toward agent legibility
-
-OpenHarness assumes a practical truth of agentic software work:
-
-**If the agent cannot discover it from the repository, it effectively does not exist.**
-
-That means key decisions should move out of chat threads and into versioned artifacts. The repo becomes the working memory, not just the code container.
-
-### 5. Runtime Workflow Packages instead of a fake universal debug skill
-
-OpenHarness does not assume one generic runtime-debug skill can cover API, browser, worker, migration, and observability work equally well.
-
-Instead, it defines Runtime Workflow Package (RWP) support:
-- the core harness decides when runtime-aware routing applies
-- repositories can declare runtime workflow packages under `.harness/rwp/workflows`
-- agents use `openharness rwp list` and `openharness rwp view` for progressive disclosure instead of loading every workflow into context
-- runtime execution uses `openharness rwp run <workflow> <script.py> [args...]`
-- selected workflows, execution plans, observations, and evidence are written back into `detailed-design.md`, `verification-design.md`, and `evidence.md`
-
-## The OpenHarness workflow
-
-A typical task looks like this:
-
-1. `AGENTS.md` routes the agent into the correct workflow.
-2. `using-openharness` checks the manifest and active task packages.
-3. `brainstorming` converges the requirements first.
-4. If no task package exists yet, the agent scaffolds one after brainstorming has converged and before exploration starts.
-5. `exploring-solution-space` explores the local repo and the web before architecture is locked in.
-6. At each stage handoff, the agent should make the current stage and next planned step explicit instead of silently pushing forward.
-7. The agent drafts overview design and detailed design before implementation, including the testing or verification path appropriate to the object being changed.
-8. Readiness is decided in the task package through clear stage checks, not by stretching the entry surface into a long process manual.
-9. The agent implements against the package contract.
-10. Runtime verification, verification, and evidence are written back into the package.
-11. Completed packages are archived without losing history.
-
-The result is a repo that accumulates usable knowledge instead of accumulating invisible assumptions.
-
-The live workflow is now also explicitly stage-organized and role-injected:
-- stages remain the main path
-- product, CEO, architecture, testing, review, and risk perspectives are injected only where they sharpen the current stage
-- stage gates and challenge closure decide readiness, not document length alone
-
-## Verification baseline
-
-OpenHarness does not pretend every repository already has the same runtime harness.
-
-For Python-first repositories, `uv run pytest` is the default automated verification floor for testable code behavior when no stronger project-specific test command is documented.
-That floor is intentionally weaker than full runtime or integration evidence, and it is not proof of documentation semantics, collaboration protocols, skill behavior, or agent workflow behavior.
-When a task depends on project-specific runtime behavior, protocol semantics, or agent behavior, object-appropriate verification must be designed and recorded in the task package rather than guessed globally.
-When repositories mature beyond that minimum, Runtime Workflow Package support is what tells the agent how to discover, inspect, execute, and record project-specific runtime validation.
-
-## Why this works
-
-OpenAI's harness engineering write-up makes a point that resonates strongly here: once agents can generate code quickly, the scarce resource becomes human attention.
-
-OpenHarness is designed around that constraint.
-
-It tries to reduce wasted human attention by making the repository:
-- easier for agents to navigate
-- easier to validate mechanically
-- easier to review incrementally
-- easier to clean up over time
-
-In other words, this repo is optimized less for heroic one-shot prompting and more for sustained, compounding throughput.
-
-## Repository layout
-
-```text
-AGENTS.md                          # repository map
-skills/                            # workflow skills used by Codex
-docs/task-packages/<task>/               # active task packages
-docs/archived/task-packages/<task>/      # archived task packages
-.project-memory/                   # reusable validated project knowledge
+```
+任务名/
+├── task-info.yaml        ← 状态机（机器可读）
+├── requirements.md        ← 需求（问题 + 目标 + 约束）
+├── overview-design.md     ← 概要设计（架构决策）
+├── detailed-design.md     ← 详细设计（实现路径 + 测试计划）
+├── verification-design.md ← 验证设计（如何证明完成）
+└── evidence.md            ← 证据（实际执行结果）
 ```
 
-## Who this is for
+人和智能体共享这同一套文件。可以 `git diff`、可以 Review、可以归档、可以审计。
 
-OpenHarness is a good fit if you want to:
-- run Codex against real repositories, not toy demos
-- keep architecture and workflow decisions in version control
-- make agent output more consistent without writing giant prompts
-- scale multi-step work through task packages and verification loops
-- build a repo that gets more legible as it grows
+### 2. 关注点分离 → 阶段门禁
 
-It is probably not a fit if you want a minimal one-file setup with no process overhead.
+**原则**：不同性质的工作不应混在同一个步骤里完成。
 
-## Upstream attribution
+OpenHarness 把任务生命周期拆解为 6 个阶段，每个阶段只关注一件事：
 
-OpenHarness is a derivative work.
+| 阶段 | 关注点 | 产物 |
+|------|--------|------|
+| `proposing` | 明确要解决什么问题 | 需求文档 |
+| `overview_designing` | 架构方向是否正确 | 概要设计 |
+| `detailed_designing` | 实现路径是否可行 | 详细设计 |
+| `verification_designing` | 如何证明完成 | 验证设计 |
+| `implementing` | 编码实现 | 代码变更 |
+| `verifying` | 是否达到验收标准 | 证据记录 |
 
-This repository directly reuses and adapts code from [`obra/superpowers`](https://github.com/obra/superpowers). In particular:
-- the project was bootstrapped by copying the adapted skills library from [`openrelay`](https://github.com/Krual-T/OpenRelay), which itself includes code and skill content derived from `superpowers`
-- the install flow in `INSTALL.md` intentionally follows the same "Fetch and follow instructions from ..." pattern popularized by `superpowers`
+每个阶段都有独立的**完成标准**，不达标准不能 Transition 到下一阶段。这确保了智能体不会"边设计边实现边验证"——那是最容易产生隐蔽错误的模式。
 
-OpenHarness is therefore not presented as an original invention of the entire workflow. It is a derivative adaptation that reuses upstream code and restructures it into a repository-centered harness model.
+### 3. 渐进式披露 → RWP 运行时工作流
 
-Please preserve attribution when redistributing substantial portions of this repository.
+**原则**：不加载当前不需要的信息。
 
-## License
+不是所有调试场景都一样。API 调试需要 HTTP 客户端和 Mock 服务，前端调试需要 headless 浏览器，数据迁移需要数据库快照——各自需要的运行时环境完全不同。
 
-MIT. See `LICENSE`.
+RWP 的设计遵循三级渐进式披露：
 
-This repository includes attribution to the upstream MIT-licensed work from `obra/superpowers`.
+```bash
+# 第一级：只看摘要（几乎零 Token 成本）
+openharness rwp list
 
-## Recommended next step
+# 第二级：选定候选后才加载详情
+openharness rwp view <工作流>
 
-After installing, open a real repo and give Codex a task that normally goes off the rails. Then compare the difference between:
-- a repo with scattered context and no harness
-- a repo with a map, task packages, verification gates, and reusable skills
+# 第三级：确定执行后才运行
+openharness rwp run <工作流> <脚本.py>
+```
 
-That comparison is the product.
+智能体不会一次性把所有工作流说明塞进上下文。它按需拉取。
+
+### 4. 不可发现即不存在 → 智能体可读性
+
+**原则**：仓库结构必须对智能体友好，否则信息等价于不存在。
+
+这个原则很残酷但也很真实：如果智能体从项目文件里读不到某个信息，那对智能体来说这个信息就不存在。这意味着：
+
+- 关键决策**必须从聊天记录搬到版本化文档**
+- 仓库目录结构**必须让智能体凭直觉就能导航**
+- 命名**必须遵循可预测的约定**，不能靠人类背景知识补充
+
+`AGENTS.md` 不是写给新人看的 README，它是**智能体的入口路由器**。它回答的是：什么东西在哪里、该走哪个流程、做完该写回什么。
+
+### 5. 约束降低决策成本 → 技能库
+
+**原则**：不是给智能体更多选项，而是给智能体更少但更清晰的选择。
+
+`skills/` 目录下的技能不教智能体"怎么写代码"——那它本来就会。技能教的是"在当前阶段，你应该关注什么、产出什么、不做什么"。
+
+每个阶段技能都有明确的边界：
+- 入口条件（什么时候进入这个阶段）
+- 产出标准（阶段结束时必须交付什么）
+- 禁止行为（这个阶段不要做什么）
+- 出口条件（推进到下一阶段的前提）
+
+这消除了智能体在每个节点"接下来该干什么"的决策疲劳。
+
+---
+
+## 反馈闭环
+
+把以上原则组合在一起，形成的是**工程控制论意义上的反馈闭环**：
+
+```text
+需求 ──→ 概要设计 ──→ 详细设计 ──→ 实现 ──→ 验证
+  │                                 │         │
+  │        ←─── 证据驱动修正 ←──────┴─────────┘
+  │
+  └──→ 归档（知识积累，反哺未来任务）
+```
+
+- **向前**：每个阶段只依赖上一阶段的产物作为输入
+- **向后**：验证阶段用证据匹配需求，不匹配则回退
+- **积累**：归档的任务包成为项目的结构化记忆，新任务可以检索历史决策
+
+这不是线性的瀑布模型——它是**带反馈的闭环**。验证失败就回退修正，而不是假装通过。
+
+---
+
+## 命令速览
+
+| 命令 | 控制论语义 |
+|------|-----------|
+| `openharness task-package new <名称>` | 创建新的反馈回路 |
+| `openharness task-package list` | 列出所有活跃回路 |
+| `openharness task-package view <任务>` | 查看回路当前状态 |
+| `openharness task-package transition <任务> <状态>` | 执行门禁检查并推进 |
+| `openharness rwp list` | 渐进式披露：一级摘要 |
+| `openharness rwp view <工作流>` | 渐进式披露：二级详情 |
+| `openharness rwp run <工作流> <脚本>` | 执行运行时验证 |
+| `openharness init --agent <claude\|codex\|all>` | 在项目中部署控制论骨架 |
+| `openharness update` | 更新到最新版本 |
+
+---
+
+## 项目结构
+
+```text
+AGENTS.md                           # 智能体入口路由器
+skills/using-openharness/
+  ├── SKILL.md                      # 会话入口：判断是否需要任务包
+  ├── states/                       # 阶段技能（按状态加载）
+  │   ├── brainstorming/            # 需求收敛
+  │   ├── exploring-solution-space/ # 方案探索
+  │   ├── detailed-design/          # 详细设计
+  │   ├── implementing/             # 编码实现
+  │   ├── verification-designing/   # 验证设计
+  │   └── verifying/                # 执行验证
+  └── references/                   # 模板和协议文档
+docs/
+  ├── task-packages/<任务>/         # 活跃任务包
+  └── archived/task-packages/       # 已归档任务包（结构化记忆）
+openharness_cli/                    # CLI 工具
+tests/                              # 测试
+install.sh / install.ps1            # 跨平台安装脚本
+```
+
+---
+
+## 起源与归属
+
+OpenHarness 的设计思想受多个源头的启发：
+
+- **人机共生**（J.C.R. Licklider, 1960）— 人与计算机的紧密耦合协作
+- **增强人类智能**（Douglas Engelbart, 1962）— 计算技术放大而非替代人的认知
+- **联合认知系统**（David Woods & Erik Hollnagel, 2006）— 人与机器作为统一的认知单元
+- **控制论**（Norbert Wiener, 1948）— 反馈回路与自修正系统的理论基础
+- **工程控制论**（钱学森, 1954）— 将控制论从数学理论落地为工程学科
+- **渐进式披露**（Jakob Nielsen, 1995）— 信息按需呈现
+- **信息论**（Claude Shannon, 1948）— 熵减作为结构化工程
+- **OpenAI Harness Engineering**（2025）— 智能体时代的注意力经济学
+
+代码层面，OpenHarness 是衍生作品，直接复用并改编了 [`obra/superpowers`](https://github.com/obra/superpowers) 的源码。技能库经由 [`openrelay`](https://github.com/Krual-T/OpenRelay) 孵化而来。
+
+分发本仓库的实质性部分时，请保留上游版权和许可声明。
+
+---
+
+## 许可证
+
+[MIT](LICENSE)，包含上游 `obra/superpowers` 的 MIT 许可归属声明。
+
+---
+
+<p align="center">
+  <strong>智能体不是用来使唤的。<br>给它一张地图、一个反馈回路、一套对等协作的协议。<br>然后，一起工作。</strong>
+</p>
