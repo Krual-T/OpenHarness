@@ -24,7 +24,7 @@ description: 当任务状态是 implementing（实现使验证通过，TDD 绿+�
    - `## 语义审核`（qualitative）：开发中观察到的审核对象和中间发现草稿
    - `## 运行时观察`（rwp）：开发中观察到的工作流名和输出路径
    - 不在 implementing 阶段填写最终通过/失败结论；最终 `## 验证结果`、`## 残余风险` 和 `## 后续事项` 留给 verifying 阶段
-3. `openharness task-package transition <task> implemented`
+3. `openharness task-package transition <task-name>|<task-id> implemented`
 
 ## Exit Check
 
@@ -32,7 +32,7 @@ description: 当任务状态是 implementing（实现使验证通过，TDD 绿+�
 2. `evidence.md` 是否存在且内容非空？
 3. 变更文件是否已全部列出？
 
-全部能回答 → `openharness task-package transition <task> implemented`
+全部能回答 → `openharness task-package transition <task-name>|<task-id> implemented`
 
 `implemented` 是 gate 状态，CLI 会自动推进到 `verifying` 并输出验证阶段指令。
 

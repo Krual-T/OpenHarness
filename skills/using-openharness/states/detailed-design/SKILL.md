@@ -57,7 +57,7 @@ description: 当任务状态是 detailed_designing（总体方案已收敛、需
 
 ## 阶段结束检查
 
-离开详细设计阶段前，**必须**能明确回答下面 7 个问题（每项答案必须引用具体产物——文件路径、接口签名、数据结构定义——作为证据，不能只答"是"或"否"。任何一条答不上来 → 阻塞，使用 `openharness task-package transition <task> detailed_designed` 前必须全部通过）：
+离开详细设计阶段前，**必须**能明确回答下面 7 个问题（每项答案必须引用具体产物——文件路径、接口签名、数据结构定义——作为证据，不能只答"是"或"否"。任何一条答不上来 → 阻塞，使用 `openharness task-package transition <task-name>|<task-id> detailed_designed` 前必须全部通过）：
 
 1. 是否已经知道实现会落到哪些文件或模块，以及为什么是这些地方？
 2. 是否已经知道主要接口边界、接口精度和误用风险？

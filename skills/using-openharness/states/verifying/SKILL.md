@@ -21,7 +21,7 @@ description: 当任务状态是 verifying（执行验证、收集证据）时由
    - **综合两方结论**：将子 Agent 审核结果和人类反馈合并写入 `evidence.md` 的 `## 语义审核` 章节；双方存在分歧时，以人类审阅者意见为准并在结论中注明分歧点
 6. **自检 阶段结束检查**
 
-完成后：`openharness task-package transition <task> verified`
+完成后：`openharness task-package transition <task-name>|<task-id> verified`
 
 （`verified` 是 gate 状态，CLI 检查 evidence.md 存在且非空后自动归档）
 
@@ -78,7 +78,7 @@ description: 当任务状态是 verifying（执行验证、收集证据）时由
 3. 验收标准是否全部有对应的证据覆盖？
 4. 是否有验证失败的条目？如果有，是否已分流到正确的回退路径？
 
-全部能回答 → `openharness task-package transition <task> verified`
+全部能回答 → `openharness task-package transition <task-name>|<task-id> verified`
 
 ## 要点
 

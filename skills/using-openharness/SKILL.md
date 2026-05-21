@@ -35,7 +35,7 @@ openharness task-package list
 
 按输出：
 
-- 有匹配活跃包：`openharness task-package view <task>`
+- 有匹配活跃包：`openharness task-package view <task-name>|<task-id>`
 - 无匹配或空：`openharness task-package new <name>`
 
 随后执行 CLI 输出的当前阶段 skill。
@@ -45,7 +45,7 @@ openharness task-package list
 每个活跃阶段完成后，用 `transition` 推进到对应完成态：
 
 ```
-openharness task-package transition <task> <完成态>
+openharness task-package transition <task-name>|<task-id> <完成态>
 ```
 
 | 当前阶段 | 完成态 |

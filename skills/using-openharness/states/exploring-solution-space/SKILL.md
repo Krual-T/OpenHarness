@@ -25,7 +25,7 @@ description: 当任务状态是 overview_designing（需求已明确、需要收
 
 ## 阶段结束检查
 
-离开方案探索阶段前，**必须**能明确回答下面 6 个问题（每项答案必须引用 `overview-design.md` 的具体章节号作为证据，不能只答"是"或"否"。任何一条答不上来 → 阻塞，使用 `openharness task-package transition <task> overview_designed` 前必须全部通过）：
+离开方案探索阶段前，**必须**能明确回答下面 6 个问题（每项答案必须引用 `overview-design.md` 的具体章节号作为证据，不能只答"是"或"否"。任何一条答不上来 → 阻塞，使用 `openharness task-package transition <task-name>|<task-id> overview_designed` 前必须全部通过）：
 
 1. 这轮设计到底覆盖哪些表面，明确不覆盖哪些表面？
 2. 推荐方案具体由哪些模块、接口和责任边界构成？
