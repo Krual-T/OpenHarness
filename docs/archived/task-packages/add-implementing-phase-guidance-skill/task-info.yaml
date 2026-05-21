@@ -1,0 +1,12 @@
+id: TASK-021
+title: Add Implementing Phase Guidance Skill
+status: archived
+summary: 将 implementing 阶段技能升级为完整引导：融入 Karpathy 四项编码准则，补齐入口分流、重入指南、人机协同停点、反合理化、相邻文档边界等标准章节。
+owner: Shaokun.Tang
+created_at: '2026-05-21'
+updated_at: '2026-05-21'
+collaboration:
+  task_type: standard development
+  design_review_mode: stepwise
+verification:
+  verify_by: qualitative
