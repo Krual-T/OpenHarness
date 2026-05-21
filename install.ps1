@@ -67,5 +67,21 @@ Write-Step "Installing openharness CLI ..."
 uv tool install --editable $OHClone
 
 Write-Host ""
+
+# --- install shell completion ---
+
+Write-Step "Installing PowerShell completion..."
+$profileDir = Split-Path $PROFILE -Parent
+if ($profileDir -and -not (Test-Path $profileDir)) {
+    New-Item -ItemType Directory -Force -Path $profileDir | Out-Null
+}
+if ($profileDir) {
+    openharness --show-completion | Out-File -Append -FilePath $PROFILE -Encoding UTF8
+    Write-Info "Completion installed to PowerShell profile (生效需新开终端或 . `$PROFILE)"
+} else {
+    Write-Info "Skipped: cannot determine PowerShell profile path; run 'openharness --install-completion' manually"
+}
+
+Write-Host ""
 Write-Host "OpenHarness installed. Next, run this in each project:"
 Write-Host "  openharness init --agent <claude|codex|all>"

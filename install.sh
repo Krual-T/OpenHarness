@@ -68,6 +68,22 @@ fi
 echo "Installing openharness CLI ..."
 uv tool install --editable "$OH_CLONE"
 
+# Install shell completion
+echo ""
+echo "Installing shell completion..."
+case "${SHELL##*/}" in
+    bash)
+        openharness --show-completion >> "$HOME/.bashrc"
+        echo "  Completion installed to ~/.bashrc (生效需新开终端或 source ~/.bashrc)"
+        ;;
+    zsh|fish)
+        echo "  Run 'openharness --install-completion' to install completion for ${SHELL##*/}"
+        ;;
+    *)
+        echo "  Unknown shell: run 'openharness --install-completion' to install completion manually"
+        ;;
+esac
+
 echo ""
 echo "OpenHarness installed. Next, run this in each project:"
 echo "  openharness init --agent <claude|codex|all>"
