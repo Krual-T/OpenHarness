@@ -1,8 +1,3 @@
----
-name: exploring-solution-space
-description: 当任务状态是 overview_designing（需求已明确、需要收敛总体方案）时使用
----
-
 # 方案探索（总体设计）
 
 ## 步骤

@@ -1,8 +1,3 @@
----
-name: brainstorming
-description: 当任务状态是 proposing（需求未收敛、范围未明确）时使用
----
-
 # 需求分析
 
 ## 入口分流

@@ -1,8 +1,3 @@
----
-name: detailed-design
-description: 当任务状态是 detailed_designing（总体方案已收敛、需要将设计落到可编码粒度）时使用
----
-
 # 详细设计
 
 ## 步骤
