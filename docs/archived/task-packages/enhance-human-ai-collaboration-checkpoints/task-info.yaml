@@ -1,0 +1,12 @@
+id: TASK-020
+title: Enhance Human Ai Collaboration Checkpoints
+status: archived
+summary: 描述《Enhance Human Ai Collaboration Checkpoints》的目标和要求。
+owner: <GIT OWNER>
+created_at: YYYY-MM-DD
+updated_at: '2026-05-21'
+collaboration:
+  task_type: protocol/architecture
+  design_review_mode: stepwise
+verification:
+  verify_by: qualitative

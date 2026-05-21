@@ -11,6 +11,7 @@ description: 当任务状态是 overview_designing（需求已明确、需要收
 2. 探索本地仓库：相关代码、文档、测试、最近变更
 3. 涉及第三方 API、当前平台行为、已有公共方案或最新最佳实践时，搜索网络
 4. 总结本地约束、可行选项和推荐方向
+   - 如果存在多个可行方向，必须列出候选+各自取舍，不得默不作声地选一个。将此展示作为第一个逐项设计确认停点
 5. 判断是否需要运行时验证：
    - 如果任务可能依赖运行时行为（API、服务、工作流），运行 `openharness rwp list` 检查候选 RWP
    - 如有匹配的 RWP，在 `overview-design.md` 的 `## 关键流程` 或 `## 阶段门禁` 中记录 RWP 候选
@@ -18,9 +19,13 @@ description: 当任务状态是 overview_designing（需求已明确、需要收
 6. 撰写 `overview-design.md`：覆盖范围、排除范围、主体结构、关键边界、主流、备选方案，以及至少一个被拒绝的替代方案及其被拒原因
 7. 概览反思：挑战主路径，比较替代方案，检查是否有遗漏的验证影响因素
 
-## Exit Check
+## 文档审阅停点
 
-离开 overview 阶段前，**必须**能明确回答下面 6 个问题（任何一条答不上来 → 阻塞，使用 `openharness task-package transition <task> overview_designed` 前必须全部通过）：
+写完 `overview-design.md` 并通过阶段结束检查自检后，必须告知用户文档路径，让用户在 IDE 中审阅完整文档。获得用户审阅确认后才可 transition。用户要求修改 → 回到对应步骤修正，重新自检。
+
+## 阶段结束检查
+
+离开方案探索阶段前，**必须**能明确回答下面 6 个问题（每项答案必须引用 `overview-design.md` 的具体章节号作为证据，不能只答"是"或"否"。任何一条答不上来 → 阻塞，使用 `openharness task-package transition <task> overview_designed` 前必须全部通过）：
 
 1. 这轮设计到底覆盖哪些表面，明确不覆盖哪些表面？
 2. 推荐方案具体由哪些模块、接口和责任边界构成？
@@ -33,7 +38,7 @@ description: 当任务状态是 overview_designing（需求已明确、需要收
 
 ## 逐项设计确认
 
-对于非 `mechanical` 任务，建议逐项确认设计：
+对于非 `mechanical` 任务且 `design_review_mode: stepwise`，必须逐项确认设计。架构级决策（边界、主路径、推荐结构）至少有一个停点，在写完这三节后先让用户确认方向，再补其他章节。`design_review_mode: auto` 时保持为可选。
 
 ```
 设计点 N/M：<短标题>

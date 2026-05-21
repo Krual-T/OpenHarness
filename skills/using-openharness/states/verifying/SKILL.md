@@ -19,7 +19,7 @@ description: 当任务状态是 verifying（执行验证、收集证据）时由
    - **启动子 Agent 审核**：按 `verification-design.md` 中定义的审核矩阵，启动一个独立子 Agent（`subagent_type: general-purpose`），将审核对象、审核维度和通过标准完整交给子 Agent。子 Agent 逐项审核后输出结构化发现
    - **征集人类审阅者反馈**：将子 Agent 的审核结论呈现给人类审阅者，请人类审阅者逐项给出反馈（同意 / 异议 / 补充），人类审阅者的意见与子 Agent 结论具有同等权重
    - **综合两方结论**：将子 Agent 审核结果和人类反馈合并写入 `evidence.md` 的 `## 语义审核` 章节；双方存在分歧时，以人类审阅者意见为准并在结论中注明分歧点
-6. **自检 Exit Check**
+6. **自检 阶段结束检查**
 
 完成后：`openharness task-package transition <task> verified`
 
@@ -38,6 +38,12 @@ description: 当任务状态是 verifying（执行验证、收集证据）时由
 | qualitative 审核结论模糊（"差不多""基本可以"） | 审核判定准则不够具体 | 回到 `verification-design.md` 补充判定准则 |
 
 **关键约束**：不要看到失败就自动跳回 implementing。先判断失败属于代码问题、环境问题还是验证策略问题——三者回退路径不同。
+
+## 验证结论确认停点
+
+`evidence.md` 写完最终结论（通过/有条件通过/不通过 + 残余风险清单）后，必须向用户展示并获确认后才可 transition。
+
+回退修复后重新进入 verifying 时，先明确本轮验证的增量目标（"上次失败的是 X，本轮只验证 X 是否修复 + 已有通过的 Y 不退化"），再执行验证命令。
 
 ## evidence.md 完整性检查
 
@@ -65,7 +71,7 @@ description: 当任务状态是 verifying（执行验证、收集证据）时由
 
 如果 checklist 有缺项，先补充再 transition。
 
-## Exit Check
+## 阶段结束检查
 
 1. 所有验证命令是否已执行？
 2. evidence.md 是否包含了实际运行的命令和结果？

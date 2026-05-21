@@ -10,7 +10,7 @@ description: 当任务状态是 detailed_designing（总体方案已收敛、需
 1. 读取 `overview-design.md`，理解已确定的总体方向、Stage Gates、已确认的设计点和约束
 2. 识别实现落脚点：哪些文件、模块或文档面承载本轮改动，为什么是这些落点而不是其他
 3. 设计落地细节：
-   - 接口精度（参数语义、输入输出约束、边界条件、错误传播、兼容性要求）
+   - 接口精度（参数语义、输入输出约束、边界条件、错误传播、兼容性要求）。如果接口精度存在多个合理选择（参数传标识还是传对象、错误是抛异常还是返回 Result 类型、同步还是异步），必须列出选项+各自代价，不得默不作声地选一个
    - 模块内部职责分解（编排、校验、状态更新、副作用、适配层分别落在哪里）
    - 数据语义（关键数据结构、字段语义、状态转换、一致性约束）
    - 错误处理（主要失败路径、误用风险、静默出错风险、异常传播链）
@@ -25,7 +25,7 @@ description: 当任务状态是 detailed_designing（总体方案已收敛、需
 
 ## 逐项设计确认
 
-对于非 `mechanical` 任务，建议逐项确认设计：
+对于非 `mechanical` 任务且 `design_review_mode: stepwise`，必须逐项确认设计。接口精度决策至少有一个停点，`design_review_mode: auto` 时保持为可选。
 
 ```
 设计点 N/M：<短标题>
@@ -55,9 +55,9 @@ description: 当任务状态是 detailed_designing（总体方案已收敛、需
 - 从 `detailed_designing` 首次进入 → 完整流程
 - 从 `implementing` 回退到 `detailed_designing` → 从步骤1开始（重新理解当前设计状态），但可以跳过已确认不变的设计点
 
-## Exit Check
+## 阶段结束检查
 
-离开 detailed 阶段前，**必须**能明确回答下面 7 个问题（任何一条答不上来 → 阻塞，使用 `openharness task-package transition <task> detailed_designed` 前必须全部通过）：
+离开详细设计阶段前，**必须**能明确回答下面 7 个问题（每项答案必须引用具体产物——文件路径、接口签名、数据结构定义——作为证据，不能只答"是"或"否"。任何一条答不上来 → 阻塞，使用 `openharness task-package transition <task> detailed_designed` 前必须全部通过）：
 
 1. 是否已经知道实现会落到哪些文件或模块，以及为什么是这些地方？
 2. 是否已经知道主要接口边界、接口精度和误用风险？
@@ -68,6 +68,8 @@ description: 当任务状态是 detailed_designing（总体方案已收敛、需
 7. 是否已经知道后续 `verification-design.md` 需要收什么证据？
 
 如果这些问题还答不清，**阻塞**。不要进入 `implementing`。
+
+自检通过后，将 7 条答案整理为确认清单（每条附产物引用），向用户展示并获确认后才可 transition。用户否定任一条 → 回到对应步骤修正，重新自检。
 
 ## 要点
 
