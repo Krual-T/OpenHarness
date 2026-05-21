@@ -87,7 +87,7 @@ def view_package(
     print(f"Owner: {package.owner}")
     print(f"Status: `{stage['current_stage']}` — {stage['current_stage_description']}")
     print(f"Next: `{stage['next_stage']}` — {stage['next_step']}" if stage["next_stage"] else f"Next: none")
-    output_state_hook(package.current_status)
+    output_state_hook(package.current_status, package=package)
 
 
 @task_app.command(name="new")
@@ -149,9 +149,9 @@ def transition(
             raise typer.Exit(code=1)
         target = updated.current_status
         print(f"Transitioned {package.task_id} from `{package.current_status}` to `{target}`")
-        output_state_hook(target)
+        output_state_hook(target, package=package)
     elif result.archived_path is not None:
         print(f"Archived task package: {package.task_id} -> {result.archived_path}")
-        output_state_hook("archived")
+        output_state_hook("archived", package=package)
     else:
         print(f"{package.task_id} already in `{package.current_status}`")

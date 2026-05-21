@@ -4,9 +4,15 @@
 
 1. **读需求文档**：打开 `requirements.md`，确认必须交付的结果和验收标准
 2. **确定验证方式**：根据 `task-info.yaml.verification.verify_by` 选择
+{% if verify_by == "unit_test" %}
    - `unit_test` → 列出测试文件和测试命令
+{% elif verify_by == "qualitative" %}
    - `qualitative` → 明确审核对象、审核标准和判定准则；审核需由子 Agent 和人类审阅者双轨执行，两方结论均需记录
+{% elif verify_by == "rwp" %}
    - `rwp` → 选择或编写运行时工作流脚本
+{% else %}
+   - 当前未设置 verify_by，请先确认验证方式后再继续
+{% endif %}
 3. **写 `verification-design.md`**：参考模板 `skills/using-openharness/references/templates/task-package.verification-design.md`
    - `## 验证路径`：计划路径（怎么验证）和预期执行路径
    - `## 必需命令`：逐条列出验证命令（命令、期望退出码、期望输出）
@@ -50,6 +56,7 @@
 
 如果 `task-info.yaml.verification.verify_by` 与上述规则冲突，**阻塞**——回到 `requirements.md` 重新确定 verify_by。
 
+{% if verify_by == "rwp" %}
 ### RWP 选择与设计约束
 
 当 verify_by == rwp 时：
@@ -58,6 +65,7 @@
 - **必须明确**退出码语义：0 通过 / 1 失败 / 其他 = 环境异常
 - 工作流脚本的 stdout 和 stderr 不可混用——stdout 放结构化产物，stderr 放人类可读日志
 - **预期结果必须可逐项比对**：verifying 阶段会由子 Agent 读取工作流输出（stdout/stderr/产物），对照 `## 预期结果` 逐项比对。预期结果不能写成"输出正常"或"运行成功"——必须写具体期望（退出码 0、stdout 包含某字段、产物文件存在且非空等），否则子 Agent 无法产出结构化发现
+{% endif %}
 
 ## 失败回退
 

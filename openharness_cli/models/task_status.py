@@ -11,17 +11,17 @@ def parse_status(value: str) -> Optional[TaskStatus]:
 
 
 class TaskStatus(StrEnum):
-    PROPOSING = ("proposing", "skills/using-openharness/states/brainstorming/SKILL.md")
+    PROPOSING = ("proposing", "skills/using-openharness/states/brainstorming/instructions.md")
     REQUIREMENTS_DESIGNED = ("requirements_designed", "")
-    OVERVIEW_DESIGNING = ("overview_designing", "skills/using-openharness/states/exploring-solution-space/SKILL.md")
+    OVERVIEW_DESIGNING = ("overview_designing", "skills/using-openharness/states/exploring-solution-space/instructions.md")
     OVERVIEW_DESIGNED = ("overview_designed", "")
-    DETAILED_DESIGNING = ("detailed_designing", "skills/using-openharness/states/detailed-design/SKILL.md")
+    DETAILED_DESIGNING = ("detailed_designing", "skills/using-openharness/states/detailed-design/instructions.md")
     DETAILED_DESIGNED = ("detailed_designed", "")
-    VERIFICATION_DESIGNING = ("verification_designing", "skills/using-openharness/states/verification-designing/SKILL.md")
+    VERIFICATION_DESIGNING = ("verification_designing", "skills/using-openharness/states/verification-designing/instructions.md")
     VERIFICATION_DESIGNED = ("verification_designed", "")
-    IMPLEMENTING = ("implementing", "skills/using-openharness/states/implementing/SKILL.md")
+    IMPLEMENTING = ("implementing", "skills/using-openharness/states/implementing/instructions.md")
     IMPLEMENTED = ("implemented", "")
-    VERIFYING = ("verifying", "skills/using-openharness/states/verifying/SKILL.md")
+    VERIFYING = ("verifying", "skills/using-openharness/states/verifying/instructions.md")
     VERIFIED = ("verified", "")
     ARCHIVED = ("archived", "")
 

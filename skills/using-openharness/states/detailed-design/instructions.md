@@ -18,6 +18,7 @@
    - 最后写 `## 推荐图示` 和 `## 详细设计反思`
 5. 详细反思：再次挑战测试策略、接口边界、迁移顺序、预期证据是否足够支撑实施
 
+{% if task_type != "mechanical" and design_review_mode == "stepwise" %}
 ## 逐项设计确认
 
 对于非 `mechanical` 任务且 `design_review_mode: stepwise`，必须逐项确认设计。接口精度决策至少有一个停点，`design_review_mode: auto` 时保持为可选。
@@ -44,6 +45,7 @@
 - `确认`/`ok`/`可以` → 仅确认当前设计点
 - `自主推进`/`你决定` → 写入 `collaboration.design_review_mode: auto`
 - 每确认一个设计点就及时写回任务包，不要攒到最后
+{% endif %}
 
 ## 重入指南
 

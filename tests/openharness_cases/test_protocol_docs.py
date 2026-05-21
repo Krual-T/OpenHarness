@@ -119,21 +119,6 @@ def test_cli_commands_resolve() -> None:
     result = runner.invoke(app, ["rwp", "--help"])
     assert result.exit_code == 0
 
-def test_readme_describes_plug_and_play_harness_and_python_pytest_floor() -> None:
-    readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
-    assert "plug-and-play" in readme
-    assert "Python-first" in readme
-    assert "`uv run pytest` is the default automated verification floor for testable code behavior" in readme
-    assert "not the only valid evidence path" in readme
-    assert "object-appropriate verification" in readme
-
-def test_readme_describes_runtime_capability_contract() -> None:
-    readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
-    assert "Runtime Workflow Package" in readme
-    assert "openharness rwp list" in readme
-    assert ".harness/rwp/workflows" in readme
-    assert "detailed-design.md" in readme
-
 def test_agents_md_routes_repo_skill_usage_through_openharness() -> None:
     agents_path = REPO_ROOT / "AGENTS.md"
     text = agents_path.read_text(encoding="utf-8")

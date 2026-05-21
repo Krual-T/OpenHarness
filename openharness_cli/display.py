@@ -1,5 +1,8 @@
 
 from pathlib import Path
+from typing import Optional
+
+from jinja2 import BaseLoader, Environment
 
 from .harness_context import harness, HarnessContext
 from .models import parse_status, TaskPackage
@@ -18,7 +21,7 @@ def describe_stage(package: TaskPackage) -> dict[str, str]:
 
 
 @harness
-def output_state_hook(ctx: HarnessContext, state: str) -> None:
+def output_state_hook(ctx: HarnessContext, state: str, package: Optional[TaskPackage] = None) -> None:
     status = parse_status(state)
     if status is None:
         return
@@ -39,6 +42,21 @@ def output_state_hook(ctx: HarnessContext, state: str) -> None:
     if skill_path is None:
         print(f"[hook] skill file not found: {relative}", flush=True)
         return
+
+    template_raw = skill_path.read_text(encoding="utf-8")
+    rendered = _render_template(template_raw, package) if package is not None else template_raw
+
     print(f"--- BEGIN: {relative} ---", flush=True)
-    print(skill_path.read_text(encoding="utf-8"), flush=True)
+    print(rendered, flush=True)
     print(f"--- END: {relative} ---", flush=True)
+
+
+def _render_template(template_raw: str, package: TaskPackage) -> str:
+    env = Environment(loader=BaseLoader(), autoescape=False)
+    template = env.from_string(template_raw)
+    context = {
+        "task_type": package.task_type or "",
+        "design_review_mode": package.design_review_mode or "",
+        "verify_by": package.verify_by or "",
+    }
+    return template.render(**context)

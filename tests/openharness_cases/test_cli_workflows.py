@@ -82,7 +82,7 @@ def test_task_package_view_injects_current_stage_skill(tmp_path: Path, capsys) -
     state_root = repo_root / "skills" / "using-openharness" / "states" / "exploring-solution-space"
     state_root.mkdir(parents=True)
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
-    (state_root / "SKILL.md").write_text("# Overview Stage\n\nUse overview guidance.\n", encoding="utf-8")
+    (state_root / "instructions.md").write_text("# Overview Stage\n\nUse overview guidance.\n", encoding="utf-8")
     (repo_root / "docs" / "task-packages" / "visible-stage").mkdir(parents=True)
     root = repo_root / "docs" / "task-packages" / "visible-stage"
     for doc in ALL_DESIGN_FILES:
@@ -106,7 +106,7 @@ def test_task_package_view_injects_current_stage_skill(tmp_path: Path, capsys) -
     assert result.exit_code == 0
     assert "Task: OH-964 Visible Stage View" in result.stdout
     assert "Status: `overview_designing`" in result.stdout
-    assert "--- BEGIN: skills/using-openharness/states/exploring-solution-space/SKILL.md ---" in result.stdout
+    assert "--- BEGIN: skills/using-openharness/states/exploring-solution-space/instructions.md ---" in result.stdout
     assert "# Overview Stage" in result.stdout
 
 
@@ -236,7 +236,7 @@ def test_init_creates_harness_gitignore_that_ignores_everything(
     captured = capsys.readouterr()
     assert result.exit_code == 0
     assert (repo_root / ".harness" / ".gitignore").read_text(encoding="utf-8") == "*\n"
-    assert str(repo_root / ".harness") in result.stdout
+    assert "OpenHarness initialized" in result.stdout
 
 
 def test_validate_design_package_rejects_overview_designed_without_reflection(tmp_path: Path) -> None:

@@ -380,7 +380,7 @@ def test_key_repo_skills_are_vendored_locally() -> None:
         "verifying",
     ]:
         assert (states_base / name).is_dir(), f"state skill {name} missing"
-        assert (states_base / name / "SKILL.md").exists(), f"state skill {name}/SKILL.md missing"
+        assert (states_base / name / "instructions.md").exists(), f"state skill {name}/instructions.md missing"
     assert not (states_base / "finishing-a-development-branch").exists()
 
 

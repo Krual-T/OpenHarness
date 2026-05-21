@@ -52,6 +52,7 @@
 
 根据 `task-info.yaml.verification.verify_by` 选择执行循环：
 
+{% if verify_by == "unit_test" %}
 ### unit_test — TDD 循环
 
 将任务转化为可验证目标：
@@ -74,6 +75,7 @@
 3. [步骤] → 验证: [检查项]
 ```
 
+{% elif verify_by == "qualitative" %}
 ### qualitative — 逐项写、逐项确认完成
 
 - 打开 `verification-design.md` 中的审核矩阵，了解有哪些审核对象
@@ -82,6 +84,7 @@
 - 不在这里做正确性判定——那是 verifying 阶段的职责
 - 没有 RED 阶段——定性任务无测试可跑
 
+{% elif verify_by == "rwp" %}
 ### rwp — 单元测试 + 工作流验证
 
 - 先运行 `verification-design.md` 中声明的单元测试命令（如有），全部通过后再继续
@@ -89,19 +92,43 @@
 - 单元测试失败或工作流异常 → 修正 → 重复
 - 输出语义是否正确留给 verifying 阶段判定——本阶段只看退出码和 stderr
 
+{% else %}
+### 通用执行循环
+
+根据 `task-info.yaml.verification.verify_by` 选择对应的执行循环（unit_test / qualitative / rwp），逐项执行并验证。
+{% endif %}
+
 ## 完成后
 
-1. 确认验证通过：
-   - unit_test：运行全部验证命令，确认全部通过
-   - qualitative：确认审核矩阵中所有审核对象均已写完、内容非空
-   - rwp：单元测试（如有）全部通过，工作流退出码均为 0、stderr 无异常报错
+{% if verify_by == "unit_test" %}
+1. 确认验证通过：运行全部验证命令，确认全部通过
 2. 写 `evidence.md` 中间事实：
    - `## 变更文件`：变更文件和改动说明（一行一个文件）
-   - `## 测试结果`（unit_test）：开发中执行过的测试命令和中间结果
-   - `## 语义审核`（qualitative）：开发中观察到的审核对象和中间发现草稿
-   - `## 运行时观察`（rwp）：开发中执行的单元测试命令和结果（如有）+ 工作流名、退出码和 stderr 摘要
-   - 不在 implementing 阶段填写最终通过/失败结论；最终 `## 验证结果`、`## 残余风险` 和 `## 后续事项` 留给 verifying 阶段
+   - `## 测试结果`：开发中执行过的测试命令和中间结果
 3. 每轮循环写完立即追加 evidence.md——不要等全部完成再补写
+
+{% elif verify_by == "qualitative" %}
+1. 确认验证通过：确认审核矩阵中所有审核对象均已写完、内容非空
+2. 写 `evidence.md` 中间事实：
+   - `## 变更文件`：变更文件和改动说明（一行一个文件）
+   - `## 语义审核`：开发中观察到的审核对象和中间发现草稿
+3. 每轮循环写完立即追加 evidence.md——不要等全部完成再补写
+
+{% elif verify_by == "rwp" %}
+1. 确认验证通过：单元测试（如有）全部通过，工作流退出码均为 0、stderr 无异常报错
+2. 写 `evidence.md` 中间事实：
+   - `## 变更文件`：变更文件和改动说明（一行一个文件）
+   - `## 运行时观察`：开发中执行的单元测试命令和结果（如有）+ 工作流名、退出码和 stderr 摘要
+3. 每轮循环写完立即追加 evidence.md——不要等全部完成再补写
+
+{% else %}
+1. 确认验证通过（按 verify_by 选择对应检查）
+2. 写 `evidence.md` 中间事实：
+   - `## 变更文件`：变更文件和改动说明（一行一个文件）
+3. 每轮循环写完立即追加 evidence.md——不要等全部完成再补写
+{% endif %}
+
+不在 implementing 阶段填写最终通过/失败结论；最终 `## 验证结果`、`## 残余风险` 和 `## 后续事项` 留给 verifying 阶段。
 
 ## evidence.md 文档审阅停点
 
@@ -111,24 +138,27 @@
 
 ## 阶段结束检查
 
-**unit_test**：
-
+{% if verify_by == "unit_test" %}
 1. 所有 `verification-design.md` 中声明的验证命令是否全部通过？
 2. `evidence.md` 是否存在且中间事实非空？
 3. 变更文件是否已全部列出？
 
-**qualitative**：
-
+{% elif verify_by == "qualitative" %}
 1. 审核矩阵中所有审核对象是否已全部写完、内容非空？
 2. `evidence.md` 是否存在且中间事实非空？
 3. 变更文件是否已全部列出？
 
-**rwp**：
-
+{% elif verify_by == "rwp" %}
 1. 单元测试命令（如有）是否全部通过？
 2. 所有工作流命令的退出码是否均为 0、stderr 是否无异常报错？
 3. `evidence.md` 是否存在且中间事实非空？
 4. 变更文件是否已全部列出？
+
+{% else %}
+1. 是否按 verify_by 对应要求完成所有验证？
+2. `evidence.md` 是否存在且中间事实非空？
+3. 变更文件是否已全部列出？
+{% endif %}
 
 全部能回答 → `openharness task-package transition <task> implemented`
 
@@ -161,8 +191,11 @@
 - 如果验证失败且不是代码问题，回到 `verification-design.md` 修正验证策略
 - 不要等全部实现完成再补 evidence.md——每轮循环写完立即追加
 - 并行调度是横切策略，可在本阶段自行选择使用
+{% if verify_by == "unit_test" %}
 - **unit_test**：先让测试失败，再写实现——不要跳过 RED
+{% elif verify_by == "qualitative" or verify_by == "rwp" %}
 - **qualitative / rwp**：没有 RED 阶段，不要照搬 TDD 循环
+{% endif %}
 
 ## 与相邻文档的边界
 

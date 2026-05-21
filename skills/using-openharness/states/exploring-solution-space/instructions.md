@@ -31,6 +31,7 @@
 
 如果这些问题还答不清，**阻塞**。不要进入 `detailed_designing`。
 
+{% if task_type != "mechanical" and design_review_mode == "stepwise" %}
 ## 逐项设计确认
 
 对于非 `mechanical` 任务且 `design_review_mode: stepwise`，必须逐项确认设计。架构级决策（边界、主路径、推荐结构）至少有一个停点，在写完这三节后先让用户确认方向，再补其他章节。`design_review_mode: auto` 时保持为可选。
@@ -55,6 +56,7 @@
 - `自主推进`/`你决定` → 写入 `collaboration.design_review_mode: auto`
 - 每确认一个设计点就及时写回任务包，不要攒到最后
 - 不要把 detailed 级文件、字段、命令或迁移步骤塞进 `02`；这些内容应进入 `detailed-design.md`
+{% endif %}
 
 ## 重入指南
 
