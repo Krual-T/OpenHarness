@@ -82,8 +82,8 @@ description: 当任务状态是 proposing（需求未收敛、范围未明确）
 2. 核心场景是什么？
 3. 单一成功指标是什么？
 4. 哪些验收标准会决定本轮是否算完成？
-5. 哪个 counterexample 必须被排除？
-6. 哪个限制一旦被突破，这就不再是同一个 task package？
+5. 哪些反例必须被排除？
+6. 哪些限制一旦被突破，这就不再是同一个 task package？
 7. task_type（`mechanical` / `standard development` / `protocol/architecture`）是否已确认并写入 `task-info.yaml`？
 8. design_review_mode（`stepwise` / `auto`）是否已确认并写入 `task-info.yaml.collaboration.design_review_mode`？
 9. verify_by（`unit_test` / `qualitative` / `rwp`）是否已确定并写入 `task-info.yaml.verification.verify_by`？
@@ -100,7 +100,7 @@ description: 当任务状态是 proposing（需求未收敛、范围未明确）
 - 目标不要写成抽象价值词；应该能回答"做完以后什么事实会成立"
 - 问题陈述至少要写出一个已经存在的矛盾，而不是只写未来愿景
 - 必须交付的结果中每一项，后续都应该能在 `verification-design.md` 里找到对应验证
-- 非目标至少写一个 counterexample
+- 非目标至少写一个反例
 - 约束写协议边界、兼容性条件、依赖限制和 cost cap；如果某个限制被突破就会变成另一个 task package，也写在这里
 
 ## 与相邻文档的边界
@@ -122,7 +122,7 @@ description: 当任务状态是 proposing（需求未收敛、范围未明确）
 | 借口 | 为什么不成立 |
 |------|-------------|
 | "需求已经很清楚了，直接开始设计吧" | 清楚到能写下来 ≠ 实际上写下来了。没写进 `requirements.md` 的需求，在实现阶段会被遗忘或曲解。 |
-| "用户只问了一个小功能" | 小功能也可能有隐式假设。不写下目标用户、场景和 counterexample，范围就会在实现时自然膨胀。 |
+| "用户只问了一个小功能" | 小功能也可能有隐式假设。不写下目标用户、场景和反例，范围就会在实现时自然膨胀。 |
 | "用户说了要什么，不需要再分析" | 用户说的 ≠ 需求。需求需要转化为可验证的验收标准，否则验证阶段无法判断完成。 |
 | "先写代码，需求后面补" | 后面不会补的。需求文档不是负担——它是你和未来维护者之间的契约。 |
 | "这次改动很小，不需要完整需求分析" | 如果确实属于清晰任务，走快通道即可。但"改动小"不是跳过需求文档的理由——边界模糊的小改动最容易在实现时引发争议。 |
