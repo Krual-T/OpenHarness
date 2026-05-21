@@ -1,0 +1,11 @@
+id: TASK-019
+title: Clean Up Outdated Using Openharness States
+status: archived
+summary: 描述《Clean Up Outdated Using Openharness States》的目标和要求。
+owner: <GIT OWNER>
+created_at: YYYY-MM-DD
+updated_at: '2026-05-20'
+collaboration:
+  task_type: mechanical
+verification:
+  verify_by: unit_test
