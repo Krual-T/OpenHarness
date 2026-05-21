@@ -1,9 +1,6 @@
----
-name: verifying
-description: 当任务状态是 verifying（执行验证、收集证据）时由 CLI 自动注入
----
-
 # 执行验证
+
+implementing 阶段 agent 已在 `evidence.md` 中记录了中间执行结果（变更文件、执行的命令、退出码、输出摘要）。你的职责是判定这些结果的正确性，而非重新执行——除非需要复现验证失败。
 
 ## 步骤
 

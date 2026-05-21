@@ -1,8 +1,3 @@
----
-name: verification-designing
-description: 当任务状态是 verification_designing（设计验证策略，TDD 红阶段）时由 CLI 自动注入
----
-
 # 验证策略设计
 
 ## 步骤
@@ -81,6 +76,7 @@ description: 当任务状态是 verification_designing（设计验证策略，TD
 - 如果发现验证策略本身有歧义，回到 `requirements.md` 澄清需求
 - 模板位于 `skills/using-openharness/references/templates/task-package.verification-design.md`
 - `## 必需命令` 中每条命令的期望退出码必须写明——implementing 和 verifying 阶段依赖这个来做 pass/fail 判定
+- 你设计的每一条验证命令，implementing 阶段 agent 会在 Goal-Driven Execution 中逐条执行。确保命令可复制粘贴、退出码含义明确。verifying 阶段 agent 在此基础上做正确性判定——三个阶段形成闭环：设计验证 → 执行验证 → 判定验证
 
 ## 常见失败模式
 

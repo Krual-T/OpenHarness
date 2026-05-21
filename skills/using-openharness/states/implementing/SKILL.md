@@ -1,13 +1,70 @@
 ---
 name: implementing
-description: 当任务状态是 implementing（实现使验证通过，TDD 绿+重构阶段）时由 CLI 自动注入
+description: 当任务状态是 implementing（按 Karpathy 准则编码，使验证通过）时由 CLI 自动注入
 ---
 
 # 实现
 
-## 步骤
+## 入口分流
 
-### TDD 循环：RED → GREEN → REFACTOR
+在开始实现前，先判断当前处于哪种场景：
+
+| 场景 | 行为 |
+|------|------|
+| 从 `verification_designed` 首次进入 | 完整流程（下方 Think Before Coding → 阶段结束检查） |
+| 从 `verifying` 回退 | 增量修复——声明本轮增量目标，仅验证失败项 + 已有通过项不退化 |
+
+增量修复模式：读取 `evidence.md` 中上一次验证失败的条目 → 明确本轮只修什么 → 只跑相关验证命令 → 追加 evidence.md。不需要重新过 Think Before Coding / Simplicity First / Surgical Changes，除非失败根因是设计问题。
+
+## Think Before Coding — 写代码前先理解
+
+在写任何代码之前：
+
+- 陈述你的假设。如果不确定，主动提问
+- 如果存在多种理解方式，列出它们——不要默不作声地选一个
+- 如果有更简单的方案，说出来。有理由时推回去
+- 如果有什么不清楚，停下来。说出困惑点。问出来
+
+**不要假设。不要隐藏困惑。暴露取舍。**
+
+## Simplicity First — 最小代码解决问题
+
+- 只写解决问题必需的最少代码。不做推测性工作
+- 不写请求之外的功能
+- 不为单次使用的代码建抽象
+- 不写未被请求的"灵活性"或"可配置性"
+- 不处理不会发生的错误场景
+- 如果你写了 200 行但 50 行就够，重写
+
+自问："一个资深工程师会觉得这过于复杂吗？"如果是，简化它。
+
+## Surgical Changes — 只碰必须改的
+
+编辑已有代码时：
+
+- 不要顺手"改进"相邻代码、注释或格式
+- 不要重构没坏的东西
+- 匹配现有风格，即使你会写成别的样子
+- 如果你注意到无关的死代码，提出来——但不要删除它
+
+当你的改动制造了遗留：
+- 清理你的改动造成不再使用的 import、变量、函数
+- 不要删除改动之前就存在的死代码，除非明确要求
+
+检验标准：每一行改动都应该能追溯到用户的具体请求。
+
+## Goal-Driven Execution — 每步可验证
+
+根据 `task-info.yaml.verification.verify_by` 选择执行循环：
+
+### unit_test — TDD 循环
+
+将任务转化为可验证目标：
+- "加验证" → "为无效输入写测试，然后让测试通过"
+- "修 bug" → "写一个能复现的测试，然后让测试通过"
+- "重构 X" → "确保重构前后测试都通过"
+
+**RED → GREEN → REFACTOR**：
 
 1. **RED**：运行 `verification-design.md` 中声明的验证命令，亲眼看到失败
 2. **GREEN**：聚焦实现，使测试通过
@@ -15,55 +72,131 @@ description: 当任务状态是 implementing（实现使验证通过，TDD 绿+�
 
 重复直到所有验证通过。
 
-### 完成后
+对多步骤任务，写下简要计划：
+```
+1. [步骤] → 验证: [检查项]
+2. [步骤] → 验证: [检查项]
+3. [步骤] → 验证: [检查项]
+```
 
-1. 运行全部验证命令，确认全部通过
-2. 写 `evidence.md`：
-   - `## 文件`：变更文件和改动说明
+### qualitative — 逐项写、逐项确认完成
+
+- 打开 `verification-design.md` 中的审核矩阵，了解有哪些审核对象
+- 按审核对象逐项写：写完一个 → 确认内容非空、格式正确 → 继续下一个
+- 每轮循环：写 → 确认完整性，直到所有审核对象覆盖完毕
+- 不在这里做正确性判定——那是 verifying 阶段的职责
+- 没有 RED 阶段——定性任务无测试可跑
+
+### rwp — 单元测试 + 工作流验证
+
+- 先运行 `verification-design.md` 中声明的单元测试命令（如有），全部通过后再继续
+- 再运行工作流命令，确认退出码为 0、stderr 无异常报错
+- 单元测试失败或工作流异常 → 修正 → 重复
+- 输出语义是否正确留给 verifying 阶段判定——本阶段只看退出码和 stderr
+
+## 完成后
+
+1. 确认验证通过：
+   - unit_test：运行全部验证命令，确认全部通过
+   - qualitative：确认审核矩阵中所有审核对象均已写完、内容非空
+   - rwp：单元测试（如有）全部通过，工作流退出码均为 0、stderr 无异常报错
+2. 写 `evidence.md` 中间事实：
+   - `## 变更文件`：变更文件和改动说明（一行一个文件）
    - `## 测试结果`（unit_test）：开发中执行过的测试命令和中间结果
    - `## 语义审核`（qualitative）：开发中观察到的审核对象和中间发现草稿
-   - `## 运行时观察`（rwp）：开发中观察到的工作流名和输出路径
+   - `## 运行时观察`（rwp）：开发中执行的单元测试命令和结果（如有）+ 工作流名、退出码和 stderr 摘要
    - 不在 implementing 阶段填写最终通过/失败结论；最终 `## 验证结果`、`## 残余风险` 和 `## 后续事项` 留给 verifying 阶段
-3. `openharness task-package transition <task-name>|<task-id> implemented`
+3. 每轮循环写完立即追加 evidence.md——不要等全部完成再补写
 
-## Exit Check
+## evidence.md 文档审阅停点
+
+写完 `evidence.md` 中间事实并通过阶段结束检查自检后，必须告知用户文档路径，让用户在 IDE 中审阅完整文档。获得用户审阅确认后才可 transition。
+
+用户要求修改 → 回到对应步骤修正，重新自检。
+
+## 阶段结束检查
+
+**unit_test**：
 
 1. 所有 `verification-design.md` 中声明的验证命令是否全部通过？
-2. `evidence.md` 是否存在且内容非空？
+2. `evidence.md` 是否存在且中间事实非空？
 3. 变更文件是否已全部列出？
 
-全部能回答 → `openharness task-package transition <task-name>|<task-id> implemented`
+**qualitative**：
+
+1. 审核矩阵中所有审核对象是否已全部写完、内容非空？
+2. `evidence.md` 是否存在且中间事实非空？
+3. 变更文件是否已全部列出？
+
+**rwp**：
+
+1. 单元测试命令（如有）是否全部通过？
+2. 所有工作流命令的退出码是否均为 0、stderr 是否无异常报错？
+3. `evidence.md` 是否存在且中间事实非空？
+4. 变更文件是否已全部列出？
+
+全部能回答 → `openharness task-package transition <task> implemented`
 
 `implemented` 是 gate 状态，CLI 会自动推进到 `verifying` 并输出验证阶段指令。
 
-## TDD 循环故障处理
+## 项目工具命令参考
 
-每一轮 RED → GREEN → REFACTOR 都可能失败，但失败原因不同，回退路径也不同：
+本项目的常用命令（在仓库根目录执行）：
 
-| 失败现象 | 诊断 | 回退动作 |
-|---------|------|---------|
-| RED 阶段命令本身无法运行（文件不存在、import 错误） | 验证基础设施未就绪，不是被测代码的问题 | 回到 `verification-design.md` 修正命令路径或依赖 |
-| RED 阶段失败原因与预期不符（测试报错而不是 assertion failure） | 测试代码有 bug | 修复测试，仍在 RED 阶段 |
-| GREEN 阶段多个循环后仍无法让测试通过 | 设计有缺陷，或需求不可实现 | 回到 `overview-design.md` 或 `requirements.md` |
-| REFACTOR 后原先通过的测试变红 | 重构引入了回归 | 回滚最近一次重构，小步重做 |
-| 所有验证通过，但发现遗漏场景 | 验证策略覆盖不足 | 回到 `verification-design.md` 补充验证命令 |
+| 用途 | 命令 |
+|------|------|
+| 运行全部测试 | `uv run pytest tests/ -v` |
+| 运行单个测试文件 | `uv run pytest tests/path/to/test_file.py -v` |
+| 代码检查 | `uv run ruff check .` |
+| 类型检查 | `uv run pyright` |
+| 格式化 | `uv run ruff format .` |
 
-每完成一轮 TDD 循环，**立即**在 `evidence.md` 中追加该轮的测试命令和结果——不要等全部完成再补写。防止遗漏。
+在 implementing 阶段，每次改动后至少运行相关测试确认通过。
 
-## evidence.md 写法约束
+## 重入指南
 
-在 implementing 阶段写 evidence.md 时：
-- **只写事实**：命令、退出码、输出摘要、变更文件。不写"实现得很优雅"
-- **每轮一条**：RED 看到什么、GREEN 改了什么、REFACTOR 做了什么
-- **变更文件用列表**：一个文件一行，附带一句话改动说明
-- 如果 verify_by == unit_test：必须包含验收标准覆盖表（标准 → 测试函数）
-- 如果 verify_by == qualitative：implementing 阶段只写草稿——最终结论留给 verifying 阶段
-- 如果 verify_by == rwp：记录工作流名和观察到的输出路径，不在这里做最终结论
+- 从 `verification_designed` 首次进入 → 完整流程（入口分流 → 阶段结束检查）
+- 从 `verifying` 回退 → 先声明增量目标（"上次失败的是 X，本轮只验证 X 是否修复 + 已有通过的 Y 不退化"），再进入 Goal-Driven Execution。不需要重新过 Think Before Coding / Simplicity First / Surgical Changes，除非失败根因是设计问题
+- 从 `detailed_designing` 回退 → 按 detailed-design 技能的重入指南操作，不在本阶段处理
 
 ## 要点
 
-- 先让测试失败，再写实现——不要跳过 RED
+- 四项准则（Think Before Coding、Simplicity First、Surgical Changes、Goal-Driven Execution）不是建议——是实现阶段的硬约束
 - evidence.md 只写事实，不写评价
 - 如果验证失败且不是代码问题，回到 `verification-design.md` 修正验证策略
-- 并行调度是横切策略，可在本阶段自行选择使用
 - 不要等全部实现完成再补 evidence.md——每轮循环写完立即追加
+- 并行调度是横切策略，可在本阶段自行选择使用
+- **unit_test**：先让测试失败，再写实现——不要跳过 RED
+- **qualitative / rwp**：没有 RED 阶段，不要照搬 TDD 循环
+
+## 与相邻文档的边界
+
+- implementing 写"中间事实"：变更文件、执行的命令、退出码、输出摘要。不写最终通过/失败结论
+- `verification-design.md` 写"验证计划"：什么命令、期望退出码、期望输出。implementing 消费它，不修改它
+- `verifying` 写"最终结论"：验证结果、残余风险、后续事项。如果你已经开始写这些，说明越界了
+- 不要在这里讨论设计方案——那在 `overview-design.md` 和 `detailed-design.md` 里
+
+## 常见失败模式
+
+| 失败现象 | 诊断 | 回退动作 |
+|---------|------|---------|
+| 跳过 Think Before Coding 直接写代码 | 没有陈述假设，没有暴露歧义——实现可能基于错误前提 | 停下来，回答：我的假设是什么？有什么不清楚的？ |
+| 为"以后可能用到"建抽象 | 违反了 Simplicity First——当前不需要的抽象就是负债 | 删除多余的抽象层，回到满足当前需求的最简实现 |
+| 顺手重构了无关代码 | 违反了 Surgical Changes——改动范围不可控 | 回滚无关改动，只保留任务要求的变更 |
+| qualitative / rwp 任务照搬 TDD 循环 | 没有测试可跑，RED 阶段空转或编造测试 | 确认 verify_by，切换到对应执行循环 |
+| RED 阶段命令本身无法运行（文件不存在、import 错误） | 验证基础设施未就绪，不是被测代码的问题 | 回到 `verification-design.md` 修正命令路径或依赖 |
+| RED 阶段失败原因与预期不符（测试报错而不是 assertion failure） | 测试代码有 bug | 修复测试，仍在 RED 阶段 |
+| GREEN 阶段多个循环后仍无法让测试通过 | 设计有缺陷，或需求不可实现 | 回到 `detailed-design.md` 或 `requirements.md` |
+| REFACTOR 后原先通过的测试变红 | 重构引入了回归 | 回滚最近一次重构，小步重做 |
+| 所有验证通过，但发现遗漏场景 | 验证策略覆盖不足 | 回到 `verification-design.md` 补充验证命令 |
+
+## 反合理化
+
+| 借口 | 为什么不成立 |
+|------|-------------|
+| "先全部实现完再跑测试" | 累积的失败难以定位根因。每轮一个验证循环，失败时你知道是哪一步引入的 |
+| "这个抽象以后会用到的" | 以后的需求以后再说。为假设的未来建抽象 = 为不存在的场景写代码 |
+| "顺手改一下没关系，反正就一行" | 一行改动也可能引入回归。不属于本轮范围的改动不应混入——它们缺少对应的验证 |
+| "evidence 最后补一下就行" | 写完代码时已经忘了中间经过。每轮循环追加一条，防止遗漏 |
+| "这个写法我会，不需要详细设计" | 详细设计不是质疑你的能力——它是在你实现之前暴露接口精度和数据语义的歧义 |
+| "Simplicity First 太极端了，实际项目需要灵活性" | 灵活性在需要时才加。提前加的"灵活性"是猜测——大概率猜错 |
