@@ -1,4 +1,0 @@
-interface:
-  display_name: "Exploring Solution Space (Overview Design)"
-policy:
-  allow_implicit_invocation: false

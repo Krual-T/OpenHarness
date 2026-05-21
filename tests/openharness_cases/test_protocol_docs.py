@@ -8,33 +8,11 @@ LIVE_REPO_SKILLS = [
     "using-openharness",
 ]
 
-STATE_SKILLS = [
-    "brainstorming",
-    "detailed-design",
-    "exploring-solution-space",
-    "implementing",
-    "verification-designing",
-    "verifying",
-]
-
 IMPLICIT_SKILLS = {
     "using-openharness",
 }
 
 EXPLICIT_ONLY_SKILLS: set[str] = set()
-
-STATE_SKILLS_IMPLICIT: set[str] = set()
-
-STATE_SKILLS_EXPLICIT = {
-    "brainstorming",
-    "detailed-design",
-    "exploring-solution-space",
-    "implementing",
-    "verification-designing",
-    "verifying",
-}
-
-STATES_BASE = "skills/using-openharness/states"
 
 def _load_skill_metadata(skill_name: str, base: str = "skills") -> dict:
     metadata_path = REPO_ROOT / base / skill_name / "agents" / "openai.yaml"
@@ -50,12 +28,14 @@ def test_openharness_legacy_script_entrypoint_is_removed() -> None:
     assert not (REPO_ROOT / "skills" / "using-openharness" / "scripts" / "openharness.py").exists()
 
 def _all_skill_triples():
-    """Return (skill_name, base_path, expected_implicit) for every live skill."""
+    """Return (skill_name, base_path, expected_implicit) for every live skill.
+
+    State skills no longer ship agents/openai.yaml — that metadata is only
+    required for live repo skills.
+    """
     triples: list[tuple[str, str, bool]] = []
     for name in LIVE_REPO_SKILLS:
         triples.append((name, "skills", name in IMPLICIT_SKILLS))
-    for name in STATE_SKILLS:
-        triples.append((name, STATES_BASE, name in STATE_SKILLS_IMPLICIT))
     return triples
 
 def test_live_repo_skills_all_ship_openai_metadata() -> None:
@@ -77,16 +57,8 @@ def test_skill_openai_metadata_uses_repo_implicit_invocation_split() -> None:
         metadata = _load_skill_metadata(skill_name)
         assert metadata["policy"]["allow_implicit_invocation"] is True
 
-    for skill_name in STATE_SKILLS_IMPLICIT:
-        metadata = _load_skill_metadata(skill_name, STATES_BASE)
-        assert metadata["policy"]["allow_implicit_invocation"] is True
-
     for skill_name in EXPLICIT_ONLY_SKILLS:
         metadata = _load_skill_metadata(skill_name)
-        assert metadata["policy"]["allow_implicit_invocation"] is False
-
-    for skill_name in STATE_SKILLS_EXPLICIT:
-        metadata = _load_skill_metadata(skill_name, STATES_BASE)
         assert metadata["policy"]["allow_implicit_invocation"] is False
 
 def test_skill_openai_metadata_uses_official_tool_dependency_shape() -> None:
