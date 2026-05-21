@@ -1,8 +1,3 @@
----
-name: implementing
-description: 当任务状态是 implementing（按 Karpathy 准则编码，使验证通过）时由 CLI 自动注入
----
-
 # 实现
 
 ## 入口分流

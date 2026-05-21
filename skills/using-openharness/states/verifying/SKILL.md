@@ -16,7 +16,12 @@ implementing 阶段 agent 已在 `evidence.md` 中记录了中间执行结果（
    - **启动子 Agent 审核**：按 `verification-design.md` 中定义的审核矩阵，启动一个独立子 Agent（`subagent_type: general-purpose`），将审核对象、审核维度和通过标准完整交给子 Agent。子 Agent 逐项审核后输出结构化发现
    - **征集人类审阅者反馈**：将子 Agent 的审核结论呈现给人类审阅者，请人类审阅者逐项给出反馈（同意 / 异议 / 补充），人类审阅者的意见与子 Agent 结论具有同等权重
    - **综合两方结论**：将子 Agent 审核结果和人类反馈合并写入 `evidence.md` 的 `## 语义审核` 章节；双方存在分歧时，以人类审阅者意见为准并在结论中注明分歧点
-6. **自检 阶段结束检查**
+6. **rwp 双轨审核流程**（仅 `verify_by: rwp`）：
+   - **执行工作流**：按 `verification-design.md` 中声明的工作流命令执行，收集 stdout、stderr、产物路径
+   - **启动子 Agent 观察**：将工作流输出（stdout/stderr/产物）、预期结果和判定标准交给独立子 Agent（`subagent_type: general-purpose`），子 Agent 逐项比对后输出结构化发现
+   - **征集人类审阅者反馈**：将子 Agent 的观察结论呈现给人类审阅者，请人类审阅者逐项给出反馈（同意 / 异议 / 补充）
+   - **综合两方结论**：将子 Agent 观察结果和人类反馈合并写入 `evidence.md` 的 `## 运行时观察` 章节；双方存在分歧时，以人类审阅者意见为准并在结论中注明分歧点
+7. **自检 阶段结束检查**
 
 完成后：`openharness task-package transition <task-name>|<task-id> verified`
 
@@ -33,6 +38,7 @@ implementing 阶段 agent 已在 `evidence.md` 中记录了中间执行结果（
 | 输出内容与预期不符，但退出码为 0 | 验证命令不够精确——期望输出写得太宽 | 回到 `verification-design.md` 收紧期望输出 |
 | rwp 脚本超时或挂起 | 工作流脚本有资源泄漏或死循环 | 回到 `implementing`，同时检查工作流脚本自身的 bug |
 | qualitative 审核结论模糊（"差不多""基本可以"） | 审核判定准则不够具体 | 回到 `verification-design.md` 补充判定准则 |
+| rwp 子 Agent 观察结论模糊（"输出看起来正常"） | 预期结果不够具体，子 Agent 无法逐项比对 | 回到 `verification-design.md` 将预期结果写为可逐项比对的条目 |
 
 **关键约束**：不要看到失败就自动跳回 implementing。先判断失败属于代码问题、环境问题还是验证策略问题——三者回退路径不同。
 
@@ -64,6 +70,10 @@ implementing 阶段 agent 已在 `evidence.md` 中记录了中间执行结果（
 - [ ] stdout 中的结构化输出（不要截断或改写）
 - [ ] stderr 是否有异常日志
 - [ ] 产物路径（输出文件、日志、截图等）
+- [ ] 子 Agent 观察已执行（工作流输出逐项比对预期结果）
+- [ ] 子 Agent 观察结论已呈现给人类审阅者并已获得逐项反馈
+- [ ] 每项发现（来源 + 比对结果 + 严重程度 + 是否闭合）
+- [ ] 最终结论（通过 / 有条件通过 / 不通过），注明子 Agent 与人类审阅者是否存在分歧
 - [ ] 盲区说明（工作流无法覆盖的场景 + 为什么可接受）
 
 如果 checklist 有缺项，先补充再 transition。
@@ -88,6 +98,8 @@ implementing 阶段 agent 已在 `evidence.md` 中记录了中间执行结果（
 - 跳过验证命令直接写 evidence.md——evidence 必须基于实际执行结果
 - verification-design.md 中声明了 N 条命令，但 verifying 只跑了 N-1 条——遗漏的命令不声不响
 - rwp 工作流执行后只看了 stdout，忽略了 stderr 中的异常日志
+- rwp 审核只有人类执行了工作流，缺少子 Agent 逐项比对预期结果——双轨审核缺一不可
+- rwp 子 Agent 观察未对照 `verification-design.md` 中的预期结果逐项比对，仅写"输出看起来正常"
 - qualitative 审核写成"代码看起来不错"——没有任何判定准则可对照
 - qualitative 审核只有 AI 子 Agent 结论，缺少人类审阅者逐项反馈——双轨审核缺一不可
 - 人类审阅者反馈未逐项对应审核矩阵，仅写"整体同意"——必须落实到每个审核维度
