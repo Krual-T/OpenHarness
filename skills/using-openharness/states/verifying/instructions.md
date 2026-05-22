@@ -77,6 +77,7 @@ implementing 阶段 agent 已在 `evidence.md` 中记录了中间执行结果（
 - [ ] 未闭合问题的 follow-up 计划
 
 {% elif verify_by == "rwp" %}
+- [ ] 每条单元测试命令的实际执行结果（命令、退出码、输出摘要）
 - [ ] 工作流名称和调用命令
 - [ ] stdout 中的结构化输出（不要截断或改写）
 - [ ] stderr 是否有异常日志
