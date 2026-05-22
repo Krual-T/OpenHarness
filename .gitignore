@@ -15,3 +15,4 @@ venv/
 CLAUDE.md
 .vscode/
 .idea/
+.tmp/
