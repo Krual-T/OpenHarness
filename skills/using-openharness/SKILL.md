@@ -1,11 +1,11 @@
 ---
 name: using-openharness
-description: 仅在每个会话开始时使用。
+description: OpenHarness SDD 任务包协作协议——代码修改、设计决策、bug 修复、新增功能时使用此流程。
 ---
 
 # using-openharness
 
-OpenHarness 是 SDD 驱动的任务包协作协议。这个入口 skill 只在每个会话开始时建立任务包协作规则；具体阶段动作由 CLI 输出的阶段 skill 接管。
+OpenHarness 是 SDD 驱动的任务包协作协议。具体阶段指令由 CLI 输出的阶段 instructions 接管。
 
 ## 任务包边界
 

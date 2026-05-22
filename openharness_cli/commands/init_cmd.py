@@ -70,16 +70,24 @@ def _write_session_start_hook(repo_root: Path) -> None:
             raise typer.Exit(code=1)
 
     hooks: list = settings.setdefault("hooks", {}).setdefault("SessionStart", [])
+    hook_exists = any(existing == hook_entry for existing in hooks)
 
-    for existing in hooks:
-        if existing == hook_entry:
-            return
+    permissions = settings.setdefault("permissions", {})
+    deny_list: list = permissions.setdefault("deny", [])
+    deny_exists = "EnterPlanMode" in deny_list
 
-    if hooks:
+    if hook_exists and deny_exists:
+        return
+
+    if hooks and not hook_exists:
         if not _prompt_overwrite(settings_path):
             return
 
-    hooks.append(hook_entry)
+    if not hook_exists:
+        hooks.append(hook_entry)
+    if not deny_exists:
+        deny_list.append("EnterPlanMode")
+
     claude_dir.mkdir(parents=True, exist_ok=True)
     settings_path.write_text(json.dumps(settings, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
