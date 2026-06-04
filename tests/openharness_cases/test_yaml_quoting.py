@@ -1,7 +1,7 @@
 from .common import Path, REPO_ROOT, TaskPackageDocument, create_task_package, setup_harness, openharness
 from openharness_cli.core.yaml import load_yaml
 
-TASK_TYPE_PLACEHOLDER = "<mechanical|standard development|structural|>"
+TASK_TYPE_PLACEHOLDER = "<mechanical|standard|structural|>"
 DESIGN_REVIEW_MODE_PLACEHOLDER = "<stepwise|auto|>"
 VERIFY_BY_PLACEHOLDER = "<unit_test|qualitative|rwp|>"
 

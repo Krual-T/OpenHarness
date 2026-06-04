@@ -22,7 +22,7 @@ from openharness_cli.core.yaml import load_yaml
 
 runner = CliRunner()
 REMOVED_TASK_INFO_KEYS = ("done" + "_criteria", "depends" + "_on", "scope")
-TASK_TYPE_PLACEHOLDER = "<mechanical|standard development|structural|>"
+TASK_TYPE_PLACEHOLDER = "<mechanical|standard|structural|>"
 DESIGN_REVIEW_MODE_PLACEHOLDER = "<stepwise|auto|>"
 VERIFY_BY_PLACEHOLDER = "<unit_test|qualitative|rwp|>"
 

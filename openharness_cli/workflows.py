@@ -101,7 +101,7 @@ def _check_requirements_gate(package: TaskPackage) -> list[str]:
     if not package.task_type:
         errors.append(
             "task_type is not confirmed. "
-            "Propose a classification (mechanical / standard development / structural) "
+            "Propose a classification (mechanical / standard / structural) "
             "and write it to task-info.yaml collaboration.task_type"
         )
     if not package.verify_by:

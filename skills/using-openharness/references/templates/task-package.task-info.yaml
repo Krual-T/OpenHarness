@@ -11,7 +11,7 @@ owner: <GIT OWNER>
 created_at: <DATE>
 updated_at: <DATE>
 collaboration:
-  task_type: < mechanical | standard development | structural >
+  task_type: < mechanical | standard | structural >
   design_review_mode: <stepwise|auto>
 verification:
   verify_by: < unit_test | qualitative | rwp >
