@@ -11,7 +11,7 @@ def parse_status(value: str) -> Optional[TaskStatus]:
 
 
 class TaskStatus(StrEnum):
-    PROPOSING = ("proposing", "skills/using-openharness/states/brainstorming/instructions.md")
+    PROPOSING = ("proposing", "skills/using-openharness/states/proposing/instructions.md")
     REQUIREMENTS_DESIGNED = ("requirements_designed", "")
     OVERVIEW_DESIGNING = ("overview_designing", "skills/using-openharness/states/exploring-solution-space/instructions.md")
     OVERVIEW_DESIGNED = ("overview_designed", "")

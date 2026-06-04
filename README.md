@@ -346,7 +346,7 @@ AGENTS.md                           # 智能体入口路由器
 skills/using-openharness/
   ├── SKILL.md                      # 会话入口：判断是否需要任务包
   ├── states/                       # 阶段技能（按状态加载）
-  │   ├── brainstorming/            # 需求收敛
+  │   ├── proposing/                 # 需求收敛
   │   ├── exploring-solution-space/ # 方案探索
   │   ├── detailed-design/          # 详细设计
   │   ├── implementing/             # 编码实现

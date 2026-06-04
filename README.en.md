@@ -347,7 +347,7 @@ AGENTS.md                           # Agent entry router
 skills/using-openharness/
   ├── SKILL.md                      # Session entry: decide if task package is needed
   ├── states/                       # Stage skills (loaded by state)
-  │   ├── brainstorming/            # Requirements convergence
+  │   ├── proposing/                 # Requirements convergence
   │   ├── exploring-solution-space/ # Solution exploration
   │   ├── detailed-design/          # Detailed design
   │   ├── implementing/             # Implementation

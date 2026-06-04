@@ -372,7 +372,7 @@ def test_key_repo_skills_are_vendored_locally() -> None:
     # Hook-injected state skills
     states_base = REPO_ROOT / "skills" / "using-openharness" / "states"
     for name in [
-        "brainstorming",
+        "proposing",
         "exploring-solution-space",
         "detailed-design",
         "verification-designing",
