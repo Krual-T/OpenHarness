@@ -6,17 +6,17 @@ from pathlib import Path
 class TaskPackageDocument(StrEnum):
     TASK_INFO = ("task-info.yaml", True, ())
     REQUIREMENTS = ("requirements.md", False, (
-        "## 目标", "## 问题陈述", "## 必须交付的结果", "## 约束",
+        "## 目标", "## 问题陈述", "## 交付物", "## 约束",
     ))
     OVERVIEW_DESIGN = ("overview-design.md", False, (
         "## 系统边界", "## 推荐结构", "## 关键流程",
-        "## 阶段门禁", "## 取舍", "## 总体设计反思",
+        "## 阶段门禁", "## 取舍", "## 反思",
     ))
     DETAILED_DESIGN = ("detailed-design.md", False, (
         "## 可观察性与验证准备", "## 新增或修改文件",
         "## 接口", "## 模块内部设计", "## 数据语义",
         "## 决策闭合", "## 错误处理", "## 迁移说明",
-        "## 详细设计反思",
+        "## 反思",
     ))
     VERIFICATION_DESIGN = ("verification-design.md", False, (
         "## 验证路径", "## 必需命令", "## 预期结果",

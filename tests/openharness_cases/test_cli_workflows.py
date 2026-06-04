@@ -248,7 +248,7 @@ def test_validate_design_package_rejects_overview_designed_without_reflection(tm
         "# 需求\n\n"
         "## 目标\nA\n\n"
         "## 问题陈述\nB\n\n"
-        "## 必须交付的结果\n1. C\n\n"
+        "## 交付物\n1. C\n\n"
         "## 非目标\n- D\n\n"
         "## 约束\n- E\n",
         encoding="utf-8",
@@ -283,4 +283,4 @@ def test_validate_design_package_rejects_overview_designed_without_reflection(tm
     errors = validate_task_package(package)
 
     assert any("overview_designed requires non-placeholder content" in error for error in errors)
-    assert any("## 总体设计反思" in error for error in errors)
+    assert any("## 反思" in error for error in errors)

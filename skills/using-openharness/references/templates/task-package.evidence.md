@@ -5,10 +5,12 @@
 > 按 `task-info.yaml` 中 `verification.verify_by` 的类型选择对应章节填写。只写实际执行过的验证。
 
 ## 验证结果
+
 - **verify_by**: <unit_test / qualitative / rwp>
 - **Result**: <passed / failed>
 
 ## 变更文件
+
 - path/to/file — 改动说明
 
 ## 测试结果
@@ -31,7 +33,7 @@ pytest tests/test_xxx.py -v
 
 ## 语义审核
 
-`verify_by: qualitative` 时填写。定性审核必须由子 Agent 和人类审阅者双轨执行，两方结论均需记录。
+`verify_by: qualitative` 时填写。定性审核由子 Agent 和人类审阅者双轨执行，两方结论均需记录。
 
 ### AI 子 Agent 审核
 
@@ -66,7 +68,9 @@ pytest tests/test_xxx.py -v
 - 未覆盖范围
 
 ## 残余风险
+
 本轮未覆盖的风险、接受理由、触发重新审查的条件。
 
 ## 后续事项
+
 后续任务、剩余决策、延后事项。没有时写"无"。

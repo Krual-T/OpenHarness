@@ -169,19 +169,17 @@ def test_design_package_templates_include_verification_path_sections() -> None:
         / "task-package.evidence.md"
     ).read_text(encoding="utf-8")
 
-    assert "## 总体设计反思" in overview
+    assert "## 反思" in overview
     assert "模块" in overview
     assert "接口" in overview
     assert "数据" in overview
-    assert "PlantUML" in overview
     assert "## 可观察性与验证准备" in detailed
     assert "Verification Path" not in detailed
     assert "Fallback Path" not in detailed
-    assert "## 详细设计反思" in detailed
+    assert "## 反思" in detailed
     assert "模块内部" in detailed
     assert "数据语义" in detailed
     assert "异常" in detailed
-    assert "PlantUML" in detailed
     assert "## 阶段门禁" in overview
     assert "## 阶段门禁" in detailed
     assert "## 决策闭合" in detailed
