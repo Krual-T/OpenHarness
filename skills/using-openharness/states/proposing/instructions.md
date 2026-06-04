@@ -61,11 +61,11 @@
 
 | 字段 | 可选值 | 说明 |
 |------|-------|------|
-| `collaboration.task_type` | `mechanical` / `standard development` / `protocol/architecture` | `mechanical` — 格式、命名、路径等低判断成本改动，跳过 overview/detailed；`standard development` — 常规功能、修复，需要设计但非架构级；`protocol/architecture` — 影响长期协议、skill 行为、公共接口，需逐项设计确认 |
+| `collaboration.task_type` | `mechanical` / `standard development` / `structural` | `mechanical` — 格式、命名、路径等低判断成本改动，跳过 overview/detailed；`standard development` — 常规功能、修复，需要设计但非架构级；`structural` — 影响长期协议、skill 行为、公共接口，需逐项设计确认 |
 | `collaboration.design_review_mode` | `stepwise` / `auto` | `stepwise` — 每个设计点逐个确认；`auto` — agent 自主推进但记录关键决策。`mechanical` 不需要此字段 |
 | `verification.verify_by` | `unit_test` / `qualitative` / `rwp` | `unit_test` — pytest 验证可明确断言的逻辑；`qualitative` — 人工/子 agent 审核文档、协议、skill 行为；`rwp` — 真实世界场景手动验证 |
 
-- `protocol/architecture` 默认建议 `stepwise`；`standard development` 默认建议 `stepwise`，用户可选 `auto`
+- `structural` 默认建议 `stepwise`；`standard development` 默认建议 `stepwise`，用户可选 `auto`
 - 混合任务可设主 `verify_by`，其余在 `verification-design.md` 补充
 - 后续阶段只消费这三项字段；如果后续发现分类错误，应回退需求阶段修正
 
@@ -79,7 +79,7 @@
 2. 做完以后什么事实会成立？怎么判断做完还是没做完？
 3. 哪些反例必须被排除？（至少一个具体的，不能写"暂无"）
 4. 哪些限制一旦被突破，这就不再是同一个任务包？
-5. task_type（`mechanical` / `standard development` / `protocol/architecture`）是否已确认并写入 `task-info.yaml`？
+5. task_type（`mechanical` / `standard development` / `structural`）是否已确认并写入 `task-info.yaml`？
 6. design_review_mode（`stepwise` / `auto`）是否已确认并写入 `task-info.yaml.collaboration.design_review_mode`？
 7. verify_by（`unit_test` / `qualitative` / `rwp`）是否已确定并写入 `task-info.yaml.verification.verify_by`？
 8. 把这份 `requirements.md` 交给一个不了解本轮对话的人，他能否仅凭文档就理解当前需要做什么、目标、边界和验收标准？
