@@ -12,17 +12,6 @@
 
 增量收敛模式：读取现有 `requirements.md` → 检查是否有新的歧义或缺失 → 仅补充/修改变化部分 → 阶段结束检查 仍须全部通过。
 
-## Handoff 约定
-
-当 `requirements.md` 为空时，意味着这是刚从 SKILL.md 理解阶段进入的新任务包。此时：
-
-- **问题理解已在 SKILL.md 阶段完成**——目标用户、核心矛盾、边界范围已经和用户确认过
-- **不要再问"这个任务是清晰还是模糊"**——能建包就说明理解已经足够清晰
-- **不要再从头挑战前提**——"为什么现在做""不做会怎样"已在建包前讨论过
-- **直接从需求编写开始**，把已经确认的理解转化为结构化的 requirements.md
-
-如果发现理解仍不充分——某些关键问题在建包前的讨论中被遗漏——先回到对话中向用户澄清，再继续编写。
-
 ## 步骤
 
 ### 1. 回述理解
@@ -38,14 +27,16 @@
 
 ### 2. 写入 `requirements.md`
 
-将已确认的理解写入 `requirements.md`，包含：
+将已确认的理解写入 `requirements.md`，包含模板要求的所有章节。
 
-- 目标用户
-- 核心场景
-- 单一成功指标（做完以后什么事实会成立）
-- 边界与约束（协议边界、兼容性条件、依赖限制）
-- 验收标准（决定本轮是否算完成的可验证条件）
-- 至少一个反例（明确不做什么）
+**核心要求：这份文档是需求阶段的唯一交付物，必须做到自包含 handoff。** 任何一个不了解本轮对话的人（或 AI）拿到这份文档，不翻聊天记录、不追问，就应该能理解：
+
+- 当前矛盾是什么、为什么现在做（背景 + 问题陈述）
+- 做完以后什么事实成立（目标 + 成功指标）
+- 怎样判断做完还是没做完（验收标准）
+- 边界在哪（非目标 + 约束）
+
+不能依赖"读者看过聊天记录"来补全信息。如果写完发现还需要口头解释别人才能懂，说明文档没写完。
 
 写完后告知用户文件路径，让用户直接在 IDE 中审阅。**不得将全文贴到聊天里。**
 
@@ -90,6 +81,7 @@
 7. task_type（`mechanical` / `standard development` / `protocol/architecture`）是否已确认并写入 `task-info.yaml`？
 8. design_review_mode（`stepwise` / `auto`）是否已确认并写入 `task-info.yaml.collaboration.design_review_mode`？
 9. verify_by（`unit_test` / `qualitative` / `rwp`）是否已确定并写入 `task-info.yaml.verification.verify_by`？
+10. **Handoff 自检**：把这份 `requirements.md` 交给一个不了解本轮对话的人，他能否仅凭文档就理解当前矛盾、目标、边界和验收标准？
 
 如果这些问题还答不上来，**阻塞**。不要进入 `overview-design.md`。
 
@@ -97,6 +89,7 @@
 
 - 模板文件位于 `skills/using-openharness/references/templates/task-package.requirements.md`
 - 需求阶段的结束标志是 `requirements.md` 足够坚实（阶段结束检查 全部能回答），不是文字变得更长
+- **`requirements.md` 是需求阶段的唯一交付物，必须自包含**：零上下文读者能仅凭文档理解问题、目标、边界和验收标准，不需要翻聊天记录
 - 在任务包里记录讨论结论，不要只留在聊天里
 - 需求收敛后，必须确认并写入 `task-info.yaml` 的三项工作流分叉字段：`collaboration.task_type`、`collaboration.design_review_mode`、`verification.verify_by`
 - 后续阶段只消费这三项字段；如果后续发现分类错误，应回退需求阶段修正
