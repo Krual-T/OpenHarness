@@ -44,7 +44,7 @@ openharness task-package list
 - 有匹配活跃包：`openharness task-package view <task-name>|<task-id>`
 - 无匹配或空：`openharness task-package new <name>`
 
-随后执行 CLI 输出的当前阶段 skill。进入 proposing 后，理解工作已在上游完成，不要再从头问"这个任务清晰还是模糊"——直接从需求编写开始。
+随后执行 CLI 输出的当前阶段 instructions。进入 proposing 后，理解工作已在上游完成，不要再从头问"这个任务清晰还是模糊"——直接从需求编写开始。
 
 ## 阶段完成
 
