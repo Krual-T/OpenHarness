@@ -52,7 +52,7 @@ def _write_session_start_hook(repo_root: Path) -> None:
     settings_path = claude_dir / "settings.json"
 
     hook_entry = {
-        "matcher": "startup|resume",
+        "matcher": "startup",
         "hooks": [
             {
                 "type": "command",
@@ -108,7 +108,7 @@ def _setup_codex_hook(repo_root: Path) -> None:
         "hooks": {
             "SessionStart": [
                 {
-                    "matcher": "startup|resume",
+                    "matcher": "startup",
                     "hooks": [
                         {
                             "type": "command",
