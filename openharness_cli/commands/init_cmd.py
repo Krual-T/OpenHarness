@@ -11,9 +11,9 @@ from ..models.agent_type import AgentType
 OH_CLONE = Path.home() / ".agents" / "skill-hub" / "openharness"
 
 if platform.system() == "Windows":
-    _SKILL_CAT_CMD = "echo; Get-Content $env:USERPROFILE/.agents/skill-hub/openharness/skills/using-openharness/SKILL.md"
+    _SKILL_CAT_CMD = "echo 'Using OpenHarness'; Get-Content $env:USERPROFILE/.agents/skill-hub/openharness/skills/using-openharness/SKILL.md"
 else:
-    _SKILL_CAT_CMD = "echo; cat $HOME/.agents/skill-hub/openharness/skills/using-openharness/SKILL.md"
+    _SKILL_CAT_CMD = "echo 'Using OpenHarness'; cat $HOME/.agents/skill-hub/openharness/skills/using-openharness/SKILL.md"
 
 
 def _prompt_overwrite(path: Path) -> bool:
