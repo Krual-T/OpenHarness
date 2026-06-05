@@ -112,6 +112,7 @@ def test_cli_commands_resolve() -> None:
     # task-package new
     result = runner.invoke(app, ["task-package", "new", "--help"])
     assert result.exit_code == 0
+    assert "--owner" not in result.stdout
     # task-package transition
     result = runner.invoke(app, ["task-package", "transition", "--help"])
     assert result.exit_code == 0

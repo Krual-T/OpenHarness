@@ -35,7 +35,7 @@ def _write_minimal_openharness_repo(repo_root: Path) -> None:
             "title: <TITLE>\n"
             "status: <STATUS>\n"
             "summary: <SUMMARY>\n"
-            "owner: <OWNER>\n"
+            "owner: <GIT OWNER>\n"
             "created_at: <DATE>\n"
             "updated_at: <DATE>\n"
             "collaboration:\n"
@@ -150,7 +150,6 @@ def test_new_package_creates_with_auto_id(tmp_path: Path, capsys) -> None:
     new_package(
         task_name="next-task",
         title="Next Task",
-        owner="codex",
         summary="auto id",
         status="proposing",
     )
@@ -161,6 +160,57 @@ def test_new_package_creates_with_auto_id(tmp_path: Path, capsys) -> None:
     assert "Task id: TASK-010" in captured.out
     assert status["id"] == "TASK-010"
     assert all(key not in status for key in REMOVED_TASK_INFO_KEYS)
+
+
+def test_new_package_injects_git_owner_from_effective_git_config(tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    _write_minimal_openharness_repo(repo_root)
+    repo_root.mkdir(exist_ok=True)
+    import subprocess
+
+    subprocess.run(["git", "init", "-q"], cwd=repo_root, check=True)
+    subprocess.run(["git", "config", "user.name", "Temp Owner"], cwd=repo_root, check=True)
+
+    result = runner.invoke(
+        app,
+        [
+            "--repo",
+            str(repo_root),
+            "task-package",
+            "new",
+            "git-owner-smoke",
+            "--title",
+            "Git Owner Smoke",
+        ],
+    )
+
+    assert result.exit_code == 0
+    info_path = repo_root / "docs" / "task-packages" / "git-owner-smoke" / "task-info.yaml"
+    info_text = info_path.read_text(encoding="utf-8")
+    status = load_yaml(info_path)
+    assert status["owner"] == "Temp Owner"
+    assert "<GIT OWNER>" not in info_text
+
+
+def test_new_package_rejects_owner_option(tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    _write_minimal_openharness_repo(repo_root)
+
+    result = runner.invoke(
+        app,
+        [
+            "--repo",
+            str(repo_root),
+            "task-package",
+            "new",
+            "manual-owner",
+            "--owner",
+            "codex",
+        ],
+    )
+
+    assert result.exit_code != 0
+    assert not (repo_root / "docs" / "task-packages" / "manual-owner").exists()
 
 
 def test_find_duplicate_task_ids_reports_conflicts(tmp_path: Path) -> None:
@@ -323,7 +373,7 @@ def test_create_task_package_from_templates(tmp_path: Path) -> None:
             "title: <TITLE>\n"
             "status: <STATUS>\n"
             "summary: <SUMMARY>\n"
-            "owner: <OWNER>\n"
+            "owner: <GIT OWNER>\n"
             "created_at: <DATE>\n"
             "updated_at: <DATE>\n"
             "collaboration:\n"
@@ -344,7 +394,6 @@ def test_create_task_package_from_templates(tmp_path: Path) -> None:
     task_root, task_id = create_task_package(
         task_name="Harness Replay",
         title="Harness Replay",
-        owner="codex",
         summary="Replay scenarios.",
     )
 
@@ -359,6 +408,7 @@ def test_create_task_package_from_templates(tmp_path: Path) -> None:
     status = load_yaml(TaskPackageDocument.TASK_INFO.path_from(task_root))
     assert status["id"] == task_id
     assert status["summary"] == "Replay scenarios."
+    assert status["owner"] != "<GIT OWNER>"
     assert all(key not in status for key in REMOVED_TASK_INFO_KEYS)
     assert status["collaboration"]["task_type"] == TASK_TYPE_PLACEHOLDER
     assert status["collaboration"]["design_review_mode"] == DESIGN_REVIEW_MODE_PLACEHOLDER

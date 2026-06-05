@@ -1,0 +1,12 @@
+id: TASK-022
+title: Git Owner Task Package Creation
+status: archived
+summary: 修复新建任务包时 task-info.yaml 的 Git owner 注入，并移除手动 owner 参数。
+owner: Shaokun.Tang
+created_at: '2026-06-05'
+updated_at: '2026-06-05'
+collaboration:
+  task_type: standard
+  design_review_mode: auto
+verification:
+  verify_by: unit_test

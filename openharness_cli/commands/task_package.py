@@ -94,7 +94,6 @@ def view_package(
 def new_package(
     task_name: str = typer.Argument(..., help="Directory slug or human-readable task name"),
     title: str = typer.Option("", "--title", help="Human-readable task title"),
-    owner: str = typer.Option("unassigned", "--owner", help="Initial owner"),
     summary: str = typer.Option("", "--summary", help="Short summary"),
     status: str = typer.Option("proposing", "--status", help="Initial status"),
 ) -> None:
@@ -104,7 +103,6 @@ def new_package(
         task_root, task_id = create_task_package(
             task_name=task_name,
             title=human_title,
-            owner=owner,
             summary=summary,
             status=status,
         )

@@ -16,7 +16,7 @@ def test_create_task_package_quotes_yaml_sensitive_status_fields(tmp_path: Path)
         "title: <TITLE>\n"
         "status: <STATUS>\n"
         "summary: <SUMMARY>\n"
-        "owner: <OWNER>\n"
+        "owner: <GIT OWNER>\n"
         "created_at: <DATE>\n"
         "updated_at: <DATE>\n"
         "collaboration:\n"
@@ -39,7 +39,6 @@ def test_create_task_package_quotes_yaml_sensitive_status_fields(tmp_path: Path)
     task_root, task_id = create_task_package(
         task_name="Quote Probe",
         title="`overview-design.md` guidance: quote YAML",
-        owner="codex",
         summary="`overview-design.md` guidance: explain quoting.",
     )
 

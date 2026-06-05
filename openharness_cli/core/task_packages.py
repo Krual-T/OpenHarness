@@ -191,7 +191,7 @@ def _create_task_package_unlocked(ctx: HarnessContext, request: CreateTaskInput,
     replacements = {
         "<TASK_ID>": task_id,
         "<TITLE>": request.title,
-        "<OWNER>": request.owner,
+        "<GIT OWNER>": request.owner,
         "<STATUS>": request.status.value,
         "<SUMMARY>": request.summary or f"描述《{request.title}》的目标和要求。",
         "<DATE>": current_date(),
@@ -220,7 +220,7 @@ def _create_task_package_document(
         template_replacements.update({
             "<TASK_ID>": json.dumps(replacements["<TASK_ID>"], ensure_ascii=False),
             "<TITLE>": json.dumps(replacements["<TITLE>"], ensure_ascii=False),
-            "<OWNER>": json.dumps(replacements["<OWNER>"], ensure_ascii=False),
+            "<GIT OWNER>": json.dumps(replacements["<GIT OWNER>"], ensure_ascii=False),
             "<STATUS>": json.dumps(replacements["<STATUS>"], ensure_ascii=False),
             "<SUMMARY>": json.dumps(replacements["<SUMMARY>"], ensure_ascii=False),
             "<DATE>": json.dumps("YYYY-MM-DD", ensure_ascii=False),
@@ -240,7 +240,7 @@ def ensure_task_package_stage_files(ctx: HarnessContext, package: TaskPackage) -
     replacements = {
         "<TASK_ID>": package.task_id,
         "<TITLE>": package.title,
-        "<OWNER>": package.owner,
+        "<GIT OWNER>": package.owner,
         "<STATUS>": package.current_status,
         "<SUMMARY>": package.summary,
         "<DATE>": "YYYY-MM-DD",
@@ -273,19 +273,17 @@ def allocate_next_task_id(ctx: HarnessContext) -> str:
 
 
 @harness
-def _resolve_owner(ctx: HarnessContext, owner: str) -> str:
-    if owner == "unassigned":
-        return get_git_author()
-    return owner
+def _resolve_owner(ctx: HarnessContext) -> str:
+    return get_git_author()
 
 
 @harness
 def create_task_package(
     ctx: HarnessContext, *, task_name: str, title: str,
-    owner: str = "unassigned", summary: str = "", status: str = "proposing",
+    summary: str = "", status: str = "proposing",
 ) -> tuple[Path, str]:
     """Create a new task package with an auto-allocated task ID."""
-    owner = _resolve_owner(owner)
+    owner = _resolve_owner()
     with _task_package_creation_lock():
         task_id = allocate_next_task_id()
         task_root = _create_task_package_unlocked(
