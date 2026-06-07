@@ -1,0 +1,12 @@
+id: TASK-023
+title: Document Verification And Qualitative Handoff
+status: implementing
+summary: 明确文档验证中字符级断言的边界，并补充自然语言定性审核的交接方法。
+owner: Shaokun.Tang
+created_at: '2026-06-05'
+updated_at: '2026-06-05'
+collaboration:
+  task_type: structural
+  design_review_mode: stepwise
+verification:
+  verify_by: qualitative

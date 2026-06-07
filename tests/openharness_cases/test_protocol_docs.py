@@ -187,8 +187,12 @@ def test_design_package_templates_include_verification_path_sections() -> None:
     assert "## 可追溯性" in verification
     assert "## 风险接受" in verification
     assert "## 验证路径" in verification
+    assert "## 审核交接包" in verification
+    assert "### 审核矩阵" in verification
     assert "Fallback Path" not in verification
     assert "## 验证结果" in evidence
+    assert "### 审核交接包摘要" in evidence
+    assert "### 发现处理" in evidence
     assert "## 残余风险" in evidence
 
 def test_runtime_capability_reference_defines_declaration_shape_and_writeback() -> None:
@@ -336,4 +340,7 @@ def test_task_package_templates_default_to_chinese_narrative_and_headings() -> N
     assert "## 推荐结构" in overview
     assert "## 可观察性与验证准备" in detailed
     assert "## 验证路径" in verification
+    assert "## 审核交接包" in verification
+    assert "### 审核矩阵" in verification
+    assert "### 审核交接包摘要" in evidence
     assert "## 残余风险" in evidence
