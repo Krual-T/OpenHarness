@@ -57,6 +57,8 @@ def _render_template(template_raw: str, package: TaskPackage) -> str:
     context = {
         "task_type": package.task_type or "",
         "design_review_mode": package.design_review_mode or "",
-        "verify_by": package.verify_by or "",
+        "verification_method": package.verification_method or "",
+        "rwp_enabled": package.rwp_enabled or "",
+        "rwp_reason": package.rwp_reason or "",
     }
     return template.render(**context)

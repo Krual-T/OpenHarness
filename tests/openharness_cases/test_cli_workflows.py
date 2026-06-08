@@ -132,7 +132,10 @@ def test_transition_verified_reports_auto_archive(tmp_path: Path) -> None:
         "entrypoints:\n"
         "  - docs/task-packages/ready-to-archive/requirements.md\n"
         "verification:\n"
-        "  verify_by: qualitative\n",
+        "  method: qualitative\n"
+        "  rwp:\n"
+        "    enabled: false\n"
+        "    reason: archive flow does not need runtime evidence\n",
         encoding="utf-8",
     )
 
@@ -174,7 +177,10 @@ def test_transition_verified_keeps_source_status_when_archive_target_exists(tmp_
         "created_at: 2026-05-18\n"
         "updated_at: 2026-05-18\n"
         "verification:\n"
-        "  verify_by: qualitative\n",
+        "  method: qualitative\n"
+        "  rwp:\n"
+        "    enabled: false\n"
+        "    reason: archive conflict flow does not need runtime evidence\n",
         encoding="utf-8",
     )
 

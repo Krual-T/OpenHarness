@@ -147,7 +147,7 @@ def transition(
             raise typer.Exit(code=1)
         target = updated.current_status
         print(f"Transitioned {package.task_id} from `{package.current_status}` to `{target}`")
-        output_state_hook(target, package=package)
+        output_state_hook(target, package=updated)
     elif result.archived_path is not None:
         print(f"Archived task package: {package.task_id} -> {result.archived_path}")
         output_state_hook("archived", package=package)

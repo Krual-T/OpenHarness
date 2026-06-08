@@ -48,9 +48,26 @@ class TaskPackage:
         return self.info.owner
 
     @property
-    def verify_by(self) -> str:
+    def verification_method(self) -> str:
         v = self.info.verification
-        return v.verify_by.value if v and v.verify_by else ""
+        return v.method.value if v and v.method else ""
+
+    @property
+    def raw_verification_method(self) -> str:
+        v = self.info.verification
+        return v.raw_method if v else ""
+
+    @property
+    def rwp_enabled(self) -> str:
+        v = self.info.verification
+        if not v or v.rwp.enabled is None:
+            return ""
+        return "true" if v.rwp.enabled else "false"
+
+    @property
+    def rwp_reason(self) -> str:
+        v = self.info.verification
+        return v.rwp.reason if v else ""
 
     @property
     def task_type(self) -> str:

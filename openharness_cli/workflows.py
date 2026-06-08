@@ -37,7 +37,7 @@ DESCRIPTIONS: dict[TaskStatus, str] = {
 # ═══════════════════════════════════════════════════════════════════════════════
 
 _PROPOSING_STEP = (
-    "Converge requirements, determine task_type and verify_by, "
+    "Converge requirements, determine task_type, verification method, and RWP setting, "
     f"write `{TaskPackageDocument.REQUIREMENTS.value}`, then transition to `requirements_designed`."
 )
 
@@ -104,11 +104,22 @@ def _check_requirements_gate(package: TaskPackage) -> list[str]:
             "Propose a classification (mechanical / standard / structural) "
             "and write it to task-info.yaml collaboration.task_type"
         )
-    if not package.verify_by:
+    if not package.verification_method:
         errors.append(
-            "verify_by is not determined. "
-            "Determine the verification strategy (unit_test / qualitative / rwp) "
-            "and write it to task-info.yaml verification.verify_by"
+            "verification method is not determined. "
+            "Determine the verification method (unit_test / qualitative) "
+            "and write it to task-info.yaml verification.method"
+        )
+    if not package.rwp_enabled:
+        errors.append(
+            "RWP setting is not confirmed. "
+            "Confirm whether runtime workflow evidence is enabled "
+            "and write it to task-info.yaml verification.rwp.enabled"
+        )
+    if package.rwp_enabled and not package.rwp_reason:
+        errors.append(
+            "RWP reason is not documented. "
+            "Write the reason to task-info.yaml verification.rwp.reason"
         )
     return errors
 

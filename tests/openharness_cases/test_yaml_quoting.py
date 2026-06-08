@@ -3,7 +3,9 @@ from openharness_cli.core.yaml import load_yaml
 
 TASK_TYPE_PLACEHOLDER = "<mechanical|standard|structural|>"
 DESIGN_REVIEW_MODE_PLACEHOLDER = "<stepwise|auto|>"
-VERIFY_BY_PLACEHOLDER = "<unit_test|qualitative|rwp|>"
+VERIFICATION_METHOD_PLACEHOLDER = "<unit_test|qualitative|>"
+RWP_ENABLED_PLACEHOLDER = "<true|false|>"
+RWP_REASON_PLACEHOLDER = "<rwp reason>"
 
 
 def test_create_task_package_quotes_yaml_sensitive_status_fields(tmp_path: Path) -> None:
@@ -23,7 +25,10 @@ def test_create_task_package_quotes_yaml_sensitive_status_fields(tmp_path: Path)
         f"  task_type: {TASK_TYPE_PLACEHOLDER}\n"
         f"  design_review_mode: {DESIGN_REVIEW_MODE_PLACEHOLDER}\n"
         "verification:\n"
-        f"  verify_by: {VERIFY_BY_PLACEHOLDER}\n",
+        f"  method: {VERIFICATION_METHOD_PLACEHOLDER}\n"
+        "  rwp:\n"
+        f"    enabled: {RWP_ENABLED_PLACEHOLDER}\n"
+        f"    reason: {RWP_REASON_PLACEHOLDER}\n",
         encoding="utf-8",
     )
     for name in (
@@ -52,4 +57,6 @@ def test_create_task_package_quotes_yaml_sensitive_status_fields(tmp_path: Path)
     assert status["summary"] == "`overview-design.md` guidance: explain quoting."
     assert status["collaboration"]["task_type"] == TASK_TYPE_PLACEHOLDER
     assert status["collaboration"]["design_review_mode"] == DESIGN_REVIEW_MODE_PLACEHOLDER
-    assert status["verification"]["verify_by"] == VERIFY_BY_PLACEHOLDER
+    assert status["verification"]["method"] == VERIFICATION_METHOD_PLACEHOLDER
+    assert status["verification"]["rwp"]["enabled"] == RWP_ENABLED_PLACEHOLDER
+    assert status["verification"]["rwp"]["reason"] == RWP_REASON_PLACEHOLDER

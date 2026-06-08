@@ -49,7 +49,7 @@
 
 ### 4. 确认工作流分叉字段
 
-向下方"工作流分叉字段"章节的三条字段逐一解释含义、给出建议值及理由，**三条字段一并陈述，一次性获得用户确认**后写入 `task-info.yaml`。
+向下方"工作流分叉字段"章节的字段逐一解释含义、给出建议值及理由，**字段一并陈述，一次性获得用户确认**后写入 `task-info.yaml`。
 
 ### 5. 自检阶段结束检查
 
@@ -57,17 +57,20 @@
 
 ## 工作流分叉字段
 
-阶段结束检查 第 7-9 项依赖以下三条字段，**必须在自检阶段结束检查前确认完毕**。三条字段向用户一并解释含义、给出建议值及理由，一次性获得用户确认后写入 `task-info.yaml`。
+阶段结束检查第 5-8 项依赖以下字段，**必须在自检阶段结束检查前确认完毕**。这些字段向用户一并解释含义、给出建议值及理由，一次性获得用户确认后写入 `task-info.yaml`。
 
 | 字段 | 可选值 | 说明 |
 |------|-------|------|
 | `collaboration.task_type` | `mechanical` / `standard` / `structural` | `mechanical` — 格式、命名、路径等低判断成本改动，跳过 overview/detailed；`standard` — 常规功能、修复，需要设计但非结构性；`structural` — 影响长期协议、skill 行为、公共接口，需逐项设计确认 |
 | `collaboration.design_review_mode` | `stepwise` / `auto` | `stepwise` — 每个设计点逐个确认；`auto` — agent 自主推进但记录关键决策。`mechanical` 不需要此字段 |
-| `verification.verify_by` | `unit_test` / `qualitative` / `rwp` | `unit_test` — pytest 验证可明确断言的逻辑；`qualitative` — 人工/子 agent 审核文档、协议、skill 行为；`rwp` — 真实世界场景手动验证 |
+| `verification.method` | `unit_test` / `qualitative` | `unit_test` — pytest 验证可明确断言的逻辑；`qualitative` — 人工/子 agent 审核文档、协议、skill 行为 |
+| `verification.rwp.enabled` | `true` / `false` | 是否启用运行时工作流证据；启用或不启用都必须经用户确认 |
+| `verification.rwp.reason` | 自然语言理由 | 记录为什么启用或不启用 RWP |
 
 - `structural` 默认建议 `stepwise`；`standard` 默认建议 `stepwise`，用户可选 `auto`
-- 混合任务可设主 `verify_by`，其余在 `verification-design.md` 补充
-- 后续阶段只消费这三项字段；如果后续发现分类错误，应回退需求阶段修正
+- 混合任务以 `verification.method` 表示主要验证方法，其余辅助验证在 `verification-design.md` 补充
+- RWP 是运行时证据开关，不是 `verification.method` 的可选值
+- 后续阶段只消费这些字段；如果后续发现分类错误，应回退需求阶段修正
 
 ## 阶段结束检查
 
@@ -81,7 +84,7 @@
 4. 哪些限制一旦被突破，这就不再是同一个任务包？
 5. task_type（`mechanical` / `standard` / `structural`）是否已确认并写入 `task-info.yaml`？
 6. design_review_mode（`stepwise` / `auto`）是否已确认并写入 `task-info.yaml.collaboration.design_review_mode`？
-7. verify_by（`unit_test` / `qualitative` / `rwp`）是否已确定并写入 `task-info.yaml.verification.verify_by`？
+7. RWP 是否启用、理由是否已确认并写入 `task-info.yaml.verification.rwp.enabled` 和 `task-info.yaml.verification.rwp.reason`？
 8. 把这份 `requirements.md` 交给一个不了解本轮对话的人，他能否仅凭文档就理解当前需要做什么、目标、边界和验收标准？
 
 如果这些问题还答不上来，**阻塞**。不要进入 `overview-design.md`。
@@ -92,8 +95,8 @@
 - 需求阶段的结束标志是 `requirements.md` 足够坚实（阶段结束检查全部能回答），不是文字变得更长
 - **`requirements.md` 是需求阶段的唯一交付物，必须自包含**：零上下文读者能仅凭文档理解问题、目标、边界和验收标准，不需要翻聊天记录
 - 在任务包里记录讨论结论，不要只留在聊天里
-- 需求收敛后，必须确认并写入 `task-info.yaml` 的三项工作流分叉字段：`collaboration.task_type`、`collaboration.design_review_mode`、`verification.verify_by`
-- 后续阶段只消费这三项字段；如果后续发现分类错误，应回退需求阶段修正
+- 需求收敛后，必须确认并写入 `task-info.yaml` 的工作流分叉字段：`collaboration.task_type`、`collaboration.design_review_mode`、`verification.method`、`verification.rwp.enabled`、`verification.rwp.reason`
+- 后续阶段只消费这些字段；如果后续发现分类错误，应回退需求阶段修正
 - 目标不要写成抽象价值词；写"做完以后什么事实会成立"
 - 问题陈述至少要写出一个当前存在的具体问题，而不是只写未来愿景
 - 交付物中每一项，后续都应该能在验证设计里找到对应验证

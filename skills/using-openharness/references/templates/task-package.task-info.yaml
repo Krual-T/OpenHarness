@@ -14,4 +14,7 @@ collaboration:
   task_type: < mechanical | standard | structural >
   design_review_mode: <stepwise|auto>
 verification:
-  verify_by: < unit_test | qualitative | rwp >
+  method: < unit_test | qualitative >
+  rwp:
+    enabled: < true | false >
+    reason: < RWP_ENABLED_OR_DISABLED_REASON >

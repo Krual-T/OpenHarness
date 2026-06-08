@@ -2,11 +2,12 @@
 
 > **语言规则**：章节标题使用中文；正文默认使用中文；命令、状态值、YAML 键名、文件名与路径保持英文。
 >
-> 按 `task-info.yaml` 中 `verification.verify_by` 的类型选择对应章节填写。只写实际执行过的验证。
+> 按 `task-info.yaml` 中 `verification.method` 和 `verification.rwp.enabled` 选择对应章节填写。只写实际执行过的验证。
 
 ## 验证结果
 
-- **verify_by**: <unit_test / qualitative / rwp>
+- **method**: <unit_test / qualitative>
+- **rwp_enabled**: <true / false>
 - **Result**: <passed / failed>
 
 ## 变更文件
@@ -15,7 +16,7 @@
 
 ## 测试结果
 
-`verify_by: unit_test` 时填写：
+`verification.method: unit_test` 时填写：
 
 ```
 pytest tests/test_xxx.py -v
@@ -33,7 +34,7 @@ pytest tests/test_xxx.py -v
 
 ## 语义审核
 
-`verify_by: qualitative` 时填写。定性审核由子 Agent 和人类审阅者双轨执行，两方结论均需记录。
+`verification.method: qualitative` 时填写。定性审核由子 Agent 和人类审阅者双轨执行，两方结论均需记录。
 
 ### 审核交接包摘要
 
@@ -74,7 +75,7 @@ pytest tests/test_xxx.py -v
 
 ## 运行时观察
 
-`verify_by: rwp` 时填写：
+`verification.rwp.enabled: true` 时填写：
 
 - 工作流名称
 - 观察结果

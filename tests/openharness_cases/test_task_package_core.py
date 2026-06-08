@@ -24,7 +24,9 @@ runner = CliRunner()
 REMOVED_TASK_INFO_KEYS = ("done" + "_criteria", "depends" + "_on", "scope")
 TASK_TYPE_PLACEHOLDER = "<mechanical|standard|structural|>"
 DESIGN_REVIEW_MODE_PLACEHOLDER = "<stepwise|auto|>"
-VERIFY_BY_PLACEHOLDER = "<unit_test|qualitative|rwp|>"
+VERIFICATION_METHOD_PLACEHOLDER = "<unit_test|qualitative|>"
+RWP_ENABLED_PLACEHOLDER = "<true|false|>"
+RWP_REASON_PLACEHOLDER = "<rwp reason>"
 
 
 def _write_minimal_openharness_repo(repo_root: Path) -> None:
@@ -42,7 +44,10 @@ def _write_minimal_openharness_repo(repo_root: Path) -> None:
             f"  task_type: {TASK_TYPE_PLACEHOLDER}\n"
             f"  design_review_mode: {DESIGN_REVIEW_MODE_PLACEHOLDER}\n"
             "verification:\n"
-            f"  verify_by: {VERIFY_BY_PLACEHOLDER}\n"
+            f"  method: {VERIFICATION_METHOD_PLACEHOLDER}\n"
+            "  rwp:\n"
+            f"    enabled: {RWP_ENABLED_PLACEHOLDER}\n"
+            f"    reason: {RWP_REASON_PLACEHOLDER}\n"
         ),
         "task-package.requirements.md": "req\n",
         "task-package.overview-design.md": "overview\n",
@@ -354,8 +359,108 @@ def test_gate_precondition_failure_does_not_persist_intermediate_status(tmp_path
 
     assert result.exit_code == 1
     assert "task_type is not confirmed" in result.stdout
-    assert "verify_by is not determined" in result.stdout
+    assert "verification method is not determined" in result.stdout
+    assert "RWP setting is not confirmed" in result.stdout
     assert load_yaml(info_path)["status"] == "proposing"
+
+
+def test_gate_precondition_requires_rwp_reason_after_rwp_setting_is_confirmed(tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
+    (repo_root / "docs" / "task-packages" / "missing-rwp-reason").mkdir(parents=True)
+    root = repo_root / "docs" / "task-packages" / "missing-rwp-reason"
+    for doc in ALL_DESIGN_FILES:
+        doc.path_from(root).write_text("# x\n", encoding="utf-8")
+    info_path = TaskPackageDocument.TASK_INFO.path_from(root)
+    info_path.write_text(
+        "id: OH-969\n"
+        "title: Missing RWP Reason\n"
+        "status: proposing\n"
+        "summary: gate precondition\n"
+        "owner: codex\n"
+        "created_at: 2026-06-09\n"
+        "updated_at: 2026-06-09\n"
+        "collaboration:\n"
+        "  task_type: standard\n"
+        "  design_review_mode: stepwise\n"
+        "verification:\n"
+        "  method: unit_test\n"
+        "  rwp:\n"
+        "    enabled: false\n",
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        ["--repo", str(repo_root), "task-package", "transition", "missing-rwp-reason", "requirements_designed"],
+    )
+
+    assert result.exit_code == 1
+    assert "RWP reason is not documented" in result.stdout
+    assert load_yaml(info_path)["status"] == "proposing"
+
+
+def test_validate_task_package_reports_unknown_verification_method(tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    (repo_root / "docs" / "task-packages" / "bad-method").mkdir(parents=True)
+    root = repo_root / "docs" / "task-packages" / "bad-method"
+    for doc in ALL_DESIGN_FILES:
+        doc.path_from(root).write_text("# x\n", encoding="utf-8")
+    TaskPackageDocument.TASK_INFO.path_from(root).write_text(
+        "id: OH-970\n"
+        "title: Bad Method\n"
+        "status: proposing\n"
+        "summary: invalid method\n"
+        "owner: codex\n"
+        "created_at: 2026-06-09\n"
+        "updated_at: 2026-06-09\n"
+        "collaboration:\n"
+        "  task_type: standard\n"
+        "  design_review_mode: stepwise\n"
+        "verification:\n"
+        "  method: rwp\n"
+        "  rwp:\n"
+        "    enabled: false\n"
+        "    reason: no runtime evidence\n",
+        encoding="utf-8",
+    )
+
+    setup_harness(repo_root)
+    package = discover_task_packages()[0]
+    errors = validate_task_package(package)
+
+    assert any("unknown verification.method `rwp`" in error for error in errors)
+    assert package.raw_verification_method == "rwp"
+    assert package.verification_method == ""
+
+
+def test_validate_task_package_rejects_string_rwp_enabled(tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    (repo_root / "docs" / "task-packages" / "bad-rwp-enabled").mkdir(parents=True)
+    root = repo_root / "docs" / "task-packages" / "bad-rwp-enabled"
+    for doc in ALL_DESIGN_FILES:
+        doc.path_from(root).write_text("# x\n", encoding="utf-8")
+    TaskPackageDocument.TASK_INFO.path_from(root).write_text(
+        "id: OH-971\n"
+        "title: Bad RWP Enabled\n"
+        "status: proposing\n"
+        "summary: invalid rwp enabled\n"
+        "owner: codex\n"
+        "created_at: 2026-06-09\n"
+        "updated_at: 2026-06-09\n"
+        "verification:\n"
+        "  method: unit_test\n"
+        "  rwp:\n"
+        "    enabled: \"false\"\n"
+        "    reason: no runtime evidence\n",
+        encoding="utf-8",
+    )
+
+    setup_harness(repo_root)
+    package = discover_task_packages()[0]
+    errors = validate_task_package(package)
+
+    assert any("`verification.rwp.enabled` must be a boolean" in error for error in errors)
 
 
 def test_slugify_task_name_normalizes_human_text() -> None:
@@ -380,7 +485,10 @@ def test_create_task_package_from_templates(tmp_path: Path) -> None:
             f"  task_type: {TASK_TYPE_PLACEHOLDER}\n"
             f"  design_review_mode: {DESIGN_REVIEW_MODE_PLACEHOLDER}\n"
             "verification:\n"
-            f"  verify_by: {VERIFY_BY_PLACEHOLDER}\n"
+            f"  method: {VERIFICATION_METHOD_PLACEHOLDER}\n"
+            "  rwp:\n"
+            f"    enabled: {RWP_ENABLED_PLACEHOLDER}\n"
+            f"    reason: {RWP_REASON_PLACEHOLDER}\n"
         ),
         "task-package.requirements.md": "req\n",
         "task-package.overview-design.md": "overview\n",
@@ -412,7 +520,9 @@ def test_create_task_package_from_templates(tmp_path: Path) -> None:
     assert all(key not in status for key in REMOVED_TASK_INFO_KEYS)
     assert status["collaboration"]["task_type"] == TASK_TYPE_PLACEHOLDER
     assert status["collaboration"]["design_review_mode"] == DESIGN_REVIEW_MODE_PLACEHOLDER
-    assert status["verification"]["verify_by"] == VERIFY_BY_PLACEHOLDER
+    assert status["verification"]["method"] == VERIFICATION_METHOD_PLACEHOLDER
+    assert status["verification"]["rwp"]["enabled"] == RWP_ENABLED_PLACEHOLDER
+    assert status["verification"]["rwp"]["reason"] == RWP_REASON_PLACEHOLDER
 
 
 def test_key_repo_skills_are_vendored_locally() -> None:

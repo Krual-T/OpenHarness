@@ -1,0 +1,15 @@
+id: TASK-024
+title: Verification Method Rwp Split
+status: archived
+summary: 将验证配置从 verify_by 单选改为 method 加 RWP 独立确认开关。
+owner: Shaokun.Tang
+created_at: '2026-06-09'
+updated_at: '2026-06-09'
+collaboration:
+  task_type: structural
+  design_review_mode: stepwise
+verification:
+  method: unit_test
+  rwp:
+    enabled: false
+    reason: 本轮验证对象是 CLI 模型、模板和协议文本变更，可通过单元测试与文档断言覆盖，不需要运行时工作流证据。

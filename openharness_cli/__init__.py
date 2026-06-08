@@ -16,7 +16,7 @@ from .models import (
     TaskPackageDocument,
     TaskStatus,
     TaskType,
-    VerifyBy,
+    VerificationMethod,
     VerificationInfo,
     Workflow,
     parse_status,
@@ -50,7 +50,7 @@ __all__ = [
     "HarnessContext", "harness",
     # Domain types
     "AgentType",
-    "TaskStatus", "TaskType", "VerifyBy", "DesignReviewMode",
+    "TaskStatus", "TaskType", "VerificationMethod", "DesignReviewMode",
     "CollaborationInfo", "VerificationInfo",
     "Workflow", "TaskInfo", "parse_status",
     "STANDARD_WORKFLOW", "MECHANICAL_WORKFLOW", "workflow_for",

@@ -3,15 +3,16 @@
 ## 步骤
 
 1. **读需求文档**：打开 `requirements.md`，确认交付物和验收标准
-2. **校验验证方式**：读取 `task-info.yaml.verification.verify_by`，确认它与验证对象一致；本阶段消费需求阶段已确认的验证方式，不在这里静默改成另一类验证
-{% if verify_by == "unit_test" %}
+2. **校验验证方式**：读取 `task-info.yaml.verification.method` 和 `task-info.yaml.verification.rwp`，确认它们与验证对象一致；本阶段消费需求阶段已确认的验证配置，不在这里静默改成另一类验证
+{% if verification_method == "unit_test" %}
    - `unit_test` → 列出测试文件和测试命令
-{% elif verify_by == "qualitative" %}
+{% elif verification_method == "qualitative" %}
    - `qualitative` → 明确审核对象、审核标准、判定准则和审核交接包；审核需由子 Agent 和人类审阅者双轨执行，两方结论均需记录
-{% elif verify_by == "rwp" %}
-   - `rwp` → 列出单元测试命令 + 选择或编写运行时工作流脚本
 {% else %}
-   - 当前未设置 verify_by，请先确认验证方式后再继续
+   - 当前未设置 verification.method，请先确认验证方式后再继续
+{% endif %}
+{% if rwp_enabled == "true" %}
+   - `rwp.enabled: true` → 在主要验证方法之外，选择或编写运行时工作流脚本
 {% endif %}
 3. **写 `verification-design.md`**：参考模板 `skills/using-openharness/references/templates/task-package.verification-design.md`
    - `## 验证路径`：计划路径（怎么验证）和预期执行路径
@@ -44,13 +45,13 @@
 
 `verification_designed` 是 gate 状态，CLI 会自动推进到 `implementing` 并输出实现阶段指令。
 
-## verify_by 一致性校验
+## verification.method 一致性校验
 
-`verify_by` 已在需求阶段确定。本阶段只校验当前值是否仍然匹配验证对象；如果冲突，**阻塞**——回到 `requirements.md` 和 `task-info.yaml` 重新确定 verify_by。
+`verification.method` 和 `verification.rwp` 已在需求阶段确定。本阶段只校验当前值是否仍然匹配验证对象；如果冲突，**阻塞**——回到 `requirements.md` 和 `task-info.yaml` 重新确定验证配置。
 
-{% if verify_by == "unit_test" %}
+{% if verification_method == "unit_test" %}
 验证对象必须满足：输入输出可编程、无外部副作用、失败可自动判定。不能用 `unit_test` 验证代码可读性、设计意图或自然语言语义。
-{% elif verify_by == "qualitative" %}
+{% elif verification_method == "qualitative" %}
 验证对象必须是设计文档、API 契约、命名规范、协议意图等语义产物；审核必须由子 Agent 和人类审阅者双轨执行。不能用 `qualitative` 验证可编程函数返回值。
 
 ## 文档与字符级断言边界
@@ -71,7 +72,7 @@
 - 只用普通关键词证明主题已覆盖，例如 `assert "验证" in text`。
 - 用完整自然语言句子断言语义正确，导致正常改写被误判为失败。
 
-如果验证对象是自然语言语义、协议意图、设计正确性或命名规范，使用 `qualitative` 审核。若本阶段发现当前 `verify_by` 与对象性质冲突，回到 `requirements.md` 和 `task-info.yaml` 修正，不在本阶段临时切换。
+如果验证对象是自然语言语义、协议意图、设计正确性或命名规范，使用 `qualitative` 审核。若本阶段发现当前 `verification.method` 与对象性质冲突，回到 `requirements.md` 和 `task-info.yaml` 修正，不在本阶段临时切换。
 
 ## qualitative 审核交接包
 
@@ -87,11 +88,9 @@
 - **输出格式**：结论、逐项发现、证据缺口、风险接受。
 
 审核矩阵的判定标准必须能让子 Agent 和人类审阅者逐项回答“通过 / 有条件通过 / 不通过”。不能只写“审查是否合理”“看起来是否清楚”。
-{% elif verify_by == "rwp" %}
-验证对象必须需要端到端运行、跨进程交互或依赖外部环境。不能用 `rwp` 替代纯逻辑单元测试；代码单元正确性仍需单元测试保障。
 {% endif %}
 
-{% if verify_by == "rwp" %}
+{% if rwp_enabled == "true" %}
 ### RWP 选择与设计约束
 
 - **必须包含单元测试**：RWP 不是纯工作流——代码单元的正确性仍需要单元测试保障。`## 必需命令` 中必须列出单元测试命令，不可只写工作流命令
@@ -110,8 +109,8 @@
 |---------|---------|
 | 某项交付物找不到对应验证方法 | 回到 `requirements.md` 修正——它不可验证，等于没写 |
 | 验证命令无法精确到复制粘贴执行 | 命令依赖的上下文不完整——补充文件路径、参数、环境变量 |
-| verify_by 与需求性质冲突 | 回退需求阶段，修正 `requirements.md` 和 `task-info.yaml` 后再重新进入验证设计 |
-{% if verify_by == "qualitative" %}
+| 验证配置与需求性质冲突 | 回退需求阶段，修正 `requirements.md` 和 `task-info.yaml` 后再重新进入验证设计 |
+{% if verification_method == "qualitative" %}
 | 文档语义被写成 pytest 字符串断言 | 回到 `verification-design.md` 改为 `qualitative` 审核矩阵；只保留稳定文本契约断言 |
 | 定性审核交接包缺字段 | 补齐审核对象、背景、目标、矩阵、非审核范围和输出格式 |
 {% endif %}
@@ -125,21 +124,21 @@
 - 模板位于 `skills/using-openharness/references/templates/task-package.verification-design.md`
 - `## 必需命令` 中每条命令的期望退出码必须写明——implementing 和 verifying 阶段依赖这个来做 pass/fail 判定
 - 你设计的每一条验证命令，implementing 阶段 agent 会在 Goal-Driven Execution 中逐条执行。确保命令可复制粘贴、退出码含义明确。verifying 阶段 agent 在此基础上做正确性判定——三个阶段形成闭环：设计验证 → 执行验证 → 判定验证
-{% if verify_by == "qualitative" %}
+{% if verification_method == "qualitative" %}
 - 对 `qualitative` 任务，审核交接包和审核矩阵就是主要验证计划；不要为了凑命令而编造 pytest
 {% endif %}
 
 ## 常见失败模式
 
 - 把验证命令写成抽象描述（"运行测试"），而非可执行命令（`pytest tests/test_xxx.py -v`）
-{% if verify_by == "qualitative" %}
+{% if verification_method == "qualitative" %}
 - 对自然语言文档默认设计 `pytest`，把“测试通过”误当成“文档语义正确”
 - 用普通关键词或完整句子字符串断言代替语义审核，导致测试要么过宽、要么脆弱
 - 对定性验证（qualitative）不写判定准则，只写"审查通过"，导致 verifying 阶段无判断标准
 - 定性验证只写“请帮我看一下”，没有审核交接包、审核矩阵和非审核范围
 - 定性验证只安排了 AI 审核未安排人类审核——人类审阅者的反馈是定性审核的必要组成部分，缺失则审核不完整
 {% endif %}
-{% if verify_by == "rwp" %}
+{% if rwp_enabled == "true" %}
 - 没有检查现有 RWP 就新建工作流脚本，导致重复
 - rwp 预期结果写成"运行成功""输出正常"等无法逐项比对的形式——verifying 阶段子 Agent 需要具体期望才能产出结构化发现，模糊预期导致双轨审核空转
 {% endif %}

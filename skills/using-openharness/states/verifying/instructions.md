@@ -10,7 +10,7 @@ implementing 阶段 agent 已在 `evidence.md` 中记录了中间执行结果（
 {{ n.cnt }}. **判断命令结果（如有）**：逐条对比期望退出码 vs 实际退出码和输出
 {% set n.cnt = n.cnt + 1 %}
 {{ n.cnt }}. **处理失败**：见下方"验证失败处理"
-{% if verify_by == "qualitative" %}
+{% if verification_method == "qualitative" %}
 {% set n.cnt = n.cnt + 1 %}
 {{ n.cnt }}. **定性审核双轨流程**：
    - **准备审核交接包**：读取 `verification-design.md` 的 `## 审核交接包` 和审核矩阵，确认审核对象、任务背景、审核目标、非审核范围和输出格式齐全
@@ -19,9 +19,9 @@ implementing 阶段 agent 已在 `evidence.md` 中记录了中间执行结果（
    - **综合两方结论**：将子 Agent 审核结果和人类反馈合并写入 `evidence.md` 的 `## 语义审核` 章节；双方存在分歧时，以人类审阅者意见为准，并记录分歧点、采纳或拒绝理由
    - **处理未闭合项**：子 Agent 发现被拒绝时写明拒绝理由；人工反馈缺失或未逐项对应时，最终结论只能是有条件通过或不通过
 {% endif %}
-{% if verify_by == "rwp" %}
+{% if rwp_enabled == "true" %}
 {% set n.cnt = n.cnt + 1 %}
-{{ n.cnt }}. **rwp 双轨审核流程**：
+{{ n.cnt }}. **RWP 双轨审核流程**：
    - **执行工作流**：按 `verification-design.md` 中声明的工作流命令执行，收集 stdout、stderr、产物路径
    - **启动子 Agent 观察**：将工作流输出（stdout/stderr/产物）、预期结果和判定标准交给独立子 Agent（`subagent_type: general-purpose`），子 Agent 逐项比对后输出结构化发现
    - **征集人类审阅者反馈**：将子 Agent 的观察结论呈现给人类审阅者，请人类审阅者逐项给出反馈（同意 / 异议 / 补充）
@@ -65,15 +65,15 @@ implementing 阶段 agent 已在 `evidence.md` 中记录了中间执行结果（
 
 ## evidence.md 完整性检查
 
-在 transition 到 verified 之前，evidence.md 必须包含以下内容（按 verify_by）：
+在 transition 到 verified 之前，evidence.md 必须包含以下内容（按 `verification.method` 和 RWP 开关）：
 
-{% if verify_by == "unit_test" %}
+{% if verification_method == "unit_test" %}
 - [ ] 每条验证命令的实际执行结果（命令、退出码、输出摘要）
 - [ ] 变更文件清单（一个文件一行，附带改动说明）
 - [ ] 验收标准覆盖表（每条标准 → 对应测试函数名 → 结果）
 - [ ] 残余风险（本轮未覆盖的边界 + 接受理由）
 
-{% elif verify_by == "qualitative" %}
+{% elif verification_method == "qualitative" %}
 - [ ] `verification-design.md` 中的审核交接包已用于子 Agent 和人类审阅者
 - [ ] 子 Agent 审核已执行（审核对象、审核维度、通过标准逐项覆盖）
 - [ ] 子 Agent 审核结论已呈现给人类审阅者并已获得逐项反馈
@@ -81,8 +81,13 @@ implementing 阶段 agent 已在 `evidence.md` 中记录了中间执行结果（
 - [ ] 最终结论（通过 / 有条件通过 / 不通过），注明子 Agent 与人类审阅者是否存在分歧
 - [ ] 未闭合问题的 follow-up 计划
 
-{% elif verify_by == "rwp" %}
-- [ ] 每条单元测试命令的实际执行结果（命令、退出码、输出摘要）
+{% else %}
+- [ ] 验证命令的实际执行结果
+- [ ] 变更文件清单（一个文件一行，附带改动说明）
+- [ ] 验收标准覆盖表
+- [ ] 残余风险和后续事项
+{% endif %}
+{% if rwp_enabled == "true" %}
 - [ ] 工作流名称和调用命令
 - [ ] stdout 中的结构化输出（不要截断或改写）
 - [ ] stderr 是否有异常日志
@@ -90,14 +95,7 @@ implementing 阶段 agent 已在 `evidence.md` 中记录了中间执行结果（
 - [ ] 子 Agent 观察已执行（工作流输出逐项比对预期结果）
 - [ ] 子 Agent 观察结论已呈现给人类审阅者并已获得逐项反馈
 - [ ] 每项发现（来源 + 比对结果 + 严重程度 + 是否闭合）
-- [ ] 最终结论（通过 / 有条件通过 / 不通过），注明子 Agent 与人类审阅者是否存在分歧
 - [ ] 盲区说明（工作流无法覆盖的场景 + 为什么可接受）
-
-{% else %}
-- [ ] 验证命令的实际执行结果
-- [ ] 变更文件清单（一个文件一行，附带改动说明）
-- [ ] 验收标准覆盖表
-- [ ] 残余风险和后续事项
 {% endif %}
 
 如果 checklist 有缺项，先补充再 transition。

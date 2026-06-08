@@ -8,7 +8,7 @@ from .constants import (
     PLACEHOLDER_NUMBERED_RE,
     REQUIRED_STATUS_KEYS,
 )
-from .models import DesignReviewMode, TaskPackage, TaskStatus, TaskType, VerifyBy, TaskPackageDocument
+from .models import DesignReviewMode, TaskPackage, TaskStatus, TaskType, VerificationMethod, TaskPackageDocument
 
 
 def _extract_markdown_section(text: str, heading: str) -> str:
@@ -118,16 +118,24 @@ def validate_task_package(package: TaskPackage) -> list[str]:
             f"expected `stepwise` or `auto`"
         )
 
-    # Validate verify_by if present
-    if package.verify_by and package.verify_by not in {v.value for v in VerifyBy}:
+    # Validate verification.method if present
+    raw_verification_method = package.raw_verification_method
+    if raw_verification_method and raw_verification_method not in {v.value for v in VerificationMethod}:
         errors.append(
-            f"unknown verification.verify_by `{package.verify_by}` in {TaskPackageDocument.TASK_INFO.path_from(package.root)}; "
-            f"expected one of: {', '.join(sorted(v.value for v in VerifyBy))}"
+            f"unknown verification.method `{raw_verification_method}` in {TaskPackageDocument.TASK_INFO.path_from(package.root)}; "
+            f"expected one of: {', '.join(sorted(v.value for v in VerificationMethod))}"
         )
 
     verification = package.info.to_dict().get("verification")
     if verification is not None and not isinstance(verification, dict):
         errors.append(f"`verification` must be a mapping in {TaskPackageDocument.TASK_INFO.path_from(package.root)}")
+    if isinstance(verification, dict):
+        raw_rwp = verification.get("rwp")
+        if raw_rwp is not None and not isinstance(raw_rwp, dict):
+            errors.append(f"`verification.rwp` must be a mapping in {TaskPackageDocument.TASK_INFO.path_from(package.root)}")
+        rwp_info = package.info.verification.rwp if package.info.verification else None
+        if rwp_info is not None and rwp_info.raw_enabled is not None and not isinstance(rwp_info.raw_enabled, bool):
+            errors.append(f"`verification.rwp.enabled` must be a boolean in {TaskPackageDocument.TASK_INFO.path_from(package.root)}")
 
     valid_status_values = {s.value for s in wf.status_sequence}
     if package.current_status not in valid_status_values:

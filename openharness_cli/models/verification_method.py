@@ -1,8 +1,6 @@
-
 from enum import StrEnum
 
 
-class VerifyBy(StrEnum):
+class VerificationMethod(StrEnum):
     UNIT_TEST = "unit_test"
     QUALITATIVE = "qualitative"
-    RWP = "rwp"

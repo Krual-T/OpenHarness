@@ -20,7 +20,7 @@
 
 ## 审核交接包
 
-`verify_by: qualitative` 时填写。写清交给子 Agent 和人类审阅者的同一份审核输入。
+`verification.method: qualitative` 时填写。写清交给子 Agent 和人类审阅者的同一份审核输入。
 
 - **审核对象**：文件路径、章节范围和本轮实际改动。
 - **任务背景**：为什么修改、要解决什么问题、本轮边界是什么。
@@ -47,4 +47,4 @@
 何时执行、由谁执行、执行环境要求。实现完成后立即执行，不延迟到"后面再验"。
 
 - 验证失败时：回到 `implementing` 修改代码，或回到 `verification_designing` 修正策略。
-- `verify_by: qualitative` 时：审核由子 Agent 和人类审阅者双轨执行，两方结论均需写入 `evidence.md`；审核矩阵的判定准则必须对双方都明确无歧义。
+- `verification.method: qualitative` 时：审核由子 Agent 和人类审阅者双轨执行，两方结论均需写入 `evidence.md`；审核矩阵的判定准则必须对双方都明确无歧义。
