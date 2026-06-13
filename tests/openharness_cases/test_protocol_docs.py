@@ -153,13 +153,13 @@ def test_design_package_templates_include_verification_path_sections() -> None:
         / "templates"
         / "task-package.detailed-design.md"
     ).read_text(encoding="utf-8")
-    verification = (
+    plan = (
         REPO_ROOT
         / "skills"
         / "using-openharness"
         / "references"
         / "templates"
-        / "task-package.verification-design.md"
+        / "task-package.plan.md"
     ).read_text(encoding="utf-8")
     evidence = (
         REPO_ROOT
@@ -184,12 +184,12 @@ def test_design_package_templates_include_verification_path_sections() -> None:
     assert "## 阶段门禁" in overview
     assert "## 阶段门禁" in detailed
     assert "## 决策闭合" in detailed
-    assert "## 可追溯性" in verification
-    assert "## 风险接受" in verification
-    assert "## 验证路径" in verification
-    assert "## 审核交接包" in verification
-    assert "### 审核矩阵" in verification
-    assert "Fallback Path" not in verification
+    assert "## 实施步骤" in plan
+    assert "## 验证设计" in plan
+    assert "## 完成判定" in plan
+    assert "## 风险接受" in plan
+    assert "### 审核矩阵" in plan
+    assert "Fallback Path" not in plan
     assert "## 验证结果" in evidence
     assert "### 审核交接包摘要" in evidence
     assert "### 发现处理" in evidence
@@ -215,7 +215,7 @@ def test_runtime_capability_reference_defines_declaration_shape_and_writeback() 
     assert "success criteria" in text
     assert "failure evidence" in text
     assert "detailed-design.md" in text
-    assert "verification-design.md" in text
+    assert "plan.md" in text
     assert "evidence.md" in text
     assert "## Routing Contract" in text
     assert "openharness rwp list" in text
@@ -249,7 +249,7 @@ def test_runtime_workflow_package_reference_defines_minimum_contents_and_selecti
     assert "openharness rwp view" in text
     assert "openharness rwp run" in text
     assert "detailed-design.md" in text
-    assert "verification-design.md" in text
+    assert "plan.md" in text
     assert "evidence.md" in text
 
 def test_runtime_workflow_package_template_provides_adoption_shape() -> None:
@@ -270,7 +270,7 @@ def test_runtime_workflow_package_template_provides_adoption_shape() -> None:
     assert "## Success Criteria" in text
     assert "## Failure Evidence" in text
     assert "detailed-design.md" in text
-    assert "verification-design.md" in text
+    assert "plan.md" in text
     assert "evidence.md" in text
 
 def test_runtime_workflow_package_reference_defines_env_and_logger_boundaries() -> None:
@@ -314,13 +314,13 @@ def test_task_package_templates_default_to_chinese_narrative_and_headings() -> N
         / "templates"
         / "task-package.detailed-design.md"
     ).read_text(encoding="utf-8")
-    verification = (
+    plan = (
         REPO_ROOT
         / "skills"
         / "using-openharness"
         / "references"
         / "templates"
-        / "task-package.verification-design.md"
+        / "task-package.plan.md"
     ).read_text(encoding="utf-8")
     evidence = (
         REPO_ROOT
@@ -331,7 +331,7 @@ def test_task_package_templates_default_to_chinese_narrative_and_headings() -> N
         / "task-package.evidence.md"
     ).read_text(encoding="utf-8")
 
-    for text in (requirements, overview, detailed, verification, evidence):
+    for text in (requirements, overview, detailed, plan, evidence):
         assert "正文默认使用中文" in text
         assert "章节标题使用中文" in text
         assert "YAML 键名" in text
@@ -339,8 +339,9 @@ def test_task_package_templates_default_to_chinese_narrative_and_headings() -> N
     assert "## 目标" in requirements
     assert "## 推荐结构" in overview
     assert "## 可观察性与验证准备" in detailed
-    assert "## 验证路径" in verification
-    assert "## 审核交接包" in verification
-    assert "### 审核矩阵" in verification
+    assert "## 实施步骤" in plan
+    assert "## 验证设计" in plan
+    assert "## 完成判定" in plan
+    assert "### 审核矩阵" in plan
     assert "### 审核交接包摘要" in evidence
     assert "## 残余风险" in evidence

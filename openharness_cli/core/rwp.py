@@ -106,7 +106,7 @@ description: {description}
 
 ## Writeback Guidance
 - `detailed-design.md`: 写入被选中的 workflow、脚本、前置条件、预期观察和降级路径。
-- `verification-design.md`: 写入实际执行命令、退出码、输出摘要、运行时观察和阻塞情况。
+- `plan.md`: 写入计划执行命令、预期结果、运行时观察方式和阻塞回退。
 - `evidence.md`: 写入产物路径、外部记录、人工步骤、残余风险和后续事项。
 """
 

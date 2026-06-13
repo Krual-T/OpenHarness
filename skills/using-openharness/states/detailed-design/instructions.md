@@ -36,7 +36,7 @@
 <写入 03 的哪些章节，会影响哪些部分>
 
 后续验证证据：
-<在 verification-design.md 中需要收什么证据>
+<在 plan.md 中需要收什么证据>
 
 请确认：
 <明确的确认问题>
@@ -62,7 +62,7 @@
 4. 是否已经知道迁移顺序、切换点和回滚触发点？
 5. 是否已经知道先准备什么测试或验证（testing-first / verification-first 顺序）？
 6. 是否已经知道失败会通过什么信号暴露（observability 从哪里来）？
-7. 是否已经知道后续 `verification-design.md` 需要收什么证据？
+7. 是否已经知道后续 `plan.md` 需要收什么证据？
 
 如果这些问题还答不清，**阻塞**。不要进入 `implementing`。
 
@@ -82,7 +82,7 @@
 - 这里写"怎么落地"，不写"整体怎么组织"——那是 `overview-design.md` 的职责
 - 如果你还在讨论方案一还是方案二，说明 overview 还没真正收敛，应回退到 `overview_designing`
 - 不要把实际执行结果提前写进来
-- `verification-design.md` 写验证计划；如果你已经开始记录实际执行结果，那部分应进入 `evidence.md`
+- `plan.md` 写实施步骤和验证设计；如果你已经开始记录实际执行结果，那部分应进入 `evidence.md`
 
 ## 常见失败模式
 

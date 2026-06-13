@@ -1,9 +1,11 @@
 id: <TASK_ID>
 title: <TITLE>
 # 状态流转（mechanical）：
-#   proposing -> requirements_designed[G] -> verification_designing -> verification_designed[G] -> implementing -> implemented[G] -> verifying -> verified[G] -> archived
-# 状态流转（standard / structural）：
-#   proposing -> overview_designing -> overview_designed[G] -> detailed_designing -> detailed_designed[G] -> verification_designing -> verification_designed[G] -> implementing -> implemented[G] -> verifying -> verified[G] -> archived
+#   proposing -> requirements_designed[G] -> implementing -> implemented[G] -> verifying -> verified[G] -> archived
+# 状态流转（standard）：
+#   proposing -> requirements_designed[G] -> planning -> planned[G] -> implementing -> implemented[G] -> verifying -> verified[G] -> archived
+# 状态流转（structural）：
+#   proposing -> requirements_designed[G] -> overview_designing -> overview_designed[G] -> detailed_designing -> detailed_designed[G] -> planning -> planned[G] -> implementing -> implemented[G] -> verifying -> verified[G] -> archived
 # [G] = 门禁状态，CLI 自动推进。
 status: <STATUS>
 summary: <SUMMARY>

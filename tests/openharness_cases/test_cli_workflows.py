@@ -18,6 +18,93 @@ from openharness_cli.cli import app
 runner = CliRunner()
 
 
+def _write_ready_requirements_package(repo_root: Path, name: str, task_type: str) -> Path:
+    root = repo_root / "docs" / "task-packages" / name
+    root.mkdir(parents=True)
+    (repo_root / "skills" / "using-openharness" / "references" / "templates").mkdir(parents=True)
+    TaskPackageDocument.REQUIREMENTS.path_from(root).write_text(
+        "# 需求\n\n"
+        "## 目标\nA\n\n"
+        "## 问题陈述\nB\n\n"
+        "## 交付物\nC\n\n"
+        "## 约束\nD\n",
+        encoding="utf-8",
+    )
+    TaskPackageDocument.TASK_INFO.path_from(root).write_text(
+        "id: OH-980\n"
+        "title: Workflow Branch\n"
+        "status: proposing\n"
+        "summary: branch flow\n"
+        "owner: codex\n"
+        "created_at: 2026-06-13\n"
+        "updated_at: 2026-06-13\n"
+        "collaboration:\n"
+        f"  task_type: {task_type}\n"
+        "  design_review_mode: stepwise\n"
+        "verification:\n"
+        "  method: unit_test\n"
+        "  rwp:\n"
+        "    enabled: false\n"
+        "    reason: branch test does not need runtime evidence\n",
+        encoding="utf-8",
+    )
+    return root
+
+
+def test_requirements_gate_routes_mechanical_directly_to_implementing(tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    root = _write_ready_requirements_package(repo_root, "mechanical-flow", "mechanical")
+
+    result = runner.invoke(
+        app,
+        ["--repo", str(repo_root), "task-package", "transition", "mechanical-flow", "requirements_designed"],
+    )
+
+    assert result.exit_code == 0
+    assert "to `implementing`" in result.stdout
+    assert "status: implementing" in TaskPackageDocument.TASK_INFO.path_from(root).read_text(encoding="utf-8")
+    assert not TaskPackageDocument.PLAN.path_from(root).exists()
+    assert not TaskPackageDocument.OVERVIEW_DESIGN.path_from(root).exists()
+    assert not TaskPackageDocument.DETAILED_DESIGN.path_from(root).exists()
+
+
+def test_requirements_gate_routes_standard_to_planning(tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    root = _write_ready_requirements_package(repo_root, "standard-flow", "standard")
+    template = repo_root / "skills" / "using-openharness" / "references" / "templates" / "task-package.plan.md"
+    template.write_text("# 计划\n\n## 实施步骤\nx\n", encoding="utf-8")
+
+    result = runner.invoke(
+        app,
+        ["--repo", str(repo_root), "task-package", "transition", "standard-flow", "requirements_designed"],
+    )
+
+    assert result.exit_code == 0
+    assert "to `planning`" in result.stdout
+    assert "status: planning" in TaskPackageDocument.TASK_INFO.path_from(root).read_text(encoding="utf-8")
+    assert TaskPackageDocument.PLAN.path_from(root).exists()
+    assert not TaskPackageDocument.OVERVIEW_DESIGN.path_from(root).exists()
+    assert not TaskPackageDocument.DETAILED_DESIGN.path_from(root).exists()
+
+
+def test_requirements_gate_routes_structural_to_overview_before_planning(tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    root = _write_ready_requirements_package(repo_root, "structural-flow", "structural")
+    template_root = repo_root / "skills" / "using-openharness" / "references" / "templates"
+    (template_root / "task-package.overview-design.md").write_text("# 总体设计\n", encoding="utf-8")
+
+    result = runner.invoke(
+        app,
+        ["--repo", str(repo_root), "task-package", "transition", "structural-flow", "requirements_designed"],
+    )
+
+    assert result.exit_code == 0
+    assert "to `overview_designing`" in result.stdout
+    assert "status: overview_designing" in TaskPackageDocument.TASK_INFO.path_from(root).read_text(encoding="utf-8")
+    assert TaskPackageDocument.OVERVIEW_DESIGN.path_from(root).exists()
+    assert not TaskPackageDocument.PLAN.path_from(root).exists()
+
+
 def test_bootstrap_reports_yaml_quote_hint_for_invalid_status_yaml(tmp_path: Path, capsys) -> None:
     repo_root = tmp_path / "repo"
     (repo_root / "skills" / "using-openharness" / "references").mkdir(parents=True)
@@ -268,7 +355,7 @@ def test_validate_design_package_rejects_overview_designed_without_reflection(tm
         encoding="utf-8",
     )
     TaskPackageDocument.DETAILED_DESIGN.path_from(root).write_text("x\n", encoding="utf-8")
-    TaskPackageDocument.VERIFICATION_DESIGN.path_from(root).write_text("x\n", encoding="utf-8")
+    TaskPackageDocument.PLAN.path_from(root).write_text("x\n", encoding="utf-8")
     TaskPackageDocument.EVIDENCE.path_from(root).write_text("x\n", encoding="utf-8")
     TaskPackageDocument.TASK_INFO.path_from(root).write_text(
         "id: OH-904\n"
@@ -278,9 +365,14 @@ def test_validate_design_package_rejects_overview_designed_without_reflection(tm
         "owner: codex\n"
         "created_at: 2026-03-22\n"
         "updated_at: 2026-03-22\n"
+        "collaboration:\n"
+        "  task_type: structural\n"
+        "  design_review_mode: stepwise\n"
         "verification:\n"
-        "  required_commands: []\n"
-        "  required_scenarios: []\n",
+        "  method: unit_test\n"
+        "  rwp:\n"
+        "    enabled: false\n"
+        "    reason: overview validation does not need runtime evidence\n",
         encoding="utf-8",
     )
 

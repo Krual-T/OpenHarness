@@ -1,7 +1,6 @@
-
 from typing import Optional, Union
 
-from .models import TaskPackage, TaskStatus, TaskType, Workflow, TaskPackageDocument
+from .models import TaskPackage, TaskPackageDocument, TaskStatus, TaskType, Workflow
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -20,11 +19,11 @@ DESCRIPTIONS: dict[TaskStatus, str] = {
     TaskStatus.REQUIREMENTS_DESIGNED: "Requirements converged; auto-advancing to next active state.",
     TaskStatus.OVERVIEW_DESIGNING: "Exploring and drafting overview design.",
     TaskStatus.OVERVIEW_DESIGNED: "Overview design complete; auto-advancing to detailed design.",
-    TaskStatus.DETAILED_DESIGNING: "Drafting detailed design and implementation plan.",
-    TaskStatus.DETAILED_DESIGNED: "Detailed design complete; auto-advancing to verification design.",
-    TaskStatus.VERIFICATION_DESIGNING: "Designing verification strategy (TDD red phase).",
-    TaskStatus.VERIFICATION_DESIGNED: "Verification strategy complete; auto-advancing to implementation.",
-    TaskStatus.IMPLEMENTING: "Implementing against the verification plan (TDD green + refactor).",
+    TaskStatus.DETAILED_DESIGNING: "Drafting detailed design.",
+    TaskStatus.DETAILED_DESIGNED: "Detailed design complete; auto-advancing to planning.",
+    TaskStatus.PLANNING: "Drafting implementation plan and verification design.",
+    TaskStatus.PLANNED: "Plan complete; auto-advancing to implementation.",
+    TaskStatus.IMPLEMENTING: "Implementing against the plan.",
     TaskStatus.IMPLEMENTED: "Implementation complete; auto-advancing to verification execution.",
     TaskStatus.VERIFYING: "Executing verification and collecting evidence.",
     TaskStatus.VERIFIED: "Verification complete; auto-advancing to archived.",
@@ -41,7 +40,39 @@ _PROPOSING_STEP = (
     f"write `{TaskPackageDocument.REQUIREMENTS.value}`, then transition to `requirements_designed`."
 )
 
+_IMPLEMENT_STEP = "Implement to pass the plan, then transition to `implemented`."
+
+_VERIFY_STEP = (
+    f"Execute verification and write `{TaskPackageDocument.EVIDENCE.value}`, "
+    "then transition to `verified`."
+)
+
+MECHANICAL_NEXT_STEPS: dict[TaskStatus, str] = {
+    TaskStatus.PROPOSING: _PROPOSING_STEP,
+    TaskStatus.REQUIREMENTS_DESIGNED: "Auto-advancing to `implementing`.",
+    TaskStatus.IMPLEMENTING: _IMPLEMENT_STEP,
+    TaskStatus.IMPLEMENTED: "Auto-advancing to `verifying`.",
+    TaskStatus.VERIFYING: _VERIFY_STEP,
+    TaskStatus.VERIFIED: "Auto-advancing to `archived`.",
+    TaskStatus.ARCHIVED: "No next step. The package is complete and archived.",
+}
+
 STANDARD_NEXT_STEPS: dict[TaskStatus, str] = {
+    TaskStatus.PROPOSING: _PROPOSING_STEP,
+    TaskStatus.REQUIREMENTS_DESIGNED: "Auto-advancing to `planning`.",
+    TaskStatus.PLANNING: (
+        f"Write `{TaskPackageDocument.PLAN.value}` with implementation steps and verification design, "
+        "then transition to `planned`."
+    ),
+    TaskStatus.PLANNED: "Auto-advancing to `implementing`.",
+    TaskStatus.IMPLEMENTING: _IMPLEMENT_STEP,
+    TaskStatus.IMPLEMENTED: "Auto-advancing to `verifying`.",
+    TaskStatus.VERIFYING: _VERIFY_STEP,
+    TaskStatus.VERIFIED: "Auto-advancing to `archived`.",
+    TaskStatus.ARCHIVED: "No next step. The package is complete and archived.",
+}
+
+STRUCTURAL_NEXT_STEPS: dict[TaskStatus, str] = {
     TaskStatus.PROPOSING: _PROPOSING_STEP,
     TaskStatus.REQUIREMENTS_DESIGNED: "Auto-advancing to `overview_designing`.",
     TaskStatus.OVERVIEW_DESIGNING: (
@@ -53,40 +84,15 @@ STANDARD_NEXT_STEPS: dict[TaskStatus, str] = {
         "Complete detailed design, close design challenges, "
         "then transition to `detailed_designed`."
     ),
-    TaskStatus.DETAILED_DESIGNED: "Auto-advancing to `verification_designing`.",
-    TaskStatus.VERIFICATION_DESIGNING: (
-        f"Design verification strategy, write `{TaskPackageDocument.VERIFICATION_DESIGN.value}`, "
-        "then transition to `verification_designed`."
+    TaskStatus.DETAILED_DESIGNED: "Auto-advancing to `planning`.",
+    TaskStatus.PLANNING: (
+        f"Write `{TaskPackageDocument.PLAN.value}` with implementation steps and verification design, "
+        "then transition to `planned`."
     ),
-    TaskStatus.VERIFICATION_DESIGNED: "Auto-advancing to `implementing`.",
-    TaskStatus.IMPLEMENTING: (
-        "Implement to pass verification, then transition to `implemented`."
-    ),
+    TaskStatus.PLANNED: "Auto-advancing to `implementing`.",
+    TaskStatus.IMPLEMENTING: _IMPLEMENT_STEP,
     TaskStatus.IMPLEMENTED: "Auto-advancing to `verifying`.",
-    TaskStatus.VERIFYING: (
-        f"Execute verification and write `{TaskPackageDocument.EVIDENCE.value}`, "
-        "then transition to `verified`."
-    ),
-    TaskStatus.VERIFIED: "Auto-advancing to `archived`.",
-    TaskStatus.ARCHIVED: "No next step. The package is complete and archived.",
-}
-
-MECHANICAL_NEXT_STEPS: dict[TaskStatus, str] = {
-    TaskStatus.PROPOSING: _PROPOSING_STEP,
-    TaskStatus.REQUIREMENTS_DESIGNED: "Auto-advancing to `verification_designing`.",
-    TaskStatus.VERIFICATION_DESIGNING: (
-        f"Design verification strategy, write `{TaskPackageDocument.VERIFICATION_DESIGN.value}`, "
-        "then transition to `verification_designed`."
-    ),
-    TaskStatus.VERIFICATION_DESIGNED: "Auto-advancing to `implementing`.",
-    TaskStatus.IMPLEMENTING: (
-        "Implement to pass verification, then transition to `implemented`."
-    ),
-    TaskStatus.IMPLEMENTED: "Auto-advancing to `verifying`.",
-    TaskStatus.VERIFYING: (
-        f"Execute verification and write `{TaskPackageDocument.EVIDENCE.value}`, "
-        "then transition to `verified`."
-    ),
+    TaskStatus.VERIFYING: _VERIFY_STEP,
     TaskStatus.VERIFIED: "Auto-advancing to `archived`.",
     TaskStatus.ARCHIVED: "No next step. The package is complete and archived.",
 }
@@ -137,8 +143,79 @@ def _check_verified_gate(package: TaskPackage) -> list[str]:
 # Concrete Workflow instances
 # ═══════════════════════════════════════════════════════════════════════════════
 
+MECHANICAL_WORKFLOW = Workflow(
+    name="mechanical",
+    status_sequence=(
+        TaskStatus.PROPOSING,
+        TaskStatus.REQUIREMENTS_DESIGNED,
+        TaskStatus.IMPLEMENTING,
+        TaskStatus.IMPLEMENTED,
+        TaskStatus.VERIFYING,
+        TaskStatus.VERIFIED,
+        TaskStatus.ARCHIVED,
+    ),
+    gate_next={
+        TaskStatus.REQUIREMENTS_DESIGNED: TaskStatus.IMPLEMENTING,
+        TaskStatus.IMPLEMENTED: TaskStatus.VERIFYING,
+        TaskStatus.VERIFIED: TaskStatus.ARCHIVED,
+    },
+    gate_preconditions={
+        TaskStatus.REQUIREMENTS_DESIGNED: _check_requirements_gate,
+        TaskStatus.VERIFIED: _check_verified_gate,
+    },
+    file_additions={
+        TaskStatus.REQUIREMENTS_DESIGNED: (TaskPackageDocument.REQUIREMENTS,),
+        TaskStatus.VERIFIED: (TaskPackageDocument.EVIDENCE,),
+    },
+    working_files={
+        TaskStatus.PROPOSING: (TaskPackageDocument.REQUIREMENTS,),
+        TaskStatus.VERIFYING: (TaskPackageDocument.EVIDENCE,),
+    },
+    section_specs=_FILE_SECTION_REQUIREMENTS,
+    descriptions=DESCRIPTIONS,
+    next_steps=MECHANICAL_NEXT_STEPS,
+)
+
 STANDARD_WORKFLOW = Workflow(
     name="standard",
+    status_sequence=(
+        TaskStatus.PROPOSING,
+        TaskStatus.REQUIREMENTS_DESIGNED,
+        TaskStatus.PLANNING,
+        TaskStatus.PLANNED,
+        TaskStatus.IMPLEMENTING,
+        TaskStatus.IMPLEMENTED,
+        TaskStatus.VERIFYING,
+        TaskStatus.VERIFIED,
+        TaskStatus.ARCHIVED,
+    ),
+    gate_next={
+        TaskStatus.REQUIREMENTS_DESIGNED: TaskStatus.PLANNING,
+        TaskStatus.PLANNED: TaskStatus.IMPLEMENTING,
+        TaskStatus.IMPLEMENTED: TaskStatus.VERIFYING,
+        TaskStatus.VERIFIED: TaskStatus.ARCHIVED,
+    },
+    gate_preconditions={
+        TaskStatus.REQUIREMENTS_DESIGNED: _check_requirements_gate,
+        TaskStatus.VERIFIED: _check_verified_gate,
+    },
+    file_additions={
+        TaskStatus.REQUIREMENTS_DESIGNED: (TaskPackageDocument.REQUIREMENTS,),
+        TaskStatus.PLANNED: (TaskPackageDocument.PLAN,),
+        TaskStatus.VERIFIED: (TaskPackageDocument.EVIDENCE,),
+    },
+    working_files={
+        TaskStatus.PROPOSING: (TaskPackageDocument.REQUIREMENTS,),
+        TaskStatus.PLANNING: (TaskPackageDocument.PLAN,),
+        TaskStatus.VERIFYING: (TaskPackageDocument.EVIDENCE,),
+    },
+    section_specs=_FILE_SECTION_REQUIREMENTS,
+    descriptions=DESCRIPTIONS,
+    next_steps=STANDARD_NEXT_STEPS,
+)
+
+STRUCTURAL_WORKFLOW = Workflow(
+    name="structural",
     status_sequence=(
         TaskStatus.PROPOSING,
         TaskStatus.REQUIREMENTS_DESIGNED,
@@ -146,8 +223,8 @@ STANDARD_WORKFLOW = Workflow(
         TaskStatus.OVERVIEW_DESIGNED,
         TaskStatus.DETAILED_DESIGNING,
         TaskStatus.DETAILED_DESIGNED,
-        TaskStatus.VERIFICATION_DESIGNING,
-        TaskStatus.VERIFICATION_DESIGNED,
+        TaskStatus.PLANNING,
+        TaskStatus.PLANNED,
         TaskStatus.IMPLEMENTING,
         TaskStatus.IMPLEMENTED,
         TaskStatus.VERIFYING,
@@ -157,8 +234,8 @@ STANDARD_WORKFLOW = Workflow(
     gate_next={
         TaskStatus.REQUIREMENTS_DESIGNED: TaskStatus.OVERVIEW_DESIGNING,
         TaskStatus.OVERVIEW_DESIGNED: TaskStatus.DETAILED_DESIGNING,
-        TaskStatus.DETAILED_DESIGNED: TaskStatus.VERIFICATION_DESIGNING,
-        TaskStatus.VERIFICATION_DESIGNED: TaskStatus.IMPLEMENTING,
+        TaskStatus.DETAILED_DESIGNED: TaskStatus.PLANNING,
+        TaskStatus.PLANNED: TaskStatus.IMPLEMENTING,
         TaskStatus.IMPLEMENTED: TaskStatus.VERIFYING,
         TaskStatus.VERIFIED: TaskStatus.ARCHIVED,
     },
@@ -170,66 +247,38 @@ STANDARD_WORKFLOW = Workflow(
         TaskStatus.REQUIREMENTS_DESIGNED: (TaskPackageDocument.REQUIREMENTS,),
         TaskStatus.OVERVIEW_DESIGNED: (TaskPackageDocument.OVERVIEW_DESIGN,),
         TaskStatus.DETAILED_DESIGNED: (TaskPackageDocument.DETAILED_DESIGN,),
-        TaskStatus.VERIFICATION_DESIGNED: (TaskPackageDocument.VERIFICATION_DESIGN,),
+        TaskStatus.PLANNED: (TaskPackageDocument.PLAN,),
         TaskStatus.VERIFIED: (TaskPackageDocument.EVIDENCE,),
     },
     working_files={
         TaskStatus.PROPOSING: (TaskPackageDocument.REQUIREMENTS,),
         TaskStatus.OVERVIEW_DESIGNING: (TaskPackageDocument.OVERVIEW_DESIGN,),
         TaskStatus.DETAILED_DESIGNING: (TaskPackageDocument.DETAILED_DESIGN,),
-        TaskStatus.VERIFICATION_DESIGNING: (TaskPackageDocument.VERIFICATION_DESIGN,),
+        TaskStatus.PLANNING: (TaskPackageDocument.PLAN,),
         TaskStatus.VERIFYING: (TaskPackageDocument.EVIDENCE,),
     },
     section_specs=_FILE_SECTION_REQUIREMENTS,
     descriptions=DESCRIPTIONS,
-    next_steps=STANDARD_NEXT_STEPS,
-)
-
-MECHANICAL_WORKFLOW = Workflow(
-    name="mechanical",
-    status_sequence=(
-        TaskStatus.PROPOSING,
-        TaskStatus.REQUIREMENTS_DESIGNED,
-        TaskStatus.VERIFICATION_DESIGNING,
-        TaskStatus.VERIFICATION_DESIGNED,
-        TaskStatus.IMPLEMENTING,
-        TaskStatus.IMPLEMENTED,
-        TaskStatus.VERIFYING,
-        TaskStatus.VERIFIED,
-        TaskStatus.ARCHIVED,
-    ),
-    gate_next={
-        TaskStatus.REQUIREMENTS_DESIGNED: TaskStatus.VERIFICATION_DESIGNING,
-        TaskStatus.VERIFICATION_DESIGNED: TaskStatus.IMPLEMENTING,
-        TaskStatus.IMPLEMENTED: TaskStatus.VERIFYING,
-        TaskStatus.VERIFIED: TaskStatus.ARCHIVED,
-    },
-    gate_preconditions={
-        TaskStatus.REQUIREMENTS_DESIGNED: _check_requirements_gate,
-        TaskStatus.VERIFIED: _check_verified_gate,
-    },
-    file_additions={
-        TaskStatus.REQUIREMENTS_DESIGNED: (TaskPackageDocument.REQUIREMENTS,),
-        TaskStatus.VERIFICATION_DESIGNED: (TaskPackageDocument.VERIFICATION_DESIGN,),
-        TaskStatus.VERIFIED: (TaskPackageDocument.EVIDENCE,),
-    },
-    working_files={
-        TaskStatus.PROPOSING: (TaskPackageDocument.REQUIREMENTS,),
-        TaskStatus.VERIFICATION_DESIGNING: (TaskPackageDocument.VERIFICATION_DESIGN,),
-        TaskStatus.VERIFYING: (TaskPackageDocument.EVIDENCE,),
-    },
-    section_specs=_FILE_SECTION_REQUIREMENTS,
-    descriptions=DESCRIPTIONS,
-    next_steps=MECHANICAL_NEXT_STEPS,
+    next_steps=STRUCTURAL_NEXT_STEPS,
 )
 
 
 ACTIVE_STATUSES = frozenset(
-    s.value for s in STANDARD_WORKFLOW.active_statuses | MECHANICAL_WORKFLOW.active_statuses
+    s.value
+    for s in (
+        MECHANICAL_WORKFLOW.active_statuses
+        | STANDARD_WORKFLOW.active_statuses
+        | STRUCTURAL_WORKFLOW.active_statuses
+    )
 )
 
 GATE_STATUSES = frozenset(
-    s.value for s in STANDARD_WORKFLOW.gate_statuses | MECHANICAL_WORKFLOW.gate_statuses
+    s.value
+    for s in (
+        MECHANICAL_WORKFLOW.gate_statuses
+        | STANDARD_WORKFLOW.gate_statuses
+        | STRUCTURAL_WORKFLOW.gate_statuses
+    )
 )
 
 
@@ -239,7 +288,11 @@ def workflow_for(task_type: Optional[Union[TaskType, str]]) -> Workflow:
     if isinstance(task_type, str):
         if task_type == TaskType.MECHANICAL.value:
             return MECHANICAL_WORKFLOW
+        if task_type == TaskType.STRUCTURAL.value:
+            return STRUCTURAL_WORKFLOW
         return STANDARD_WORKFLOW
     if task_type == TaskType.MECHANICAL:
         return MECHANICAL_WORKFLOW
+    if task_type == TaskType.STRUCTURAL:
+        return STRUCTURAL_WORKFLOW
     return STANDARD_WORKFLOW

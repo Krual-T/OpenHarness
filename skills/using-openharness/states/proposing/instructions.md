@@ -61,14 +61,14 @@
 
 | 字段 | 可选值 | 说明 |
 |------|-------|------|
-| `collaboration.task_type` | `mechanical` / `standard` / `structural` | `mechanical` — 格式、命名、路径等低判断成本改动，跳过 overview/detailed；`standard` — 常规功能、修复，需要设计但非结构性；`structural` — 影响长期协议、skill 行为、公共接口，需逐项设计确认 |
+| `collaboration.task_type` | `mechanical` / `standard` / `structural` | `mechanical` — 格式、命名、路径等低判断成本改动，不启用 plan 和两阶段设计；`standard` — 常规功能、修复，需要执行计划和分步验证，但不需要结构设计；`structural` — 模块复杂、影响长期协议、skill 行为、公共接口或跨模块边界，需要总体设计、详细设计和计划 |
 | `collaboration.design_review_mode` | `stepwise` / `auto` | `stepwise` — 每个设计点逐个确认；`auto` — agent 自主推进但记录关键决策。`mechanical` 不需要此字段 |
 | `verification.method` | `unit_test` / `qualitative` | `unit_test` — pytest 验证可明确断言的逻辑；`qualitative` — 人工/子 agent 审核文档、协议、skill 行为 |
 | `verification.rwp.enabled` | `true` / `false` | 是否启用运行时工作流证据；启用或不启用都必须经用户确认 |
 | `verification.rwp.reason` | 自然语言理由 | 记录为什么启用或不启用 RWP |
 
 - `structural` 默认建议 `stepwise`；`standard` 默认建议 `stepwise`，用户可选 `auto`
-- 混合任务以 `verification.method` 表示主要验证方法，其余辅助验证在 `verification-design.md` 补充
+- 混合任务以 `verification.method` 表示主要验证方法，其余辅助验证在 `plan.md` 补充
 - RWP 是运行时证据开关，不是 `verification.method` 的可选值
 - 后续阶段只消费这些字段；如果后续发现分类错误，应回退需求阶段修正
 
@@ -99,7 +99,7 @@
 - 后续阶段只消费这些字段；如果后续发现分类错误，应回退需求阶段修正
 - 目标不要写成抽象价值词；写"做完以后什么事实会成立"
 - 问题陈述至少要写出一个当前存在的具体问题，而不是只写未来愿景
-- 交付物中每一项，后续都应该能在验证设计里找到对应验证
+- 交付物中每一项，后续都应该能在计划阶段找到对应实施步骤和验证方式
 - 非目标至少写一个具体的反例
 - 约束写协议边界、兼容性条件、依赖限制和预算上限；如果某个限制被突破就会变成另一个任务包，也写在这里
 - **写完重读一遍**：删掉所有"读起来不像人说的话"——翻译腔、机械句式、从模板原封不动抄过来的指令性文字

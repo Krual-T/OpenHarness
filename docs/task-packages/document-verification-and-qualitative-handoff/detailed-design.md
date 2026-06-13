@@ -6,14 +6,14 @@
 
 本轮 `verify_by: qualitative` 已在需求阶段确定。验证设计阶段不再重新选择验证方式，只校验本轮对象是否确实属于自然语言协议语义，并写出可执行的审核交接包。
 
-- **主验证路径**：后续在 `verification-design.md` 中设计定性审核矩阵；实施后由子智能体和人工审阅者按同一交接包逐项审核。
+- **主验证路径**：后续在 `plan.md` 中设计定性审核矩阵；实施后由子智能体和人工审阅者按同一交接包逐项审核。
 - **辅助验证路径**：允许运行最小化协议结构测试，但只覆盖稳定文本契约，例如新模板章节是否存在；不得用 pytest 断言自然语言语义正确。
-- **降级路径**：如果无法获得人工逐项反馈，不能宣称完整通过，只能记录为有条件通过或阻塞；如果子智能体审核输出模糊，应回退 `verification-design.md` 收紧审核矩阵。
+- **降级路径**：如果无法获得人工逐项反馈，不能宣称完整通过，只能记录为有条件通过或阻塞；如果子智能体审核输出模糊，应回退 `plan.md` 收紧审核矩阵。
 - **预期证据**：`evidence.md` 应记录审核交接包、子智能体逐项发现、人工逐项反馈、采纳或拒绝理由、分歧处理、残余风险。
 
 ## 新增或修改文件
 
-- `skills/using-openharness/states/verification-designing/instructions.md`
+- `skills/using-openharness/states/planning/instructions.md`
   - 增加 `verify_by` 阶段边界说明：需求阶段决定验证方式，验证设计阶段只校验一致性并设计具体路径。
   - 增加字符级断言规则：什么时候可以断言，什么时候必须避免。
   - 增加 `qualitative` 审核交接包要求。
@@ -21,7 +21,7 @@
   - 增加按交接包执行子智能体审核和人工反馈的步骤细节。
   - 增加分歧处理、拒绝子智能体发现时的记录要求。
   - 增加“未获得人工逐项反馈不能宣称完整审核”的失败处理。
-- `skills/using-openharness/references/templates/task-package.verification-design.md`
+- `skills/using-openharness/references/templates/task-package.plan.md`
   - 增加 `verify_by: qualitative` 可填写结构：审核交接包、审核矩阵、非审核范围、输出格式。
   - 保持模板通用，不写本任务专属内容。
 - `skills/using-openharness/references/templates/task-package.evidence.md`
@@ -40,7 +40,7 @@
 
 关键契约如下：
 
-- `task-info.yaml.verification.verify_by` 是需求阶段确定的输入。`verification-designing` 必须消费该值，不能在该阶段静默改成另一类验证。
+- `task-info.yaml.verification.verify_by` 是需求阶段确定的输入。`planning` 必须消费该值，不能在该阶段静默改成另一类验证。
 - 字符级断言的输入是稳定文本契约。有效对象包括命令名、参数名、状态值、YAML 键、文件名、路径、固定章节标题、模板占位符、废弃入口。
 - 字符级断言不得用于自然语言语义。无效对象包括说明是否清楚、设计是否正确、协议意图是否表达完整、任务包正文是否写得好。
 - `qualitative` 审核交接包的稳定字段为：审核对象、任务背景、审核目标、审核矩阵、非审核范围、输出格式。
@@ -51,7 +51,7 @@
 
 ## 模块内部设计
 
-`verification-designing/instructions.md` 的职责分解：
+`planning/instructions.md` 的职责分解：
 
 - 在“确定验证方式”步骤前后补一段阶段边界：`verify_by` 已由需求阶段确认，本阶段只校验一致性。
 - 在 `verify_by 选择约束` 后补“文档与字符级断言边界”小节，列出适用和不适用场景。
@@ -60,14 +60,14 @@
 
 `verifying/instructions.md` 的职责分解：
 
-- 在 `qualitative` 双轨流程中补充交接包传递规则：主 Agent 传给子智能体的信息必须来自 `verification-design.md`，不能临场只说“帮我看一下”。
+- 在 `qualitative` 双轨流程中补充交接包传递规则：主 Agent 传给子智能体的信息必须来自 `plan.md`，不能临场只说“帮我看一下”。
 - 要求子智能体逐项输出结构化发现，人工审阅者逐项反馈。
 - 明确主 Agent 的职责是整理、执行修改和写回证据，不用自己的判断替代两方审核。
 - 在 evidence 完整性检查中加入交接包和采纳/拒绝理由。
 
 模板职责分解：
 
-- `task-package.verification-design.md` 提供审核计划结构，不写执行结果。
+- `task-package.plan.md` 提供审核计划结构，不写执行结果。
 - `task-package.evidence.md` 提供审核结果结构，只写实际发生的审核与反馈。
 - 反模式文档提供负面例子和检查提醒，不参与状态推进。
 
@@ -95,7 +95,7 @@
 
 一致性约束：
 
-- `verification-design.md` 中定义的审核矩阵必须能映射到 `evidence.md` 的审核结果。
+- `plan.md` 中定义的审核矩阵必须能映射到 `evidence.md` 的审核结果。
 - 人工反馈必须逐项对应审核矩阵或子智能体发现；只有整体“同意”不足以闭合。
 - 没有执行过的审核不得写入 `evidence.md` 作为已完成证据。
 
@@ -104,7 +104,7 @@
 进入实施前必须满足：
 
 - 实现落点已限定在验证阶段说明、验证模板、证据模板、反模式文档和必要的协议结构测试。
-- `verification-designing` 的阶段职责已明确为消费并校验 `verify_by`，不是重新选择验证方式。
+- `planning` 的阶段职责已明确为消费并校验 `verify_by`，不是重新选择验证方式。
 - 字符级断言适用和不适用场景已定义。
 - 审核交接包字段、审核矩阵字段、审核发现字段已定义。
 - 已明确 `evidence.md` 的语义审核证据应覆盖子智能体、人工反馈和分歧处理。
@@ -113,8 +113,8 @@
 
 ## 决策闭合
 
-- 接受：在 `verification-designing` 中保留验证方式一致性检查。理由是 `verify_by` 虽然已在需求阶段确定，但后续设计可能发现需求分类错误，必须有明确回退路径。
-- 拒绝：在 `verification-designing` 中重新“选择 qualitative”。理由是这会破坏阶段边界；正确做法是发现冲突后回退需求阶段修正 `task-info.yaml`。
+- 接受：在 `planning` 中保留验证方式一致性检查。理由是 `verify_by` 虽然已在需求阶段确定，但后续设计可能发现需求分类错误，必须有明确回退路径。
+- 拒绝：在 `planning` 中重新“选择 qualitative”。理由是这会破坏阶段边界；正确做法是发现冲突后回退需求阶段修正 `task-info.yaml`。
 - 拒绝：为自然语言语义新增 pytest 字符串断言。替代方案是定性审核交接包和双轨审核证据。
 - 延期：建立通用 Markdown 结构校验器。触发条件是后续多个任务反复出现同类模板结构缺失，而不是本轮一次性协议优化。
 
@@ -123,8 +123,8 @@
 主要失败路径：
 
 - `verify_by` 与验证对象冲突：回退需求阶段，修正 `task-info.yaml` 和 `requirements.md`，再重新进入验证设计。
-- 审核交接包缺字段：阻塞在 `verification-designing`，补齐后才能进入实施。
-- 子智能体输出模糊：回退 `verification-design.md`，收紧审核矩阵和输出格式。
+- 审核交接包缺字段：阻塞在 `planning`，补齐后才能进入实施。
+- 子智能体输出模糊：回退 `plan.md`，收紧审核矩阵和输出格式。
 - 人工反馈没有逐项对应：不能宣称完整通过，在 `evidence.md` 记录为有条件通过或阻塞。
 - pytest 断言自然语言句子导致正常改写失败：删除或改写为稳定文本契约断言；如果没有稳定契约，不写自动断言。
 
@@ -134,15 +134,15 @@
 
 实施顺序：
 
-1. 更新 `verification-designing/instructions.md`，先修正阶段边界和字符级断言规则。
-2. 更新 `task-package.verification-design.md`，加入审核交接包结构。
+1. 更新 `planning/instructions.md`，先修正阶段边界和字符级断言规则。
+2. 更新 `task-package.plan.md`，加入审核交接包结构。
 3. 更新 `verifying/instructions.md`，加入交接包执行、人工反馈和分歧处理规则。
 4. 更新 `task-package.evidence.md`，加入对应证据结构。
 5. 更新 `docs/anti-patterns/skill-writing.md`，记录反模式。
 6. 根据实际新增的稳定模板章节，决定是否补 `test_protocol_docs.py` 的最小结构断言。
 7. 更新任务包验证和证据。
 
-兼容策略是只增加说明和模板章节，不删除现有章节，不改变状态机和枚举。切换点是协议文档合入后，后续任务包开始按新规则写验证计划。回滚触发点是新说明导致阶段职责再次混淆，尤其是让 Agent 误以为可以在 `verification-designing` 临时改 `verify_by`；若出现该问题，应回滚相关措辞并改为更明确的“回退需求阶段”。
+兼容策略是只增加说明和模板章节，不删除现有章节，不改变状态机和枚举。切换点是协议文档合入后，后续任务包开始按新规则写验证计划。回滚触发点是新说明导致阶段职责再次混淆，尤其是让 Agent 误以为可以在 `planning` 临时改 `verify_by`；若出现该问题，应回滚相关措辞并改为更明确的“回退需求阶段”。
 
 ## 推荐图示
 

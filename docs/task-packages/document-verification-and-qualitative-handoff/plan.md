@@ -54,9 +54,9 @@ uv run pytest tests/openharness_cases/test_protocol_docs.py -q
 
 ### 审核对象
 
-- `skills/using-openharness/states/verification-designing/instructions.md`
+- `skills/using-openharness/states/planning/instructions.md`
 - `skills/using-openharness/states/verifying/instructions.md`
-- `skills/using-openharness/references/templates/task-package.verification-design.md`
+- `skills/using-openharness/references/templates/task-package.plan.md`
 - `skills/using-openharness/references/templates/task-package.evidence.md`
 - `docs/anti-patterns/skill-writing.md`
 - 如实施阶段修改：`tests/openharness_cases/test_protocol_docs.py`
@@ -77,13 +77,13 @@ OpenHarness 需要让 AI 协作者在文档类任务中区分稳定文本契约�
 
 | 审核对象 | 审核维度 | 通过标准 | 证据要求 |
 |----------|----------|----------|----------|
-| `verification-designing/instructions.md` | 阶段边界 | 明确 `verify_by` 由需求阶段确定；本阶段只校验一致性并设计路径 | 指出对应段落，并说明是否存在“重新选择验证方式”的误导 |
-| `verification-designing/instructions.md` | 字符级断言边界 | 清楚区分稳定文本契约和自然语言语义 | 列出文档中“可断言”和“不可断言”规则是否完整 |
-| `verification-designing/instructions.md` | 定性审核计划 | 要求写审核交接包、审核矩阵和非审核范围 | 检查是否足以指导后续 `verification-design.md` |
+| `planning/instructions.md` | 阶段边界 | 明确 `verify_by` 由需求阶段确定；本阶段只校验一致性并设计路径 | 指出对应段落，并说明是否存在“重新选择验证方式”的误导 |
+| `planning/instructions.md` | 字符级断言边界 | 清楚区分稳定文本契约和自然语言语义 | 列出文档中“可断言”和“不可断言”规则是否完整 |
+| `planning/instructions.md` | 定性审核计划 | 要求写审核交接包、审核矩阵和非审核范围 | 检查是否足以指导后续 `plan.md` |
 | `verifying/instructions.md` | 子智能体交接 | 要求把审核对象、目标、矩阵、输出格式完整交给子智能体 | 检查是否避免“帮我看一下”式模糊交接 |
 | `verifying/instructions.md` | 人工反馈 | 要求人工逐项反馈同意、异议或补充 | 检查是否禁止只有整体同意就通过 |
 | `verifying/instructions.md` | 分歧处理 | 明确人工意见优先，并记录拒绝子智能体发现的理由 | 检查证据写回规则是否闭合 |
-| `task-package.verification-design.md` | 模板结构 | 为 `qualitative` 提供审核交接包和审核矩阵填写位置 | 检查模板不是只写抽象提醒 |
+| `task-package.plan.md` | 模板结构 | 为 `qualitative` 提供审核交接包和审核矩阵填写位置 | 检查模板不是只写抽象提醒 |
 | `task-package.evidence.md` | 证据结构 | 能记录交接包摘要、子智能体发现、人工反馈、采纳/拒绝理由、残余风险 | 检查 evidence 能对应审核矩阵 |
 | `docs/anti-patterns/skill-writing.md` | 反模式覆盖 | 覆盖文档默认 pytest、脆弱字符断言、定性审核交接不完整 | 检查反模式有错误特征、问题原因和正确做法 |
 | `test_protocol_docs.py` | 测试边界 | 如有测试，只断言稳定文本契约，不断言自然语言语义 | 检查是否存在完整自然语言句子断言 |
@@ -109,7 +109,7 @@ OpenHarness 需要让 AI 协作者在文档类任务中区分稳定文本契约�
 
 | 需求交付物 | 验证方法 | 预期证据 |
 |------------|----------|----------|
-| 更新验证策略相关技能说明 | 审核矩阵检查 `verification-designing/instructions.md` 和 `verifying/instructions.md` | 子智能体和人工逐项确认阶段职责、交接和写回规则 |
+| 更新验证策略相关技能说明 | 审核矩阵检查 `planning/instructions.md` 和 `verifying/instructions.md` | 子智能体和人工逐项确认阶段职责、交接和写回规则 |
 | 补充字符级断言适用规则 | 审核矩阵检查“可断言/不可断言”边界 | 发现记录中列明规则是否完整、是否有误导 |
 | 补充自然语言定性审核交接方法 | 审核矩阵检查交接包字段和输出格式 | evidence 记录交接包摘要和审核结论 |
 | 补充审核结果写回要求 | 审核矩阵检查 `task-package.evidence.md` 和 `verifying/instructions.md` | evidence 能记录子智能体、人工反馈、分歧处理 |
@@ -136,7 +136,7 @@ OpenHarness 需要让 AI 协作者在文档类任务中区分稳定文本契约�
 
 验证失败时：
 
-- 发现协议文档仍暗示 `verification-designing` 可以重新选择 `verify_by`：回到 `implementing` 修正文档。
-- 审核交接包不足以执行：回到 `verification_designing` 修正本文件。
+- 发现协议文档仍暗示 `planning` 可以重新选择 `verify_by`：回到 `implementing` 修正文档。
+- 审核交接包不足以执行：回到 `planning` 修正本文件。
 - 子智能体或人工指出规则不可执行：回到 `implementing` 修正文档。
 - 人工反馈缺失：不能进入 `verified`。

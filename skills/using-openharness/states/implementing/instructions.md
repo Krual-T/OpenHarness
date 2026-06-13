@@ -6,7 +6,7 @@
 
 | 场景 | 行为 |
 |------|------|
-| 从 `verification_designed` 首次进入 | 完整流程（下方 Think Before Coding → 阶段结束检查） |
+| 从 `planned` 首次进入 | 完整流程（下方 Think Before Coding → 阶段结束检查） |
 | 从 `verifying` 回退 | 增量修复——声明本轮增量目标，仅验证失败项 + 已有通过项不退化 |
 
 增量修复模式：读取 `evidence.md` 中上一次验证失败的条目 → 明确本轮只修什么 → 只跑相关验证命令 → 追加 evidence.md。不需要重新过 Think Before Coding / Simplicity First / Surgical Changes，除非失败根因是设计问题。
@@ -62,7 +62,7 @@
 
 **RED → GREEN → REFACTOR**：
 
-1. **RED**：运行 `verification-design.md` 中声明的验证命令，亲眼看到失败
+1. **RED**：运行 `plan.md` 中声明的验证命令，亲眼看到失败
 2. **GREEN**：聚焦实现，使测试通过
 3. **REFACTOR**：消除重复、提取函数、改善结构，保持测试全绿
 
@@ -78,7 +78,7 @@
 {% elif verification_method == "qualitative" %}
 ### qualitative — 逐项写、逐项确认完成
 
-- 打开 `verification-design.md` 中的审核矩阵，了解有哪些审核对象
+- 打开 `plan.md` 中的审核矩阵，了解有哪些审核对象
 - 按审核对象逐项写：写完一个 → 确认内容非空、格式正确 → 继续下一个
 - 每轮循环：写 → 确认完整性，直到所有审核对象覆盖完毕
 - 不在这里做正确性判定——那是 verifying 阶段的职责
@@ -92,7 +92,7 @@
 {% if rwp_enabled == "true" %}
 ### RWP 附加运行时验证
 
-- 在主要验证方法通过后，运行 `verification-design.md` 中声明的工作流命令
+- 在主要验证方法通过后，运行 `plan.md` 中声明的工作流命令
 - 确认工作流退出码为 0、stderr 无异常报错
 - 工作流异常 → 修正 → 重复
 - 输出语义是否正确留给 verifying 阶段判定——本阶段只看退出码和 stderr
@@ -135,7 +135,7 @@
 ## 阶段结束检查
 
 {% if verification_method == "unit_test" %}
-1. 所有 `verification-design.md` 中声明的验证命令是否全部通过？
+1. 所有 `plan.md` 中声明的验证命令是否全部通过？
 2. `evidence.md` 是否存在且中间事实非空？
 3. 变更文件是否已全部列出？
 
@@ -173,7 +173,7 @@
 
 ## 重入指南
 
-- 从 `verification_designed` 首次进入 → 完整流程（入口分流 → 阶段结束检查）
+- 从 `planned` 首次进入 → 完整流程（入口分流 → 阶段结束检查）
 - 从 `verifying` 回退 → 先声明增量目标（"上次失败的是 X，本轮只验证 X 是否修复 + 已有通过的 Y 不退化"），再进入 Goal-Driven Execution。不需要重新过 Think Before Coding / Simplicity First / Surgical Changes，除非失败根因是设计问题
 - 从 `detailed_designing` 回退 → 按 detailed-design 技能的重入指南操作，不在本阶段处理
 
@@ -181,7 +181,7 @@
 
 - 四项准则（Think Before Coding、Simplicity First、Surgical Changes、Goal-Driven Execution）不是建议——是实现阶段的硬约束
 - evidence.md 只写事实，不写评价
-- 如果验证失败且不是代码问题，回到 `verification-design.md` 修正验证策略
+- 如果验证失败且不是代码问题，回到 `plan.md` 修正计划
 - 不要等全部实现完成再补 evidence.md——每轮循环写完立即追加
 - 并行调度是横切策略，可在本阶段自行选择使用
 {% if verification_method == "unit_test" %}
@@ -196,7 +196,7 @@
 ## 与相邻文档的边界
 
 - implementing 写"中间事实"：变更文件、执行的命令、退出码、输出摘要。不写最终通过/失败结论
-- `verification-design.md` 写"验证计划"：什么命令、期望退出码、期望输出。implementing 消费它，不修改它
+- `plan.md` 写"验证设计"：什么命令、期望退出码、期望输出。implementing 消费它，不修改它
 - `verifying` 写"最终结论"：验证结果、残余风险、后续事项。如果你已经开始写这些，说明越界了
 - 不要在这里讨论设计方案——那在 `overview-design.md` 和 `detailed-design.md` 里
 
@@ -210,11 +210,11 @@
 | qualitative 任务照搬 TDD 循环 | 没有测试可跑，RED 阶段空转或编造测试 | 确认 `verification.method`，切换到 qualitative 执行循环 |
 | rwp 任务跳过单元测试直接跑工作流 | 工作流通过但代码单元逻辑可能有 bug——工作流覆盖的是端到端路径，不是边界和错误分支 | 先运行单元测试命令，全部通过后再跑工作流 |
 | rwp 任务在单元测试上照搬完整 TDD 循环 | 工作流部分没有 RED 阶段，要求工作流也 RED 会导致空转 | 单元测试部分做 RED → GREEN，工作流部分只验证退出码和 stderr |
-| RED 阶段命令本身无法运行（文件不存在、import 错误） | 验证基础设施未就绪，不是被测代码的问题 | 回到 `verification-design.md` 修正命令路径或依赖 |
+| RED 阶段命令本身无法运行（文件不存在、import 错误） | 验证基础设施未就绪，不是被测代码的问题 | 回到 `plan.md` 修正命令路径或依赖 |
 | RED 阶段失败原因与预期不符（测试报错而不是 assertion failure） | 测试代码有 bug | 修复测试，仍在 RED 阶段 |
 | GREEN 阶段多个循环后仍无法让测试通过 | 设计有缺陷，或需求不可实现 | 回到 `detailed-design.md` 或 `requirements.md` |
 | REFACTOR 后原先通过的测试变红 | 重构引入了回归 | 回滚最近一次重构，小步重做 |
-| 所有验证通过，但发现遗漏场景 | 验证策略覆盖不足 | 回到 `verification-design.md` 补充验证命令 |
+| 所有验证通过，但发现遗漏场景 | 计划覆盖不足 | 回到 `plan.md` 补充验证命令 |
 
 ## 反合理化
 

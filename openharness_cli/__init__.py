@@ -23,8 +23,9 @@ from .models import (
 )
 from .workflows import (
     ACTIVE_STATUSES,
-    STANDARD_WORKFLOW,
     MECHANICAL_WORKFLOW,
+    STANDARD_WORKFLOW,
+    STRUCTURAL_WORKFLOW,
     workflow_for,
 )
 from .core import (
@@ -53,7 +54,7 @@ __all__ = [
     "TaskStatus", "TaskType", "VerificationMethod", "DesignReviewMode",
     "CollaborationInfo", "VerificationInfo",
     "Workflow", "TaskInfo", "parse_status",
-    "STANDARD_WORKFLOW", "MECHANICAL_WORKFLOW", "workflow_for",
+    "MECHANICAL_WORKFLOW", "STANDARD_WORKFLOW", "STRUCTURAL_WORKFLOW", "workflow_for",
     # Backward-compat
     "ACTIVE_STATUSES", "ALL_STATUS_VALUES",
     # Models

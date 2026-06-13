@@ -35,7 +35,7 @@ def test_create_task_package_quotes_yaml_sensitive_status_fields(tmp_path: Path)
         "task-package.requirements.md",
         "task-package.overview-design.md",
         "task-package.detailed-design.md",
-        "task-package.verification-design.md",
+        "task-package.plan.md",
         "task-package.evidence.md",
     ):
         (template_root / name).write_text("x\n", encoding="utf-8")

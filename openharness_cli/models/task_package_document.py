@@ -18,9 +18,9 @@ class TaskPackageDocument(StrEnum):
         "## 决策闭合", "## 错误处理", "## 迁移说明",
         "## 反思",
     ))
-    VERIFICATION_DESIGN = ("verification-design.md", False, (
-        "## 验证路径", "## 必需命令", "## 预期结果",
-        "## 可追溯性", "## 风险接受",
+    PLAN = ("plan.md", False, (
+        "## 实施步骤", "## 验证设计", "## 完成判定",
+        "## 风险接受",
     ))
     EVIDENCE = ("evidence.md", False, (
         "## 验证结果", "## 文件", "## 残余风险",

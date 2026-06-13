@@ -6,9 +6,9 @@
 
 本轮覆盖 OpenHarness 协议中与文档验证相关的说明面：
 
-- `skills/using-openharness/states/verification-designing/instructions.md`：负责消费需求阶段已确认的 `verify_by`，检查验证方式与验证对象是否冲突，并补上字符级断言边界和定性审核交接包要求。
+- `skills/using-openharness/states/planning/instructions.md`：负责消费需求阶段已确认的 `verify_by`，检查验证方式与验证对象是否冲突，并补上字符级断言边界和定性审核交接包要求。
 - `skills/using-openharness/states/verifying/instructions.md`：负责执行和判定验证，应补上自然语言审核的交接、人工反馈、分歧处理和写回证据规则。
-- `skills/using-openharness/references/templates/task-package.verification-design.md`：负责生成任务包验证计划，应给 `qualitative` 审核矩阵和交接包预留稳定填写位置。
+- `skills/using-openharness/references/templates/task-package.plan.md`：负责生成任务包验证计划，应给 `qualitative` 审核矩阵和交接包预留稳定填写位置。
 - `skills/using-openharness/references/templates/task-package.evidence.md`：负责记录验证证据，应能容纳子智能体审核、人工反馈、采纳或拒绝理由、残余风险。
 - `docs/anti-patterns/skill-writing.md`：负责记录技能与模板写作反模式，应补充文档验证相关反模式。
 
@@ -18,9 +18,9 @@
 
 推荐方案是在现有 `qualitative` 验证路径内补充两层规则，而不是新增验证类型。
 
-第一层是验证方式一致性检查。`verify_by` 在需求阶段已经确定；`verification-designing` 不重新选择验证方式，只检查已确认的 `verify_by` 是否和验证对象匹配。若 `verify_by: qualitative`，验证计划应落到语义审核交接包；若任务实际需要验证稳定文本契约、机器入口、复制执行内容或已知回归哨点，应回退需求阶段重新确认是否需要 `unit_test` 或混合验证说明。这个检查发生在写 `verification-design.md` 前，避免后续把自然语言审核计划写成默认 `pytest`。
+第一层是验证方式一致性检查。`verify_by` 在需求阶段已经确定；`planning` 不重新选择验证方式，只检查已确认的 `verify_by` 是否和验证对象匹配。若 `verify_by: qualitative`，验证计划应落到语义审核交接包；若任务实际需要验证稳定文本契约、机器入口、复制执行内容或已知回归哨点，应回退需求阶段重新确认是否需要 `unit_test` 或混合验证说明。这个检查发生在写 `plan.md` 前，避免后续把自然语言审核计划写成默认 `pytest`。
 
-第二层是定性审核交接。`verification-design.md` 应要求写出审核交接包，至少包含审核对象、任务背景、审核目标、审核矩阵、非审核范围和输出格式。`verifying` 阶段按交接包启动子智能体审核，再把子智能体结论交给人工审阅者逐项反馈，最后由主 Agent 把采纳项、拒绝项、分歧和残余风险写入 `evidence.md`。
+第二层是定性审核交接。`plan.md` 应要求写出审核交接包，至少包含审核对象、任务背景、审核目标、审核矩阵、非审核范围和输出格式。`verifying` 阶段按交接包启动子智能体审核，再把子智能体结论交给人工审阅者逐项反馈，最后由主 Agent 把采纳项、拒绝项、分歧和残余风险写入 `evidence.md`。
 
 责任边界如下：
 
@@ -33,16 +33,16 @@
 
 主流程如下：
 
-1. 任务进入 `verification_designing` 后，Agent 读取需求阶段已确认的 `verify_by`。
+1. 任务进入 `planning` 后，Agent 读取需求阶段已确认的 `verify_by`。
 2. Agent 检查 `verify_by` 与验证对象是否一致。稳定文本契约、机器入口、复制执行内容、已知回归哨点可以由 `unit_test` 或混合验证说明覆盖；自然语言语义、清晰度、设计正确性、协议意图应由 `qualitative` 覆盖。
-3. 如果发现当前 `verify_by` 与验证对象冲突，Agent 回退需求阶段修正 `task-info.yaml`，而不是在 `verification-designing` 阶段临时改口。
-4. 对于已确认的 `verify_by: qualitative`，Agent 在 `verification-design.md` 写出审核交接包。
+3. 如果发现当前 `verify_by` 与验证对象冲突，Agent 回退需求阶段修正 `task-info.yaml`，而不是在 `planning` 阶段临时改口。
+4. 对于已确认的 `verify_by: qualitative`，Agent 在 `plan.md` 写出审核交接包。
 5. 任务进入 `verifying` 后，Agent 按交接包启动子智能体审核，要求按审核矩阵逐项输出结构化发现。
 6. Agent 将子智能体结论呈现给人工审阅者，要求人工逐项反馈同意、异议或补充。
 7. Agent 汇总两方结论。人工意见优先；子智能体发现被拒绝时记录拒绝理由；未处理问题写入残余风险或后续事项。
 8. `evidence.md` 记录最终结论和覆盖关系。
 
-关键失败信号包括：`verification-design.md` 没有审核矩阵、审核标准不可判定、子智能体只给整体感受、人工反馈没有逐项对应、主 Agent 用自己的判断替代两方审核、对自然语言语义新增脆弱字符断言。
+关键失败信号包括：`plan.md` 没有审核矩阵、审核标准不可判定、子智能体只给整体感受、人工反馈没有逐项对应、主 Agent 用自己的判断替代两方审核、对自然语言语义新增脆弱字符断言。
 
 本轮不需要运行时验证。已执行 `uv run openharness rwp list`，结果为 `No runtime workflow packages found.`；该缺口不影响本轮，因为目标是协议文档与审核方法。
 
@@ -52,7 +52,7 @@
 
 - 已确认不新增 `verify_by` 枚举，不改 CLI 状态机。
 - 已确认字符级断言只覆盖稳定文本契约、机器入口、复制执行内容和已知回归哨点。
-- 已确认 `verification-designing` 只消费和校验需求阶段确定的 `verify_by`，不重新选择验证方式。
+- 已确认 `planning` 只消费和校验需求阶段确定的 `verify_by`，不重新选择验证方式。
 - 已确认自然语言语义审核在 `verify_by: qualitative` 下不能用 `pytest` 或普通关键词断言替代。
 - 已确认审核交接包的核心字段：审核对象、任务背景、审核目标、审核矩阵、非审核范围、输出格式。
 - 已确认 `evidence.md` 需要记录子智能体结论、人工反馈、分歧处理、采纳或拒绝理由、残余风险。

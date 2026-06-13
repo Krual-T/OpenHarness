@@ -9,4 +9,7 @@ collaboration:
   task_type: structural
   design_review_mode: stepwise
 verification:
-  verify_by: qualitative
+  method: qualitative
+  rwp:
+    enabled: false
+    reason: "本任务验证文档语义和审核交接规则，不需要运行时工作流证据。"

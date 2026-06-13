@@ -52,7 +52,7 @@ def _write_minimal_openharness_repo(repo_root: Path) -> None:
         "task-package.requirements.md": "req\n",
         "task-package.overview-design.md": "overview\n",
         "task-package.detailed-design.md": "detailed\n",
-        "task-package.verification-design.md": "verify\n",
+        "task-package.plan.md": "plan\n",
         "task-package.evidence.md": "evidence\n",
     }.items():
         (repo_root / "skills" / "using-openharness" / "references" / "templates" / name).write_text(
@@ -259,7 +259,7 @@ def test_validate_task_package_rejects_unknown_status_but_allows_stale_entrypoin
         TaskPackageDocument.REQUIREMENTS,
         TaskPackageDocument.OVERVIEW_DESIGN,
         TaskPackageDocument.DETAILED_DESIGN,
-        TaskPackageDocument.VERIFICATION_DESIGN,
+        TaskPackageDocument.PLAN,
         TaskPackageDocument.EVIDENCE,
     ):
         doc.path_from(root).write_text("x\n", encoding="utf-8")
@@ -493,7 +493,7 @@ def test_create_task_package_from_templates(tmp_path: Path) -> None:
         "task-package.requirements.md": "req\n",
         "task-package.overview-design.md": "overview\n",
         "task-package.detailed-design.md": "detail\n",
-        "task-package.verification-design.md": "verify\n",
+        "task-package.plan.md": "plan\n",
         "task-package.evidence.md": "evidence\n",
     }.items():
         (template_root / file_name).write_text(content, encoding="utf-8")
@@ -511,7 +511,7 @@ def test_create_task_package_from_templates(tmp_path: Path) -> None:
     assert TaskPackageDocument.REQUIREMENTS.path_from(task_root).exists()
     assert not TaskPackageDocument.OVERVIEW_DESIGN.path_from(task_root).exists()
     assert not TaskPackageDocument.DETAILED_DESIGN.path_from(task_root).exists()
-    assert not TaskPackageDocument.VERIFICATION_DESIGN.path_from(task_root).exists()
+    assert not TaskPackageDocument.PLAN.path_from(task_root).exists()
     assert not TaskPackageDocument.EVIDENCE.path_from(task_root).exists()
     status = load_yaml(TaskPackageDocument.TASK_INFO.path_from(task_root))
     assert status["id"] == task_id
@@ -535,7 +535,7 @@ def test_key_repo_skills_are_vendored_locally() -> None:
         "proposing",
         "exploring-solution-space",
         "detailed-design",
-        "verification-designing",
+        "planning",
         "implementing",
         "verifying",
     ]:

@@ -59,7 +59,7 @@ openharness task-package transition <task-name>|<task-id> <完成态>
 | `proposing` | `requirements_designed` |
 | `overview_designing` | `overview_designed` |
 | `detailed_designing` | `detailed_designed` |
-| `verification_designing` | `verification_designed` |
+| `planning` | `planned` |
 | `implementing` | `implemented` |
 | `verifying` | `verified` |
 
