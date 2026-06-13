@@ -345,3 +345,35 @@ def test_task_package_templates_default_to_chinese_narrative_and_headings() -> N
     assert "### 审核矩阵" in plan
     assert "### 审核交接包摘要" in evidence
     assert "## 残余风险" in evidence
+
+def test_planning_instructions_render_by_task_type_and_focus_on_execution_plan() -> None:
+    text = (
+        REPO_ROOT
+        / "skills"
+        / "using-openharness"
+        / "states"
+        / "planning"
+        / "instructions.md"
+    ).read_text(encoding="utf-8")
+
+    assert "校验任务类型" not in text
+    assert '{% if task_type == "standard" %}' in text
+    assert '{% elif task_type == "structural" %}' in text
+    assert "当前任务是 `standard`" in text
+    assert "当前任务是 `structural`" in text
+    assert "轻量实现设计" in text
+    assert "本阶段消费 `requirements.md`、`overview-design.md` 和 `detailed-design.md`" in text
+    assert "不要重新讨论模块边界" in text
+
+    for heading in (
+        "目标与上下文",
+        "输入文档",
+        "实施步骤",
+        "文件修改计划",
+        "验证设计",
+        "进度记录",
+        "决策与发现",
+        "风险接受",
+        "完成判定",
+    ):
+        assert heading in text

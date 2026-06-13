@@ -1,0 +1,15 @@
+id: TASK-026
+title: Planning Instructions Methodology Fix
+status: archived
+summary: 修正 planning 阶段提示词的方法论，让 plan.md 作为实现计划按任务类型消费前置文档。
+owner: Shaokun.Tang
+created_at: '2026-06-13'
+updated_at: '2026-06-13'
+collaboration:
+  task_type: standard
+  design_review_mode: auto
+verification:
+  method: unit_test
+  rwp:
+    enabled: false
+    reason: 本任务只修正 live skill 指令和协议文档测试，不需要运行时工作流证据。
