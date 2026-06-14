@@ -1,0 +1,15 @@
+id: TASK-030
+title: Implementing Progress Sync
+status: archived
+summary: 让 implementing 阶段提示词要求环境任务工具进度与 plan.md 实施步骤同步更新。
+owner: Shaokun.Tang
+created_at: '2026-06-14'
+updated_at: '2026-06-14'
+collaboration:
+  task_type: structural
+  design_review_mode: auto
+verification:
+  method: qualitative
+  rwp:
+    enabled: false
+    reason: 本轮修改的是阶段提示词语义，不需要运行时工作流证据；通过定性审核确认规则是否清楚、可执行且跨环境。
