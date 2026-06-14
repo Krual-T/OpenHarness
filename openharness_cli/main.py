@@ -67,17 +67,41 @@ def _run_sync_command(command_parts: list[str], source: Path) -> bool:
     return False
 
 
-def _run_update() -> None:
+def _is_dev_source_update(args: list[str]) -> bool:
+    if "--dev-source" in args:
+        return True
+    for index, value in enumerate(args):
+        if value == "--mode" and index + 1 < len(args):
+            return args[index + 1] == "dev-source"
+        if value == "--mode=dev-source":
+            return True
+    return False
+
+
+def _force_sync(source: Path) -> None:
+    for command_parts in (["git", "fetch", "--prune"], ["git", "reset", "--hard", "@{u}"]):
+        if not _run_sync_command(command_parts, source):
+            print(
+                f"ERROR: force sync failed at `{' '.join(command_parts)}` after "
+                f"{SYNC_RETRY_ATTEMPTS} attempts; refusing to continue with tool upgrade.",
+                flush=True,
+            )
+            sys.exit(1)
+    print(f"Force-synchronized OpenHarness source clone from {source}", flush=True)
+
+
+def _run_update(args: list[str] | None = None) -> None:
     source = _find_source_root()
+    update_args = args or []
     print(f"OpenHarness source: {source}", flush=True)
-    if not _run_sync_command(["git", "pull"], source):
-        print(
-            f"ERROR: git pull failed after {SYNC_RETRY_ATTEMPTS} attempts; "
-            "refusing to continue with tool upgrade.",
-            flush=True,
-        )
-        sys.exit(1)
+    dev_source = _is_dev_source_update(update_args)
+    if not dev_source:
+        _force_sync(source)
     subprocess.run(["uv", "tool", "upgrade", "--reinstall", "openharness"], cwd=source)
+    if dev_source:
+        print(f"Reinstalled OpenHarness from local dev source {source}", flush=True)
+    else:
+        print(f"Updated OpenHarness from {source}", flush=True)
 
 
 try:
@@ -89,7 +113,7 @@ except ModuleNotFoundError:
 def main() -> None:
     if app is None:
         if len(sys.argv) >= 2 and sys.argv[1] == "update":
-            _run_update()
+            _run_update(sys.argv[2:])
             return
         print(
             "ERROR: missing dependencies. Run `openharness update` to reinstall.",

@@ -12,8 +12,8 @@ from ..core import load_yaml, write_yaml
 
 
 class UpdateMode(StrEnum):
-    PULL = "pull"
     FORCE_SYNC = "force-sync"
+    DEV_SOURCE = "dev-source"
 
 
 SYNC_RETRY_ATTEMPTS = 3
@@ -93,16 +93,35 @@ def _run_sync_command(command_parts: list[str], repo_root: Path) -> bool:
     return False
 
 
+def _parse_update_mode(value: str) -> UpdateMode:
+    try:
+        return UpdateMode(str(value).strip())
+    except ValueError:
+        print(f"ERROR: invalid update mode `{value}`; expected `force-sync` or `dev-source`")
+        raise typer.Exit(code=1)
+
+
+def _force_sync(repo_root: Path) -> None:
+    for command_parts in (["git", "fetch", "--prune"], ["git", "reset", "--hard", "@{u}"]):
+        if not _run_sync_command(command_parts, repo_root):
+            print(
+                f"ERROR: force sync failed at `{' '.join(command_parts)}` after "
+                f"{SYNC_RETRY_ATTEMPTS} attempts; refusing to continue with tool upgrade."
+            )
+            raise typer.Exit(code=1)
+    print(f"Force-synchronized OpenHarness source clone from {repo_root}")
+
+
 def update(
-    force_sync: bool = typer.Option(False, "--force-sync", help="Discard local changes and reset to upstream branch"),
-    mode: str | None = typer.Option(None, "--mode", help="Override saved default update mode (pull / force-sync)"),
-    set_default_mode: str | None = typer.Option(None, "--set-default-mode", help="Save default update mode and exit (pull / force-sync)"),
+    force_sync: bool = typer.Option(False, "--force-sync", help="Discard local changes and reset the managed source clone to upstream"),
+    mode: str | None = typer.Option(None, "--mode", help="Override saved default update mode (force-sync / dev-source)"),
+    set_default_mode: str | None = typer.Option(None, "--set-default-mode", help="Save default update mode and exit (force-sync / dev-source)"),
 ) -> None:
     """Update the OpenHarness clone and refresh the installed CLI tool."""
     repo_root = _openharness_source_root()
 
     if set_default_mode:
-        m = UpdateMode(str(set_default_mode))
+        m = _parse_update_mode(set_default_mode)
         settings_path = _project_settings_path(repo_root)
         data = load_yaml(settings_path) if settings_path.exists() else {}
         update_settings = data.setdefault("update", {})
@@ -115,49 +134,30 @@ def update(
         print(f"Default update mode set to `{m.value}` in {settings_path}")
         return
 
-    # Resolve update mode
     if force_sync:
         update_mode = UpdateMode.FORCE_SYNC
     elif mode is not None:
-        update_mode = UpdateMode(str(mode))
+        update_mode = _parse_update_mode(mode)
     else:
         settings_path = _project_settings_path(repo_root)
         if settings_path.exists():
             data = load_yaml(settings_path)
             configured = (data.get("update") or {}).get("default_mode")
             if configured:
-                try:
-                    update_mode = UpdateMode(str(configured).strip())
-                except ValueError:
-                    print(
-                        f"ERROR: invalid default update mode `{configured}` in {settings_path}; "
-                        f"expected `pull` or `force-sync`"
-                    )
-                    raise typer.Exit(code=1)
+                update_mode = _parse_update_mode(str(configured))
             else:
-                update_mode = UpdateMode.PULL
+                update_mode = UpdateMode.FORCE_SYNC
         else:
-            update_mode = UpdateMode.PULL
+            update_mode = UpdateMode.FORCE_SYNC
 
     if update_mode is UpdateMode.FORCE_SYNC:
-        for command_parts in (["git", "fetch", "--prune"], ["git", "reset", "--hard", "@{u}"]):
-            if not _run_sync_command(command_parts, repo_root):
-                print(
-                    f"ERROR: force sync failed at `{' '.join(command_parts)}` after "
-                    f"{SYNC_RETRY_ATTEMPTS} attempts; refusing to continue with tool upgrade."
-                )
-                raise typer.Exit(code=1)
-        print(f"Force-synchronized OpenHarness source clone from {repo_root}")
-    elif update_mode is UpdateMode.PULL:
-        if not _run_sync_command(["git", "pull"], repo_root):
-            print(
-                f"ERROR: git pull failed after {SYNC_RETRY_ATTEMPTS} attempts; "
-                "refusing to continue with tool upgrade."
-            )
-            raise typer.Exit(code=1)
+        _force_sync(repo_root)
 
     upgrade_result = subprocess.run(["uv", "tool", "upgrade", "--reinstall", "openharness"], cwd=repo_root).returncode
     if upgrade_result != 0:
         print("ERROR: `uv tool upgrade --reinstall openharness` failed.")
         raise typer.Exit(code=1)
-    print(f"Updated OpenHarness from {repo_root}")
+    if update_mode is UpdateMode.DEV_SOURCE:
+        print(f"Reinstalled OpenHarness from local dev source {repo_root}")
+    else:
+        print(f"Updated OpenHarness from {repo_root}")

@@ -301,32 +301,33 @@ def test_update_uses_installed_openharness_source_root(tmp_path: Path, monkeypat
 
     assert result.exit_code == 0
     assert calls == [
-        (("git", "pull"), source_root),
+        (("git", "fetch", "--prune"), source_root),
+        (("git", "reset", "--hard", "@{u}"), source_root),
         (("uv", "tool", "upgrade", "--reinstall", "openharness"), source_root),
     ]
     assert f"Updated OpenHarness from {source_root}" in result.stdout
 
 
-def test_update_retries_pull_and_reports_failures(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_update_retries_default_force_sync_and_reports_failures(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     project_root = tmp_path / "project"
     project_root.mkdir()
     source_root = tmp_path / "openharness-source"
     source_root.mkdir()
     update_module = importlib.import_module("openharness_cli.commands.update")
     calls: list[tuple[str, ...]] = []
-    pull_attempts = 0
+    fetch_attempts = 0
 
     def fake_run(command_parts, cwd=None, capture_output=False, text=False):
-        nonlocal pull_attempts
+        nonlocal fetch_attempts
         calls.append(tuple(command_parts))
-        if command_parts == ["git", "pull"]:
-            pull_attempts += 1
-            if pull_attempts < 3:
+        if command_parts == ["git", "fetch", "--prune"]:
+            fetch_attempts += 1
+            if fetch_attempts < 3:
                 return subprocess.CompletedProcess(
                     command_parts,
                     128,
-                    stdout=f"out {pull_attempts}",
-                    stderr=f"err {pull_attempts}",
+                    stdout=f"out {fetch_attempts}",
+                    stderr=f"err {fetch_attempts}",
                 )
         return subprocess.CompletedProcess(command_parts, 0, stdout="", stderr="")
 
@@ -337,18 +338,19 @@ def test_update_retries_pull_and_reports_failures(tmp_path: Path, monkeypatch: p
 
     assert result.exit_code == 0
     assert calls == [
-        ("git", "pull"),
-        ("git", "pull"),
-        ("git", "pull"),
+        ("git", "fetch", "--prune"),
+        ("git", "fetch", "--prune"),
+        ("git", "fetch", "--prune"),
+        ("git", "reset", "--hard", "@{u}"),
         ("uv", "tool", "upgrade", "--reinstall", "openharness"),
     ]
-    assert "Attempt 1/3 failed for `git pull`" in result.stdout
+    assert "Attempt 1/3 failed for `git fetch --prune`" in result.stdout
     assert "stderr: err 1" in result.stdout
-    assert "Attempt 2/3 failed for `git pull`" in result.stdout
+    assert "Attempt 2/3 failed for `git fetch --prune`" in result.stdout
     assert f"Updated OpenHarness from {source_root}" in result.stdout
 
 
-def test_update_stops_after_three_pull_failures(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_update_stops_after_three_default_sync_failures(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     project_root = tmp_path / "project"
     project_root.mkdir()
     source_root = tmp_path / "openharness-source"
@@ -366,11 +368,15 @@ def test_update_stops_after_three_pull_failures(tmp_path: Path, monkeypatch: pyt
     result = runner.invoke(app, ["--repo", str(project_root), "update"])
 
     assert result.exit_code == 1
-    assert calls == [("git", "pull"), ("git", "pull"), ("git", "pull")]
-    assert "Attempt 3/3 failed for `git pull`" in result.stdout
+    assert calls == [
+        ("git", "fetch", "--prune"),
+        ("git", "fetch", "--prune"),
+        ("git", "fetch", "--prune"),
+    ]
+    assert "Attempt 3/3 failed for `git fetch --prune`" in result.stdout
     assert "stdout: pull out" in result.stdout
     assert "stderr: pull err" in result.stdout
-    assert "ERROR: git pull failed after 3 attempts; refusing to continue with tool upgrade." in result.stdout
+    assert "ERROR: force sync failed at `git fetch --prune` after 3 attempts; refusing to continue with tool upgrade." in result.stdout
 
 
 def test_update_retries_force_sync_commands(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -405,6 +411,71 @@ def test_update_retries_force_sync_commands(tmp_path: Path, monkeypatch: pytest.
     ]
     assert "Attempt 1/3 failed for `git fetch --prune`" in result.stdout
     assert "stderr: fetch err" in result.stdout
+
+
+def test_update_dev_source_skips_git_sync(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    project_root = tmp_path / "project"
+    project_root.mkdir()
+    source_root = tmp_path / "openharness-source"
+    source_root.mkdir()
+    update_module = importlib.import_module("openharness_cli.commands.update")
+    calls: list[tuple[str, ...]] = []
+
+    def fake_run(command_parts, cwd=None, capture_output=False, text=False):
+        calls.append(tuple(command_parts))
+        return subprocess.CompletedProcess(command_parts, 0, stdout="", stderr="")
+
+    monkeypatch.setattr(update_module.subprocess, "run", fake_run)
+    monkeypatch.setattr(update_module, "_source_root_from_installed_metadata", lambda: source_root)
+
+    result = runner.invoke(app, ["--repo", str(project_root), "update", "--mode", "dev-source"])
+
+    assert result.exit_code == 0
+    assert calls == [("uv", "tool", "upgrade", "--reinstall", "openharness")]
+    assert f"Reinstalled OpenHarness from local dev source {source_root}" in result.stdout
+
+
+def test_update_set_default_mode_accepts_dev_source(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    project_root = tmp_path / "project"
+    project_root.mkdir()
+    source_root = tmp_path / "openharness-source"
+    source_root.mkdir()
+    update_module = importlib.import_module("openharness_cli.commands.update")
+
+    monkeypatch.setattr(update_module, "_source_root_from_installed_metadata", lambda: source_root)
+
+    result = runner.invoke(app, ["--repo", str(project_root), "update", "--set-default-mode", "dev-source"])
+
+    assert result.exit_code == 0
+    settings_text = (source_root / ".harness" / "settings.yaml").read_text(encoding="utf-8")
+    assert "default_mode: dev-source" in settings_text
+
+
+def test_update_rejects_legacy_pull_default_mode(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    project_root = tmp_path / "project"
+    project_root.mkdir()
+    source_root = tmp_path / "openharness-source"
+    (source_root / ".harness").mkdir(parents=True)
+    (source_root / ".harness" / "settings.yaml").write_text(
+        "update:\n"
+        "  default_mode: pull\n",
+        encoding="utf-8",
+    )
+    update_module = importlib.import_module("openharness_cli.commands.update")
+    calls: list[tuple[str, ...]] = []
+
+    def fake_run(command_parts, cwd=None, capture_output=False, text=False):
+        calls.append(tuple(command_parts))
+        return subprocess.CompletedProcess(command_parts, 0, stdout="", stderr="")
+
+    monkeypatch.setattr(update_module.subprocess, "run", fake_run)
+    monkeypatch.setattr(update_module, "_source_root_from_installed_metadata", lambda: source_root)
+
+    result = runner.invoke(app, ["--repo", str(project_root), "update"])
+
+    assert result.exit_code == 1
+    assert calls == []
+    assert "ERROR: invalid update mode `pull`; expected `force-sync` or `dev-source`" in result.stdout
 
 
 def test_openharness_source_root_falls_back_to_module_repo(monkeypatch: pytest.MonkeyPatch) -> None:

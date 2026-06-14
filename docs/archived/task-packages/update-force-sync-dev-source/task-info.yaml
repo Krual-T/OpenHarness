@@ -1,0 +1,15 @@
+id: TASK-028
+title: Update Force Sync Dev Source
+status: archived
+summary: 将 openharness update 默认改为强制同步，并新增 dev-source 开发者模式。
+owner: Shaokun.Tang
+created_at: '2026-06-14'
+updated_at: '2026-06-14'
+collaboration:
+  task_type: standard
+  design_review_mode: auto
+verification:
+  method: unit_test
+  rwp:
+    enabled: false
+    reason: 本任务修改 CLI 更新命令的 subprocess 编排和文档说明，单元测试足够覆盖，不需要运行时工作流证据。

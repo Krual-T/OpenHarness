@@ -335,7 +335,8 @@ openharness rwp run <工作流> <脚本.py>
 | `openharness rwp view <工作流>` | 渐进式披露：二级详情 |
 | `openharness rwp run <工作流> <脚本>` | 执行运行时验证 |
 | `openharness init --agent <claude\|codex\|all>` | 在项目中部署控制论骨架 |
-| `openharness update` | 更新到最新版本 |
+| `openharness update` | 强制同步安装源码目录并更新到最新版本 |
+| `openharness update --mode dev-source` | 跳过 Git 同步，从当前开发源码重新安装 |
 
 ---
 

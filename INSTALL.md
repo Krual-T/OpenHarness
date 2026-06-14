@@ -113,24 +113,26 @@ openharness init --agent <claude|codex|all>
 openharness update
 ```
 
-此命令会更新 OpenHarness 克隆仓库并刷新 CLI 工具。技能通过符号链接自动保持最新。
+此命令会强制同步 OpenHarness 安装源码目录并刷新 CLI 工具。技能通过符号链接自动保持最新。
 
-如果需要强制同步（丢弃本地修改）：
+默认同步会执行 `git fetch --prune` 和 `git reset --hard @{u}`，会丢弃安装源码目录中的本地修改。这个目录应视为 OpenHarness 管理的安装缓存，不应作为开发工作区使用。
+
+如果你正在开发 OpenHarness 本仓库，只想把当前源码重新安装到全局工具中，使用开发源码模式：
 
 ```bash
-openharness update --force-sync
+openharness update --mode dev-source
 ```
 
-设为默认强制同步模式（推荐）：
+也可以把开发源码模式设为默认：
+
+```bash
+openharness update --set-default-mode dev-source
+```
+
+恢复默认强制同步模式：
 
 ```bash
 openharness update --set-default-mode force-sync
-```
-
-恢复默认拉取模式：
-
-```bash
-openharness update --set-default-mode pull
 ```
 
 ## 已有安装补充 CLI
