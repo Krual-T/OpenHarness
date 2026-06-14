@@ -1,11 +1,11 @@
 ---
 name: using-openharness
-description: OpenHarness SDD 任务包协作协议——代码修改、设计决策、bug 修复、新增功能时使用此流程。
+description: OpenHarness SDD 人机共生协作协议——代码修改、设计决策、bug 修复、新增功能时使用此流程。
 ---
 
 # using-openharness
 
-OpenHarness 是 SDD 驱动的任务包协作协议。具体阶段指令由 CLI 输出的阶段 instructions 接管。
+OpenHarness 是 SDD 驱动的人机共生协作协议。它把智能体定位为可问责的协作方：先和人共同收敛问题、挑战假设、记录取舍，再用证据验证结果；当需求不清、方案不成立或验证不足时，应直接提问、反驳或拒绝继续推进。具体阶段指令由 CLI 输出的阶段 instructions 接管。
 
 ## 任务包边界
 
