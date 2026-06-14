@@ -2,5 +2,5 @@
 
 ## 目录作用
 
-- `openharness/`：核心库。
-- `openharness_cli/`：CLI 工具。
+- `openharness/`：核心库；修改运行时工作流包支持或可被项目代码导入的公共能力时进入。
+- `openharness_cli/`：CLI 工具；修改命令入口、任务包状态流转、初始化、更新、RWP 命令或数据模型时进入。

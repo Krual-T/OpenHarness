@@ -2,10 +2,10 @@
 
 ## 目录作用
 
-- `docs/task-packages/`：活跃任务包事实源。
-- `docs/archived/`：已归档的任务包和历史材料。
-- `docs/anti-patterns/`：反模式和自检清单。
-- `README.md`：项目中文概览与设计哲学。
-- `README.en.md`：项目英文概览。
-- `INSTALL.md`：安装说明。
-- `AGENTS.example.md`：示例协作入口文件。
+- `docs/task-packages/`：活跃任务包事实源；处理当前需求、设计、实现和验证时先读这里。
+- `docs/archived/`：已归档任务包和历史材料；追溯历史决策、验证证据和迁移背景时读这里，不作为当前任务事实源。
+- `docs/anti-patterns/`：反模式和自检清单；修改 skill、模板、仓库地图或文档协议前读这里。
+- `README.md`：项目中文概览与设计哲学；需要面向中文读者理解项目定位时读这里。
+- `README.en.md`：项目英文概览；需要英文说明或对照项目介绍时读这里。
+- `INSTALL.md`：安装说明；修改安装流程、更新说明或命令入口前读这里。
+- `AGENTS.example.md`：示例协作入口文件；调整初始化生成的协作入口示例时读这里。
