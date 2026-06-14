@@ -5,6 +5,10 @@ from pathlib import Path
 from urllib.parse import unquote, urlparse
 
 
+SYNC_RETRY_ATTEMPTS = 3
+OUTPUT_SNIPPET_LIMIT = 2000
+
+
 def _find_source_root() -> Path:
     """Locate the OpenHarness source clone without importing the package."""
     # 1) Try installed metadata (uv tool install from local path)
@@ -32,12 +36,47 @@ def _find_source_root() -> Path:
     return module_path.parents[2]
 
 
+def _snippet(value: str | None) -> str:
+    if not value:
+        return "(empty)"
+    stripped = value.strip()
+    if len(stripped) <= OUTPUT_SNIPPET_LIMIT:
+        return stripped
+    return f"{stripped[:OUTPUT_SNIPPET_LIMIT]}... [truncated]"
+
+
+def _run_sync_command(command_parts: list[str], source: Path) -> bool:
+    command_display = " ".join(command_parts)
+    for attempt in range(1, SYNC_RETRY_ATTEMPTS + 1):
+        result = subprocess.run(
+            command_parts,
+            cwd=source,
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode == 0:
+            return True
+
+        print(
+            f"Attempt {attempt}/{SYNC_RETRY_ATTEMPTS} failed for `{command_display}` "
+            f"in {source} (exit {result.returncode}).",
+            flush=True,
+        )
+        print(f"stdout: {_snippet(result.stdout)}", flush=True)
+        print(f"stderr: {_snippet(result.stderr)}", flush=True)
+    return False
+
+
 def _run_update() -> None:
     source = _find_source_root()
     print(f"OpenHarness source: {source}", flush=True)
-    result = subprocess.run(["git", "pull"], cwd=source)
-    if result.returncode != 0:
-        print("WARNING: git pull failed, continuing with tool upgrade anyway", flush=True)
+    if not _run_sync_command(["git", "pull"], source):
+        print(
+            f"ERROR: git pull failed after {SYNC_RETRY_ATTEMPTS} attempts; "
+            "refusing to continue with tool upgrade.",
+            flush=True,
+        )
+        sys.exit(1)
     subprocess.run(["uv", "tool", "upgrade", "--reinstall", "openharness"], cwd=source)
 
 

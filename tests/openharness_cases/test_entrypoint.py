@@ -44,7 +44,7 @@ def test_update_reinstalls_existing_tool_source(monkeypatch) -> None:
 
     calls: list[tuple[list[str], str]] = []
 
-    def fake_run(command, cwd=None):
+    def fake_run(command, cwd=None, capture_output=False, text=False):
         calls.append((list(command), str(cwd)))
         return subprocess.CompletedProcess(args=command, returncode=0)
 
@@ -58,3 +58,34 @@ def test_update_reinstalls_existing_tool_source(monkeypatch) -> None:
         ["git", "pull"],
         ["uv", "tool", "upgrade", "--reinstall", "openharness"],
     ]
+
+
+def test_fallback_update_retries_pull_and_stops_before_upgrade(monkeypatch, capsys, tmp_path: Path) -> None:
+    import subprocess
+    import pytest
+    from openharness_cli import main as entrypoint
+
+    calls: list[list[str]] = []
+
+    def fake_run(command, cwd=None, capture_output=False, text=False):
+        calls.append(list(command))
+        return subprocess.CompletedProcess(
+            args=command,
+            returncode=1,
+            stdout="fallback stdout",
+            stderr="fallback stderr",
+        )
+
+    monkeypatch.setattr(entrypoint, "_find_source_root", lambda: tmp_path)
+    monkeypatch.setattr(subprocess, "run", fake_run)
+
+    with pytest.raises(SystemExit) as exc_info:
+        entrypoint._run_update()
+
+    output = capsys.readouterr().out
+    assert exc_info.value.code == 1
+    assert calls == [["git", "pull"], ["git", "pull"], ["git", "pull"]]
+    assert "Attempt 3/3 failed for `git pull`" in output
+    assert "stdout: fallback stdout" in output
+    assert "stderr: fallback stderr" in output
+    assert "refusing to continue with tool upgrade" in output

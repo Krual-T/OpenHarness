@@ -1,0 +1,15 @@
+id: TASK-027
+title: Update Retry Error Reporting
+status: archived
+summary: 让 openharness update 的源码同步失败显示详细报错，并自动最多重试 3 次。
+owner: Shaokun.Tang
+created_at: '2026-06-14'
+updated_at: '2026-06-14'
+collaboration:
+  task_type: standard
+  design_review_mode: auto
+verification:
+  method: unit_test
+  rwp:
+    enabled: false
+    reason: 本任务验证 CLI 更新命令的 subprocess 行为，单元测试足够覆盖，不需要运行时工作流证据。

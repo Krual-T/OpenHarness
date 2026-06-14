@@ -290,7 +290,7 @@ def test_update_uses_installed_openharness_source_root(tmp_path: Path, monkeypat
     update_module = importlib.import_module("openharness_cli.commands.update")
     calls: list[tuple[tuple[str, ...], Path | None]] = []
 
-    def fake_run(command_parts, cwd=None):
+    def fake_run(command_parts, cwd=None, capture_output=False, text=False):
         calls.append((tuple(command_parts), Path(cwd) if cwd is not None else None))
         return subprocess.CompletedProcess(command_parts, 0)
 
@@ -305,6 +305,106 @@ def test_update_uses_installed_openharness_source_root(tmp_path: Path, monkeypat
         (("uv", "tool", "upgrade", "--reinstall", "openharness"), source_root),
     ]
     assert f"Updated OpenHarness from {source_root}" in result.stdout
+
+
+def test_update_retries_pull_and_reports_failures(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    project_root = tmp_path / "project"
+    project_root.mkdir()
+    source_root = tmp_path / "openharness-source"
+    source_root.mkdir()
+    update_module = importlib.import_module("openharness_cli.commands.update")
+    calls: list[tuple[str, ...]] = []
+    pull_attempts = 0
+
+    def fake_run(command_parts, cwd=None, capture_output=False, text=False):
+        nonlocal pull_attempts
+        calls.append(tuple(command_parts))
+        if command_parts == ["git", "pull"]:
+            pull_attempts += 1
+            if pull_attempts < 3:
+                return subprocess.CompletedProcess(
+                    command_parts,
+                    128,
+                    stdout=f"out {pull_attempts}",
+                    stderr=f"err {pull_attempts}",
+                )
+        return subprocess.CompletedProcess(command_parts, 0, stdout="", stderr="")
+
+    monkeypatch.setattr(update_module.subprocess, "run", fake_run)
+    monkeypatch.setattr(update_module, "_source_root_from_installed_metadata", lambda: source_root)
+
+    result = runner.invoke(app, ["--repo", str(project_root), "update"])
+
+    assert result.exit_code == 0
+    assert calls == [
+        ("git", "pull"),
+        ("git", "pull"),
+        ("git", "pull"),
+        ("uv", "tool", "upgrade", "--reinstall", "openharness"),
+    ]
+    assert "Attempt 1/3 failed for `git pull`" in result.stdout
+    assert "stderr: err 1" in result.stdout
+    assert "Attempt 2/3 failed for `git pull`" in result.stdout
+    assert f"Updated OpenHarness from {source_root}" in result.stdout
+
+
+def test_update_stops_after_three_pull_failures(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    project_root = tmp_path / "project"
+    project_root.mkdir()
+    source_root = tmp_path / "openharness-source"
+    source_root.mkdir()
+    update_module = importlib.import_module("openharness_cli.commands.update")
+    calls: list[tuple[str, ...]] = []
+
+    def fake_run(command_parts, cwd=None, capture_output=False, text=False):
+        calls.append(tuple(command_parts))
+        return subprocess.CompletedProcess(command_parts, 128, stdout="pull out", stderr="pull err")
+
+    monkeypatch.setattr(update_module.subprocess, "run", fake_run)
+    monkeypatch.setattr(update_module, "_source_root_from_installed_metadata", lambda: source_root)
+
+    result = runner.invoke(app, ["--repo", str(project_root), "update"])
+
+    assert result.exit_code == 1
+    assert calls == [("git", "pull"), ("git", "pull"), ("git", "pull")]
+    assert "Attempt 3/3 failed for `git pull`" in result.stdout
+    assert "stdout: pull out" in result.stdout
+    assert "stderr: pull err" in result.stdout
+    assert "ERROR: git pull failed after 3 attempts; refusing to continue with tool upgrade." in result.stdout
+
+
+def test_update_retries_force_sync_commands(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    project_root = tmp_path / "project"
+    project_root.mkdir()
+    source_root = tmp_path / "openharness-source"
+    source_root.mkdir()
+    update_module = importlib.import_module("openharness_cli.commands.update")
+    calls: list[tuple[str, ...]] = []
+    fetch_attempts = 0
+
+    def fake_run(command_parts, cwd=None, capture_output=False, text=False):
+        nonlocal fetch_attempts
+        calls.append(tuple(command_parts))
+        if command_parts == ["git", "fetch", "--prune"]:
+            fetch_attempts += 1
+            if fetch_attempts == 1:
+                return subprocess.CompletedProcess(command_parts, 128, stdout="", stderr="fetch err")
+        return subprocess.CompletedProcess(command_parts, 0, stdout="", stderr="")
+
+    monkeypatch.setattr(update_module.subprocess, "run", fake_run)
+    monkeypatch.setattr(update_module, "_source_root_from_installed_metadata", lambda: source_root)
+
+    result = runner.invoke(app, ["--repo", str(project_root), "update", "--force-sync"])
+
+    assert result.exit_code == 0
+    assert calls == [
+        ("git", "fetch", "--prune"),
+        ("git", "fetch", "--prune"),
+        ("git", "reset", "--hard", "@{u}"),
+        ("uv", "tool", "upgrade", "--reinstall", "openharness"),
+    ]
+    assert "Attempt 1/3 failed for `git fetch --prune`" in result.stdout
+    assert "stderr: fetch err" in result.stdout
 
 
 def test_openharness_source_root_falls_back_to_module_repo(monkeypatch: pytest.MonkeyPatch) -> None:

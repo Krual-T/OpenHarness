@@ -16,6 +16,10 @@ class UpdateMode(StrEnum):
     FORCE_SYNC = "force-sync"
 
 
+SYNC_RETRY_ATTEMPTS = 3
+OUTPUT_SNIPPET_LIMIT = 2000
+
+
 def _project_settings_path(repo_root: Path) -> Path:
     return (repo_root / ".harness" / "settings.yaml").resolve()
 
@@ -57,6 +61,36 @@ def _source_root_from_installed_metadata() -> Path | None:
         return None
 
     return Path(unquote(parsed.path)).resolve()
+
+
+def _snippet(value: str | None) -> str:
+    if not value:
+        return "(empty)"
+    stripped = value.strip()
+    if len(stripped) <= OUTPUT_SNIPPET_LIMIT:
+        return stripped
+    return f"{stripped[:OUTPUT_SNIPPET_LIMIT]}... [truncated]"
+
+
+def _run_sync_command(command_parts: list[str], repo_root: Path) -> bool:
+    command_display = " ".join(command_parts)
+    for attempt in range(1, SYNC_RETRY_ATTEMPTS + 1):
+        result = subprocess.run(
+            command_parts,
+            cwd=repo_root,
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode == 0:
+            return True
+
+        print(
+            f"Attempt {attempt}/{SYNC_RETRY_ATTEMPTS} failed for `{command_display}` "
+            f"in {repo_root} (exit {result.returncode})."
+        )
+        print(f"stdout: {_snippet(result.stdout)}")
+        print(f"stderr: {_snippet(result.stderr)}")
+    return False
 
 
 def update(
@@ -107,15 +141,19 @@ def update(
 
     if update_mode is UpdateMode.FORCE_SYNC:
         for command_parts in (["git", "fetch", "--prune"], ["git", "reset", "--hard", "@{u}"]):
-            sync_result = subprocess.run(command_parts, cwd=repo_root).returncode
-            if sync_result != 0:
-                print(f"ERROR: force sync failed at `{' '.join(command_parts)}`; refusing to continue with tool upgrade.")
+            if not _run_sync_command(command_parts, repo_root):
+                print(
+                    f"ERROR: force sync failed at `{' '.join(command_parts)}` after "
+                    f"{SYNC_RETRY_ATTEMPTS} attempts; refusing to continue with tool upgrade."
+                )
                 raise typer.Exit(code=1)
         print(f"Force-synchronized OpenHarness source clone from {repo_root}")
     elif update_mode is UpdateMode.PULL:
-        git_pull_result = subprocess.run(["git", "pull"], cwd=repo_root).returncode
-        if git_pull_result != 0:
-            print("ERROR: git pull failed; refusing to continue with tool upgrade.")
+        if not _run_sync_command(["git", "pull"], repo_root):
+            print(
+                f"ERROR: git pull failed after {SYNC_RETRY_ATTEMPTS} attempts; "
+                "refusing to continue with tool upgrade."
+            )
             raise typer.Exit(code=1)
 
     upgrade_result = subprocess.run(["uv", "tool", "upgrade", "--reinstall", "openharness"], cwd=repo_root).returncode
