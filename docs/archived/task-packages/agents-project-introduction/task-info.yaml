@@ -1,0 +1,15 @@
+id: TASK-032
+title: Agents Project Introduction
+status: archived
+summary: 在 AGENTS.md 开头补充 OpenHarness 项目介绍和系统安装版本区别。
+owner: Shaokun.Tang
+created_at: '2026-06-14'
+updated_at: '2026-06-14'
+collaboration:
+  task_type: mechanical
+  design_review_mode: auto
+verification:
+  method: qualitative
+  rwp:
+    enabled: false
+    reason: 本轮只补充仓库入口文档说明，不涉及运行时工作流证据。
