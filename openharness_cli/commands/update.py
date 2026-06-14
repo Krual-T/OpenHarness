@@ -93,6 +93,22 @@ def _run_sync_command(command_parts: list[str], repo_root: Path) -> bool:
     return False
 
 
+def _head_commit(repo_root: Path) -> str | None:
+    result = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=repo_root,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode == 0:
+        return result.stdout.strip()
+
+    print(f"ERROR: failed to read git HEAD in {repo_root} (exit {result.returncode}).")
+    print(f"stdout: {_snippet(result.stdout)}")
+    print(f"stderr: {_snippet(result.stderr)}")
+    return None
+
+
 def _parse_update_mode(value: str) -> UpdateMode:
     try:
         return UpdateMode(str(value).strip())
@@ -101,7 +117,11 @@ def _parse_update_mode(value: str) -> UpdateMode:
         raise typer.Exit(code=1)
 
 
-def _force_sync(repo_root: Path) -> None:
+def _force_sync(repo_root: Path) -> bool:
+    before_head = _head_commit(repo_root)
+    if before_head is None:
+        raise typer.Exit(code=1)
+
     for command_parts in (["git", "fetch", "--prune"], ["git", "reset", "--hard", "@{u}"]):
         if not _run_sync_command(command_parts, repo_root):
             print(
@@ -109,7 +129,13 @@ def _force_sync(repo_root: Path) -> None:
                 f"{SYNC_RETRY_ATTEMPTS} attempts; refusing to continue with tool upgrade."
             )
             raise typer.Exit(code=1)
+
+    after_head = _head_commit(repo_root)
+    if after_head is None:
+        raise typer.Exit(code=1)
+
     print(f"Force-synchronized OpenHarness source clone from {repo_root}")
+    return before_head != after_head
 
 
 def update(
@@ -150,8 +176,13 @@ def update(
         else:
             update_mode = UpdateMode.FORCE_SYNC
 
+    source_changed = True
     if update_mode is UpdateMode.FORCE_SYNC:
-        _force_sync(repo_root)
+        source_changed = _force_sync(repo_root)
+
+    if not source_changed:
+        print(f"OpenHarness is already at latest code in {repo_root}")
+        return
 
     upgrade_result = subprocess.run(["uv", "tool", "upgrade", "--reinstall", "openharness"], cwd=repo_root).returncode
     if upgrade_result != 0:

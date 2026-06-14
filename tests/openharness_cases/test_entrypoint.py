@@ -69,6 +69,13 @@ def test_fallback_update_retries_default_force_sync_and_stops_before_upgrade(mon
 
     def fake_run(command, cwd=None, capture_output=False, text=False):
         calls.append(list(command))
+        if command == ["git", "rev-parse", "HEAD"]:
+            return subprocess.CompletedProcess(
+                args=command,
+                returncode=0,
+                stdout="abc123\n",
+                stderr="",
+            )
         return subprocess.CompletedProcess(
             args=command,
             returncode=1,
@@ -85,6 +92,7 @@ def test_fallback_update_retries_default_force_sync_and_stops_before_upgrade(mon
     output = capsys.readouterr().out
     assert exc_info.value.code == 1
     assert calls == [
+        ["git", "rev-parse", "HEAD"],
         ["git", "fetch", "--prune"],
         ["git", "fetch", "--prune"],
         ["git", "fetch", "--prune"],
@@ -93,6 +101,60 @@ def test_fallback_update_retries_default_force_sync_and_stops_before_upgrade(mon
     assert "stdout: fallback stdout" in output
     assert "stderr: fallback stderr" in output
     assert "refusing to continue with tool upgrade" in output
+
+
+def test_fallback_update_skips_reinstall_when_head_unchanged(monkeypatch, capsys, tmp_path: Path) -> None:
+    import subprocess
+    from openharness_cli import main as entrypoint
+
+    calls: list[list[str]] = []
+
+    def fake_run(command, cwd=None, capture_output=False, text=False):
+        calls.append(list(command))
+        if command == ["git", "rev-parse", "HEAD"]:
+            return subprocess.CompletedProcess(args=command, returncode=0, stdout="abc123\n", stderr="")
+        return subprocess.CompletedProcess(args=command, returncode=0, stdout="", stderr="")
+
+    monkeypatch.setattr(entrypoint, "_find_source_root", lambda: tmp_path)
+    monkeypatch.setattr(subprocess, "run", fake_run)
+
+    entrypoint._run_update()
+
+    output = capsys.readouterr().out
+    assert calls == [
+        ["git", "rev-parse", "HEAD"],
+        ["git", "fetch", "--prune"],
+        ["git", "reset", "--hard", "@{u}"],
+        ["git", "rev-parse", "HEAD"],
+    ]
+    assert f"OpenHarness is already at latest code in {tmp_path}" in output
+
+
+def test_fallback_update_reinstalls_when_head_changes(monkeypatch, tmp_path: Path) -> None:
+    import subprocess
+    from openharness_cli import main as entrypoint
+
+    calls: list[list[str]] = []
+    heads = iter(["abc123", "def456"])
+
+    def fake_run(command, cwd=None, capture_output=False, text=False):
+        calls.append(list(command))
+        if command == ["git", "rev-parse", "HEAD"]:
+            return subprocess.CompletedProcess(args=command, returncode=0, stdout=f"{next(heads)}\n", stderr="")
+        return subprocess.CompletedProcess(args=command, returncode=0, stdout="", stderr="")
+
+    monkeypatch.setattr(entrypoint, "_find_source_root", lambda: tmp_path)
+    monkeypatch.setattr(subprocess, "run", fake_run)
+
+    entrypoint._run_update()
+
+    assert calls == [
+        ["git", "rev-parse", "HEAD"],
+        ["git", "fetch", "--prune"],
+        ["git", "reset", "--hard", "@{u}"],
+        ["git", "rev-parse", "HEAD"],
+        ["uv", "tool", "upgrade", "--reinstall", "openharness"],
+    ]
 
 
 def test_fallback_update_dev_source_skips_git_sync(monkeypatch, tmp_path: Path) -> None:

@@ -289,9 +289,12 @@ def test_update_uses_installed_openharness_source_root(tmp_path: Path, monkeypat
     source_root.mkdir()
     update_module = importlib.import_module("openharness_cli.commands.update")
     calls: list[tuple[tuple[str, ...], Path | None]] = []
+    heads = iter(["abc123", "abc123"])
 
     def fake_run(command_parts, cwd=None, capture_output=False, text=False):
         calls.append((tuple(command_parts), Path(cwd) if cwd is not None else None))
+        if command_parts == ["git", "rev-parse", "HEAD"]:
+            return subprocess.CompletedProcess(command_parts, 0, stdout=f"{next(heads)}\n", stderr="")
         return subprocess.CompletedProcess(command_parts, 0)
 
     monkeypatch.setattr(update_module.subprocess, "run", fake_run)
@@ -301,9 +304,41 @@ def test_update_uses_installed_openharness_source_root(tmp_path: Path, monkeypat
 
     assert result.exit_code == 0
     assert calls == [
+        (("git", "rev-parse", "HEAD"), source_root),
         (("git", "fetch", "--prune"), source_root),
         (("git", "reset", "--hard", "@{u}"), source_root),
-        (("uv", "tool", "upgrade", "--reinstall", "openharness"), source_root),
+        (("git", "rev-parse", "HEAD"), source_root),
+    ]
+    assert f"OpenHarness is already at latest code in {source_root}" in result.stdout
+
+
+def test_update_reinstalls_after_force_sync_changes_head(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    project_root = tmp_path / "project"
+    project_root.mkdir()
+    source_root = tmp_path / "openharness-source"
+    source_root.mkdir()
+    update_module = importlib.import_module("openharness_cli.commands.update")
+    calls: list[tuple[str, ...]] = []
+    heads = iter(["abc123", "def456"])
+
+    def fake_run(command_parts, cwd=None, capture_output=False, text=False):
+        calls.append(tuple(command_parts))
+        if command_parts == ["git", "rev-parse", "HEAD"]:
+            return subprocess.CompletedProcess(command_parts, 0, stdout=f"{next(heads)}\n", stderr="")
+        return subprocess.CompletedProcess(command_parts, 0, stdout="", stderr="")
+
+    monkeypatch.setattr(update_module.subprocess, "run", fake_run)
+    monkeypatch.setattr(update_module, "_source_root_from_installed_metadata", lambda: source_root)
+
+    result = runner.invoke(app, ["--repo", str(project_root), "update"])
+
+    assert result.exit_code == 0
+    assert calls == [
+        ("git", "rev-parse", "HEAD"),
+        ("git", "fetch", "--prune"),
+        ("git", "reset", "--hard", "@{u}"),
+        ("git", "rev-parse", "HEAD"),
+        ("uv", "tool", "upgrade", "--reinstall", "openharness"),
     ]
     assert f"Updated OpenHarness from {source_root}" in result.stdout
 
@@ -316,10 +351,13 @@ def test_update_retries_default_force_sync_and_reports_failures(tmp_path: Path, 
     update_module = importlib.import_module("openharness_cli.commands.update")
     calls: list[tuple[str, ...]] = []
     fetch_attempts = 0
+    heads = iter(["abc123", "def456"])
 
     def fake_run(command_parts, cwd=None, capture_output=False, text=False):
         nonlocal fetch_attempts
         calls.append(tuple(command_parts))
+        if command_parts == ["git", "rev-parse", "HEAD"]:
+            return subprocess.CompletedProcess(command_parts, 0, stdout=f"{next(heads)}\n", stderr="")
         if command_parts == ["git", "fetch", "--prune"]:
             fetch_attempts += 1
             if fetch_attempts < 3:
@@ -338,10 +376,12 @@ def test_update_retries_default_force_sync_and_reports_failures(tmp_path: Path, 
 
     assert result.exit_code == 0
     assert calls == [
+        ("git", "rev-parse", "HEAD"),
         ("git", "fetch", "--prune"),
         ("git", "fetch", "--prune"),
         ("git", "fetch", "--prune"),
         ("git", "reset", "--hard", "@{u}"),
+        ("git", "rev-parse", "HEAD"),
         ("uv", "tool", "upgrade", "--reinstall", "openharness"),
     ]
     assert "Attempt 1/3 failed for `git fetch --prune`" in result.stdout
@@ -360,6 +400,8 @@ def test_update_stops_after_three_default_sync_failures(tmp_path: Path, monkeypa
 
     def fake_run(command_parts, cwd=None, capture_output=False, text=False):
         calls.append(tuple(command_parts))
+        if command_parts == ["git", "rev-parse", "HEAD"]:
+            return subprocess.CompletedProcess(command_parts, 0, stdout="abc123\n", stderr="")
         return subprocess.CompletedProcess(command_parts, 128, stdout="pull out", stderr="pull err")
 
     monkeypatch.setattr(update_module.subprocess, "run", fake_run)
@@ -369,6 +411,7 @@ def test_update_stops_after_three_default_sync_failures(tmp_path: Path, monkeypa
 
     assert result.exit_code == 1
     assert calls == [
+        ("git", "rev-parse", "HEAD"),
         ("git", "fetch", "--prune"),
         ("git", "fetch", "--prune"),
         ("git", "fetch", "--prune"),
@@ -387,10 +430,13 @@ def test_update_retries_force_sync_commands(tmp_path: Path, monkeypatch: pytest.
     update_module = importlib.import_module("openharness_cli.commands.update")
     calls: list[tuple[str, ...]] = []
     fetch_attempts = 0
+    heads = iter(["abc123", "def456"])
 
     def fake_run(command_parts, cwd=None, capture_output=False, text=False):
         nonlocal fetch_attempts
         calls.append(tuple(command_parts))
+        if command_parts == ["git", "rev-parse", "HEAD"]:
+            return subprocess.CompletedProcess(command_parts, 0, stdout=f"{next(heads)}\n", stderr="")
         if command_parts == ["git", "fetch", "--prune"]:
             fetch_attempts += 1
             if fetch_attempts == 1:
@@ -404,9 +450,11 @@ def test_update_retries_force_sync_commands(tmp_path: Path, monkeypatch: pytest.
 
     assert result.exit_code == 0
     assert calls == [
+        ("git", "rev-parse", "HEAD"),
         ("git", "fetch", "--prune"),
         ("git", "fetch", "--prune"),
         ("git", "reset", "--hard", "@{u}"),
+        ("git", "rev-parse", "HEAD"),
         ("uv", "tool", "upgrade", "--reinstall", "openharness"),
     ]
     assert "Attempt 1/3 failed for `git fetch --prune`" in result.stdout

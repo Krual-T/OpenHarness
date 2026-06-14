@@ -67,6 +67,22 @@ def _run_sync_command(command_parts: list[str], source: Path) -> bool:
     return False
 
 
+def _head_commit(source: Path) -> str | None:
+    result = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=source,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode == 0:
+        return result.stdout.strip()
+
+    print(f"ERROR: failed to read git HEAD in {source} (exit {result.returncode}).", flush=True)
+    print(f"stdout: {_snippet(result.stdout)}", flush=True)
+    print(f"stderr: {_snippet(result.stderr)}", flush=True)
+    return None
+
+
 def _is_dev_source_update(args: list[str]) -> bool:
     if "--dev-source" in args:
         return True
@@ -78,7 +94,11 @@ def _is_dev_source_update(args: list[str]) -> bool:
     return False
 
 
-def _force_sync(source: Path) -> None:
+def _force_sync(source: Path) -> bool:
+    before_head = _head_commit(source)
+    if before_head is None:
+        sys.exit(1)
+
     for command_parts in (["git", "fetch", "--prune"], ["git", "reset", "--hard", "@{u}"]):
         if not _run_sync_command(command_parts, source):
             print(
@@ -87,7 +107,13 @@ def _force_sync(source: Path) -> None:
                 flush=True,
             )
             sys.exit(1)
+
+    after_head = _head_commit(source)
+    if after_head is None:
+        sys.exit(1)
+
     print(f"Force-synchronized OpenHarness source clone from {source}", flush=True)
+    return before_head != after_head
 
 
 def _run_update(args: list[str] | None = None) -> None:
@@ -95,8 +121,12 @@ def _run_update(args: list[str] | None = None) -> None:
     update_args = args or []
     print(f"OpenHarness source: {source}", flush=True)
     dev_source = _is_dev_source_update(update_args)
+    source_changed = True
     if not dev_source:
-        _force_sync(source)
+        source_changed = _force_sync(source)
+    if not source_changed:
+        print(f"OpenHarness is already at latest code in {source}", flush=True)
+        return
     subprocess.run(["uv", "tool", "upgrade", "--reinstall", "openharness"], cwd=source)
     if dev_source:
         print(f"Reinstalled OpenHarness from local dev source {source}", flush=True)
